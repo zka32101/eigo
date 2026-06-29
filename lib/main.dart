@@ -1,0 +1,194 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'models/stage.dart';
+import 'providers/purchase_provider.dart';
+import 'providers/settings_provider.dart';
+import 'screens/badge_screen.dart';
+import 'screens/home_screen.dart';
+import 'screens/lesson_screen.dart';
+import 'screens/onboarding_screen.dart';
+import 'screens/parent_dashboard_screen.dart';
+import 'screens/privacy_policy_screen.dart';
+import 'screens/result_screen.dart';
+import 'screens/settings_screen.dart';
+import 'screens/splash_screen.dart';
+import 'screens/stage_select_screen.dart';
+import 'screens/ranking_screen.dart';
+import 'screens/speaking_practice_screen.dart';
+import 'screens/study_calendar_screen.dart';
+import 'screens/test_prep_result_screen.dart';
+import 'screens/test_prep_screen.dart';
+import 'screens/upgrade_screen.dart';
+import 'screens/weekly_report_screen.dart';
+import 'screens/word_review_screen.dart';
+import 'screens/daily_challenge_screen.dart';
+import 'screens/pronunciation_battle_screen.dart';
+import 'screens/conversation_screen.dart';
+import 'screens/parent_child_challenge_screen.dart';
+import 'screens/invite_screen.dart';
+import 'screens/notification_settings_screen.dart';
+import 'screens/profile_select_screen.dart';
+import 'screens/ai_freetalk_screen.dart';
+import 'screens/pronunciation_check_screen.dart';
+import 'screens/vocabulary_screen.dart';
+import 'screens/stage_intro_screen.dart';
+import 'services/notification_service.dart';
+import 'providers/morning_notification_provider.dart';
+import 'theme/app_theme.dart' show buildAppTheme, buildDarkAppTheme, kPrimaryColor, kTextMuted;
+import 'providers/user_profile_provider.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+    systemNavigationBarColor: Colors.transparent,
+    statusBarIconBrightness: Brightness.light,
+  ));
+
+  // 通知初期化
+  await NotificationService().init();
+
+  runApp(const ProviderScope(child: EigoKoreApp()));
+}
+
+class EigoKoreApp extends ConsumerWidget {
+  const EigoKoreApp({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // プロバイダーを事前ウォームアップ
+    ref.watch(settingsProvider);
+    ref.watch(purchaseProvider);
+    ref.watch(morningNotificationStateProvider);
+
+    final profiles = ref.watch(userProfilesProvider);
+    final currentUserId = ref.watch(currentUserIdProvider);
+    final hasProfiles = profiles.isNotEmpty && currentUserId != null;
+
+    return MaterialApp(
+      title: '英語コレ！',
+      theme: buildAppTheme(),
+      darkTheme: buildDarkAppTheme(),
+      debugShowCheckedModeBanner: false,
+      initialRoute: '/',
+      routes: {
+        '/': (context) => hasProfiles ? const RootShell() : const ProfileSelectScreen(),
+        '/onboarding': (context) => const OnboardingScreen(),
+        '/home': (context) => const RootShell(),
+        '/stages': (context) => const StageSelectScreen(),
+        '/settings': (context) => const SettingsScreen(),
+        '/badges': (context) => const BadgeScreen(),
+        '/parent': (context) => const ParentDashboardScreen(),
+        '/privacy': (context) => const PrivacyPolicyScreen(),
+        '/upgrade': (context) => const UpgradeScreen(),
+        '/test-prep': (context) => const TestPrepScreen(),
+        '/speaking-practice': (context) => const SpeakingPracticeScreen(),
+        '/ranking': (context) => const RankingScreen(),
+        '/calendar': (context) => const StudyCalendarScreen(),
+        '/weekly-report': (context) => const WeeklyReportScreen(),
+        '/daily-challenge': (context) => const DailyChallengeScreen(),
+        '/pronunciation-battle': (context) => const PronunciationBattleScreen(),
+        '/conversation': (context) => const ConversationScreen(),
+        '/parent-child': (context) => const ParentChildChallengeScreen(),
+        '/invite': (context) => const InviteScreen(),
+        '/notification-settings': (context) => const NotificationSettingsScreen(),
+        '/profile-select': (context) => const ProfileSelectScreen(),
+        '/ai-freetalk': (context) => const AiFreetalkScreen(),
+        '/vocabulary': (context) => const VocabularyScreen(),
+      },
+      onGenerateRoute: (settings) {
+        if (settings.name == '/test-prep-result') {
+          final args = settings.arguments as Map<String, dynamic>;
+          return MaterialPageRoute(
+            builder: (_) => TestPrepResultScreen(args: args),
+            settings: settings,
+          );
+        }
+        if (settings.name == '/stage-intro') {
+          final stage = settings.arguments as Stage;
+          return MaterialPageRoute(
+            builder: (_) => StageIntroScreen(stage: stage),
+            settings: settings,
+          );
+        }
+        if (settings.name == '/lesson') {
+          final stage = settings.arguments as Stage;
+          return MaterialPageRoute(
+            builder: (_) => LessonScreen(stage: stage),
+            settings: settings,
+          );
+        }
+        if (settings.name == '/result') {
+          final args = settings.arguments as Map<String, dynamic>;
+          return MaterialPageRoute(
+            builder: (_) => ResultScreen(args: args),
+            settings: settings,
+          );
+        }
+        if (settings.name == '/word-review') {
+          final stage = settings.arguments as Stage;
+          return MaterialPageRoute(
+            builder: (_) => WordReviewScreen(stage: stage),
+            settings: settings,
+          );
+        }
+        if (settings.name == '/pronunciation-check') {
+          final stage = settings.arguments as Stage;
+          return MaterialPageRoute(
+            builder: (_) => PronunciationCheckScreen(stage: stage),
+            settings: settings,
+          );
+        }
+        return null;
+      },
+    );
+  }
+}
+
+class RootShell extends ConsumerStatefulWidget {
+  const RootShell({super.key});
+
+  @override
+  ConsumerState<RootShell> createState() => _RootShellState();
+}
+
+class _RootShellState extends ConsumerState<RootShell> {
+  int _tab = 0;
+
+  static const _screens = [
+    HomeScreen(),
+    StageSelectScreen(),
+    ParentDashboardScreen(),
+    SettingsScreen(),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: IndexedStack(
+        index: _tab,
+        children: _screens,
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _tab,
+        onTap: (i) => setState(() => _tab = i),
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: kPrimaryColor,
+        unselectedItemColor: kTextMuted,
+        backgroundColor: Colors.white,
+        elevation: 8,
+        selectedFontSize: 11,
+        unselectedFontSize: 10,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'ホーム'),
+          BottomNavigationBarItem(icon: Icon(Icons.menu_book), label: 'ステージ'),
+          BottomNavigationBarItem(icon: Icon(Icons.family_restroom), label: '親'),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'せってい'),
+        ],
+      ),
+    );
+  }
+}

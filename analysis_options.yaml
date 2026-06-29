@@ -1,0 +1,34 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  errors:
+    # 未使用インポートをwarningに昇格
+    unused_import: warning
+    # 未使用フィールドをwarningに
+    unused_field: warning
+    # 未使用ローカル変数をwarningに
+    unused_local_variable: warning
+  exclude:
+    - '**/*.g.dart'
+    - '**/*.freezed.dart'
+
+linter:
+  rules:
+    # コードスタイル
+    prefer_single_quotes: true
+    prefer_const_constructors: true
+    prefer_const_declarations: true
+    prefer_final_locals: true
+    prefer_final_fields: true
+    # 安全性
+    avoid_print: true
+    avoid_unnecessary_containers: true
+    avoid_void_async: true
+    cancel_subscriptions: true
+    # パフォーマンス
+    prefer_collection_literals: true
+    prefer_spread_collections: true
+    use_key_in_widget_constructors: true
+    # Flutter 固有
+    sized_box_for_whitespace: true
+    use_full_hex_values_for_flutter_colors: true

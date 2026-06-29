@@ -1,0 +1,40 @@
+# Flutter
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+build/
+*.iml
+.gradle
+android/.gradle
+android/local.properties
+.idea/
+ios/.idea/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+
+# Generated files
+*.g.dart
+*.config.dart
+
+# Dependencies
+pubspec.lock
+
+# Environment
+.env
+.env.local
+
+# IDE
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# API keys & secrets
+google-services.json
+google-services.json.backup
+*_secrets*
