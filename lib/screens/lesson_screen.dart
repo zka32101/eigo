@@ -12,8 +12,10 @@ import '../providers/speaking_history_provider.dart';
 import '../providers/weakness_provider.dart';
 import '../services/speech_service.dart';
 import '../services/tts_service.dart';
+import '../services/pronunciation_pet_integration_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/speaking_score_ring.dart';
+import '../providers/user_profile_provider.dart';
 
 class LessonScreen extends ConsumerStatefulWidget {
   final Stage stage;
@@ -189,6 +191,9 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
           if (s >= 85) _confetti.play();
           // 弱点記録
           _answerLog.add((id: _current.id, type: _current.type, correct: s >= 60, speakingScore: s));
+
+          // ペット育成統合：発音スコア → ペットフィード
+          _feedPetFromScore(s, text);
         }
       },
     );
@@ -197,6 +202,45 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
   Future<void> _stopListening() async {
     await _speech.stopListening();
     setState(() { _isListening = false; });
+  }
+
+  /// 発音スコアをペット育成に反映
+  Future<void> _feedPetFromScore(int pronouncingScore, String recognizedText) async {
+    final userId = ref.read(userProfileProvider).value?.userId;
+    if (userId == null || pronouncingScore < 60) return;
+
+    try {
+      // PronunciationResult を構築（0-1 スケール）
+      final accuracy = pronouncingScore / 100.0;
+      final result = PronunciationResult(
+        word: _current.correctAnswer,
+        userPronunciation: recognizedText,
+        accuracy: accuracy,
+        feedback: '',
+        isPassed: accuracy >= 0.7,
+      );
+
+      // 統合サービスでペット更新・コイン加算・XP付与
+      final feedbackResult = await ref
+          .read(pronunciationPetIntegrationProvider)
+          .processResult(
+            pronunciationResult: result,
+            userId: userId,
+          );
+
+      // ユーザーへフィードバック表示
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(feedbackResult.generateFeedback()),
+            duration: const Duration(seconds: 2),
+            backgroundColor: feedbackResult.coinsEarned > 0 ? Colors.green : Colors.blue,
+          ),
+        );
+      }
+    } catch (e) {
+      print('Pet feeding error: $e');
+    }
   }
 
   @override
