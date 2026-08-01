@@ -5,6 +5,7 @@ const kPrimaryColor = Color(0xFF1A73E8);
 const kPrimaryDark = Color(0xFF1558B0);
 const kPrimaryLight = Color(0xFF4A9EFF);
 const kAccentGreen = Color(0xFF34A853);
+const kSecondaryColor = kAccentGreen;
 const kAccentOrange = Color(0xFFFB8C00);
 const kAccentRed = Color(0xFFE53935);
 const kAccentPurple = Color(0xFF7B1FA2);

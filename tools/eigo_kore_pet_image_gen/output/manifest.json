@@ -1,0 +1,202 @@
+{
+  "parrot_egg": {
+    "nameJp": "オウム（たまご）",
+    "speciesId": "parrot",
+    "stageId": "egg",
+    "file": "parrot_egg.png",
+    "prompt": "a colorful parrot with a curved beak, vivid red-blue-yellow feathers, expressive round eyes, depicted as a cute round egg with soft matching-color speckled pattern, tiny cracks hinting at the creature inside, no visible limbs, cute kawaii mascot illustration for a Japanese elementary school English learning app, thick clean rounded outlines, flat vector art style, soft pastel color palette, simple flat shading, chibi proportions, centered composition, friendly and welcoming, no scary or realistic elements, plain solid white background, isolated character, no shadow on ground, high quality, clean lineart, professional game asset",
+    "provider": "leonardo",
+    "modelId": "de7d3faf-762f-48e0-b3b7-9d0ac3a3fcf3",
+    "generatedAt": "2026-08-01T09:50:49.097Z"
+  },
+  "parrot_baby": {
+    "nameJp": "オウム（ベビー）",
+    "speciesId": "parrot",
+    "stageId": "baby",
+    "file": "parrot_baby.png",
+    "prompt": "a colorful parrot with a curved beak, vivid red-blue-yellow feathers, expressive round eyes, depicted as a tiny baby version, extremely chibi proportions, oversized head, tiny stubby limbs, sitting pose, sparkly innocent eyes, cute kawaii mascot illustration for a Japanese elementary school English learning app, thick clean rounded outlines, flat vector art style, soft pastel color palette, simple flat shading, chibi proportions, centered composition, friendly and welcoming, no scary or realistic elements, plain solid white background, isolated character, no shadow on ground, high quality, clean lineart, professional game asset",
+    "provider": "leonardo",
+    "modelId": "de7d3faf-762f-48e0-b3b7-9d0ac3a3fcf3",
+    "generatedAt": "2026-08-01T09:50:57.739Z"
+  },
+  "parrot_kids": {
+    "nameJp": "オウム（キッズ）",
+    "speciesId": "parrot",
+    "stageId": "kids",
+    "file": "parrot_kids.png",
+    "prompt": "a colorful parrot with a curved beak, vivid red-blue-yellow feathers, expressive round eyes, depicted as a young playful version, chibi proportions but slightly more balanced, mid-action playful pose, cheerful expression, cute kawaii mascot illustration for a Japanese elementary school English learning app, thick clean rounded outlines, flat vector art style, soft pastel color palette, simple flat shading, chibi proportions, centered composition, friendly and welcoming, no scary or realistic elements, plain solid white background, isolated character, no shadow on ground, high quality, clean lineart, professional game asset",
+    "provider": "leonardo",
+    "modelId": "de7d3faf-762f-48e0-b3b7-9d0ac3a3fcf3",
+    "generatedAt": "2026-08-01T09:51:47.102Z"
+  },
+  "parrot_adult": {
+    "nameJp": "オウム（アダルト）",
+    "speciesId": "parrot",
+    "stageId": "adult",
+    "file": "parrot_adult.png",
+    "prompt": "a colorful parrot with a curved beak, vivid red-blue-yellow feathers, expressive round eyes, depicted as a fully grown confident version, still cute and rounded (not realistic/scary), proud upright pose, sparkling proud eyes, cute kawaii mascot illustration for a Japanese elementary school English learning app, thick clean rounded outlines, flat vector art style, soft pastel color palette, simple flat shading, chibi proportions, centered composition, friendly and welcoming, no scary or realistic elements, plain solid white background, isolated character, no shadow on ground, high quality, clean lineart, professional game asset",
+    "provider": "leonardo",
+    "modelId": "de7d3faf-762f-48e0-b3b7-9d0ac3a3fcf3",
+    "generatedAt": "2026-08-01T09:51:56.200Z"
+  },
+  "turtle_egg": {
+    "nameJp": "カメ（たまご）",
+    "speciesId": "turtle",
+    "stageId": "egg",
+    "file": "turtle_egg.png",
+    "prompt": "a small turtle with a rounded green-brown shell with soft patterns, stubby little legs, gentle round eyes, depicted as a cute round egg with soft matching-color speckled pattern, tiny cracks hinting at the creature inside, no visible limbs, cute kawaii mascot illustration for a Japanese elementary school English learning app, thick clean rounded outlines, flat vector art style, soft pastel color palette, simple flat shading, chibi proportions, centered composition, friendly and welcoming, no scary or realistic elements, plain solid white background, isolated character, no shadow on ground, high quality, clean lineart, professional game asset",
+    "provider": "leonardo",
+    "modelId": "de7d3faf-762f-48e0-b3b7-9d0ac3a3fcf3",
+    "generatedAt": "2026-08-01T09:55:08.558Z"
+  },
+  "turtle_baby": {
+    "nameJp": "カメ（ベビー）",
+    "speciesId": "turtle",
+    "stageId": "baby",
+    "file": "turtle_baby.png",
+    "prompt": "a small turtle with a rounded green-brown shell with soft patterns, stubby little legs, gentle round eyes, depicted as a tiny baby version, extremely chibi proportions, oversized head, tiny stubby limbs, sitting pose, sparkly innocent eyes, cute kawaii mascot illustration for a Japanese elementary school English learning app, thick clean rounded outlines, flat vector art style, soft pastel color palette, simple flat shading, chibi proportions, centered composition, friendly and welcoming, no scary or realistic elements, plain solid white background, isolated character, no shadow on ground, high quality, clean lineart, professional game asset",
+    "provider": "leonardo",
+    "modelId": "de7d3faf-762f-48e0-b3b7-9d0ac3a3fcf3",
+    "generatedAt": "2026-08-01T09:52:12.559Z"
+  },
+  "turtle_kids": {
+    "nameJp": "カメ（キッズ）",
+    "speciesId": "turtle",
+    "stageId": "kids",
+    "file": "turtle_kids.png",
+    "prompt": "a small turtle with a rounded green-brown shell with soft patterns, stubby little legs, gentle round eyes, depicted as a young playful version, chibi proportions but slightly more balanced, mid-action playful pose, cheerful expression, cute kawaii mascot illustration for a Japanese elementary school English learning app, thick clean rounded outlines, flat vector art style, soft pastel color palette, simple flat shading, chibi proportions, centered composition, friendly and welcoming, no scary or realistic elements, plain solid white background, isolated character, no shadow on ground, high quality, clean lineart, professional game asset",
+    "provider": "leonardo",
+    "modelId": "de7d3faf-762f-48e0-b3b7-9d0ac3a3fcf3",
+    "generatedAt": "2026-08-01T09:52:19.805Z"
+  },
+  "turtle_adult": {
+    "nameJp": "カメ（アダルト）",
+    "speciesId": "turtle",
+    "stageId": "adult",
+    "file": "turtle_adult.png",
+    "prompt": "a small turtle with a rounded green-brown shell with soft patterns, stubby little legs, gentle round eyes, depicted as a fully grown confident version, still cute and rounded (not realistic/scary), proud upright pose, sparkling proud eyes, cute kawaii mascot illustration for a Japanese elementary school English learning app, thick clean rounded outlines, flat vector art style, soft pastel color palette, simple flat shading, chibi proportions, centered composition, friendly and welcoming, no scary or realistic elements, plain solid white background, isolated character, no shadow on ground, high quality, clean lineart, professional game asset",
+    "provider": "leonardo",
+    "modelId": "de7d3faf-762f-48e0-b3b7-9d0ac3a3fcf3",
+    "generatedAt": "2026-08-01T09:52:30.993Z"
+  },
+  "fish_egg": {
+    "nameJp": "さかな（たまご）",
+    "speciesId": "fish",
+    "stageId": "egg",
+    "file": "fish_egg.png",
+    "prompt": "a plump tropical fish with shimmering blue-orange scales, fan-like fins, big sparkling eyes, depicted peeking out of a small round translucent glowing egg sac with soft speckled pattern, tiny bubbles floating around, only the head and upper body visible above the sac, no visible tail or fins below, cute kawaii mascot illustration for a Japanese elementary school English learning app, thick clean rounded outlines, flat vector art style, soft pastel color palette, simple flat shading, chibi proportions, centered composition, friendly and welcoming, no scary or realistic elements, plain solid white background, isolated character, no shadow on ground, high quality, clean lineart, professional game asset",
+    "provider": "leonardo",
+    "modelId": "de7d3faf-762f-48e0-b3b7-9d0ac3a3fcf3",
+    "generatedAt": "2026-08-01T09:56:14.345Z"
+  },
+  "fish_baby": {
+    "nameJp": "さかな（ベビー）",
+    "speciesId": "fish",
+    "stageId": "baby",
+    "file": "fish_baby.png",
+    "prompt": "a plump tropical fish with shimmering blue-orange scales, fan-like fins, big sparkling eyes, depicted as a tiny baby version, extremely chibi proportions, oversized head, tiny stubby limbs, sitting pose, sparkly innocent eyes, cute kawaii mascot illustration for a Japanese elementary school English learning app, thick clean rounded outlines, flat vector art style, soft pastel color palette, simple flat shading, chibi proportions, centered composition, friendly and welcoming, no scary or realistic elements, plain solid white background, isolated character, no shadow on ground, high quality, clean lineart, professional game asset",
+    "provider": "leonardo",
+    "modelId": "de7d3faf-762f-48e0-b3b7-9d0ac3a3fcf3",
+    "generatedAt": "2026-08-01T09:52:56.503Z"
+  },
+  "fish_kids": {
+    "nameJp": "さかな（キッズ）",
+    "speciesId": "fish",
+    "stageId": "kids",
+    "file": "fish_kids.png",
+    "prompt": "a plump tropical fish with shimmering blue-orange scales, fan-like fins, big sparkling eyes, depicted as a young playful version, chibi proportions but slightly more balanced, mid-action playful pose, cheerful expression, cute kawaii mascot illustration for a Japanese elementary school English learning app, thick clean rounded outlines, flat vector art style, soft pastel color palette, simple flat shading, chibi proportions, centered composition, friendly and welcoming, no scary or realistic elements, plain solid white background, isolated character, no shadow on ground, high quality, clean lineart, professional game asset",
+    "provider": "leonardo",
+    "modelId": "de7d3faf-762f-48e0-b3b7-9d0ac3a3fcf3",
+    "generatedAt": "2026-08-01T09:53:04.145Z"
+  },
+  "fish_adult": {
+    "nameJp": "さかな（アダルト）",
+    "speciesId": "fish",
+    "stageId": "adult",
+    "file": "fish_adult.png",
+    "prompt": "a plump tropical fish with shimmering blue-orange scales, fan-like fins, big sparkling eyes, depicted as a fully grown confident version, still cute and rounded (not realistic/scary), proud upright pose, sparkling proud eyes, cute kawaii mascot illustration for a Japanese elementary school English learning app, thick clean rounded outlines, flat vector art style, soft pastel color palette, simple flat shading, chibi proportions, centered composition, friendly and welcoming, no scary or realistic elements, plain solid white background, isolated character, no shadow on ground, high quality, clean lineart, professional game asset",
+    "provider": "leonardo",
+    "modelId": "de7d3faf-762f-48e0-b3b7-9d0ac3a3fcf3",
+    "generatedAt": "2026-08-01T09:53:14.674Z"
+  },
+  "lion_egg": {
+    "nameJp": "ライオン（たまご）",
+    "speciesId": "lion",
+    "stageId": "egg",
+    "file": "lion_egg.png",
+    "prompt": "a small lion cub with a fluffy golden mane, round fluffy ears, warm amber eyes, depicted as a cute round egg with soft matching-color speckled pattern, tiny cracks hinting at the creature inside, no visible limbs, cute kawaii mascot illustration for a Japanese elementary school English learning app, thick clean rounded outlines, flat vector art style, soft pastel color palette, simple flat shading, chibi proportions, centered composition, friendly and welcoming, no scary or realistic elements, plain solid white background, isolated character, no shadow on ground, high quality, clean lineart, professional game asset",
+    "provider": "leonardo",
+    "modelId": "de7d3faf-762f-48e0-b3b7-9d0ac3a3fcf3",
+    "generatedAt": "2026-08-01T09:53:21.930Z"
+  },
+  "lion_baby": {
+    "nameJp": "ライオン（ベビー）",
+    "speciesId": "lion",
+    "stageId": "baby",
+    "file": "lion_baby.png",
+    "prompt": "a small lion cub with a fluffy golden mane, round fluffy ears, warm amber eyes, depicted as a tiny baby version, extremely chibi proportions, oversized head, tiny stubby limbs, sitting pose, sparkly innocent eyes, cute kawaii mascot illustration for a Japanese elementary school English learning app, thick clean rounded outlines, flat vector art style, soft pastel color palette, simple flat shading, chibi proportions, centered composition, friendly and welcoming, no scary or realistic elements, plain solid white background, isolated character, no shadow on ground, high quality, clean lineart, professional game asset",
+    "provider": "leonardo",
+    "modelId": "de7d3faf-762f-48e0-b3b7-9d0ac3a3fcf3",
+    "generatedAt": "2026-08-01T09:53:32.285Z"
+  },
+  "lion_kids": {
+    "nameJp": "ライオン（キッズ）",
+    "speciesId": "lion",
+    "stageId": "kids",
+    "file": "lion_kids.png",
+    "prompt": "a small lion cub with a fluffy golden mane, round fluffy ears, warm amber eyes, depicted as a young playful version, chibi proportions but slightly more balanced, mid-action playful pose, cheerful expression, cute kawaii mascot illustration for a Japanese elementary school English learning app, thick clean rounded outlines, flat vector art style, soft pastel color palette, simple flat shading, chibi proportions, centered composition, friendly and welcoming, no scary or realistic elements, plain solid white background, isolated character, no shadow on ground, high quality, clean lineart, professional game asset",
+    "provider": "leonardo",
+    "modelId": "de7d3faf-762f-48e0-b3b7-9d0ac3a3fcf3",
+    "generatedAt": "2026-08-01T09:53:40.743Z"
+  },
+  "lion_adult": {
+    "nameJp": "ライオン（アダルト）",
+    "speciesId": "lion",
+    "stageId": "adult",
+    "file": "lion_adult.png",
+    "prompt": "a small lion cub with a fluffy golden mane, round fluffy ears, warm amber eyes, depicted as a fully grown confident version, still cute and rounded (not realistic/scary), proud upright pose, sparkling proud eyes, cute kawaii mascot illustration for a Japanese elementary school English learning app, thick clean rounded outlines, flat vector art style, soft pastel color palette, simple flat shading, chibi proportions, centered composition, friendly and welcoming, no scary or realistic elements, plain solid white background, isolated character, no shadow on ground, high quality, clean lineart, professional game asset",
+    "provider": "leonardo",
+    "modelId": "de7d3faf-762f-48e0-b3b7-9d0ac3a3fcf3",
+    "generatedAt": "2026-08-01T09:53:48.613Z"
+  },
+  "fox_egg": {
+    "nameJp": "キツネ（たまご）",
+    "speciesId": "fox",
+    "stageId": "egg",
+    "file": "fox_egg.png",
+    "prompt": "a fluffy orange fox with a big bushy white-tipped tail, pointed ears, bright curious eyes, depicted as a cute round egg with soft matching-color speckled pattern, tiny cracks hinting at the creature inside, no visible limbs, cute kawaii mascot illustration for a Japanese elementary school English learning app, thick clean rounded outlines, flat vector art style, soft pastel color palette, simple flat shading, chibi proportions, centered composition, friendly and welcoming, no scary or realistic elements, plain solid white background, isolated character, no shadow on ground, high quality, clean lineart, professional game asset",
+    "provider": "leonardo",
+    "modelId": "de7d3faf-762f-48e0-b3b7-9d0ac3a3fcf3",
+    "generatedAt": "2026-08-01T09:53:56.744Z"
+  },
+  "fox_baby": {
+    "nameJp": "キツネ（ベビー）",
+    "speciesId": "fox",
+    "stageId": "baby",
+    "file": "fox_baby.png",
+    "prompt": "a fluffy orange fox with a big bushy white-tipped tail, pointed ears, bright curious eyes, depicted as a tiny baby version, extremely chibi proportions, oversized head, tiny stubby limbs, sitting pose, sparkly innocent eyes, cute kawaii mascot illustration for a Japanese elementary school English learning app, thick clean rounded outlines, flat vector art style, soft pastel color palette, simple flat shading, chibi proportions, centered composition, friendly and welcoming, no scary or realistic elements, plain solid white background, isolated character, no shadow on ground, high quality, clean lineart, professional game asset",
+    "provider": "leonardo",
+    "modelId": "de7d3faf-762f-48e0-b3b7-9d0ac3a3fcf3",
+    "generatedAt": "2026-08-01T09:54:04.891Z"
+  },
+  "fox_kids": {
+    "nameJp": "キツネ（キッズ）",
+    "speciesId": "fox",
+    "stageId": "kids",
+    "file": "fox_kids.png",
+    "prompt": "a fluffy orange fox with a big bushy white-tipped tail, pointed ears, bright curious eyes, depicted as a young playful version, chibi proportions but slightly more balanced, mid-action playful pose, cheerful expression, cute kawaii mascot illustration for a Japanese elementary school English learning app, thick clean rounded outlines, flat vector art style, soft pastel color palette, simple flat shading, chibi proportions, centered composition, friendly and welcoming, no scary or realistic elements, plain solid white background, isolated character, no shadow on ground, high quality, clean lineart, professional game asset",
+    "provider": "leonardo",
+    "modelId": "de7d3faf-762f-48e0-b3b7-9d0ac3a3fcf3",
+    "generatedAt": "2026-08-01T09:54:12.977Z"
+  },
+  "fox_adult": {
+    "nameJp": "キツネ（アダルト）",
+    "speciesId": "fox",
+    "stageId": "adult",
+    "file": "fox_adult.png",
+    "prompt": "a fluffy orange fox with a big bushy white-tipped tail, pointed ears, bright curious eyes, depicted as a fully grown confident version, still cute and rounded (not realistic/scary), proud upright pose, sparkling proud eyes, cute kawaii mascot illustration for a Japanese elementary school English learning app, thick clean rounded outlines, flat vector art style, soft pastel color palette, simple flat shading, chibi proportions, centered composition, friendly and welcoming, no scary or realistic elements, plain solid white background, isolated character, no shadow on ground, high quality, clean lineart, professional game asset",
+    "provider": "leonardo",
+    "modelId": "de7d3faf-762f-48e0-b3b7-9d0ac3a3fcf3",
+    "generatedAt": "2026-08-01T09:54:20.943Z"
+  }
+}

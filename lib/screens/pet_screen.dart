@@ -19,7 +19,7 @@ class _PetScreenState extends ConsumerState<PetScreen> {
   }
 
   Future<void> _initializePetIfNeeded() async {
-    final userId = ref.read(userProfileProvider).value?.userId;
+    final userId = ref.read(currentUserProvider)?.id;
     if (userId == null) return;
 
     final pet = ref.read(petProvider(userId)).value;
@@ -40,7 +40,7 @@ class _PetScreenState extends ConsumerState<PetScreen> {
   }
 
   Future<void> _createPet(PetSpecies species) async {
-    final userId = ref.read(userProfileProvider).value?.userId;
+    final userId = ref.read(currentUserProvider)?.id;
     if (userId == null) return;
 
     await ref.read(petNotifierProvider(userId).notifier).initializePet(species);
@@ -49,7 +49,7 @@ class _PetScreenState extends ConsumerState<PetScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final userId = ref.watch(userProfileProvider).value?.userId ?? '';
+    final userId = ref.watch(currentUserProvider)?.id ?? '';
     final petAsync = ref.watch(petProvider(userId));
 
     return Scaffold(
@@ -131,7 +131,7 @@ class _PetDisplayCard extends ConsumerWidget {
       padding: const EdgeInsets.all(24),
       child: Column(
         children: [
-          // ペットアニメーション表示エリア
+          // ペットイラスト表示エリア
           Container(
             height: 200,
             decoration: BoxDecoration(
@@ -139,9 +139,14 @@ class _PetDisplayCard extends ConsumerWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Center(
-              child: Text(
-                pet.species.displayName,
-                style: const TextStyle(fontSize: 80),
+              child: Image.asset(
+                pet.imageAsset,
+                height: 160,
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) => Text(
+                  pet.species.displayName,
+                  style: const TextStyle(fontSize: 80),
+                ),
               ),
             ),
           ),
@@ -505,7 +510,18 @@ class _PetSelectionDialog extends StatelessWidget {
           children: PetSpecies.values
               .map(
                 (species) => ListTile(
-                  leading: Text(species.displayName.split(' ').first, style: const TextStyle(fontSize: 32)),
+                  leading: SizedBox(
+                    width: 48,
+                    height: 48,
+                    child: Image.asset(
+                      species.previewImageAsset,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) => Text(
+                        species.displayName.split(' ').first,
+                        style: const TextStyle(fontSize: 32),
+                      ),
+                    ),
+                  ),
                   title: Text(species.displayName.split(' ').last),
                   onTap: () {
                     onSelected(species);

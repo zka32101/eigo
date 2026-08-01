@@ -16,6 +16,7 @@ import '../services/pronunciation_pet_integration_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/speaking_score_ring.dart';
 import '../providers/user_profile_provider.dart';
+import '../models/pronunciation_result.dart';
 
 class LessonScreen extends ConsumerStatefulWidget {
   final Stage stage;
@@ -206,7 +207,7 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
 
   /// 発音スコアをペット育成に反映
   Future<void> _feedPetFromScore(int pronouncingScore, String recognizedText) async {
-    final userId = ref.read(userProfileProvider).value?.userId;
+    final userId = ref.read(currentUserProvider)?.id;
     if (userId == null || pronouncingScore < 60) return;
 
     try {

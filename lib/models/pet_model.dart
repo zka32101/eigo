@@ -16,6 +16,9 @@ enum PetSpecies {
   static PetSpecies fromId(String id) {
     return values.firstWhere((e) => e.id == id, orElse: () => PetSpecies.parrot);
   }
+
+  /// 選択画面などでペット作成前に見せるプレビュー画像（ベビー段階）
+  String get previewImageAsset => 'assets/pets/${id}_baby.png';
 }
 
 /// ペットの進化段階
@@ -124,6 +127,9 @@ class PetModel {
 
   /// ペットの現在の気分を取得
   PetMood get currentMood => PetMood.fromHungerAndHappiness(hunger, happiness);
+
+  /// 現在の種族・進化段階に対応するイラスト画像のアセットパス
+  String get imageAsset => 'assets/pets/${species.id}_${currentStage.name}.png';
 
   /// 次のレベルアップまでに必要な EXP
   int get expToNextLevel => 100 - exp;

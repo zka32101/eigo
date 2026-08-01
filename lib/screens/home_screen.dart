@@ -315,6 +315,16 @@ class _QuickActions extends StatelessWidget {
               _QuickBtn('📅 カレンダー', kListeningColor, '/calendar'),
             ],
           ),
+          const SizedBox(height: 6),
+          Row(
+            children: [
+              _QuickBtn('🐾 ペット\n育成', const Color(0xFFFF7043), '/pet'),
+              const SizedBox(width: 8),
+              _QuickBtn('🧑‍🏫 先生\nごっこ', const Color(0xFF26A69A), '/teacher-mode'),
+              const SizedBox(width: 8),
+              const Expanded(child: SizedBox.shrink()),
+            ],
+          ),
         ],
       ),
     );

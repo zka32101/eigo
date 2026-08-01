@@ -15,7 +15,11 @@ final currentUserIdProvider = StateNotifierProvider<CurrentUserIdNotifier, Strin
 final currentUserProvider = Provider<UserProfile?>((ref) {
   final currentUserId = ref.watch(currentUserIdProvider);
   final profiles = ref.watch(userProfilesProvider);
-  return profiles.firstWhere((p) => p.id == currentUserId, orElse: () => profiles.isNotEmpty ? profiles.first : null as UserProfile);
+  if (profiles.isEmpty) return null;
+  for (final p in profiles) {
+    if (p.id == currentUserId) return p;
+  }
+  return profiles.first;
 });
 
 class UserProfileNotifier extends StateNotifier<List<UserProfile>> {

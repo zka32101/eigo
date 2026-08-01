@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/question.dart';
 import '../services/claude_api_service.dart';
 import 'ai_api_key_provider.dart';
+import 'user_profile_provider.dart';
 
 /// 先生ごっこセッション状態
 class TeacherModeState {
@@ -86,7 +87,7 @@ class TeacherModeNotifier extends StateNotifier<TeacherModeState> {
       final difficulty = _mapDifficulty(question.difficulty);
       final response = await _claudeService.generateWrongPhrase(
         correctPhrase: question.text,
-        japaneseTranslation: question.meaning ?? '意味不明',
+        japaneseTranslation: question.textJa,
         difficulty: difficulty,
         userLevel: int.tryParse(_userLevel) ?? 15,
       );
@@ -96,7 +97,7 @@ class TeacherModeNotifier extends StateNotifier<TeacherModeState> {
         wrongPhrase: response.mistake,
         mistakeType: response.mistakeType,
         explanation: response.explanation,
-        japaneseTranslation: question.meaning ?? '',
+        japaneseTranslation: question.textJa,
         teachingTip: response.teachingTip,
       );
 
@@ -158,8 +159,8 @@ class TeacherModeNotifier extends StateNotifier<TeacherModeState> {
 /// Provider: 先生ごっこ State
 final teacherModeProvider =
     StateNotifierProvider.family<TeacherModeNotifier, TeacherModeState, List<Question>>((ref, questions) {
-  final apiKey = ref.watch(aiApiKeyProvider);
-  final userLevel = ref.watch(userProfileProvider).asData?.value?.level.toString() ?? '15';
+  final apiKey = ref.watch(aiApiKeysProvider).claudeKey;
+  final userLevel = ref.watch(currentUserProvider)?.grade.toString() ?? '3';
 
   final claudeService = ClaudeApiService(
     apiKey: apiKey ?? '',

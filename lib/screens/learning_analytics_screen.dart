@@ -34,7 +34,7 @@ class LearningAnalyticsScreen extends ConsumerWidget {
         body: TabBarView(
           children: [
             _buildStatisticsTab(),
-            _buildMonthlyAnalyticsTab(ref),
+            _buildMonthlyAnalyticsTab(context, ref),
           ],
         ),
       ),
@@ -72,7 +72,7 @@ class LearningAnalyticsScreen extends ConsumerWidget {
   }
 
   /// 月別学力タブ
-  Widget _buildMonthlyAnalyticsTab(WidgetRef ref) {
+  Widget _buildMonthlyAnalyticsTab(BuildContext context, WidgetRef ref) {
     final analytics = ref.watch(analyticsProvider);
 
     if (analytics == null || analytics.isEmpty) {

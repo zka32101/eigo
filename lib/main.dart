@@ -33,6 +33,8 @@ import 'screens/ai_freetalk_screen.dart';
 import 'screens/pronunciation_check_screen.dart';
 import 'screens/vocabulary_screen.dart';
 import 'screens/stage_intro_screen.dart';
+import 'screens/pet_screen.dart';
+import 'screens/teacher_mode_screen.dart';
 import 'services/notification_service.dart';
 import 'providers/morning_notification_provider.dart';
 import 'theme/app_theme.dart' show buildAppTheme, buildDarkAppTheme, kPrimaryColor, kTextMuted;
@@ -98,6 +100,8 @@ class EigoKoreApp extends ConsumerWidget {
         '/profile-select': (context) => const ProfileSelectScreen(),
         '/ai-freetalk': (context) => const AiFreetalkScreen(),
         '/vocabulary': (context) => const VocabularyScreen(),
+        '/pet': (context) => const PetScreen(),
+        '/teacher-mode': (context) => const TeacherModeScreen(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/test-prep-result') {

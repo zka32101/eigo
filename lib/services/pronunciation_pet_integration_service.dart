@@ -14,7 +14,7 @@ import '../providers/level_provider.dart';
 /// 4. コイン加算
 /// 5. 人間レベル XP 加算（別系統）
 class PronunciationPetIntegrationService {
-  final WidgetRef ref;
+  final Ref ref;
 
   PronunciationPetIntegrationService({required this.ref});
 

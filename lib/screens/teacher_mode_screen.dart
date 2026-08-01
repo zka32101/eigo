@@ -9,6 +9,7 @@ import '../providers/coin_provider.dart';
 import '../providers/level_provider.dart';
 import '../services/claude_api_service.dart';
 import '../providers/ai_api_key_provider.dart';
+import '../providers/teacher_mode_provider.dart' show TeacherModeQuestion;
 
 class TeacherModeScreen extends ConsumerStatefulWidget {
   final int sessionSize;
@@ -28,53 +29,61 @@ class _TeacherModeScreenState extends ConsumerState<TeacherModeScreen> {
 
   int _currentQuestion = 0;
   int _correctAnswers = 0;
+  int _coinsEarned = 0;
   int _sessionSize = 5;
   bool _isListening = false;
   String _recognizedText = '';
-  TeacherModeQuestion? _currentQuestion_;
+  late List<TeacherModeQuestion> _questions;
 
   // プリセット質問（フォールバック用）
   final List<TeacherModeQuestion> _presetQuestions = [
     TeacherModeQuestion(
-      phrase: 'What is your name?',
+      correctPhrase: 'What is your name?',
       wrongPhrase: 'What is you name?',
       mistakeType: 'grammar',
       explanation: 'I の後は "am" を使います',
       japaneseTranslation: 'あなたの名前は何ですか？',
+      teachingTip: '"you" の後に be動詞が必要だよ、と教えてあげよう',
     ),
     TeacherModeQuestion(
-      phrase: 'I like apples',
+      correctPhrase: 'I like apples',
       wrongPhrase: 'I likes apples',
       mistakeType: 'grammar',
       explanation: '1人称単数では "like" を使います',
       japaneseTranslation: '私はりんごが好きです',
+      teachingTip: '"I" の後には "s" をつけないよ、と教えてあげよう',
     ),
     TeacherModeQuestion(
-      phrase: 'She goes to school',
+      correctPhrase: 'She goes to school',
       wrongPhrase: 'She go to school',
       mistakeType: 'grammar',
       explanation: '3人称単数には "s" をつけます',
       japaneseTranslation: '彼女は学校に行きます',
+      teachingTip: '"she" の後の動詞には "s" が必要だよ、と教えてあげよう',
     ),
     TeacherModeQuestion(
-      phrase: 'Hello, how are you?',
+      correctPhrase: 'Hello, how are you?',
       wrongPhrase: 'Hello, how you are?',
       mistakeType: 'grammar',
       explanation: '英語の語順は固定です',
       japaneseTranslation: 'こんにちは、元気ですか？',
+      teachingTip: '疑問文の語順は "how + be動詞 + you" だよ、と教えてあげよう',
     ),
     TeacherModeQuestion(
-      phrase: 'I am interested in learning English',
+      correctPhrase: 'I am interested in learning English',
       wrongPhrase: 'I am interesting in learning English',
       mistakeType: 'semantic',
       explanation: 'interested = 興味がある、interesting = 興味深い',
       japaneseTranslation: '英語を勉強することに興味があります',
+      teachingTip: '"interested"（興味がある側）と "interesting"（興味深い側）の違いを教えてあげよう',
     ),
   ];
 
   @override
   void initState() {
     super.initState();
+    _sessionSize = widget.sessionSize;
+    _questions = (_presetQuestions..shuffle()).take(_sessionSize).toList();
     _initializeSpeech();
     _initializeTts();
   }
@@ -119,7 +128,7 @@ class _TeacherModeScreenState extends ConsumerState<TeacherModeScreen> {
     final question = _questions[_currentQuestion];
     final isCorrect = _judgeAnswer(
       userAnswer: _recognizedText,
-      correctPhrase: question.phrase,
+      correctPhrase: question.correctPhrase,
       wrongPhrase: question.wrongPhrase,
     );
 
@@ -231,7 +240,7 @@ class _TeacherModeScreenState extends ConsumerState<TeacherModeScreen> {
   }
 
   Future<void> _showSessionComplete() async {
-    final userId = ref.read(userProfileProvider).value?.userId ?? '';
+    final userId = ref.read(currentUserProvider)?.id ?? '';
     final coinsEarned = _correctAnswers * 10;
     final accuracy = (_correctAnswers / _questions.length * 100).toInt();
 
@@ -242,6 +251,7 @@ class _TeacherModeScreenState extends ConsumerState<TeacherModeScreen> {
 
     // コイン加算
     await ref.read(coinProvider.notifier).addCoins(totalCoins);
+    if (mounted) setState(() => _coinsEarned = totalCoins);
 
     // ペット幸福度加算（先生として教えた喜び）
     if (userId.isNotEmpty) {
@@ -746,21 +756,4 @@ class _ScoreDisplay extends StatelessWidget {
       ),
     );
   }
-}
-
-/// データモデル
-class TeacherModeQuestion {
-  final String phrase;
-  final String wrongPhrase;
-  final String mistakeType;
-  final String explanation;
-  final String japaneseTranslation;
-
-  TeacherModeQuestion({
-    required this.phrase,
-    required this.wrongPhrase,
-    required this.mistakeType,
-    required this.explanation,
-    required this.japaneseTranslation,
-  });
 }
