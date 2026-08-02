@@ -36,7 +36,9 @@ import 'screens/stage_intro_screen.dart';
 import 'screens/pet_screen.dart';
 import 'screens/teacher_mode_screen.dart';
 import 'services/notification_service.dart';
+import 'services/firebase_service.dart';
 import 'providers/morning_notification_provider.dart';
+import 'providers/coin_provider.dart';
 import 'theme/app_theme.dart' show buildAppTheme, buildDarkAppTheme, kPrimaryColor, kTextMuted;
 import 'providers/user_profile_provider.dart';
 
@@ -53,7 +55,15 @@ Future<void> main() async {
   // 通知初期化
   await NotificationService().init();
 
-  runApp(const ProviderScope(child: EigoKoreApp()));
+  // Firebase初期化（未設定時はgraceful fallbackでローカルのみ動作）
+  await FirebaseService().init();
+
+  // 保存済みコイン残高を読み込んでから起動（未読み込みのままだと0のみで
+  // 上書きされ、既存残高が消失するため必須）
+  final container = ProviderContainer();
+  await container.read(coinProvider.notifier).load();
+
+  runApp(UncontrolledProviderScope(container: container, child: const EigoKoreApp()));
 }
 
 class EigoKoreApp extends ConsumerWidget {

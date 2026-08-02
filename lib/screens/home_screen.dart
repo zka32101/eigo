@@ -563,6 +563,9 @@ class _WeeklyRanking extends StatelessWidget {
       );
     });
 
-    return WeeklyRankingCard(weeklyScores: weeklyScores);
+    return GestureDetector(
+      onTap: () => Navigator.of(context).pushNamed('/ranking'),
+      child: WeeklyRankingCard(weeklyScores: weeklyScores),
+    );
   }
 }
