@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../services/secure_storage_service.dart';
 
-const _storage = FlutterSecureStorage();
 const _geminiKeyName = 'eigo_kore_gemini_api_key';
 const _claudeKeyName = 'eigo_kore_claude_api_key';
 
@@ -26,8 +25,8 @@ class AiApiKeyNotifier extends StateNotifier<AiApiKeys> {
 
   Future<void> _loadKeys() async {
     try {
-      final gemini = await _storage.read(key: _geminiKeyName);
-      final claude = await _storage.read(key: _claudeKeyName);
+      final gemini = await SecureStorageService.getGoogleApiKey();
+      final claude = await SecureStorageService.getClaudeApiKey();
       state = AiApiKeys(geminiKey: gemini, claudeKey: claude);
     } catch (_) {
       // Silent failure - keys will be null
@@ -37,10 +36,10 @@ class AiApiKeyNotifier extends StateNotifier<AiApiKeys> {
   Future<void> setGeminiKey(String key) async {
     try {
       if (key.isEmpty) {
-        await _storage.delete(key: _geminiKeyName);
+        await SecureStorageService.clearAllKeys();
         state = AiApiKeys(geminiKey: null, claudeKey: state.claudeKey);
       } else {
-        await _storage.write(key: _geminiKeyName, value: key);
+        await SecureStorageService.saveGoogleApiKey(key);
         state = AiApiKeys(geminiKey: key, claudeKey: state.claudeKey);
       }
     } catch (_) {
@@ -51,10 +50,10 @@ class AiApiKeyNotifier extends StateNotifier<AiApiKeys> {
   Future<void> setClaudeKey(String key) async {
     try {
       if (key.isEmpty) {
-        await _storage.delete(key: _claudeKeyName);
+        await SecureStorageService.clearAllKeys();
         state = AiApiKeys(geminiKey: state.geminiKey, claudeKey: null);
       } else {
-        await _storage.write(key: _claudeKeyName, value: key);
+        await SecureStorageService.saveClaudeApiKey(key);
         state = AiApiKeys(geminiKey: state.geminiKey, claudeKey: key);
       }
     } catch (_) {
@@ -64,8 +63,7 @@ class AiApiKeyNotifier extends StateNotifier<AiApiKeys> {
 
   Future<void> clearAllKeys() async {
     try {
-      await _storage.delete(key: _geminiKeyName);
-      await _storage.delete(key: _claudeKeyName);
+      await SecureStorageService.clearAllKeys();
       state = AiApiKeys();
     } catch (_) {
       // Silent failure
