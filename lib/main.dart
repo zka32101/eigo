@@ -40,6 +40,7 @@ import 'screens/learning_pace_screen.dart';
 import 'screens/character_collection_screen.dart';
 import 'screens/ad_settings_screen.dart';
 import 'screens/promotion_screen.dart';
+import 'screens/profile_management_screen.dart';
 import 'services/notification_service.dart';
 import 'services/ad_service.dart';
 import 'services/firebase_service.dart';
@@ -126,6 +127,7 @@ class EigoKoreApp extends ConsumerWidget {
         '/character-collection': (context) => const CharacterCollectionScreen(),
         '/ad-settings': (context) => const AdSettingsScreen(),
         '/promotions': (context) => const PromotionScreen(),
+        '/profile-management': (context) => const ProfileManagementScreen(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/test-prep-result') {
