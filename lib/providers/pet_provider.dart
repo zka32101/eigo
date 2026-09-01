@@ -1,187 +1,315 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 import '../models/pet_model.dart';
-import '../models/user_profile.dart';
 
-/// ペット情報 Provider（Firestore から読み込み）
-final petProvider = FutureProvider.family<PetModel?, String>((ref, userId) async {
-  final firestore = FirebaseFirestore.instance;
-  final docSnapshot = await firestore.collection('users').doc(userId).collection('pet').doc('data').get();
-
-  if (!docSnapshot.exists) {
-    return null;
-  }
-
-  return PetModel.fromJson(docSnapshot.data() as Map<String, dynamic>);
+/// 現在のペットプロバイダー
+final currentPetProvider = StateNotifierProvider<PetNotifier, Pet?>((ref) {
+  return PetNotifier();
 });
 
-/// ペット操作用 StateNotifier
-class PetNotifier extends StateNotifier<PetModel?> {
-  final String userId;
-  final FirebaseFirestore _firestore;
+/// ペット統計プロバイダー
+final petStatsProvider = StateNotifierProvider<PetStatsNotifier, PetStats>((ref) {
+  return PetStatsNotifier();
+});
 
-  PetNotifier(this.userId, {FirebaseFirestore? firestore})
-      : _firestore = firestore ?? FirebaseFirestore.instance,
-        super(null);
+/// ペット専門店の食べ物リスト
+final petFoodShopProvider = Provider<List<PetFood>>((ref) {
+  return [
+    const PetFood(
+      foodId: 'apple',
+      name: 'りんご',
+      description: 'あっさりした味',
+      satietyRestore: 20,
+      cost: 10,
+      icon: '🍎',
+    ),
+    const PetFood(
+      foodId: 'banana',
+      name: 'バナナ',
+      description: 'あまいあじ',
+      satietyRestore: 25,
+      cost: 15,
+      icon: '🍌',
+    ),
+    const PetFood(
+      foodId: 'fish',
+      name: 'さかな',
+      description: 'えいようまんてん',
+      satietyRestore: 35,
+      cost: 25,
+      icon: '🐟',
+    ),
+    const PetFood(
+      foodId: 'meat',
+      name: 'にく',
+      description: 'パワーアップ!',
+      satietyRestore: 40,
+      cost: 40,
+      icon: '🍖',
+    ),
+    const PetFood(
+      foodId: 'deluxe',
+      name: 'ごほうび',
+      description: 'ぜんぶもりもり',
+      satietyRestore: 100,
+      cost: 99,
+      icon: '🎉',
+    ),
+  ];
+});
 
-  /// ペットを初期化（新規作成）
-  Future<void> initializePet(PetSpecies species) async {
-    final now = DateTime.now();
-    final newPet = PetModel(
-      userId: userId,
-      species: species,
-      lastFedDate: now,
-      createdAt: now,
-    );
+class PetNotifier extends StateNotifier<Pet?> {
+  static const String _petStorageKey = 'eigo_kore_current_pet';
 
-    await _firestore
-        .collection('users')
-        .doc(userId)
-        .collection('pet')
-        .doc('data')
-        .set(newPet.toJson());
-
-    state = newPet;
+  PetNotifier() : super(null) {
+    _loadPet();
   }
 
-  /// Firestore からペット情報を再読み込み
-  Future<void> refreshPet() async {
-    final docSnapshot = await _firestore
-        .collection('users')
-        .doc(userId)
-        .collection('pet')
-        .doc('data')
-        .get();
-
-    if (docSnapshot.exists) {
-      final pet = PetModel.fromJson(docSnapshot.data() as Map<String, dynamic>);
-
-      // 時間経過をシミュレート
-      final simulatedPet = pet.simulateTimePass();
-      state = simulatedPet;
-    }
-  }
-
-  /// 発音スコアでペットにエサやり
-  /// [pronouncingScore] 0-100 の発音スコア
-  /// 返却値：獲得したコイン数
-  Future<int> feedPetWithScore(int pronouncingScore) async {
-    if (state == null) return 0;
-
-    final coinsEarned = state!.feedPetWithScore(pronouncingScore);
-
-    // hunger, exp を更新
-    int newHunger = (state!.hunger - 10).clamp(0, 100);
-    int newExp = state!.exp + 10 + ((pronouncingScore - 60) ~/ 10);
-
-    // Level UP 判定
-    PetModel updatedPet = state!.copyWith(hunger: newHunger, exp: newExp);
-    while (updatedPet.exp >= 100) {
-      final leveledUp = updatedPet.tryLevelUp();
-      if (leveledUp != null) {
-        updatedPet = leveledUp;
-      } else {
-        break;
+  /// ペットを読み込む
+  Future<void> _loadPet() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final petJson = prefs.getString(_petStorageKey);
+      if (petJson != null) {
+        final json = jsonDecode(petJson);
+        state = Pet.fromJson(json);
       }
+    } catch (e) {
+      print('Error loading pet: $e');
     }
-
-    // Firestore に保存
-    await _firestore
-        .collection('users')
-        .doc(userId)
-        .collection('pet')
-        .doc('data')
-        .update(updatedPet.toJson());
-
-    state = updatedPet;
-    return coinsEarned;
   }
 
-  /// 毎日のプレイボーナス（朝通知から呼ぶ）
-  Future<void> applyDailyBonus() async {
-    if (state == null || state!.isFedToday) return;
+  /// 新しいペットを作成
+  Future<void> createPet(PetSpecies species, String nickname) async {
+    final now = DateTime.now();
+    state = Pet(
+      petId: DateTime.now().millisecondsSinceEpoch.toString(),
+      species: species,
+      nickname: nickname,
+      createdAt: now,
+      lastFedAt: now,
+      lastPlayedAt: now,
+    );
+    await _savePet();
+  }
 
-    final newHappiness = (state!.happiness + 5).clamp(0, 100);
-    final updatedPet = state!.copyWith(
+  /// ペットにエサをあげる（お腹を満たす）
+  Future<void> feedPet(int satietyRestore) async {
+    if (state == null) return;
+
+    int newSatiety = (state!.satiety + satietyRestore).clamp(0, 100);
+    int newHappiness = (state!.happiness + 5).clamp(0, 100); // エサをあげるとちょっと幸せ
+    int newExp = state!.experience + 2; // 経験値 +2
+
+    state = state!.copyWith(
+      satiety: newSatiety,
       happiness: newHappiness,
-      lastFedDate: DateTime.now(),
+      experience: newExp % 100,
+      level: state!.level + (newExp ~/ 100),
+      lastFedAt: DateTime.now(),
+      totalFeedsCount: state!.totalFeedsCount + 1,
     );
 
-    await _firestore
-        .collection('users')
-        .doc(userId)
-        .collection('pet')
-        .doc('data')
-        .update(updatedPet.toJson());
-
-    state = updatedPet;
+    // 進化判定
+    _checkEvolution();
+    await _savePet();
   }
 
-  /// 装飾品を装備
-  Future<void> equipDecoration(String decorationId) async {
+  /// ペットと遊ぶ
+  Future<void> playWithPet() async {
     if (state == null) return;
 
-    final decorationIds = [...state!.decorationIds];
-    if (!decorationIds.contains(decorationId)) {
-      decorationIds.add(decorationId);
+    int newSatiety = (state!.satiety - 10).clamp(0, 100); // 遊ぶとお腹が減る
+    int newHappiness = (state!.happiness + 20).clamp(0, 100);
+    int newExp = state!.experience + 5;
+
+    state = state!.copyWith(
+      satiety: newSatiety,
+      happiness: newHappiness,
+      experience: newExp % 100,
+      level: state!.level + (newExp ~/ 100),
+      lastPlayedAt: DateTime.now(),
+      totalPlayCount: state!.totalPlayCount + 1,
+    );
+
+    _checkEvolution();
+    await _savePet();
+  }
+
+  /// ペットをなでる
+  Future<void> petPet() async {
+    if (state == null) return;
+
+    int newHappiness = (state!.happiness + 10).clamp(0, 100);
+
+    state = state!.copyWith(
+      happiness: newHappiness,
+    );
+
+    await _savePet();
+  }
+
+  /// 毎日のケアチェック（朝に1回呼び出し）
+  Future<void> dailyCheck() async {
+    if (state == null) return;
+
+    DateTime lastPlayed = state!.lastPlayedAt;
+    bool playedToday = DateTime.now().difference(lastPlayed).inHours < 24;
+
+    int newHappiness = state!.happiness;
+    int newSatiety = (state!.satiety - 5).clamp(0, 100); // 毎日少しずつお腹が減る
+
+    if (!playedToday) {
+      newHappiness = (newHappiness - 10).clamp(0, 100); // 遊ばないと不幸に
+    } else {
+      newHappiness = (newHappiness + 5).clamp(0, 100); // 遊んだなら幸せ
     }
 
-    final updatedPet = state!.copyWith(decorationIds: decorationIds);
+    state = state!.copyWith(
+      satiety: newSatiety,
+      happiness: newHappiness,
+    );
 
-    await _firestore
-        .collection('users')
-        .doc(userId)
-        .collection('pet')
-        .doc('data')
-        .update(updatedPet.toJson());
-
-    state = updatedPet;
+    await _savePet();
   }
 
-  /// 装飾品を外す
-  Future<void> unequipDecoration(String decorationId) async {
+  /// 単語を学習させる
+  Future<void> learnWord(String word) async {
     if (state == null) return;
 
-    final decorationIds = state!.decorationIds.where((id) => id != decorationId).toList();
-    final updatedPet = state!.copyWith(decorationIds: decorationIds);
+    final newWords = [...state!.learnedWords];
+    if (!newWords.contains(word)) {
+      newWords.add(word);
+    }
 
-    await _firestore
-        .collection('users')
-        .doc(userId)
-        .collection('pet')
-        .doc('data')
-        .update(updatedPet.toJson());
+    // 単語学習でコイン報酬
+    int newExp = state!.experience + 10;
 
-    state = updatedPet;
+    state = state!.copyWith(
+      learnedWords: newWords,
+      experience: newExp % 100,
+      level: state!.level + (newExp ~/ 100),
+    );
+
+    _checkEvolution();
+    await _savePet();
+  }
+
+  /// 進化チェック（レベルに基づいて進化）
+  void _checkEvolution() {
+    if (state == null) return;
+
+    EvolutionStage newStage = state!.evolutionStage;
+
+    if (state!.level >= 50 && state!.evolutionStage == EvolutionStage.adult) {
+      return; // 最高段階
+    }
+
+    if (state!.level >= 40 && state!.evolutionStage != EvolutionStage.adult) {
+      newStage = EvolutionStage.adult;
+    } else if (state!.level >= 25 && state!.evolutionStage == EvolutionStage.kids) {
+      return; // 既に kids
+    } else if (state!.level >= 25) {
+      newStage = EvolutionStage.kids;
+    } else if (state!.level >= 10 && state!.evolutionStage == EvolutionStage.baby) {
+      return; // 既に baby
+    } else if (state!.level >= 10) {
+      newStage = EvolutionStage.baby;
+    }
+
+    if (newStage != state!.evolutionStage) {
+      state = state!.copyWith(evolutionStage: newStage);
+    }
+  }
+
+  /// ペットを保存
+  Future<void> _savePet() async {
+    if (state == null) return;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_petStorageKey, jsonEncode(state!.toJson()));
+    } catch (e) {
+      print('Error saving pet: $e');
+    }
+  }
+
+  /// ペットをリセット
+  Future<void> deletePet() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_petStorageKey);
+      state = null;
+    } catch (e) {
+      print('Error deleting pet: $e');
+    }
   }
 }
 
-/// ペット操作用 StateNotifierProvider
-final petNotifierProvider = StateNotifierProvider.family<PetNotifier, PetModel?, String>(
-  (ref, userId) => PetNotifier(userId),
-);
+class PetStatsNotifier extends StateNotifier<PetStats> {
+  static const String _statsStorageKey = 'eigo_kore_pet_stats';
 
-/// 現在のペット気分を取得
-final petMoodProvider = Provider.family<PetMood?, String>((ref, userId) {
-  final pet = ref.watch(petProvider(userId)).asData?.value;
-  return pet?.currentMood;
-});
+  PetStatsNotifier()
+      : super(
+          const PetStats(
+            totalPets: 0,
+            maxLevel: 0,
+            averageSatiety: 0,
+            averageHappiness: 0,
+            totalFeeds: 0,
+            totalPlays: 0,
+            lastInteractionAt: DateTime.epoch,
+          ),
+        ) {
+    _loadStats();
+  }
 
-/// 現在のペット進化段階を取得
-final petEvolutionStageProvider = Provider.family<PetEvolutionStage?, String>((ref, userId) {
-  final pet = ref.watch(petProvider(userId)).asData?.value;
-  return pet?.currentStage;
-});
+  Future<void> _loadStats() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final statsJson = prefs.getString(_statsStorageKey);
+      if (statsJson != null) {
+        final json = jsonDecode(statsJson);
+        state = PetStats.fromJson(json);
+      }
+    } catch (e) {
+      print('Error loading pet stats: $e');
+    }
+  }
 
-/// ペットが今日既にエサを食べたかどうか
-final petIsFedTodayProvider = Provider.family<bool, String>((ref, userId) {
-  final pet = ref.watch(petProvider(userId)).asData?.value;
-  return pet?.isFedToday ?? false;
-});
+  Future<void> updateStats(Pet pet) async {
+    state = PetStats(
+      totalPets: state.totalPets + 1,
+      maxLevel: pet.level > state.maxLevel ? pet.level : state.maxLevel,
+      averageSatiety: (state.averageSatiety + pet.satiety) / 2,
+      averageHappiness: (state.averageHappiness + pet.happiness) / 2,
+      totalFeeds: state.totalFeeds + pet.totalFeedsCount,
+      totalPlays: state.totalPlays + pet.totalPlayCount,
+      lastInteractionAt: DateTime.now(),
+    );
 
-/// 次のレベルアップまでの進捗（%）
-final petLevelProgressProvider = Provider.family<int, String>((ref, userId) {
-  final pet = ref.watch(petProvider(userId)).asData?.value;
-  if (pet == null) return 0;
-  return ((pet.exp / 100) * 100).toInt();
-});
+    await _saveStats();
+  }
+
+  Future<void> _saveStats() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_statsStorageKey, jsonEncode(state.toJson()));
+    } catch (e) {
+      print('Error saving pet stats: $e');
+    }
+  }
+
+  Future<void> resetStats() async {
+    state = const PetStats(
+      totalPets: 0,
+      maxLevel: 0,
+      averageSatiety: 0,
+      averageHappiness: 0,
+      totalFeeds: 0,
+      totalPlays: 0,
+      lastInteractionAt: DateTime.epoch,
+    );
+    await _saveStats();
+  }
+}
