@@ -16,6 +16,7 @@ import '../services/pronunciation_pet_integration_service.dart';
 import '../theme/app_theme.dart';
 import '../theme/spacing.dart';
 import '../theme/sizes.dart';
+import '../theme/typography.dart';
 import '../widgets/speaking_score_ring.dart';
 import '../widgets/lesson_screen_components.dart';
 import '../providers/user_profile_provider.dart';
@@ -267,11 +268,11 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
         title: Text('${widget.stage.emoji} ${widget.stage.titleJa}'),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 16),
+            padding: EdgeInsets.only(right: AppSpacing.md),
             child: Center(
               child: Text(
                 '${_qIndex + 1} / ${questions.length}',
-                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                style: AppTypography.labelLarge.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
               ),
             ),
           ),
@@ -288,7 +289,7 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
               ),
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
+                  padding: AppSpacing.allPaddingMd,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -408,16 +409,16 @@ class _SpeakingArea extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(AppSpacing.lg),
         child: Column(
           children: [
             if (!speakingDone) ...[
-              const Text(
+              Text(
                 'マイクに向かって発音してみよう！',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: kTextDark),
+                style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold, color: kTextDark),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 20),
+              AppSpacing.verticalSpacerLg,
               GestureDetector(
                 onTap: isListening ? onStop : onStart,
                 child: AnimatedContainer(
@@ -438,25 +439,25 @@ class _SpeakingArea extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              AppSpacing.verticalSpacerMd,
               Text(
                 isListening ? '聞いています...' : 'タップして話す',
-                style: TextStyle(
+                style: AppTypography.bodySmall.copyWith(
                   color: isListening ? kSpeakingColor : kTextMuted,
                   fontWeight: isListening ? FontWeight.bold : FontWeight.normal,
                 ),
               ),
               if (recognizedText.isNotEmpty) ...[
-                const SizedBox(height: 12),
+                AppSpacing.verticalSpacerXs,
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: EdgeInsets.all(AppSpacing.xs),
                   decoration: BoxDecoration(
                     color: kBgLight,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                   ),
                   child: Text(
                     '"$recognizedText"',
-                    style: const TextStyle(fontSize: 16, color: kTextDark),
+                    style: AppTypography.labelLarge.copyWith(color: kTextDark),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -485,21 +486,21 @@ class _SpeakingScoreWidget extends StatelessWidget {
     return Column(
       children: [
         SpeakingScoreRing(score: score, size: 100),
-        const SizedBox(height: 12),
+        AppSpacing.verticalSpacerXs,
         Text(
           _speech.getFeedback(score),
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
         if (recognized.isNotEmpty) ...[
-          const SizedBox(height: 8),
+          AppSpacing.verticalSpacerXs,
           Text(
             'あなた: "$recognized"',
-            style: const TextStyle(fontSize: 14, color: kTextMuted),
+            style: AppTypography.bodySmall.copyWith(color: kTextMuted),
           ),
           Text(
             '正解: "$expected"',
-            style: const TextStyle(fontSize: 14, color: kAccentGreen, fontWeight: FontWeight.bold),
+            style: AppTypography.bodySmall.copyWith(color: kAccentGreen, fontWeight: FontWeight.bold),
           ),
         ],
       ],
