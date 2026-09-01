@@ -51,7 +51,7 @@ class HomeScreen extends ConsumerWidget {
                   ),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 40, 16, 12),
+                  padding: EdgeInsets.fromLTRB(AppSpacing.md, 40, AppSpacing.md, 12),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -62,13 +62,13 @@ class HomeScreen extends ConsumerWidget {
                               showModalBottomSheet(
                                 context: context,
                                 builder: (ctx) => Container(
-                                  padding: const EdgeInsets.all(16),
+                                  padding: AppSpacing.allPaddingMd,
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      const Text('プロフィール一覧', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                                      const SizedBox(height: 12),
+                                      Text('プロフィール一覧', style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold)),
+                                      AppSpacing.verticalSpacerXs,
                                       ...profiles.map((p) => ListTile(
                                         leading: Text(p.avatar, style: const TextStyle(fontSize: 24)),
                                         title: Text(p.name),
@@ -82,7 +82,7 @@ class HomeScreen extends ConsumerWidget {
                                           }
                                         },
                                       )),
-                                      const SizedBox(height: 8),
+                                      AppSpacing.verticalSpacerXs,
                                       SizedBox(
                                         width: double.infinity,
                                         child: OutlinedButton.icon(
@@ -100,25 +100,25 @@ class HomeScreen extends ConsumerWidget {
                               );
                             },
                             child: Text('${currentUser?.avatar ?? '👧'} ${currentUser?.name ?? 'プロフィール'}',
-                              style: const TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold)),
+                              style: AppTypography.labelLarge.copyWith(color: Colors.white, fontWeight: FontWeight.bold)),
                           ),
-                          const SizedBox(width: 8),
+                          AppSpacing.horizontalSpacerXs,
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Text(
+                                Text(
                                   '英語コレ！',
-                                  style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                                  style: AppTypography.labelLarge.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
                                 ),
                                 Row(
                                   children: [
                                     StreakBadge(days: progress.streakDays),
-                                    const SizedBox(width: 6),
+                                    AppSpacing.horizontalSpacerXs,
                                     Text(
                                       'コイン: ${coins.totalCoins}🪙',
-                                      style: const TextStyle(color: Colors.white70, fontSize: 12),
+                                      style: AppTypography.bodySmall.copyWith(color: Colors.white70),
                                     ),
                                   ],
                                 ),
@@ -134,7 +134,7 @@ class HomeScreen extends ConsumerWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 6),
+                      AppSpacing.verticalSpacerXs,
                       XpBar(level: level, compact: true),
                     ],
                   ),
@@ -169,7 +169,7 @@ class HomeScreen extends ConsumerWidget {
           SliverToBoxAdapter(child: _ImprovedSkillBreakdown(progress: progress)),
           if (badges.earnedBadges.isNotEmpty)
             SliverToBoxAdapter(child: _RecentBadges(badges: badges)),
-          const SliverToBoxAdapter(child: SizedBox(height: 32)),
+          SliverToBoxAdapter(child: SizedBox(height: AppSpacing.xxl)),
         ],
       ),
     );
@@ -204,45 +204,45 @@ class _QuickActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+      padding: EdgeInsets.fromLTRB(AppSpacing.md, 0, AppSpacing.md, AppSpacing.xs),
       child: Column(
         children: [
           Row(
             children: [
               _QuickBtn('⚡ デイリー\nチャレンジ', kAccentOrange, '/daily-challenge'),
-              const SizedBox(width: 8),
+              AppSpacing.horizontalSpacerXs,
               _QuickBtn('🎤 発音\nバトル', kSpeakingColor, '/pronunciation-battle'),
-              const SizedBox(width: 8),
+              AppSpacing.horizontalSpacerXs,
               _QuickBtn('💬 会話\nシミュ', kPrimaryColor, '/conversation'),
             ],
           ),
-          const SizedBox(height: 6),
+          AppSpacing.verticalSpacerXs,
           Row(
             children: [
               _QuickBtn('👨‍👩‍👧 親子\nチャレンジ', const Color(0xFFE91E63), '/parent-child'),
-              const SizedBox(width: 8),
+              AppSpacing.horizontalSpacerXs,
               _QuickBtn('👫 友達\n招待', kAccentGreen, '/invite'),
-              const SizedBox(width: 8),
+              AppSpacing.horizontalSpacerXs,
               _QuickBtn('🎯 テスト\n対策', kAccentRed, '/test-prep'),
             ],
           ),
-          const SizedBox(height: 6),
+          AppSpacing.verticalSpacerXs,
           Row(
             children: [
               _QuickBtn('🤖 AI\nフリートーク', const Color(0xFF7C3AED), '/ai-freetalk'),
-              const SizedBox(width: 8),
+              AppSpacing.horizontalSpacerXs,
               _QuickBtn('📖 単語\nカード', const Color(0xFF059669), '/vocabulary'),
-              const SizedBox(width: 8),
+              AppSpacing.horizontalSpacerXs,
               _QuickBtn('📅 カレンダー', kListeningColor, '/calendar'),
             ],
           ),
-          const SizedBox(height: 6),
+          AppSpacing.verticalSpacerXs,
           Row(
             children: [
               _QuickBtn('🐾 ペット\n育成', const Color(0xFFFF7043), '/pet'),
-              const SizedBox(width: 8),
+              AppSpacing.horizontalSpacerXs,
               _QuickBtn('🧑‍🏫 先生\nごっこ', const Color(0xFF26A69A), '/teacher-mode'),
-              const SizedBox(width: 8),
+              AppSpacing.horizontalSpacerXs,
               const Expanded(child: SizedBox.shrink()),
             ],
           ),
