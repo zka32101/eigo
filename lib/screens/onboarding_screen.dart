@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../theme/app_theme.dart';
+import '../theme/spacing.dart';
+import '../theme/sizes.dart';
+import '../theme/typography.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -61,23 +64,23 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(24),
+              padding: EdgeInsets.all(AppSpacing.xl),
               child: Column(
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: List.generate(_pages.length, (i) => AnimatedContainer(
                       duration: const Duration(milliseconds: 300),
-                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      margin: EdgeInsets.symmetric(horizontal: AppSpacing.xs),
                       width: _page == i ? 24 : 8,
                       height: 8,
                       decoration: BoxDecoration(
                         color: _page == i ? kPrimaryColor : Colors.grey.shade300,
-                        borderRadius: BorderRadius.circular(4),
+                        borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
                       ),
                     )),
                   ),
-                  const SizedBox(height: 24),
+                  AppSpacing.verticalSpacerLg,
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -97,7 +100,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   if (_page < _pages.length - 1)
                     TextButton(
                       onPressed: _complete,
-                      child: const Text('スキップ', style: TextStyle(color: kTextMuted)),
+                      child: Text('スキップ', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
                     ),
                 ],
               ),
@@ -125,7 +128,7 @@ class _OnboardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(32),
+      padding: EdgeInsets.all(AppSpacing.xxl),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -136,18 +139,18 @@ class _OnboardPage extends StatelessWidget {
               color: color.withAlpha(26),
               shape: BoxShape.circle,
             ),
-            child: Center(child: Text(emoji, style: const TextStyle(fontSize: 72))),
+            child: Center(child: Text(emoji, style: AppTypography.headlineLarge.copyWith(fontSize: 72))),
           ),
-          const SizedBox(height: 40),
+          AppSpacing.verticalSpacerXl,
           Text(
             title,
-            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: kTextDark),
+            style: AppTypography.headlineSmall.copyWith(fontWeight: FontWeight.bold, color: kTextDark),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 16),
+          AppSpacing.verticalSpacerMd,
           Text(
             subtitle,
-            style: const TextStyle(fontSize: 16, color: kTextMuted, height: 1.6),
+            style: AppTypography.bodySmall.copyWith(color: kTextMuted, height: 1.6),
             textAlign: TextAlign.center,
           ),
         ],
