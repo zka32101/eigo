@@ -48,6 +48,7 @@ import 'screens/notification_management_screen.dart';
 import 'screens/achievements_screen.dart';
 import 'screens/camera_scan_screen.dart';
 import 'screens/parent_child_battle_screen.dart';
+import 'screens/pronunciation_video_screen.dart';
 import 'services/notification_service.dart';
 import 'services/ad_service.dart';
 import 'services/firebase_service.dart';
@@ -142,6 +143,7 @@ class EigoKoreApp extends ConsumerWidget {
         '/achievements': (context) => const AchievementsScreen(),
         '/camera-scan': (context) => const CameraScanScreen(),
         '/parent-child-battle': (context) => const ParentChildBattleScreen(),
+        '/pronunciation-video': (context) => const PronunciationVideoScreen(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/test-prep-result') {
