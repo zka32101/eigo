@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/speaking_history_provider.dart';
+import '../providers/user_profile_provider.dart';
 import '../services/firebase_service.dart';
 import '../theme/app_theme.dart';
 import '../theme/spacing.dart';
@@ -48,15 +49,25 @@ class _RankingScreenState extends ConsumerState<RankingScreen> {
     final myCount = history.weeklyWordCount + history.weeklyPhraseCount + history.weeklyConversationCount;
 
     return [
-      {'displayName': 'はなちゃん', 'avgScore': 92.0, 'practiceCount': 45, 'uid': 'demo1'},
-      {'displayName': 'けんた', 'avgScore': 88.0, 'practiceCount': 38, 'uid': 'demo2'},
-      {'displayName': 'さくら', 'avgScore': 85.0, 'practiceCount': 42, 'uid': 'demo3'},
-      {'displayName': 'あなた', 'avgScore': myScore, 'practiceCount': myCount, 'uid': 'me'},
-      {'displayName': 'ゆうき', 'avgScore': 79.0, 'practiceCount': 28, 'uid': 'demo4'},
-      {'displayName': 'みさき', 'avgScore': 75.0, 'practiceCount': 33, 'uid': 'demo5'},
-      {'displayName': 'りょう', 'avgScore': 72.0, 'practiceCount': 20, 'uid': 'demo6'},
-      {'displayName': 'あやか', 'avgScore': 68.0, 'practiceCount': 25, 'uid': 'demo7'},
+      {'displayName': 'はなちゃん', 'avgScore': 92.0, 'practiceCount': 45, 'uid': 'demo1', 'showName': true},
+      {'displayName': 'けんた', 'avgScore': 88.0, 'practiceCount': 38, 'uid': 'demo2', 'showName': false},
+      {'displayName': 'さくら', 'avgScore': 85.0, 'practiceCount': 42, 'uid': 'demo3', 'showName': true},
+      {'displayName': 'あなた', 'avgScore': myScore, 'practiceCount': myCount, 'uid': 'me', 'showName': false},
+      {'displayName': 'ゆうき', 'avgScore': 79.0, 'practiceCount': 28, 'uid': 'demo4', 'showName': false},
+      {'displayName': 'みさき', 'avgScore': 75.0, 'practiceCount': 33, 'uid': 'demo5', 'showName': true},
+      {'displayName': 'りょう', 'avgScore': 72.0, 'practiceCount': 20, 'uid': 'demo6', 'showName': false},
+      {'displayName': 'あやか', 'avgScore': 68.0, 'practiceCount': 25, 'uid': 'demo7', 'showName': false},
     ]..sort((a, b) => (b['avgScore'] as double).compareTo(a['avgScore'] as double));
+  }
+
+  /// ユーザーの名前を表示するかどうかを決定
+  /// isMe=true の場合は常に実名を表示
+  /// isMe=false で showName=false の場合は匿名化した名前を表示
+  String _getDisplayName(String actualName, String uid, bool isMe, bool showName) {
+    if (isMe) return actualName; // ユーザー自身は常に実名表示
+    if (showName) return actualName; // 表示設定がONの場合は実名表示
+    // 匿名化: ハッシュ値から番号を生成
+    return 'ユーザー #${uid.hashCode.abs() % 10000}';
   }
 
   @override
@@ -119,10 +130,13 @@ class _RankingScreenState extends ConsumerState<RankingScreen> {
                           final score = (item['avgScore'] as num).toDouble();
                           final count = (item['practiceCount'] as num).toInt();
                           final name = item['displayName'] as String;
+                          final uid = item['uid'] as String;
+                          final showName = item['showName'] as bool? ?? false;
+                          final displayName = _getDisplayName(name, uid, isMe, showName);
 
                           return _RankCard(
                             rank: rank,
-                            name: name,
+                            displayName: displayName,
                             score: score,
                             practiceCount: count,
                             isMe: isMe,
@@ -156,14 +170,14 @@ class _RankingScreenState extends ConsumerState<RankingScreen> {
 
 class _RankCard extends StatelessWidget {
   final int rank;
-  final String name;
+  final String displayName;
   final double score;
   final int practiceCount;
   final bool isMe;
 
   const _RankCard({
     required this.rank,
-    required this.name,
+    required this.displayName,
     required this.score,
     required this.practiceCount,
     required this.isMe,
@@ -212,7 +226,7 @@ class _RankCard extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        name,
+                        displayName,
                         style: AppTypography.labelLarge.copyWith(
                           color: isMe ? kPrimaryColor : kTextDark,
                         ),
