@@ -12,6 +12,7 @@ class UserProfile {
   final Set<String> completedMissions; // TPR mission IDs
   final Set<String> unlockedBadges;
   final Set<String> purchasedAvatars; // avatar IDs that have been purchased
+  final bool showNameInRanking; // プライバシー設定：ランキングに名前を表示するか（デフォルト false）
 
   const UserProfile({
     required this.id,
@@ -27,6 +28,7 @@ class UserProfile {
     this.completedMissions = const {},
     this.unlockedBadges = const {},
     this.purchasedAvatars = const {},
+    this.showNameInRanking = false,
   });
 
   UserProfile copyWith({
@@ -43,6 +45,7 @@ class UserProfile {
     Set<String>? completedMissions,
     Set<String>? unlockedBadges,
     Set<String>? purchasedAvatars,
+    bool? showNameInRanking,
   }) {
     return UserProfile(
       id: id ?? this.id,
@@ -58,6 +61,7 @@ class UserProfile {
       completedMissions: completedMissions ?? this.completedMissions,
       unlockedBadges: unlockedBadges ?? this.unlockedBadges,
       purchasedAvatars: purchasedAvatars ?? this.purchasedAvatars,
+      showNameInRanking: showNameInRanking ?? this.showNameInRanking,
     );
   }
 
@@ -75,6 +79,7 @@ class UserProfile {
     'completedMissions': completedMissions.toList(),
     'unlockedBadges': unlockedBadges.toList(),
     'purchasedAvatars': purchasedAvatars.toList(),
+    'showNameInRanking': showNameInRanking,
   };
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
@@ -92,6 +97,7 @@ class UserProfile {
       completedMissions: Set.from(json['completedMissions'] as List? ?? []),
       unlockedBadges: Set.from(json['unlockedBadges'] as List? ?? []),
       purchasedAvatars: Set.from(json['purchasedAvatars'] as List? ?? []),
+      showNameInRanking: json['showNameInRanking'] as bool? ?? false,
     );
   }
 }
