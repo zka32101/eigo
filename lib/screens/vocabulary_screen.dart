@@ -4,6 +4,9 @@ import 'package:flutter_tts/flutter_tts.dart';
 import '../data/vocabulary_data.dart';
 import '../models/question.dart';
 import '../theme/app_theme.dart';
+import '../theme/spacing.dart';
+import '../theme/sizes.dart';
+import '../theme/typography.dart';
 
 class VocabularyScreen extends ConsumerStatefulWidget {
   const VocabularyScreen({super.key});
@@ -91,17 +94,17 @@ class _VocabularyScreenState extends ConsumerState<VocabularyScreen> {
             const Expanded(child: Center(child: Text('単語が見つかりません')))
           else ...[
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: AppSpacing.horizontalPaddingLg + const EdgeInsets.symmetric(vertical: 8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     '${_currentIndex + 1} / ${_filteredWords.length}',
-                    style: const TextStyle(color: kTextMuted, fontSize: 13),
+                    style: AppTypography.bodySmall.copyWith(color: kTextMuted),
                   ),
                   Text(
                     vocabCategories[_filteredWords[_currentIndex].category] ?? _filteredWords[_currentIndex].category,
-                    style: const TextStyle(color: kTextMuted, fontSize: 13),
+                    style: AppTypography.bodySmall.copyWith(color: kTextMuted),
                   ),
                 ],
               ),
@@ -176,7 +179,7 @@ class _FilterBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: AppSpacing.allPaddingMd,
       child: Column(
         children: [
           SingleChildScrollView(
@@ -196,10 +199,10 @@ class _FilterBar extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 4),
+          AppSpacing.verticalSpacerSm,
           Row(
             children: [
-              const Text('難易度: ', style: TextStyle(fontSize: 12, color: kTextMuted)),
+              Text('難易度: ', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
               _DiffChip(label: 'すべて', selected: selectedDifficulty == null, onTap: () => onDifficultyChanged(null)),
               _DiffChip(label: '初級', selected: selectedDifficulty == DifficultyLevel.beginner, onTap: () => onDifficultyChanged(DifficultyLevel.beginner)),
               _DiffChip(label: '中級', selected: selectedDifficulty == DifficultyLevel.intermediate, onTap: () => onDifficultyChanged(DifficultyLevel.intermediate)),
@@ -281,10 +284,10 @@ class _FrontCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge)),
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
           gradient: const LinearGradient(
             colors: [kPrimaryColor, Color(0xFF5B9BD5)],
             begin: Alignment.topLeft,
@@ -298,30 +301,27 @@ class _FrontCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(word.emoji, style: const TextStyle(fontSize: 72)),
-                  const SizedBox(height: 16),
+                  AppSpacing.verticalSpacerMd,
                   Text(
                     showJapanese ? word.japanese : word.english,
-                    style: const TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
+                    style: AppTypography.displaySmall.copyWith(
                       color: Colors.white,
                     ),
                     textAlign: TextAlign.center,
                   ),
                   if (!showJapanese && word.phonetic.isNotEmpty) ...[
-                    const SizedBox(height: 8),
+                    AppSpacing.verticalSpacerSm,
                     Text(
                       word.phonetic,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white.withAlpha(200),
+                      style: AppTypography.bodyLarge.copyWith(
+                        color: Colors.white70,
                       ),
                     ),
                   ],
-                  const SizedBox(height: 24),
-                  const Text(
+                  AppSpacing.verticalSpacerLg,
+                  Text(
                     'タップして裏を見る',
-                    style: TextStyle(fontSize: 13, color: Colors.white70),
+                    style: AppTypography.bodySmall.copyWith(color: Colors.white70),
                   ),
                 ],
               ),
