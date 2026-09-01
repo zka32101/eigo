@@ -117,7 +117,7 @@ class _AiFreetalkScreenState extends ConsumerState<AiFreetalkScreen> {
                       children: [
                         Text(
                           '${currentUser?.avatar ?? '👧'} ${currentUser?.name ?? 'フレンド'}',
-                          style: const TextStyle(fontSize: 48),
+                          style: AppTypography.headlineSmall.copyWith(fontSize: 48),
                         ),
                         AppSpacing.verticalSpacerSm,
                         Text(
