@@ -6,6 +6,7 @@ import '../theme/app_theme.dart';
 import '../theme/spacing.dart';
 import '../theme/sizes.dart';
 import '../theme/typography.dart';
+import '../widgets/educational_illustrations.dart';
 
 class StageIntroScreen extends StatefulWidget {
   final Stage stage;
@@ -209,7 +210,21 @@ class _VocabChip extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(vocab.emoji, style: AppTypography.headlineSmall),
+              // Visual vocabulary aid
+              SizedBox(
+                width: 48,
+                height: 48,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF0F4FF),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: const Color(0xFFE3F2FD), width: 1),
+                  ),
+                  child: Center(
+                    child: Text(vocab.emoji, style: const TextStyle(fontSize: 24)),
+                  ),
+                ),
+              ),
               AppSpacing.verticalSpacerXs,
               Text(
                 vocab.english,
@@ -352,28 +367,65 @@ class _ContentBreakdownCard extends StatelessWidget {
               '📊 このレッスンの内容',
               style: AppTypography.labelLarge,
             ),
-            AppSpacing.verticalSpacerSm,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+            AppSpacing.verticalSpacerMd,
+            Wrap(
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.md,
               children: [
                 if (stage.listeningCount > 0)
-                  _TypeCount('👂', 'リスニング', stage.listeningCount, kListeningColor),
+                  LearningMethodCard(
+                    emoji: '👂',
+                    title: 'リスニング',
+                    description: '聞いて理解する',
+                    color: kListeningColor,
+                  ),
                 if (stage.speakingCount > 0)
-                  _TypeCount('🎤', 'スピーキング', stage.speakingCount, kSpeakingColor),
+                  LearningMethodCard(
+                    emoji: '🎤',
+                    title: 'スピーキング',
+                    description: '発音して話す',
+                    color: kSpeakingColor,
+                  ),
                 if (stage.readingCount > 0)
-                  _TypeCount('📖', 'リーディング', stage.readingCount, kReadingColor),
+                  LearningMethodCard(
+                    emoji: '📖',
+                    title: 'リーディング',
+                    description: '読んで理解する',
+                    color: kReadingColor,
+                  ),
                 if (stage.writingCount > 0)
-                  _TypeCount('✏️', 'ライティング', stage.writingCount, kWritingColor),
+                  LearningMethodCard(
+                    emoji: '✏️',
+                    title: 'ライティング',
+                    description: '書いて学ぶ',
+                    color: kWritingColor,
+                  ),
               ],
             ),
-            AppSpacing.verticalSpacerSm,
-            Text(
-              '合計 ${stage.questions.length} 問',
-              style: AppTypography.bodySmall.copyWith(
-                color: kTextMuted,
-                fontWeight: FontWeight.bold,
+            AppSpacing.verticalSpacerMd,
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(AppSpacing.md),
+              decoration: BoxDecoration(
+                color: kPrimaryColor.withAlpha(13),
+                borderRadius: BorderRadius.circular(AppSizes.borderRadius),
               ),
-              textAlign: TextAlign.center,
+              child: Column(
+                children: [
+                  Text(
+                    '合計 ${stage.questions.length} 問',
+                    style: AppTypography.labelLarge.copyWith(
+                      color: kPrimaryColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  AppSpacing.verticalSpacerXs,
+                  Text(
+                    'すべてを完了してマスターしよう！',
+                    style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

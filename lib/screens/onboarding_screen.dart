@@ -4,6 +4,7 @@ import '../theme/app_theme.dart';
 import '../theme/spacing.dart';
 import '../theme/sizes.dart';
 import '../theme/typography.dart';
+import '../widgets/educational_illustrations.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -132,15 +133,8 @@ class _OnboardPage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            width: 140,
-            height: 140,
-            decoration: BoxDecoration(
-              color: color.withAlpha(26),
-              shape: BoxShape.circle,
-            ),
-            child: Center(child: Text(emoji, style: AppTypography.headlineLarge.copyWith(fontSize: 72))),
-          ),
+          // Custom illustration based on title
+          _buildIllustration(),
           AppSpacing.verticalSpacerXl,
           Text(
             title,
@@ -155,6 +149,27 @@ class _OnboardPage extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildIllustration() {
+    if (title.contains('リスニング')) {
+      return ListeningIllustration(size: 140);
+    } else if (title.contains('スピーキング')) {
+      return SpeakingIllustration(size: 140);
+    } else if (title.contains('親向け')) {
+      return ParentFeedbackIllustration(size: 140);
+    } else if (title.contains('ゲーム')) {
+      return GamificationIllustration(size: 140);
+    }
+    return Container(
+      width: 140,
+      height: 140,
+      decoration: BoxDecoration(
+        color: color.withAlpha(26),
+        shape: BoxShape.circle,
+      ),
+      child: Center(child: Text(emoji, style: AppTypography.headlineLarge.copyWith(fontSize: 72))),
     );
   }
 }

@@ -7,6 +7,7 @@ import '../theme/app_theme.dart';
 import '../theme/spacing.dart';
 import '../theme/sizes.dart';
 import '../theme/typography.dart';
+import '../widgets/educational_illustrations.dart';
 
 class VocabularyScreen extends ConsumerStatefulWidget {
   const VocabularyScreen({super.key});
@@ -300,7 +301,19 @@ class _FrontCard extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(word.emoji, style: AppTypography.headlineLarge.copyWith(fontSize: 72)),
+                  // Visual vocabulary aid with enhanced design
+                  Container(
+                    width: 120,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withAlpha(30),
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white.withAlpha(80), width: 2),
+                    ),
+                    child: Center(
+                      child: Text(word.emoji, style: AppTypography.headlineLarge.copyWith(fontSize: 72)),
+                    ),
+                  ),
                   AppSpacing.verticalSpacerMd,
                   Text(
                     showJapanese ? word.japanese : word.english,
