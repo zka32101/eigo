@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/badge_model.dart';
 import '../providers/badge_provider.dart';
 import '../theme/app_theme.dart';
+import '../theme/spacing.dart';
+import '../theme/sizes.dart';
+import '../theme/typography.dart';
 
 class BadgeScreen extends ConsumerWidget {
   const BadgeScreen({super.key});
@@ -20,12 +23,12 @@ class BadgeScreen extends ConsumerWidget {
         backgroundColor: kPrimaryColor,
       ),
       body: GridView.builder(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.allPaddingLg,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           childAspectRatio: 1.2,
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
+          crossAxisSpacing: AppSpacing.md,
+          mainAxisSpacing: AppSpacing.md,
         ),
         itemCount: eigoBadges.length,
         itemBuilder: (context, index) {
@@ -47,7 +50,7 @@ class _BadgeCard extends StatelessWidget {
     return Card(
       color: isEarned ? Colors.white : Colors.grey.shade100,
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: AppSpacing.allPaddingMd,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -62,33 +65,31 @@ class _BadgeCard extends StatelessWidget {
                     ]),
                     child: Text(badge.emoji, style: const TextStyle(fontSize: 36)),
                   ),
-            const SizedBox(height: 6),
+            AppSpacing.verticalSpacerXs,
             Text(
               badge.title,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
+              style: AppTypography.labelLarge.copyWith(
                 color: isEarned ? kTextDark : Colors.grey,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 2),
+            AppSpacing.verticalSpacerXs,
             Text(
               badge.description,
-              style: const TextStyle(fontSize: 11, color: kTextMuted),
+              style: AppTypography.bodySmall.copyWith(color: kTextMuted),
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
             if (isEarned) ...[
-              const SizedBox(height: 4),
+              AppSpacing.verticalSpacerXs,
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
                 decoration: BoxDecoration(
                   color: kAccentGreen.withAlpha(26),
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                 ),
-                child: const Text('獲得済み！', style: TextStyle(fontSize: 10, color: kAccentGreen, fontWeight: FontWeight.bold)),
+                child: Text('獲得済み！', style: AppTypography.bodySmall.copyWith(fontSize: 10, color: kAccentGreen, fontWeight: FontWeight.bold)),
               ),
             ],
           ],
