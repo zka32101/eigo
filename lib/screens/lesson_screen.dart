@@ -14,7 +14,10 @@ import '../services/speech_service.dart';
 import '../services/tts_service.dart';
 import '../services/pronunciation_pet_integration_service.dart';
 import '../theme/app_theme.dart';
+import '../theme/spacing.dart';
+import '../theme/sizes.dart';
 import '../widgets/speaking_score_ring.dart';
+import '../widgets/lesson_screen_components.dart';
 import '../providers/user_profile_provider.dart';
 import '../models/pronunciation_result.dart';
 
@@ -279,11 +282,9 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
           Column(
             children: [
               // プログレスバー
-              LinearProgressIndicator(
-                value: progress,
-                backgroundColor: Colors.grey.shade200,
-                color: _questionTypeColor(_current.type),
-                minHeight: 6,
+              ImprovedProgressBar(
+                progress: progress,
+                questionType: _current.type,
               ),
               Expanded(
                 child: SingleChildScrollView(
@@ -292,15 +293,15 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       // スキルバッジ
-                      _SkillBadge(type: _current.type),
-                      const SizedBox(height: 16),
+                      ImprovedSkillBadge(type: _current.type),
+                      AppSpacing.verticalSpacerMd,
                       // 問題カード
-                      _QuestionCard(
+                      ImprovedQuestionCard(
                         question: _current,
                         onPlay: () => _tts.speak(_current.text),
                         onPlaySlow: () => _tts.speakSlow(_current.text),
                       ),
-                      const SizedBox(height: 20),
+                      AppSpacing.verticalSpacerLg,
                       // 回答エリア
                       if (_current.type == QuestionType.speaking)
                         _SpeakingArea(
@@ -314,38 +315,36 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
                           onPlay: () => _tts.speak(_current.text),
                         )
                       else
-                        _ChoiceArea(
+                        ImprovedChoiceArea(
                           question: _current,
                           answered: _answered,
                           selectedAnswer: _selectedAnswer,
                           onSelect: _onChoiceSelected,
                         ),
-                      const SizedBox(height: 16),
+                      AppSpacing.verticalSpacerMd,
                       // 解答後の解説パネル
                       if (_answered || _speakingDone)
-                        _AnswerExplanationCard(
+                        ImprovedAnswerExplanation(
                           question: _current,
                           isCorrect: _current.type == QuestionType.speaking
                               ? _speakingScore >= 60
                               : _selectedAnswer == _current.correctAnswer,
-                          onPlay: () => _tts.speak(_current.correctAnswer),
+                          onPlayCorrect: () => _tts.speak(_current.correctAnswer),
                         ),
-                      const SizedBox(height: 16),
+                      AppSpacing.verticalSpacerMd,
                       // 次へボタン
                       if (_answered || _speakingDone)
-                        _NextButton(
+                        ImprovedNextButton(
                           isLast: _isLastQ,
                           score: _current.type == QuestionType.speaking ? _speakingScore : null,
                           onNext: _nextQ,
-                          speech: _speech,
-                          question: _current,
                         ),
                     ],
                   ),
                 ),
               ),
               // スコア表示
-              _ScoreBar(score: _score, correct: _correct, total: _qIndex + 1),
+              ImprovedScoreBar(score: _score, correct: _correct, total: _qIndex + 1),
             ],
           ),
           // コンフェッティ
@@ -382,168 +381,7 @@ String _questionTypeLabel(QuestionType t) {
   }
 }
 
-// ─── Widgets ────────────────────────────────────────────────────
-
-class _SkillBadge extends StatelessWidget {
-  final QuestionType type;
-  const _SkillBadge({required this.type});
-
-  @override
-  Widget build(BuildContext context) {
-    final color = _questionTypeColor(type);
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: color.withAlpha(26),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: color.withAlpha(76)),
-        ),
-        child: Text(
-          _questionTypeLabel(type),
-          style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 13),
-        ),
-      ),
-    );
-  }
-}
-
-class _QuestionCard extends ConsumerWidget {
-  final Question question;
-  final VoidCallback onPlay;
-  final VoidCallback onPlaySlow;
-
-  const _QuestionCard({required this.question, required this.onPlay, required this.onPlaySlow});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final showPhonetics = ref.watch(settingsProvider).showPhonetics;
-
-    return Card(
-      elevation: 4,
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            if (question.imageEmoji != null)
-              Text(question.imageEmoji!, style: const TextStyle(fontSize: 60)),
-            const SizedBox(height: 12),
-            Text(
-              question.text,
-              style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: kTextDark),
-              textAlign: TextAlign.center,
-            ),
-            if (showPhonetics && question.phonetic != null) ...[
-              const SizedBox(height: 4),
-              Text(
-                question.phonetic!,
-                style: const TextStyle(fontSize: 14, color: kTextMuted, fontStyle: FontStyle.italic),
-              ),
-            ],
-            const SizedBox(height: 8),
-            Text(
-              question.textJa,
-              style: const TextStyle(fontSize: 14, color: kTextMuted),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton.filled(
-                  icon: const Icon(Icons.volume_up),
-                  onPressed: onPlay,
-                  style: IconButton.styleFrom(backgroundColor: kPrimaryColor),
-                ),
-                const SizedBox(width: 12),
-                OutlinedButton.icon(
-                  icon: const Icon(Icons.slow_motion_video, size: 16),
-                  label: const Text('ゆっくり'),
-                  onPressed: onPlaySlow,
-                  style: OutlinedButton.styleFrom(foregroundColor: kPrimaryColor),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _ChoiceArea extends StatelessWidget {
-  final Question question;
-  final bool answered;
-  final String? selectedAnswer;
-  final void Function(String) onSelect;
-
-  const _ChoiceArea({
-    required this.question,
-    required this.answered,
-    required this.selectedAnswer,
-    required this.onSelect,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: question.choices.map((choice) {
-        final isSelected = selectedAnswer == choice;
-        final isCorrect = choice == question.correctAnswer;
-
-        Color bgColor = Colors.white;
-        Color borderColor = Colors.grey.shade300;
-        Color textColor = kTextDark;
-        Widget? trailingIcon;
-
-        if (answered) {
-          if (isCorrect) {
-            bgColor = kAccentGreen.withAlpha(26);
-            borderColor = kAccentGreen;
-            textColor = kAccentGreen;
-            trailingIcon = const Icon(Icons.check_circle, color: kAccentGreen);
-          } else if (isSelected) {
-            bgColor = kAccentRed.withAlpha(26);
-            borderColor = kAccentRed;
-            textColor = kAccentRed;
-            trailingIcon = const Icon(Icons.cancel, color: kAccentRed);
-          }
-        }
-
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 10),
-          child: Material(
-            color: bgColor,
-            borderRadius: BorderRadius.circular(12),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(12),
-              onTap: answered ? null : () => onSelect(choice),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: borderColor, width: 2),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        choice,
-                        style: TextStyle(fontSize: 16, color: textColor, fontWeight: FontWeight.w500),
-                      ),
-                    ),
-                    ?trailingIcon,
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      }).toList(),
-    );
-  }
-}
+// ─── Old component definitions removed (now using ImprovedXxx components from lesson_screen_components.dart) ───
 
 class _SpeakingArea extends StatelessWidget {
   final Question question;
@@ -664,215 +502,6 @@ class _SpeakingScoreWidget extends StatelessWidget {
             style: const TextStyle(fontSize: 14, color: kAccentGreen, fontWeight: FontWeight.bold),
           ),
         ],
-      ],
-    );
-  }
-}
-
-class _NextButton extends StatelessWidget {
-  final bool isLast;
-  final int? score;
-  final VoidCallback onNext;
-  final SpeechService speech;
-  final Question question;
-
-  const _NextButton({
-    required this.isLast,
-    required this.score,
-    required this.onNext,
-    required this.speech,
-    required this.question,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: onNext,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: isLast ? kAccentGreen : kPrimaryColor,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-        ),
-        child: Text(isLast ? '結果を見る！🎉' : 'つぎへ →', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-      ),
-    );
-  }
-}
-
-class _ScoreBar extends StatelessWidget {
-  final int score;
-  final int correct;
-  final int total;
-  const _ScoreBar({required this.score, required this.correct, required this.total});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _ScorePill('スコア', '$score点', kPrimaryColor),
-          _ScorePill('正解', '$correct/$total', kAccentGreen),
-        ],
-      ),
-    );
-  }
-}
-
-// ─── Answer Explanation Card ─────────────────────────────────────
-
-class _AnswerExplanationCard extends StatelessWidget {
-  final Question question;
-  final bool isCorrect;
-  final VoidCallback onPlay;
-
-  const _AnswerExplanationCard({
-    required this.question,
-    required this.isCorrect,
-    required this.onPlay,
-  });
-
-  String _tipForType(QuestionType type) {
-    switch (type) {
-      case QuestionType.listening: return '👂 もう一度聞いて、正しい音を確認しよう';
-      case QuestionType.speaking: return '🎤 口を大きく開けてゆっくり発音しよう';
-      case QuestionType.reading: return '📖 文字と音を一緒に覚えよう';
-      case QuestionType.writing: return '✏️ 英語のスペルを確認してみよう';
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final bgColor = isCorrect
-        ? kAccentGreen.withAlpha(20)
-        : kAccentRed.withAlpha(15);
-    final borderColor = isCorrect ? kAccentGreen : kAccentRed;
-    final icon = isCorrect ? '🎉' : '💪';
-    final message = isCorrect ? 'よくできました！' : 'おしい！もう一度確認しよう';
-
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: borderColor, width: 1.5),
-      ),
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 結果ヘッダー
-          Row(
-            children: [
-              Text(icon, style: const TextStyle(fontSize: 22)),
-              const SizedBox(width: 8),
-              Text(
-                message,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: isCorrect ? kAccentGreen : kAccentRed,
-                ),
-              ),
-            ],
-          ),
-          const Divider(height: 20),
-
-          // 正解
-          const Row(
-            children: [
-              Expanded(
-                child: Text(
-                  '正解',
-                  style: TextStyle(fontSize: 12, color: kTextMuted, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      question.correctAnswer,
-                      style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: kPrimaryColor,
-                      ),
-                    ),
-                    if (question.phonetic != null)
-                      Text(
-                        question.phonetic!,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          color: kTextMuted,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                    const SizedBox(height: 2),
-                    Text(
-                      question.textJa,
-                      style: const TextStyle(fontSize: 13, color: kTextDark),
-                    ),
-                  ],
-                ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.volume_up, color: kPrimaryColor),
-                onPressed: onPlay,
-                tooltip: '発音を聞く',
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 10),
-
-          // 学習ティップス
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: Colors.white.withAlpha(180),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Row(
-              children: [
-                const Text('💡', style: TextStyle(fontSize: 16)),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    _tipForType(question.type),
-                    style: const TextStyle(fontSize: 12, color: kTextMuted),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ScorePill extends StatelessWidget {
-  final String label;
-  final String value;
-  final Color color;
-  const _ScorePill(this.label, this.value, this.color);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(value, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: color)),
-        Text(label, style: const TextStyle(fontSize: 11, color: kTextMuted)),
       ],
     );
   }
