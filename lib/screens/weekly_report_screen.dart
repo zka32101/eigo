@@ -7,6 +7,9 @@ import '../providers/progress_provider.dart';
 import '../providers/speaking_history_provider.dart';
 import '../providers/weakness_provider.dart';
 import '../theme/app_theme.dart';
+import '../theme/spacing.dart';
+import '../theme/sizes.dart';
+import '../theme/typography.dart';
 import '../widgets/xp_bar.dart';
 
 class WeeklyReportScreen extends ConsumerWidget {
@@ -33,20 +36,20 @@ class WeeklyReportScreen extends ConsumerWidget {
         ],
       ),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.allPaddingMd,
         children: [
           _LevelSection(level: level),
-          const SizedBox(height: 16),
+          AppSpacing.verticalSpacerMd,
           _WeekSummaryCard(progress: progress, history: history, week: week),
-          const SizedBox(height: 16),
+          AppSpacing.verticalSpacerMd,
           _SkillBreakdownCard(weakness: weakness),
-          const SizedBox(height: 16),
+          AppSpacing.verticalSpacerMd,
           _DailyScoreChart(week: week),
-          const SizedBox(height: 16),
+          AppSpacing.verticalSpacerMd,
           _ImprovementCard(history: history),
-          const SizedBox(height: 16),
+          AppSpacing.verticalSpacerMd,
           _GoalCard(progress: progress, history: history),
-          const SizedBox(height: 32),
+          AppSpacing.verticalSpacerXxl,
         ],
       ),
     );
@@ -82,7 +85,7 @@ class _WeekSummaryCard extends StatelessWidget {
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.allPaddingMd,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -93,23 +96,23 @@ class _WeekSummaryCard extends StatelessWidget {
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: kTextDark)),
                 if (improvement != 0)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: EdgeInsets.symmetric(horizontal: AppSpacing.xs, vertical: 4),
                     decoration: BoxDecoration(
                       color: improvement > 0 ? kAccentGreen.withAlpha(26) : kAccentRed.withAlpha(26),
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                     ),
                     child: Text(
                       '先週比 ${improvement > 0 ? '+' : ''}${improvement.round()}点',
-                      style: TextStyle(
-                        fontSize: 12,
+                      style: AppTypography.bodySmall.copyWith(
                         fontWeight: FontWeight.bold,
                         color: improvement > 0 ? kAccentGreen : kAccentRed,
+                        fontSize: 12,
                       ),
                     ),
                   ),
               ],
             ),
-            const SizedBox(height: 14),
+            AppSpacing.verticalSpacerXs,
             Row(
               children: [
                 _SummaryCell('📅', '学習日数', '$studyDays / 7日', kPrimaryColor, studyDays / 7),
@@ -136,14 +139,14 @@ class _SummaryCell extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4),
+        padding: EdgeInsets.symmetric(horizontal: 4),
         child: Column(
           children: [
             Text(icon, style: const TextStyle(fontSize: 22)),
-            const SizedBox(height: 4),
-            Text(value, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: color)),
-            Text(label, style: const TextStyle(fontSize: 11, color: kTextMuted)),
-            const SizedBox(height: 6),
+            AppSpacing.verticalSpacerXs,
+            Text(value, style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold, color: color)),
+            Text(label, style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 11)),
+            AppSpacing.verticalSpacerXs,
             ClipRRect(
               borderRadius: BorderRadius.circular(3),
               child: LinearProgressIndicator(
@@ -170,19 +173,19 @@ class _SkillBreakdownCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.allPaddingMd,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text('🎯 スキル別パフォーマンス',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: kTextDark)),
-            const SizedBox(height: 14),
+            AppSpacing.verticalSpacerXs,
             _SkillRow('👂 リスニング', weakness.listeningAccuracy, kListeningColor),
-            const SizedBox(height: 10),
+            AppSpacing.verticalSpacerXs,
             _SkillRow('🎤 スピーキング', weakness.speakingAvgScore / 100, kSpeakingColor),
-            const SizedBox(height: 10),
+            AppSpacing.verticalSpacerXs,
             _SkillRow('📖 リーディング', 1 - weakness.skillWeaknessRate(QuestionType.reading), kReadingColor),
-            const SizedBox(height: 10),
+            AppSpacing.verticalSpacerXs,
             _SkillRow('✏️ ライティング', 1 - weakness.skillWeaknessRate(QuestionType.writing), kWritingColor),
           ],
         ),
@@ -204,7 +207,7 @@ class _SkillRow extends StatelessWidget {
       children: [
         SizedBox(
           width: 120,
-          child: Text(label, style: const TextStyle(fontSize: 13, color: kTextDark)),
+          child: Text(label, style: AppTypography.bodySmall.copyWith(color: kTextDark, fontSize: 13)),
         ),
         Expanded(
           child: ClipRRect(
@@ -217,12 +220,12 @@ class _SkillRow extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(width: 8),
+        AppSpacing.horizontalSpacerXs,
         SizedBox(
           width: 40,
           child: Text(
             '${pct.round()}%',
-            style: TextStyle(fontSize: 12, color: color, fontWeight: FontWeight.bold),
+            style: AppTypography.bodySmall.copyWith(color: color, fontWeight: FontWeight.bold, fontSize: 12),
           ),
         ),
       ],
@@ -266,13 +269,13 @@ class _DailyScoreChart extends StatelessWidget {
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.allPaddingMd,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text('📅 日別スピーキングスコア',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: kTextDark)),
-            const SizedBox(height: 16),
+            AppSpacing.verticalSpacerMd,
             SizedBox(
               height: 160,
               child: BarChart(
@@ -290,7 +293,7 @@ class _DailyScoreChart extends StatelessWidget {
                         reservedSize: 28,
                         getTitlesWidget: (v, _) => Text(
                           '${v.round()}',
-                          style: const TextStyle(fontSize: 10, color: kTextMuted),
+                          style: AppTypography.bodySmall.copyWith(fontSize: 10, color: kTextMuted),
                         ),
                         interval: 25,
                       ),
@@ -302,9 +305,9 @@ class _DailyScoreChart extends StatelessWidget {
                           const days = ['月', '火', '水', '木', '金', '土', '日'];
                           final date = now.subtract(Duration(days: 6 - v.round()));
                           return Padding(
-                            padding: const EdgeInsets.only(top: 4),
+                            padding: EdgeInsets.only(top: 4),
                             child: Text(days[(date.weekday - 1) % 7],
-                                style: const TextStyle(fontSize: 11, color: kTextMuted)),
+                                style: AppTypography.bodySmall.copyWith(fontSize: 11, color: kTextMuted)),
                           );
                         },
                       ),
@@ -373,19 +376,19 @@ class _ImprovementCard extends StatelessWidget {
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.allPaddingMd,
         child: Row(
           children: [
             Text(icon, style: const TextStyle(fontSize: 36)),
-            const SizedBox(width: 14),
+            AppSpacing.horizontalSpacerXs,
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text('今週の振り返り',
                       style: TextStyle(fontSize: 13, color: kTextMuted, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 4),
-                  Text(message, style: TextStyle(fontSize: 14, color: color, height: 1.5)),
+                  AppSpacing.verticalSpacerXs,
+                  Text(message, style: AppTypography.bodySmall.copyWith(color: color, height: 1.5)),
                 ],
               ),
             ),
@@ -416,31 +419,31 @@ class _GoalCard extends StatelessWidget {
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.allPaddingMd,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text('🎯 今週の目標',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: kTextDark)),
-            const SizedBox(height: 12),
+            AppSpacing.verticalSpacerXs,
             ...goals.map((g) => Padding(
-              padding: const EdgeInsets.only(bottom: 12),
+              padding: EdgeInsets.only(bottom: AppSpacing.xs),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(g.label, style: const TextStyle(fontSize: 13, color: kTextDark)),
+                      Text(g.label, style: AppTypography.bodySmall.copyWith(color: kTextDark, fontSize: 13)),
                       Text(g.progress >= 1 ? '✅ 達成！' : g.valueLabel,
-                          style: TextStyle(
+                          style: AppTypography.bodySmall.copyWith(
                             fontSize: 12,
                             color: g.progress >= 1 ? kAccentGreen : kTextMuted,
                             fontWeight: g.progress >= 1 ? FontWeight.bold : FontWeight.normal,
                           )),
                     ],
                   ),
-                  const SizedBox(height: 4),
+                  AppSpacing.verticalSpacerXs,
                   ClipRRect(
                     borderRadius: BorderRadius.circular(4),
                     child: LinearProgressIndicator(
