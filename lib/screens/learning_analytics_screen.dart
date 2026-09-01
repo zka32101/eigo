@@ -8,6 +8,7 @@ import '../theme/app_theme.dart';
 import '../theme/spacing.dart';
 import '../theme/sizes.dart';
 import '../theme/typography.dart';
+import '../widgets/educational_illustrations.dart';
 
 class LearningAnalyticsScreen extends ConsumerWidget {
   final String userId;
@@ -53,22 +54,99 @@ class LearningAnalyticsScreen extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '学習統計',
+            '学習スタイル別統計',
             style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold),
           ),
-          AppSpacing.verticalSpacerXs,
+          AppSpacing.verticalSpacerMd,
+
+          // Learning method breakdown
           Container(
             padding: AppSpacing.allPaddingMd,
             decoration: BoxDecoration(
               color: Colors.white,
-              border: Border.all(color: Colors.grey.shade300),
+              border: Border.all(color: Colors.grey.shade200),
               borderRadius: BorderRadius.circular(AppSizes.borderRadius),
             ),
-            child: const Column(
+            child: Column(
               children: [
-                Text('学習統計情報がここに表示されます'),
+                Wrap(
+                  spacing: AppSpacing.md,
+                  runSpacing: AppSpacing.md,
+                  children: [
+                    ProgressVisualization(
+                      progress: 0.85,
+                      label: 'リスニング',
+                      color: kListeningColor,
+                    ),
+                    ProgressVisualization(
+                      progress: 0.72,
+                      label: 'スピーキング',
+                      color: kSpeakingColor,
+                    ),
+                    ProgressVisualization(
+                      progress: 0.68,
+                      label: 'リーディング',
+                      color: kReadingColor,
+                    ),
+                    ProgressVisualization(
+                      progress: 0.81,
+                      label: 'ライティング',
+                      color: kWritingColor,
+                    ),
+                  ],
+                ),
               ],
             ),
+          ),
+
+          AppSpacing.verticalSpacerLg,
+          Text(
+            '学習方法別成果',
+            style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold),
+          ),
+          AppSpacing.verticalSpacerMd,
+
+          Wrap(
+            spacing: AppSpacing.md,
+            runSpacing: AppSpacing.md,
+            children: [
+              Flexible(
+                flex: 1,
+                child: LearningMethodCard(
+                  emoji: '👂',
+                  title: 'リスニング',
+                  description: '聞く力を伸ばす',
+                  color: kListeningColor,
+                ),
+              ),
+              Flexible(
+                flex: 1,
+                child: LearningMethodCard(
+                  emoji: '🎤',
+                  title: 'スピーキング',
+                  description: '話す自信を育てる',
+                  color: kSpeakingColor,
+                ),
+              ),
+              Flexible(
+                flex: 1,
+                child: LearningMethodCard(
+                  emoji: '📖',
+                  title: 'リーディング',
+                  description: '読む理解力を高める',
+                  color: kReadingColor,
+                ),
+              ),
+              Flexible(
+                flex: 1,
+                child: LearningMethodCard(
+                  emoji: '✏️',
+                  title: 'ライティング',
+                  description: '書く表現力を培う',
+                  color: kWritingColor,
+                ),
+              ),
+            ],
           ),
         ],
       ),
