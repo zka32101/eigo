@@ -19,6 +19,7 @@ import '../widgets/weekly_ranking_card.dart';
 import '../widgets/xp_bar.dart';
 import '../widgets/home_screen_cards.dart';
 import '../providers/user_profile_provider.dart';
+import 'profile_edit_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -69,18 +70,42 @@ class HomeScreen extends ConsumerWidget {
                                     children: [
                                       Text('プロフィール一覧', style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold)),
                                       AppSpacing.verticalSpacerXs,
-                                      ...profiles.map((p) => ListTile(
-                                        leading: Text(p.avatar, style: const TextStyle(fontSize: 24)),
-                                        title: Text(p.name),
-                                        subtitle: Text('${p.grade}年生'),
-                                        trailing: currentUser?.id == p.id ? const Icon(Icons.check) : null,
-                                        onTap: () async {
-                                          await ref.read(userProfilesProvider.notifier).updateLastAccessed(p.id);
-                                          if (context.mounted) {
-                                            await ref.read(currentUserIdProvider.notifier).setCurrentUserId(p.id);
-                                            Navigator.pop(ctx);
-                                          }
-                                        },
+                                      ...profiles.map((p) => Container(
+                                        margin: EdgeInsets.only(bottom: AppSpacing.xs),
+                                        child: ListTile(
+                                          leading: Text(p.avatar, style: const TextStyle(fontSize: 24)),
+                                          title: Text(p.name),
+                                          subtitle: Text('${p.grade}年生'),
+                                          trailing: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              if (currentUser?.id == p.id)
+                                                Padding(
+                                                  padding: EdgeInsets.only(right: AppSpacing.xs),
+                                                  child: const Icon(Icons.check, color: kAccentGreen, size: 20),
+                                                ),
+                                              IconButton(
+                                                icon: const Icon(Icons.edit, color: kTextMuted, size: 20),
+                                                onPressed: () {
+                                                  Navigator.pop(ctx);
+                                                  Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                      builder: (_) => ProfileEditScreen(profile: p),
+                                                    ),
+                                                  );
+                                                },
+                                                tooltip: 'プロフィール編集',
+                                              ),
+                                            ],
+                                          ),
+                                          onTap: () async {
+                                            await ref.read(userProfilesProvider.notifier).updateLastAccessed(p.id);
+                                            if (context.mounted) {
+                                              await ref.read(currentUserIdProvider.notifier).setCurrentUserId(p.id);
+                                              Navigator.pop(ctx);
+                                            }
+                                          },
+                                        ),
                                       )),
                                       AppSpacing.verticalSpacerXs,
                                       SizedBox(
