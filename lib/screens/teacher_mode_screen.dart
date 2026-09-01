@@ -10,6 +10,10 @@ import '../providers/level_provider.dart';
 import '../services/claude_api_service.dart';
 import '../providers/ai_api_key_provider.dart';
 import '../providers/teacher_mode_provider.dart' show TeacherModeQuestion;
+import '../theme/app_theme.dart';
+import '../theme/spacing.dart';
+import '../theme/sizes.dart';
+import '../theme/typography.dart';
 
 class TeacherModeScreen extends ConsumerStatefulWidget {
   final int sessionSize;
@@ -272,20 +276,20 @@ class _TeacherModeScreenState extends ConsumerState<TeacherModeScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const SizedBox(height: 16),
+                AppSpacing.verticalSpacerMd,
                 Text(
                   '$accuracy%',
-                  style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+                  style: AppTypography.headlineLarge.copyWith(fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 8),
+                AppSpacing.verticalSpacerXs,
                 Text('$_correctAnswers / ${_questions.length} 正解'),
-                const SizedBox(height: 16),
+                AppSpacing.verticalSpacerMd,
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.amber.shade50,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
                   ),
-                  padding: const EdgeInsets.all(12),
+                  padding: EdgeInsets.all(AppSpacing.xs),
                   child: Column(
                     children: [
                       Row(
@@ -303,34 +307,31 @@ class _TeacherModeScreenState extends ConsumerState<TeacherModeScreen> {
                         ],
                       ),
                       if (rewardBonus > 0) ...[
-                        const SizedBox(height: 8),
+                        AppSpacing.verticalSpacerXs,
                         Text(
                           '🌟 ボーナス + $rewardBonus',
-                          style: TextStyle(
-                            fontSize: 12,
+                          style: AppTypography.bodySmall.copyWith(
                             color: Colors.orange.shade700,
                           ),
                         ),
                       ],
-                      const SizedBox(height: 4),
+                      AppSpacing.verticalSpacerXs,
                       Text(
                         '合計: $totalCoins コイン',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                        style: AppTypography.labelLarge.copyWith(
                           color: Colors.orange,
                         ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 12),
+                AppSpacing.verticalSpacerSm,
                 if (bonusMessage.isNotEmpty)
                   Container(
-                    padding: const EdgeInsets.all(12),
+                    padding: EdgeInsets.all(AppSpacing.xs),
                     decoration: BoxDecoration(
                       color: Colors.blue.shade50,
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
                     ),
                     child: Text(
                       bonusMessage,
@@ -412,18 +413,18 @@ class _TeacherModeScreenState extends ConsumerState<TeacherModeScreen> {
         elevation: 0,
       ),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.allPaddingMd,
         children: [
           // 進捗表示
           _ProgressBar(
             current: _currentQuestion + 1,
             total: _questions.length,
           ),
-          const SizedBox(height: 24),
+          AppSpacing.verticalSpacerLg,
 
           // 出題カード
           _QuestionCard(question: question),
-          const SizedBox(height: 24),
+          AppSpacing.verticalSpacerLg,
 
           // 音声入力エリア
           _VoiceInputArea(
@@ -433,14 +434,14 @@ class _TeacherModeScreenState extends ConsumerState<TeacherModeScreen> {
             onStopListening: _stopListening,
             onSpeakWrong: () => _speakPhrase(question.wrongPhrase),
           ),
-          const SizedBox(height: 24),
+          AppSpacing.verticalSpacerLg,
 
           // 教える入力エリア
           _TeachingArea(
             onCorrect: _checkAnswer,
             recognizedText: _recognizedText,
           ),
-          const SizedBox(height: 24),
+          AppSpacing.verticalSpacerLg,
 
           // スコア表示
           _ScoreDisplay(
@@ -468,19 +469,19 @@ class _ProgressBar extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
+            Text(
               '問題',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: AppTypography.labelLarge,
             ),
             Text(
               '$current / $total',
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: AppTypography.labelLarge,
             ),
           ],
         ),
-        const SizedBox(height: 8),
+        AppSpacing.verticalSpacerXs,
         ClipRRect(
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
           child: LinearProgressIndicator(
             value: current / total,
             minHeight: 8,
@@ -504,56 +505,54 @@ class _QuestionCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.red.shade50,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppSizes.borderRadius),
         border: Border.all(color: Colors.red.shade200),
       ),
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(AppSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             '🤖 AI の生徒が言った間違い：',
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+            style: AppTypography.labelLarge.copyWith(color: Colors.red),
           ),
-          const SizedBox(height: 12),
+          AppSpacing.verticalSpacerSm,
           Container(
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
               border: Border.all(color: Colors.red.shade300),
             ),
-            padding: const EdgeInsets.all(16),
+            padding: AppSpacing.allPaddingMd,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   '"${question.wrongPhrase}"',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                  style: AppTypography.labelLarge.copyWith(
                     color: Colors.red,
                   ),
                 ),
-                const SizedBox(height: 12),
+                AppSpacing.verticalSpacerSm,
                 Text(
                   question.japaneseTranslation,
-                  style: TextStyle(color: Colors.grey[600]),
+                  style: AppTypography.bodySmall.copyWith(color: kTextMuted),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 16),
-          const Text(
+          AppSpacing.verticalSpacerMd,
+          Text(
             '✏️ 何が間違っていますか？',
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: AppTypography.labelLarge,
           ),
-          const SizedBox(height: 8),
+          AppSpacing.verticalSpacerXs,
           Container(
             decoration: BoxDecoration(
               color: Colors.blue.shade50,
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
             ),
-            padding: const EdgeInsets.all(12),
+            padding: EdgeInsets.all(AppSpacing.xs),
             child: Row(
               children: [
                 Expanded(
@@ -562,15 +561,12 @@ class _QuestionCard extends StatelessWidget {
                     children: [
                       Text(
                         'ミスタイプ: ${question.mistakeType}',
-                        style: const TextStyle(fontSize: 12),
+                        style: AppTypography.bodySmall,
                       ),
-                      const SizedBox(height: 4),
+                      AppSpacing.verticalSpacerXs,
                       Text(
                         question.explanation,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: AppTypography.bodySmall.copyWith(fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -605,54 +601,54 @@ class _VoiceInputArea extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.orange.shade50,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppSizes.borderRadius),
         border: Border.all(color: Colors.orange.shade200),
       ),
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.allPaddingMd,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             '🎤 聞く',
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: AppTypography.labelLarge,
           ),
-          const SizedBox(height: 12),
+          AppSpacing.verticalSpacerSm,
           ElevatedButton(
             onPressed: onSpeakWrong,
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.orange,
-              minimumSize: const Size(double.infinity, 40),
+              minimumSize: const Size(double.infinity, AppSizes.buttonHeight),
             ),
             child: const Text('間違いを聞く'),
           ),
-          const SizedBox(height: 12),
+          AppSpacing.verticalSpacerSm,
           ElevatedButton(
             onPressed: isListening ? onStopListening : onStartListening,
             style: ElevatedButton.styleFrom(
               backgroundColor: isListening ? Colors.red : Colors.green,
-              minimumSize: const Size(double.infinity, 44),
+              minimumSize: const Size(double.infinity, AppSizes.buttonHeight),
             ),
             child: Text(
               isListening ? '🛑 停止' : '🎤 聞く',
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold),
             ),
           ),
           if (recognizedText.isNotEmpty) ...[
-            const SizedBox(height: 12),
+            AppSpacing.verticalSpacerSm,
             Container(
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
               ),
-              padding: const EdgeInsets.all(12),
+              padding: EdgeInsets.all(AppSpacing.xs),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('認識結果:', style: TextStyle(fontSize: 12, color: Colors.grey)),
-                  const SizedBox(height: 4),
+                  Text('認識結果:', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+                  AppSpacing.verticalSpacerXs,
                   Text(
                     recognizedText,
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -679,27 +675,27 @@ class _TeachingArea extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.green.shade50,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppSizes.borderRadius),
         border: Border.all(color: Colors.green.shade200),
       ),
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.allPaddingMd,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             '👩‍🏫 教える',
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: AppTypography.labelLarge,
           ),
-          const SizedBox(height: 12),
+          AppSpacing.verticalSpacerSm,
           ElevatedButton(
             onPressed: recognizedText.isNotEmpty ? onCorrect : null,
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.green,
-              minimumSize: const Size(double.infinity, 44),
+              minimumSize: const Size(double.infinity, AppSizes.buttonHeight),
             ),
-            child: const Text(
+            child: Text(
               '✅ 正解を教える',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold),
             ),
           ),
         ],
@@ -722,19 +718,19 @@ class _ScoreDisplay extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.blue.shade50,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppSizes.borderRadius),
         border: Border.all(color: Colors.blue.shade200),
       ),
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.allPaddingMd,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Column(
             children: [
-              const Text('正解数', style: TextStyle(color: Colors.grey)),
+              Text('正解数', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
               Text(
                 '$correct / $total',
-                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: AppTypography.headlineSmall.copyWith(fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -745,10 +741,10 @@ class _ScoreDisplay extends StatelessWidget {
           ),
           Column(
             children: [
-              const Text('正答率', style: TextStyle(color: Colors.grey)),
+              Text('正答率', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
               Text(
                 '$accuracy%',
-                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: AppTypography.headlineSmall.copyWith(fontWeight: FontWeight.bold),
               ),
             ],
           ),
