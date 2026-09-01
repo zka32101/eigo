@@ -48,7 +48,7 @@
 
 ## Reporting Security Issues
 
-Email: funvestment1@gmail.com
+Email: zkaz83@gmail.com
 Subject: [SECURITY] eigo-kore - [Brief Description]
 
 Response Times:
@@ -79,6 +79,6 @@ None currently known.
 
 ---
 
-**Last Updated:** 2026-08-07
-**Security Contact:** funvestment1@gmail.com
+**Last Updated:** 2026-09-01
+**Security Contact:** zkaz83@gmail.com
 

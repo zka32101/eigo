@@ -36,7 +36,7 @@ class AiApiKeyNotifier extends StateNotifier<AiApiKeys> {
   Future<void> setGeminiKey(String key) async {
     try {
       if (key.isEmpty) {
-        await SecureStorageService.clearAllKeys();
+        await SecureStorageService.clearGoogleApiKey();
         state = AiApiKeys(geminiKey: null, claudeKey: state.claudeKey);
       } else {
         await SecureStorageService.saveGoogleApiKey(key);
@@ -50,7 +50,7 @@ class AiApiKeyNotifier extends StateNotifier<AiApiKeys> {
   Future<void> setClaudeKey(String key) async {
     try {
       if (key.isEmpty) {
-        await SecureStorageService.clearAllKeys();
+        await SecureStorageService.clearClaudeApiKey();
         state = AiApiKeys(geminiKey: state.geminiKey, claudeKey: null);
       } else {
         await SecureStorageService.saveClaudeApiKey(key);
