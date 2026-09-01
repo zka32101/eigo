@@ -8,6 +8,9 @@ import '../providers/weakness_provider.dart';
 import '../services/speech_service.dart';
 import '../services/tts_service.dart';
 import '../theme/app_theme.dart';
+import '../theme/spacing.dart';
+import '../theme/sizes.dart';
+import '../theme/typography.dart';
 import '../widgets/speaking_score_ring.dart';
 
 /// テスト対策モード: 弱点問題を集めた特別レッスン
@@ -150,11 +153,11 @@ class _TestPrepScreenState extends ConsumerState<TestPrepScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Text('🎉', style: TextStyle(fontSize: 64)),
-              const SizedBox(height: 16),
-              const Text('弱点問題がありません！', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 8),
-              const Text('全問題を正確に解けています。\nすごい！', style: TextStyle(color: kTextMuted)),
-              const SizedBox(height: 24),
+              AppSpacing.verticalSpacerMd,
+              Text('弱点問題がありません！', style: AppTypography.headlineSmall.copyWith(fontWeight: FontWeight.bold)),
+              AppSpacing.verticalSpacerXs,
+              Text('全問題を正確に解けています。\nすごい！', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+              AppSpacing.verticalSpacerXl,
               ElevatedButton(
                 onPressed: () => Navigator.of(context).pop(),
                 child: const Text('戻る'),
@@ -172,11 +175,11 @@ class _TestPrepScreenState extends ConsumerState<TestPrepScreen> {
         title: const Text('🎯 テスト対策モード'),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 16),
+            padding: EdgeInsets.only(right: AppSpacing.md),
             child: Center(
               child: Text(
                 '${_qIndex + 1} / ${_questions.length}',
-                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                style: AppTypography.labelLarge.copyWith(color: Colors.white),
               ),
             ),
           ),
@@ -194,27 +197,27 @@ class _TestPrepScreenState extends ConsumerState<TestPrepScreen> {
               ),
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
+                  padding: AppSpacing.allPaddingMd,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       // 弱点バッジ
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        margin: const EdgeInsets.only(bottom: 12),
+                        padding: EdgeInsets.symmetric(horizontal: AppSpacing.xs, vertical: 6),
+                        margin: EdgeInsets.only(bottom: AppSpacing.xs),
                         decoration: BoxDecoration(
                           color: kAccentRed.withAlpha(20),
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
                           border: Border.all(color: kAccentRed.withAlpha(80)),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             const Text('⚠️', style: TextStyle(fontSize: 14)),
-                            const SizedBox(width: 6),
+                            AppSpacing.horizontalSpacerXs,
                             Text(
                               '弱点問題 - ${_typeLabel(_current.type)}',
-                              style: const TextStyle(color: kAccentRed, fontWeight: FontWeight.bold, fontSize: 13),
+                              style: AppTypography.bodySmall.copyWith(color: kAccentRed, fontWeight: FontWeight.bold, fontSize: 13),
                             ),
                           ],
                         ),
@@ -223,27 +226,27 @@ class _TestPrepScreenState extends ConsumerState<TestPrepScreen> {
                       Card(
                         elevation: 4,
                         child: Padding(
-                          padding: const EdgeInsets.all(20),
+                          padding: EdgeInsets.all(AppSpacing.lg),
                           child: Column(
                             children: [
                               if (_current.imageEmoji != null)
                                 Text(_current.imageEmoji!, style: const TextStyle(fontSize: 60)),
-                              const SizedBox(height: 12),
+                              AppSpacing.verticalSpacerXs,
                               Text(
                                 _current.text,
-                                style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: kTextDark),
+                                style: AppTypography.headlineLarge.copyWith(color: kTextDark),
                                 textAlign: TextAlign.center,
                               ),
                               if (_current.phonetic != null) ...[
-                                const SizedBox(height: 4),
+                                AppSpacing.verticalSpacerXs,
                                 Text(_current.phonetic!,
-                                    style: const TextStyle(fontSize: 14, color: kTextMuted, fontStyle: FontStyle.italic)),
+                                    style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontStyle: FontStyle.italic)),
                               ],
-                              const SizedBox(height: 8),
+                              AppSpacing.verticalSpacerXs,
                               Text(_current.textJa,
-                                  style: const TextStyle(fontSize: 14, color: kTextMuted),
+                                  style: AppTypography.bodySmall.copyWith(color: kTextMuted),
                                   textAlign: TextAlign.center),
-                              const SizedBox(height: 12),
+                              AppSpacing.verticalSpacerXs,
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -252,7 +255,7 @@ class _TestPrepScreenState extends ConsumerState<TestPrepScreen> {
                                     onPressed: () => _tts.speak(_current.text),
                                     style: IconButton.styleFrom(backgroundColor: kPrimaryColor),
                                   ),
-                                  const SizedBox(width: 12),
+                                  AppSpacing.horizontalSpacerXs,
                                   OutlinedButton.icon(
                                     icon: const Icon(Icons.slow_motion_video, size: 16),
                                     label: const Text('ゆっくり'),
@@ -265,13 +268,13 @@ class _TestPrepScreenState extends ConsumerState<TestPrepScreen> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      AppSpacing.verticalSpacerLg,
                       // 回答エリア
                       if (_current.type == QuestionType.speaking)
                         _buildSpeakingArea()
                       else
                         _buildChoiceArea(),
-                      const SizedBox(height: 20),
+                      AppSpacing.verticalSpacerLg,
                       if (_answered || _speakingDone)
                         SizedBox(
                           width: double.infinity,
@@ -279,10 +282,10 @@ class _TestPrepScreenState extends ConsumerState<TestPrepScreen> {
                             onPressed: _next,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: _isLast ? kAccentGreen : kAccentRed,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
                             ),
                             child: Text(_isLast ? '結果を見る！🎉' : 'つぎへ →',
-                                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                style: AppTypography.headlineSmall.copyWith(fontWeight: FontWeight.bold)),
                           ),
                         ),
                     ],
@@ -292,17 +295,17 @@ class _TestPrepScreenState extends ConsumerState<TestPrepScreen> {
               // スコアバー
               Container(
                 color: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl, vertical: AppSpacing.xs),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Column(children: [
-                      Text('$_score', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: kAccentRed)),
-                      const Text('スコア', style: TextStyle(fontSize: 11, color: kTextMuted)),
+                      Text('$_score', style: AppTypography.headlineSmall.copyWith(fontWeight: FontWeight.bold, color: kAccentRed)),
+                      Text('スコア', style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 11)),
                     ]),
                     Column(children: [
-                      Text('$_correct/${_qIndex + 1}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: kAccentGreen)),
-                      const Text('正解', style: TextStyle(fontSize: 11, color: kTextMuted)),
+                      Text('$_correct/${_qIndex + 1}', style: AppTypography.headlineSmall.copyWith(fontWeight: FontWeight.bold, color: kAccentGreen)),
+                      Text('正解', style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 11)),
                     ]),
                   ],
                 ),
@@ -337,23 +340,23 @@ class _TestPrepScreenState extends ConsumerState<TestPrepScreen> {
           else if (isSelected) { bg = kAccentRed.withAlpha(26); border = kAccentRed; text = kAccentRed; icon = const Icon(Icons.cancel, color: kAccentRed); }
         }
         return Padding(
-          padding: const EdgeInsets.only(bottom: 10),
+          padding: EdgeInsets.only(bottom: AppSpacing.xs),
           child: Material(
             color: bg,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(AppSizes.borderRadius),
             child: InkWell(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(AppSizes.borderRadius),
               onTap: _answered ? null : () => _onChoiceSelected(choice),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                padding: EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                   border: Border.all(color: border, width: 2),
                 ),
                 child: Row(
                   children: [
-                    Expanded(child: Text(choice, style: TextStyle(fontSize: 16, color: text, fontWeight: FontWeight.w500))),
-                    ?icon,
+                    Expanded(child: Text(choice, style: AppTypography.labelLarge.copyWith(color: text))),
+                    if (icon != null) icon,
                   ],
                 ),
               ),
@@ -367,30 +370,30 @@ class _TestPrepScreenState extends ConsumerState<TestPrepScreen> {
   Widget _buildSpeakingArea() {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(AppSpacing.lg),
         child: _speakingDone
             ? Column(
                 children: [
                   SpeakingScoreRing(score: _speakingScore, size: 100),
-                  const SizedBox(height: 12),
+                  AppSpacing.verticalSpacerXs,
                   Text(
                     _speech.getFeedback(_speakingScore),
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
                   if (_recognizedText.isNotEmpty) ...[
-                    const SizedBox(height: 8),
-                    Text('あなた: "$_recognizedText"', style: const TextStyle(fontSize: 14, color: kTextMuted)),
+                    AppSpacing.verticalSpacerXs,
+                    Text('あなた: "$_recognizedText"', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
                     Text('正解: "${_current.correctAnswer}"',
-                        style: const TextStyle(fontSize: 14, color: kAccentGreen, fontWeight: FontWeight.bold)),
+                        style: AppTypography.bodySmall.copyWith(color: kAccentGreen, fontWeight: FontWeight.bold)),
                   ],
                 ],
               )
             : Column(
                 children: [
-                  const Text('マイクに向かって発音してみよう！',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
-                  const SizedBox(height: 20),
+                  Text('マイクに向かって発音してみよう！',
+                      style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+                  AppSpacing.verticalSpacerLg,
                   GestureDetector(
                     onTap: _isListening ? _stopListening : _startListening,
                     child: AnimatedContainer(
@@ -406,19 +409,20 @@ class _TestPrepScreenState extends ConsumerState<TestPrepScreen> {
                       child: Icon(_isListening ? Icons.mic : Icons.mic_none, color: Colors.white, size: 36),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  AppSpacing.verticalSpacerMd,
                   Text(
                     _isListening ? '聞いています...' : 'タップして話す',
-                    style: TextStyle(color: _isListening ? kSpeakingColor : kTextMuted,
-                        fontWeight: _isListening ? FontWeight.bold : FontWeight.normal),
+                    style: AppTypography.labelLarge.copyWith(
+                      color: _isListening ? kSpeakingColor : kTextMuted,
+                    ),
                   ),
                   if (_recognizedText.isNotEmpty) ...[
-                    const SizedBox(height: 12),
+                    AppSpacing.verticalSpacerXs,
                     Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(color: kBgLight, borderRadius: BorderRadius.circular(8)),
+                      padding: EdgeInsets.all(AppSpacing.xs),
+                      decoration: BoxDecoration(color: kBgLight, borderRadius: BorderRadius.circular(AppSizes.borderRadius)),
                       child: Text('"$_recognizedText"',
-                          style: const TextStyle(fontSize: 16, color: kTextDark), textAlign: TextAlign.center),
+                          style: AppTypography.labelLarge.copyWith(color: kTextDark), textAlign: TextAlign.center),
                     ),
                   ],
                 ],
