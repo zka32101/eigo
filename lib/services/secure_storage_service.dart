@@ -118,6 +118,16 @@ class SecureStorageService {
     await _storage.delete(key: _authTokenKey);
   }
 
+  /// Clear Google API key
+  static Future<void> clearGoogleApiKey() async {
+    await _storage.delete(key: _googleApiKeyKey);
+  }
+
+  /// Clear Claude API key
+  static Future<void> clearClaudeApiKey() async {
+    await _storage.delete(key: _claudeApiKeyKey);
+  }
+
   /// Delete all keys (complete logout)
   static Future<void> clearAllKeys() async {
     final allKeys = [
