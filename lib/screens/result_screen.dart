@@ -7,6 +7,8 @@ import '../models/stage.dart';
 import '../providers/level_provider.dart';
 import '../theme/app_theme.dart';
 import '../theme/spacing.dart';
+import '../theme/sizes.dart';
+import '../theme/typography.dart';
 import '../widgets/xp_bar.dart';
 import '../widgets/result_screen_components.dart';
 
@@ -85,7 +87,7 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
       body: Stack(
         children: [
           SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+            padding: AppSpacing.allPaddingMd,
             child: Column(
               children: [
                 ImprovedResultHeader(
@@ -160,23 +162,23 @@ class _ActionButtons extends StatelessWidget {
             label: const Text('単語カードで復習する'),
             onPressed: () => Navigator.of(context).pushNamed('/word-review', arguments: stage),
             style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 14),
+              padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
               foregroundColor: kAccentGreen,
               side: const BorderSide(color: kAccentGreen),
             ),
           ),
         ),
-        const SizedBox(height: 10),
+        AppSpacing.verticalSpacerXs,
         SizedBox(
           width: double.infinity,
           child: ElevatedButton.icon(
             icon: const Icon(Icons.list),
             label: const Text('ステージ一覧へ'),
             onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/home', (r) => false),
-            style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
+            style: ElevatedButton.styleFrom(padding: EdgeInsets.symmetric(vertical: AppSpacing.xs)),
           ),
         ),
-        const SizedBox(height: 12),
+        AppSpacing.verticalSpacerXs,
         SizedBox(
           width: double.infinity,
           child: OutlinedButton.icon(
@@ -187,12 +189,12 @@ class _ActionButtons extends StatelessWidget {
               Navigator.of(context).pushNamed('/lesson', arguments: stage);
             },
             style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 14),
+              padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
               foregroundColor: kPrimaryColor,
             ),
           ),
         ),
-        const SizedBox(height: 12),
+        AppSpacing.verticalSpacerXs,
         SizedBox(
           width: double.infinity,
           child: OutlinedButton.icon(
@@ -203,7 +205,7 @@ class _ActionButtons extends StatelessWidget {
               Navigator.of(context).pushNamed('/pronunciation-check', arguments: stage);
             },
             style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 14),
+              padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
               foregroundColor: const Color(0xFF7C3AED),
               side: const BorderSide(color: Color(0xFF7C3AED)),
             ),
