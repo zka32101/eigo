@@ -4,6 +4,10 @@ import '../models/analytics_model.dart';
 import '../widgets/monthly_chart_widget.dart';
 import '../widgets/learning_stats_card.dart';
 import '../providers/analytics_provider.dart';
+import '../theme/app_theme.dart';
+import '../theme/spacing.dart';
+import '../theme/sizes.dart';
+import '../theme/typography.dart';
 
 class LearningAnalyticsScreen extends ConsumerWidget {
   final String userId;
@@ -44,21 +48,21 @@ class LearningAnalyticsScreen extends ConsumerWidget {
   /// 統計タブ
   Widget _buildStatisticsTab() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.allPaddingMd,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             '学習統計',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 12),
+          AppSpacing.verticalSpacerXs,
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: AppSpacing.allPaddingMd,
             decoration: BoxDecoration(
               color: Colors.white,
               border: Border.all(color: Colors.grey.shade300),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(AppSizes.borderRadius),
             ),
             child: const Column(
               children: [
@@ -78,13 +82,13 @@ class LearningAnalyticsScreen extends ConsumerWidget {
     if (analytics == null || analytics.isEmpty) {
       return Center(
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: AppSpacing.allPaddingMd,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              Icon(Icons.analytics, size: 64, color: Colors.grey),
-              SizedBox(height: 16),
-              Text('月ごとのデータがまだありません'),
+            children: [
+              const Icon(Icons.analytics, size: 64, color: Colors.grey),
+              AppSpacing.verticalSpacerMd,
+              const Text('月ごとのデータがまだありません'),
             ],
           ),
         ),
@@ -97,13 +101,13 @@ class LearningAnalyticsScreen extends ConsumerWidget {
     if (monthlyList.isEmpty) {
       return Center(
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: AppSpacing.allPaddingMd,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              Icon(Icons.analytics, size: 64, color: Colors.grey),
-              SizedBox(height: 16),
-              Text('月ごとのデータがまだありません'),
+            children: [
+              const Icon(Icons.analytics, size: 64, color: Colors.grey),
+              AppSpacing.verticalSpacerMd,
+              const Text('月ごとのデータがまだありません'),
             ],
           ),
         ),
@@ -111,7 +115,7 @@ class LearningAnalyticsScreen extends ConsumerWidget {
     }
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(vertical: 16),
+      padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -120,7 +124,7 @@ class LearningAnalyticsScreen extends ConsumerWidget {
             monthlyStatsList: monthlyList,
             title: '📊 月ごと正答率推移',
           ),
-          const SizedBox(height: 24),
+          AppSpacing.verticalSpacerLg,
 
           // 学習量グラフ
           MonthlyBarChartWidget(
@@ -128,7 +132,7 @@ class LearningAnalyticsScreen extends ConsumerWidget {
             title: '📝 月ごと問題数',
             metric: 'quests',
           ),
-          const SizedBox(height: 24),
+          AppSpacing.verticalSpacerLg,
 
           // 学習時間グラフ
           MonthlyBarChartWidget(
@@ -136,21 +140,19 @@ class LearningAnalyticsScreen extends ConsumerWidget {
             title: '⏱️ 月ごと学習時間',
             metric: 'minutes',
           ),
-          const SizedBox(height: 24),
+          AppSpacing.verticalSpacerLg,
 
           // 月別統計カード
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
             child: Text(
               '月別統計',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold),
             ),
           ),
-          const SizedBox(height: 12),
+          AppSpacing.verticalSpacerXs,
           ...monthlyList.map((stats) => LearningStatsCard(monthlyStats: stats)),
-          const SizedBox(height: 16),
+          AppSpacing.verticalSpacerMd,
         ],
       ),
     );
