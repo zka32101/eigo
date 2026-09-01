@@ -49,8 +49,10 @@ import 'screens/achievements_screen.dart';
 import 'screens/camera_scan_screen.dart';
 import 'screens/parent_child_battle_screen.dart';
 import 'screens/pronunciation_video_screen.dart';
+import 'screens/plush_toy_screen.dart';
 import 'screens/passport_screen.dart';
 import 'screens/english_town_screen.dart';
+import 'screens/song_generator_screen.dart';
 import 'services/notification_service.dart';
 import 'services/ad_service.dart';
 import 'services/firebase_service.dart';
@@ -146,8 +148,10 @@ class EigoKoreApp extends ConsumerWidget {
         '/camera-scan': (context) => const CameraScanScreen(),
         '/parent-child-battle': (context) => const ParentChildBattleScreen(),
         '/pronunciation-video': (context) => const PronunciationVideoScreen(),
+        '/plush-toy': (context) => const PlushToyScreen(),
         '/passport': (context) => const PassportScreen(),
         '/english-town': (context) => const EnglishTownScreen(),
+        '/song-generator': (context) => const SongGeneratorScreen(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/test-prep-result') {
