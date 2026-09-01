@@ -94,7 +94,7 @@ class _ScriptCard extends StatelessWidget {
           padding: AppSpacing.allPaddingMd,
           child: Row(
             children: [
-              Text(script.emoji, style: const TextStyle(fontSize: 40)),
+              Text(script.emoji, style: AppTypography.headlineSmall.copyWith(fontSize: 40)),
               AppSpacing.horizontalSpacerSm,
               Expanded(
                 child: Column(
@@ -142,7 +142,7 @@ class _IntroScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(script.emoji, style: const TextStyle(fontSize: 80)),
+              Text(script.emoji, style: AppTypography.headlineLarge),
               AppSpacing.verticalSpacerSm,
               Text(script.titleJa,
                 style: AppTypography.headlineMedium.copyWith(color: kTextDark)),
