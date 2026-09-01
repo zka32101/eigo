@@ -145,7 +145,7 @@ class _DailyChallengeScreenState extends ConsumerState<DailyChallengeScreen> {
             children: List.generate(total, (i) => Expanded(
               child: Container(
                 height: 6,
-                margin: const EdgeInsets.symmetric(horizontal: 2),
+                margin: EdgeInsets.symmetric(horizontal: AppSpacing.xs),
                 decoration: BoxDecoration(
                   color: i < _currentIndex
                       ? kAccentOrange
@@ -174,7 +174,7 @@ class _DailyChallengeScreenState extends ConsumerState<DailyChallengeScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(q.imageEmoji ?? '🎤', style: const TextStyle(fontSize: 72)),
+                  Text(q.imageEmoji ?? '🎤', style: AppTypography.headlineLarge),
                   AppSpacing.verticalSpacerSm,
                   Text(q.text,
                     style: AppTypography.headlineLarge.copyWith(color: kTextDark),
