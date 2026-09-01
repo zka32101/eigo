@@ -11,6 +11,7 @@ class UserProfile {
   final Map<String, int> stageProgress; // stageId -> highestScore
   final Set<String> completedMissions; // TPR mission IDs
   final Set<String> unlockedBadges;
+  final Set<String> purchasedAvatars; // avatar IDs that have been purchased
 
   const UserProfile({
     required this.id,
@@ -25,6 +26,7 @@ class UserProfile {
     this.stageProgress = const {},
     this.completedMissions = const {},
     this.unlockedBadges = const {},
+    this.purchasedAvatars = const {},
   });
 
   UserProfile copyWith({
@@ -40,6 +42,7 @@ class UserProfile {
     Map<String, int>? stageProgress,
     Set<String>? completedMissions,
     Set<String>? unlockedBadges,
+    Set<String>? purchasedAvatars,
   }) {
     return UserProfile(
       id: id ?? this.id,
@@ -54,6 +57,7 @@ class UserProfile {
       stageProgress: stageProgress ?? this.stageProgress,
       completedMissions: completedMissions ?? this.completedMissions,
       unlockedBadges: unlockedBadges ?? this.unlockedBadges,
+      purchasedAvatars: purchasedAvatars ?? this.purchasedAvatars,
     );
   }
 
@@ -70,6 +74,7 @@ class UserProfile {
     'stageProgress': stageProgress,
     'completedMissions': completedMissions.toList(),
     'unlockedBadges': unlockedBadges.toList(),
+    'purchasedAvatars': purchasedAvatars.toList(),
   };
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
@@ -86,6 +91,7 @@ class UserProfile {
       stageProgress: Map<String, int>.from(json['stageProgress'] as Map? ?? {}),
       completedMissions: Set.from(json['completedMissions'] as List? ?? []),
       unlockedBadges: Set.from(json['unlockedBadges'] as List? ?? []),
+      purchasedAvatars: Set.from(json['purchasedAvatars'] as List? ?? []),
     );
   }
 }

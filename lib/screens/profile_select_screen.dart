@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/user_profile_provider.dart';
 import '../models/user_profile.dart';
+import '../models/avatar_model.dart';
 import '../theme/app_theme.dart';
 import '../theme/spacing.dart';
 import '../theme/sizes.dart';
@@ -17,8 +18,11 @@ class ProfileSelectScreen extends ConsumerStatefulWidget {
 class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
   final _nameController = TextEditingController();
   int _selectedGrade = 1;
-  String _selectedAvatar = '👧';
-  final _avatars = ['👧', '👦', '🧒', '👶', '🎀', '⚡', '🌟', '💫'];
+  String _selectedAvatarId = 'avatar_1';
+
+  bool _isAvatarAvailable(AvatarIcon avatar, UserProfile currentUser) {
+    return avatar.isDefault || currentUser.purchasedAvatars.contains(avatar.id);
+  }
 
   @override
   void dispose() {
@@ -34,10 +38,15 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
       return;
     }
 
+    final selectedAvatar = allAvatarIcons.firstWhere(
+      (icon) => icon.id == _selectedAvatarId,
+      orElse: () => allAvatarIcons.first,
+    );
+
     await ref.read(userProfilesProvider.notifier).addProfile(
       _nameController.text,
       _selectedGrade,
-      _selectedAvatar,
+      selectedAvatar.emoji,
     );
 
     // Get newly created profile ID
@@ -229,37 +238,80 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
                     children: [
                       const Text('アバターを選択'),
                       AppSpacing.verticalSpacerXs,
+                      Text(
+                        '※ ロック中のアバターはショップで購入できます',
+                        style: AppTypography.bodySmall.copyWith(color: Colors.grey[600]),
+                      ),
+                      AppSpacing.verticalSpacerXs,
                       SizedBox(
-                        height: 60,
-                        child: ListView.builder(
+                        height: 90,
+                        child: GridView.builder(
                           scrollDirection: Axis.horizontal,
-                          itemCount: _avatars.length,
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            childAspectRatio: 1,
+                            mainAxisSpacing: 8,
+                            crossAxisSpacing: 8,
+                          ),
+                          itemCount: allAvatarIcons.length,
                           itemBuilder: (context, index) {
-                            final avatar = _avatars[index];
-                            return Padding(
-                              padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() => _selectedAvatar = avatar);
-                                },
-                                child: Container(
-                                  width: 50,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: _selectedAvatar == avatar
-                                          ? const Color(0xFF378ADD)
-                                          : Colors.grey[300]!,
-                                      width: _selectedAvatar == avatar ? 2 : 0.5,
+                            final avatar = allAvatarIcons[index];
+                            final isSelected = _selectedAvatarId == avatar.id;
+                            final canSelect = avatar.isDefault;
+
+                            return GestureDetector(
+                              onTap: canSelect
+                                  ? () {
+                                      setState(() => _selectedAvatarId = avatar.id);
+                                    }
+                                  : null,
+                              child: Stack(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: isSelected
+                                            ? const Color(0xFF378ADD)
+                                            : Colors.grey[300]!,
+                                        width: isSelected ? 2 : 0.5,
+                                      ),
+                                      borderRadius: BorderRadius.circular(AppSizes.borderRadius),
+                                      color: canSelect ? Colors.white : Colors.grey[100],
                                     ),
-                                    borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      avatar,
-                                      style: AppTypography.headlineSmall.copyWith(fontSize: 32),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          avatar.emoji,
+                                          style: AppTypography.headlineSmall.copyWith(fontSize: 28),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                ),
+                                  if (!canSelect)
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(AppSizes.borderRadius),
+                                        color: Colors.black.withAlpha(120),
+                                      ),
+                                      child: Center(
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            const Icon(Icons.lock, color: Colors.white, size: 20),
+                                            AppSpacing.verticalSpacerXs,
+                                            Text(
+                                              '🪙 ${avatar.price}',
+                                              style: AppTypography.bodySmall.copyWith(
+                                                color: Colors.white,
+                                                fontSize: 10,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                ],
                               ),
                             );
                           },
