@@ -131,7 +131,7 @@ class _OverviewStat extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(icon, style: const TextStyle(fontSize: 24)),
+        Text(icon, style: AppTypography.headlineSmall),
         Text(value, style: AppTypography.headlineSmall.copyWith(fontWeight: FontWeight.bold, color: color)),
         Text(label, style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 11)),
       ],
@@ -347,7 +347,7 @@ class _WeeklyProgressCard extends StatelessWidget {
                           final dayOfWeek = now.subtract(Duration(days: 6 - val.round())).weekday - 1;
                           if (dayOfWeek < 0 || dayOfWeek >= days.length) return const SizedBox.shrink();
                           return Padding(
-                            padding: EdgeInsets.only(top: 4),
+                            padding: EdgeInsets.only(top: AppSpacing.xs),
                             child: Text(days[dayOfWeek], style: AppTypography.bodySmall.copyWith(fontSize: 11, color: kTextMuted)),
                           );
                         },
