@@ -1,175 +1,263 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/question.dart';
-import '../services/claude_api_service.dart';
-import 'ai_api_key_provider.dart';
-import 'user_profile_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import 'dart:async';
+import '../models/teacher_mode_model.dart';
 
-/// 先生ごっこセッション状態
-class TeacherModeState {
-  final List<Question> questions;
-  final int currentIndex;
-  final Map<int, TeacherModeQuestion> generatedQuestions;
-  final int correctAnswers;
-  final bool isLoading;
+/// Teacher Modeプロバイダー：現在のセッション管理
+final teacherModeSessionProvider =
+    StateNotifierProvider<TeacherModeSessionNotifier, TeacherModeSession?>((ref) {
+  return TeacherModeSessionNotifier();
+});
 
-  TeacherModeState({
-    required this.questions,
-    this.currentIndex = 0,
-    this.generatedQuestions = const {},
-    this.correctAnswers = 0,
-    this.isLoading = false,
-  });
+/// Teacher Mode統計プロバイダー
+final teacherModeStatsProvider =
+    StateNotifierProvider<TeacherModeStatsNotifier, TeacherModeStats>((ref) {
+  return TeacherModeStatsNotifier();
+});
 
-  TeacherModeState copyWith({
-    List<Question>? questions,
-    int? currentIndex,
-    Map<int, TeacherModeQuestion>? generatedQuestions,
-    int? correctAnswers,
-    bool? isLoading,
-  }) {
-    return TeacherModeState(
-      questions: questions ?? this.questions,
-      currentIndex: currentIndex ?? this.currentIndex,
-      generatedQuestions: generatedQuestions ?? this.generatedQuestions,
-      correctAnswers: correctAnswers ?? this.correctAnswers,
-      isLoading: isLoading ?? this.isLoading,
+/// AI生成プロバイダー
+final aiMistakeGeneratorProvider =
+    FutureProvider.autoDispose.family<AIStudentMistake, (String, TeacherModeDifficulty)>((ref, params) async {
+  final (phrase, difficulty) = params;
+  return _generateAIMistake(phrase, difficulty);
+});
+
+class TeacherModeSessionNotifier extends StateNotifier<TeacherModeSession?> {
+  TeacherModeSessionNotifier() : super(null);
+
+  /// 新しいセッションを開始
+  Future<void> startSession(
+    String phrase,
+    String phraseMeaning,
+    TeacherModeDifficulty difficulty,
+  ) async {
+    final sessionId = DateTime.now().millisecondsSinceEpoch.toString();
+    state = TeacherModeSession(
+      sessionId: sessionId,
+      phrase: phrase,
+      phraseMeaning: phraseMeaning,
+      difficulty: difficulty,
+      startedAt: DateTime.now(),
+      totalRounds: 3,
     );
   }
-}
 
-/// 先生ごっこ問題（Claude で生成）
-class TeacherModeQuestion {
-  final String correctPhrase;
-  final String wrongPhrase;
-  final String mistakeType;
-  final String explanation;
-  final String japaneseTranslation;
-  final String teachingTip;
+  /// AIのミスをセット
+  Future<void> setCurrentMistake(AIStudentMistake mistake) async {
+    if (state == null) return;
+    state = state!.copyWith(currentMistake: mistake);
+  }
 
-  TeacherModeQuestion({
-    required this.correctPhrase,
-    required this.wrongPhrase,
-    required this.mistakeType,
-    required this.explanation,
-    required this.japaneseTranslation,
-    required this.teachingTip,
-  });
-}
+  /// ラウンドを完了
+  Future<void> completeRound(
+    String childResponse,
+    double accuracyScore,
+  ) async {
+    if (state == null || state!.currentMistake == null) return;
 
-/// 先生ごっこ Notifier
-class TeacherModeNotifier extends StateNotifier<TeacherModeState> {
-  final ClaudeApiService _claudeService;
-  final String _userLevel;
+    final mistake = state!.currentMistake!;
+    final isCorrect = _evaluateChildResponse(
+      childResponse,
+      mistake.correctAnswer,
+    );
 
-  TeacherModeNotifier({
-    required ClaudeApiService claudeService,
-    required String userLevel,
-    required List<Question> questions,
-  })  : _claudeService = claudeService,
-        _userLevel = userLevel,
-        super(TeacherModeState(questions: questions));
+    final round = TeacherModeRound(
+      roundNumber: state!.completedRounds.length + 1,
+      mistake: mistake,
+      childResponse: childResponse,
+      isCorrect: isCorrect,
+      accuracyScore: accuracyScore,
+      completedAt: DateTime.now(),
+    );
 
-  /// 次の問題を生成
-  Future<TeacherModeQuestion?> generateNextQuestion() async {
-    if (state.currentIndex >= state.questions.length) return null;
+    final newCompletedRounds = [...state!.completedRounds, round];
+    final newCorrectAnswers = state!.correctAnswers + (isCorrect ? 1 : 0);
 
-    final question = state.questions[state.currentIndex];
+    state = state!.copyWith(
+      completedRounds: newCompletedRounds,
+      correctAnswers: newCorrectAnswers,
+      currentMistake: null,
+    );
+  }
 
-    // キャッシュ確認
-    if (state.generatedQuestions.containsKey(state.currentIndex)) {
-      return state.generatedQuestions[state.currentIndex];
-    }
+  /// セッションを終了
+  Future<void> completeSession() async {
+    if (state == null) return;
 
-    // Claude API で生成
-    state = state.copyWith(isLoading: true);
+    final accuracy = state!.accuracyRate;
+    final sessionScore = (accuracy * 100).toInt();
 
+    state = state!.copyWith(
+      completedAt: DateTime.now(),
+      sessionScore: sessionScore,
+    );
+
+    await _saveSessionHistory(state!);
+  }
+
+  /// セッションをリセット
+  void resetSession() {
+    state = null;
+  }
+
+  bool _evaluateChildResponse(String childResponse, String correctAnswer) {
+    final childLower = childResponse.toLowerCase().trim();
+    final correctLower = correctAnswer.toLowerCase().trim();
+    return childLower == correctLower ||
+           childLower.contains(correctLower) ||
+           correctLower.contains(childLower);
+  }
+
+  Future<void> _saveSessionHistory(TeacherModeSession session) async {
     try {
-      final difficulty = _mapDifficulty(question.difficulty);
-      final response = await _claudeService.generateWrongPhrase(
-        correctPhrase: question.text,
-        japaneseTranslation: question.textJa,
-        difficulty: difficulty,
-        userLevel: int.tryParse(_userLevel) ?? 15,
-      );
-
-      final generated = TeacherModeQuestion(
-        correctPhrase: question.text,
-        wrongPhrase: response.mistake,
-        mistakeType: response.mistakeType,
-        explanation: response.explanation,
-        japaneseTranslation: question.textJa,
-        teachingTip: response.teachingTip,
-      );
-
-      // キャッシュに保存
-      final updated = {...state.generatedQuestions};
-      updated[state.currentIndex] = generated;
-
-      state = state.copyWith(
-        generatedQuestions: updated,
-        isLoading: false,
-      );
-
-      return generated;
+      final prefs = await SharedPreferences.getInstance();
+      final key = 'eigo_kore_teacher_mode_sessions';
+      final existingList = prefs.getStringList(key) ?? [];
+      existingList.add(jsonEncode(session.toJson()));
+      await prefs.setStringList(key, existingList);
     } catch (e) {
-      print('Generate question error: $e');
-      state = state.copyWith(isLoading: false);
-      return null;
-    }
-  }
-
-  /// 正解を記録して次へ
-  void nextQuestion() {
-    if (state.currentIndex < state.questions.length - 1) {
-      state = state.copyWith(currentIndex: state.currentIndex + 1);
-    }
-  }
-
-  /// 正解数を増やす
-  void recordCorrectAnswer() {
-    state = state.copyWith(correctAnswers: state.correctAnswers + 1);
-  }
-
-  /// セッション終了
-  Map<String, dynamic> finishSession() {
-    final total = state.questions.length;
-    final accuracy = total > 0 ? (state.correctAnswers / total * 100).toInt() : 0;
-    final coinsEarned = state.correctAnswers * 10;
-
-    return {
-      'correctAnswers': state.correctAnswers,
-      'totalQuestions': total,
-      'accuracy': accuracy,
-      'coinsEarned': coinsEarned,
-    };
-  }
-
-  String _mapDifficulty(DifficultyLevel level) {
-    switch (level) {
-      case DifficultyLevel.beginner:
-        return 'beginner';
-      case DifficultyLevel.intermediate:
-        return 'intermediate';
-      case DifficultyLevel.advanced:
-        return 'advanced';
+      print('Error saving session history: $e');
     }
   }
 }
 
-/// Provider: 先生ごっこ State
-final teacherModeProvider =
-    StateNotifierProvider.family<TeacherModeNotifier, TeacherModeState, List<Question>>((ref, questions) {
-  final apiKey = ref.watch(aiApiKeysProvider).claudeKey;
-  final userLevel = ref.watch(currentUserProvider)?.grade.toString() ?? '3';
+class TeacherModeStatsNotifier extends StateNotifier<TeacherModeStats> {
+  static const String _storageKey = 'eigo_kore_teacher_mode_stats';
 
-  final claudeService = ClaudeApiService(
-    apiKey: apiKey ?? '',
-    userGrade: userLevel,
-  );
+  TeacherModeStatsNotifier() : super(
+    const TeacherModeStats(
+      totalSessions: 0,
+      totalCorrections: 0,
+      averageAccuracy: 0.0,
+      totalCoinsEarned: 0,
+      phrasesLearned: [],
+      lastSessionAt: DateTime.epoch,
+    ),
+  ) {
+    _loadStats();
+  }
 
-  return TeacherModeNotifier(
-    claudeService: claudeService,
-    userLevel: userLevel,
-    questions: questions,
-  );
-});
+  Future<void> _loadStats() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final jsonString = prefs.getString(_storageKey);
+      if (jsonString != null) {
+        final json = jsonDecode(jsonString);
+        state = TeacherModeStats.fromJson(json);
+      }
+    } catch (e) {
+      print('Error loading teacher mode stats: $e');
+    }
+  }
+
+  Future<void> updateStatsFromSession(TeacherModeSession session) async {
+    if (!session.isCompleted) return;
+
+    final newPhrasesLearned = [...state.phrasesLearned];
+    if (!newPhrasesLearned.contains(session.phrase)) {
+      newPhrasesLearned.add(session.phrase);
+    }
+
+    final coinsEarned = session.correctAnswers * 10;
+    final totalTests = state.totalSessions + 1;
+    final newAverageAccuracy =
+        ((state.averageAccuracy * state.totalSessions) + session.accuracyRate) / totalTests;
+
+    state = TeacherModeStats(
+      totalSessions: state.totalSessions + 1,
+      totalCorrections: state.totalCorrections + session.correctAnswers,
+      averageAccuracy: newAverageAccuracy,
+      totalCoinsEarned: state.totalCoinsEarned + coinsEarned,
+      phrasesLearned: newPhrasesLearned,
+      lastSessionAt: DateTime.now(),
+    );
+
+    await _saveStats();
+  }
+
+  Future<void> _saveStats() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_storageKey, jsonEncode(state.toJson()));
+    } catch (e) {
+      print('Error saving stats: $e');
+    }
+  }
+
+  Future<void> resetStats() async {
+    state = const TeacherModeStats(
+      totalSessions: 0,
+      totalCorrections: 0,
+      averageAccuracy: 0.0,
+      totalCoinsEarned: 0,
+      phrasesLearned: [],
+      lastSessionAt: DateTime.epoch,
+    );
+    await _saveStats();
+  }
+}
+
+Future<AIStudentMistake> _generateAIMistake(
+  String phrase,
+  TeacherModeDifficulty difficulty,
+) async {
+  final mistakeDatabase = _getMistakeDatabaseForPhrase(phrase, difficulty);
+
+  if (mistakeDatabase.isEmpty) {
+    return AIStudentMistake(
+      mistakeText: 'I am... erm... sorry?',
+      mistakeType: MistakeType.pronunciation,
+      correctAnswer: phrase,
+      explanation: 'That was a bit unclear. Can you say that again?',
+      encouragement: 'Thank you for teaching me! You are a great teacher!',
+    );
+  }
+
+  mistakeDatabase.shuffle();
+  return mistakeDatabase.first;
+}
+
+List<AIStudentMistake> _getMistakeDatabaseForPhrase(
+  String phrase,
+  TeacherModeDifficulty difficulty,
+) {
+  final mistakeMap = {
+    'What is your name?': [
+      AIStudentMistake(
+        mistakeText: 'What is you name?',
+        mistakeType: MistakeType.grammar,
+        correctAnswer: 'What is your name?',
+        explanation: 'I forgot to use "your" - a grammar mistake!',
+        encouragement: 'Perfect! You caught my mistake! You are a wonderful teacher!',
+      ),
+      AIStudentMistake(
+        mistakeText: 'Whaaaat eeees yoooor naaame?',
+        mistakeType: MistakeType.pronunciation,
+        correctAnswer: 'What is your name?',
+        explanation: 'I said it too slowly and with strange pronunciation.',
+        encouragement: 'Great job correcting me! Thank you, teacher!',
+      ),
+    ],
+    'My name is...': [
+      AIStudentMistake(
+        mistakeText: 'My names are...',
+        mistakeType: MistakeType.grammar,
+        correctAnswer: 'My name is...',
+        explanation: 'I used plural "names" but should use singular.',
+        encouragement: 'Excellent! You found my grammar mistake!',
+      ),
+    ],
+    'Nice to meet you': [
+      AIStudentMistake(
+        mistakeText: 'Nice to meet him',
+        mistakeType: MistakeType.meaning,
+        correctAnswer: 'Nice to meet you',
+        explanation: 'I said "him" instead of "you" - wrong meaning!',
+        encouragement: 'You are so smart! Thank you for the lesson!',
+      ),
+    ],
+  };
+
+  return mistakeMap[phrase] ?? [];
+}
