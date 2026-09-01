@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_core/shared_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 import '../models/badge_model.dart';
 import 'progress_provider.dart';
 
@@ -82,3 +83,112 @@ class BadgeNotifier extends StateNotifier<BadgeState> {
 final badgeProvider = StateNotifierProvider<BadgeNotifier, BadgeState>(
   (ref) => BadgeNotifier(),
 );
+
+// Additional badge progress tracking
+
+/// バッジ進捗を管理
+final badgeProgressProvider =
+    StateNotifierProvider<BadgeProgressNotifier, List<BadgeProgress>>((ref) {
+  return BadgeProgressNotifier();
+});
+
+class BadgeProgressNotifier extends StateNotifier<List<BadgeProgress>> {
+  static const String _storageKey = 'eigo_kore_badge_progress';
+
+  BadgeProgressNotifier() : super([]) {
+    _loadProgress();
+  }
+
+  /// 進捗をロード
+  Future<void> _loadProgress() async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonString = prefs.getString(_storageKey);
+    if (jsonString != null) {
+      try {
+        final List<dynamic> decoded = jsonDecode(jsonString);
+        final items = decoded
+            .map((json) => BadgeProgress.fromJson(json as Map<String, dynamic>))
+            .toList();
+        state = items;
+      } catch (e) {
+        print('Error loading badge progress: $e');
+      }
+    } else {
+      _initializeDefaultProgress();
+    }
+  }
+
+  /// デフォルト進捗を初期化
+  void _initializeDefaultProgress() {
+    state = [
+      BadgeProgress(
+        badgeId: 'first_steps',
+        title: 'はじめの一歩',
+        icon: '🌱',
+        rarity: BadgeRarity.common,
+        currentValue: 0,
+        targetValue: 1,
+      ),
+      BadgeProgress(
+        badgeId: 'hot_streak',
+        title: '熱いストリーク',
+        icon: '🔥',
+        rarity: BadgeRarity.uncommon,
+        currentValue: 0,
+        targetValue: 7,
+      ),
+      BadgeProgress(
+        badgeId: 'legendary_streak',
+        title: '伝説のストリーク',
+        icon: '👑',
+        rarity: BadgeRarity.legendary,
+        currentValue: 0,
+        targetValue: 30,
+      ),
+    ];
+  }
+
+  /// 進捗を保存
+  Future<void> _saveProgress() async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonString = jsonEncode(state.map((item) => item.toJson()).toList());
+    await prefs.setString(_storageKey, jsonString);
+  }
+
+  /// バッジの進捗を更新
+  Future<void> updateProgress(String badgeId, int newValue) async {
+    final index = state.indexWhere((b) => b.badgeId == badgeId);
+    if (index >= 0) {
+      final progress = state[index];
+      final isNowUnlocked = newValue >= progress.targetValue;
+
+      state = [
+        ...state.sublist(0, index),
+        progress.copyWith(
+          currentValue: newValue,
+          isUnlocked: isNowUnlocked,
+          unlockedAt: isNowUnlocked && !progress.isUnlocked ? DateTime.now() : progress.unlockedAt,
+        ),
+        ...state.sublist(index + 1),
+      ];
+      await _saveProgress();
+    }
+  }
+
+  /// アンロック済みバッジを取得
+  List<BadgeProgress> getUnlockedBadges() {
+    return state.where((b) => b.isUnlocked).toList();
+  }
+
+  /// 近日中にアンロック可能なバッジを取得
+  List<BadgeProgress> getNearbyBadges() {
+    return state.where((b) => !b.isUnlocked && b.progress >= 0.5).toList();
+  }
+
+  /// 全体の進捗を取得
+  double getOverallProgress() {
+    if (state.isEmpty) return 0.0;
+    final totalProgress = state.fold<double>(0, (sum, badge) => sum + badge.progress);
+    return totalProgress / state.length;
+  }
+}

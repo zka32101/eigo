@@ -209,7 +209,7 @@ class UserPacePreferenceNotifier extends StateNotifier<UserPacePreference> {
       preferredStartHour: preferredStartHour ?? state.preferredStartHour,
       preferredStartMinute: preferredStartMinute ?? state.preferredStartMinute,
       autoNotificationEnabled: autoNotificationEnabled ?? state.autoNotificationEnabled,
-      lastUpdated: lastUpdated,
+      lastUpdated: lastUpdated ?? state.lastUpdated,
     );
   }
 }

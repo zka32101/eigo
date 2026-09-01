@@ -194,7 +194,7 @@ class _ShopCategoryView extends ConsumerWidget {
   }
 }
 
-class _ShopItemCard extends StatelessWidget {
+class _ShopItemCard extends StatefulWidget {
   final Item item;
   final int owned;
   final int coins;
@@ -208,14 +208,56 @@ class _ShopItemCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final canAfford = coins >= item.price;
+  State<_ShopItemCard> createState() => _ShopItemCardState();
+}
 
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
-      ),
+class _ShopItemCardState extends State<_ShopItemCard>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+  bool _isHovered = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 200),
+      vsync: this,
+    );
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.05).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _onHoverChange(bool isHovered) {
+    setState(() => _isHovered = isHovered);
+    if (isHovered) {
+      _controller.forward();
+    } else {
+      _controller.reverse();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final canAfford = widget.coins >= widget.item.price;
+
+    return MouseRegion(
+      onEnter: (_) => _onHoverChange(true),
+      onExit: (_) => _onHoverChange(false),
+      child: ScaleTransition(
+        scale: _scaleAnimation,
+        child: Card(
+          elevation: _isHovered ? 8 : 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
+          ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -234,10 +276,10 @@ class _ShopItemCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      item.emoji,
+                      widget.item.emoji,
                       style: const TextStyle(fontSize: 48),
                     ),
-                    if (owned > 0) ...[
+                    if (widget.owned > 0) ...[
                       AppSpacing.verticalSpacerXs,
                       Container(
                         padding: EdgeInsets.symmetric(
@@ -249,7 +291,7 @@ class _ShopItemCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
                         ),
                         child: Text(
-                          '所有: $owned',
+                          '所有: ${widget.owned}',
                           style: AppTypography.bodySmall.copyWith(
                             color: kAccentGreen,
                             fontWeight: FontWeight.bold,
@@ -271,7 +313,7 @@ class _ShopItemCard extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  item.name,
+                  widget.item.name,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: AppTypography.labelMedium.copyWith(
@@ -280,7 +322,7 @@ class _ShopItemCard extends StatelessWidget {
                 ),
                 AppSpacing.verticalSpacerXs,
                 Text(
-                  item.description,
+                  widget.item.description,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: AppTypography.bodySmall.copyWith(
@@ -295,7 +337,7 @@ class _ShopItemCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '🪙 ${item.price}',
+                      '🪙 ${widget.item.price}',
                       style: AppTypography.labelSmall.copyWith(
                         fontWeight: FontWeight.bold,
                         color: canAfford ? kAccentOrange : kTextMuted,
@@ -305,7 +347,7 @@ class _ShopItemCard extends StatelessWidget {
                       height: 28,
                       width: 60,
                       child: ElevatedButton(
-                        onPressed: canAfford ? onPurchase : null,
+                        onPressed: canAfford ? widget.onPurchase : null,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: canAfford ? kAccentOrange : Colors.grey[300],
                           padding: EdgeInsets.zero,
