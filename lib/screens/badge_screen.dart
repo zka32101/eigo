@@ -55,7 +55,7 @@ class _BadgeCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             isEarned
-                ? Text(badge.emoji, style: const TextStyle(fontSize: 36))
+                ? Text(badge.emoji, style: AppTypography.headlineSmall)
                 : ColorFiltered(
                     colorFilter: const ColorFilter.matrix([
                       0.2126, 0.7152, 0.0722, 0, 0,
