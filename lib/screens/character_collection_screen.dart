@@ -15,21 +15,7 @@ class CharacterCollectionScreen extends ConsumerStatefulWidget {
       _CharacterCollectionScreenState();
 }
 
-class _CharacterCollectionScreenState extends ConsumerState<CharacterCollectionScreen>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
+class _CharacterCollectionScreenState extends ConsumerState<CharacterCollectionScreen> {
 
   @override
   Widget build(BuildContext context) {
@@ -41,27 +27,25 @@ class _CharacterCollectionScreenState extends ConsumerState<CharacterCollectionS
         appBar: AppBar(
           title: const Text('🎭 キャラクター図鑑'),
           backgroundColor: kPrimaryColor,
-          bottom: TabBar(
-            controller: _tabController,
+          bottom: const TabBar(
             labelColor: Colors.white,
             unselectedLabelColor: Colors.white70,
             indicatorColor: kAccentOrange,
             tabs: [
-              Tab(text: 'コレクション (${stats.collected})'),
+              Tab(text: 'コレクション'),
               Tab(text: 'レアリティ'),
               Tab(text: '未収集'),
             ],
           ),
         ),
         body: TabBarView(
-          controller: _tabController,
           children: [
             // コレクション一覧
             _CollectionListView(stats: stats),
             // レアリティ別表示
-            _RarityView(),
+            const _RarityView(),
             // 未収集キャラクター
-            _UncollectedView(),
+            const _UncollectedView(),
           ],
         ),
       ),

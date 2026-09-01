@@ -14,9 +14,9 @@ class AdSettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final placements = ref.watch(adPlacementsProvider);
     final limits = ref.watch(adLimitsProvider);
-    final history = ref.watch(adHistoryProvider);
+    final historyNotifier = ref.read(adHistoryProvider.notifier);
 
-    final todayAdCount = history.getTodayAdCount();
+    final todayAdCount = historyNotifier.getTodayAdCount();
 
     return DefaultTabController(
       length: 2,

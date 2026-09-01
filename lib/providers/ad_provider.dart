@@ -220,7 +220,7 @@ class AdHistoryNotifier extends StateNotifier<List<AdViewRecord>> {
 final canShowAdProvider =
     Provider.family<bool, String>((ref, placement) {
   final limits = ref.watch(adLimitsProvider);
-  final history = ref.watch(adHistoryProvider);
+  final historyNotifier = ref.read(adHistoryProvider.notifier);
   final placements = ref.watch(adPlacementsProvider);
 
   // この配置にアクティブな広告があるか
@@ -229,10 +229,10 @@ final canShowAdProvider =
   if (!hasActiveAds) return false;
 
   // 1日の最大数に達していないか
-  if (history.getTodayAdCount() >= limits.maxDailyAds) return false;
+  if (historyNotifier.getTodayAdCount() >= limits.maxDailyAds) return false;
 
   // この配置の最大表示回数に達していないか
-  if (history.getTodayCountForPlacement(placement, placements) >=
+  if (historyNotifier.getTodayCountForPlacement(placement, placements) >=
       limits.maxAdsPerPlacement) return false;
 
   return true;
