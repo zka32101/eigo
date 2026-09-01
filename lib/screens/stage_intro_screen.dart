@@ -126,7 +126,7 @@ class _HeaderCard extends StatelessWidget {
         padding: EdgeInsets.all(AppSpacing.lg),
         child: Column(
           children: [
-            Text(stage.emoji, style: const TextStyle(fontSize: 56)),
+            Text(stage.emoji, style: AppTypography.headlineLarge),
             AppSpacing.verticalSpacerXs,
             Text(
               stage.titleJa,
@@ -209,7 +209,7 @@ class _VocabChip extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(vocab.emoji, style: const TextStyle(fontSize: 24)),
+              Text(vocab.emoji, style: AppTypography.headlineSmall),
               AppSpacing.verticalSpacerXs,
               Text(
                 vocab.english,
@@ -253,7 +253,7 @@ class _TipCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('💡', style: TextStyle(fontSize: 28)),
+            Text('💡', style: AppTypography.headlineSmall.copyWith(fontSize: 28)),
             AppSpacing.horizontalSpacerSm,
             Expanded(
               child: Column(
@@ -369,8 +369,7 @@ class _ContentBreakdownCard extends StatelessWidget {
             AppSpacing.verticalSpacerSm,
             Text(
               '合計 ${stage.questions.length} 問',
-              style: const TextStyle(
-                fontSize: 13,
+              style: AppTypography.bodySmall.copyWith(
                 color: kTextMuted,
                 fontWeight: FontWeight.bold,
               ),
@@ -394,8 +393,8 @@ class _TypeCount extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(emoji, style: const TextStyle(fontSize: 22)),
-        const SizedBox(height: 4),
+        Text(emoji, style: AppTypography.headlineSmall.copyWith(fontSize: 22)),
+        AppSpacing.verticalSpacerXs,
         Text(
           '$count問',
           style: AppTypography.labelLarge.copyWith(color: color),
@@ -414,18 +413,18 @@ class _QuestionTypeInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Card(
-      color: Color(0xFFF0F4FF),
+    return Card(
+      color: const Color(0xFFF0F4FF),
       child: Padding(
-        padding: EdgeInsets.all(16),
+        padding: AppSpacing.allPaddingMd,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               '🎯 学習内容',
               style: AppTypography.labelLarge,
             ),
-            SizedBox(height: 10),
+            AppSpacing.verticalSpacerXs,
             _InfoRow('👂 リスニング', '英語を聞いて正解を選ぼう'),
             _InfoRow('🎤 スピーキング', '英語を声に出して発音しよう'),
             _InfoRow('📖 リーディング', '英文を読んで意味を理解しよう'),
