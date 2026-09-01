@@ -3,6 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/pet_model.dart';
 import '../providers/pet_provider.dart';
 import '../providers/user_profile_provider.dart';
+import '../theme/app_theme.dart';
+import '../theme/spacing.dart';
+import '../theme/sizes.dart';
+import '../theme/typography.dart';
 
 class PetScreen extends ConsumerStatefulWidget {
   const PetScreen({Key? key}) : super(key: key);
@@ -65,7 +69,7 @@ class _PetScreenState extends ConsumerState<PetScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text('ペットをまだ作成していません'),
-                  const SizedBox(height: 16),
+                  AppSpacing.verticalSpacerMd,
                   ElevatedButton(
                     onPressed: _showPetSelectionDialog,
                     child: const Text('ペットを作成する'),
@@ -76,23 +80,23 @@ class _PetScreenState extends ConsumerState<PetScreen> {
           }
 
           return ListView(
-            padding: const EdgeInsets.all(16),
+            padding: AppSpacing.allPaddingMd,
             children: [
               // ペット表示エリア
               _PetDisplayCard(pet: pet, userId: userId),
-              const SizedBox(height: 24),
+              AppSpacing.verticalSpacerLg,
 
               // ステータスバー
               _PetStatusBar(pet: pet),
-              const SizedBox(height: 24),
+              AppSpacing.verticalSpacerLg,
 
               // エサやりエリア
               _FeedingCard(pet: pet, userId: userId),
-              const SizedBox(height: 24),
+              AppSpacing.verticalSpacerLg,
 
               // 進化情報
               _EvolutionInfoCard(pet: pet),
-              const SizedBox(height: 24),
+              AppSpacing.verticalSpacerLg,
 
               // 装飾品エリア
               _DecorationsCard(pet: pet, userId: userId),
@@ -125,10 +129,10 @@ class _PetDisplayCard extends ConsumerWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
         border: Border.all(color: Colors.blue.shade200),
       ),
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(AppSpacing.xl),
       child: Column(
         children: [
           // ペットイラスト表示エリア
@@ -136,7 +140,7 @@ class _PetDisplayCard extends ConsumerWidget {
             height: 200,
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(AppSizes.borderRadius),
             ),
             child: Center(
               child: Image.asset(
@@ -145,12 +149,12 @@ class _PetDisplayCard extends ConsumerWidget {
                 fit: BoxFit.contain,
                 errorBuilder: (context, error, stackTrace) => Text(
                   pet.species.displayName,
-                  style: const TextStyle(fontSize: 80),
+                  style: AppTypography.headlineLarge,
                 ),
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          AppSpacing.verticalSpacerMd,
 
           // ペット情報
           Row(
@@ -158,37 +162,28 @@ class _PetDisplayCard extends ConsumerWidget {
             children: [
               Column(
                 children: [
-                  const Text('名前', style: TextStyle(color: Colors.grey)),
+                  Text('名前', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
                   Text(
                     pet.species.displayName.split(' ').last,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
               Column(
                 children: [
-                  const Text('段階', style: TextStyle(color: Colors.grey)),
+                  Text('段階', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
                   Text(
                     pet.currentStage.displayName,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
               Column(
                 children: [
-                  const Text('気分', style: TextStyle(color: Colors.grey)),
+                  Text('気分', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
                   Text(
                     pet.currentMood.displayName.split(' ').last,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -218,7 +213,7 @@ class _PetStatusBar extends StatelessWidget {
           color: Colors.purple,
           subLabel: '${pet.exp}/100 XP',
         ),
-        const SizedBox(height: 12),
+        AppSpacing.verticalSpacerSm,
 
         // 満腹度
         _StatusItem(
@@ -228,7 +223,7 @@ class _PetStatusBar extends StatelessWidget {
           color: Colors.orange,
           subLabel: pet.hunger > 80 ? '🍽️ ご飯が必要！' : '元気です',
         ),
-        const SizedBox(height: 12),
+        AppSpacing.verticalSpacerSm,
 
         // 幸福度
         _StatusItem(
@@ -269,14 +264,14 @@ class _StatusItem extends StatelessWidget {
           children: [
             Text(
               label,
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: AppTypography.labelLarge,
             ),
-            Text(value, style: TextStyle(color: color, fontWeight: FontWeight.bold)),
+            Text(value, style: AppTypography.labelLarge.copyWith(color: color)),
           ],
         ),
-        const SizedBox(height: 4),
+        AppSpacing.verticalSpacerXs,
         ClipRRect(
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
           child: LinearProgressIndicator(
             value: progress.clamp(0.0, 1.0),
             minHeight: 8,
@@ -285,10 +280,10 @@ class _StatusItem extends StatelessWidget {
           ),
         ),
         if (subLabel != null) ...[
-          const SizedBox(height: 4),
+          AppSpacing.verticalSpacerXs,
           Text(
             subLabel!,
-            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+            style: AppTypography.bodySmall.copyWith(color: kTextMuted),
           ),
         ],
       ],
@@ -311,25 +306,25 @@ class _FeedingCard extends ConsumerWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.amber.shade50,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppSizes.borderRadius),
         border: Border.all(color: Colors.amber.shade200),
       ),
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.allPaddingMd,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             '🍽️ エサやり',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 12),
+          AppSpacing.verticalSpacerSm,
           Text(
             pet.isFedToday
                 ? '✅ 今日はもうエサをやりました！\n明日また会いましょう。'
                 : '📍 発音問題に正解してペットにエサをやろう！\n発音スコア 60点以上でエサやりできます。',
-            style: TextStyle(color: Colors.grey[700]),
+            style: AppTypography.bodySmall.copyWith(color: kTextMuted),
           ),
-          const SizedBox(height: 12),
+          AppSpacing.verticalSpacerSm,
           if (!pet.isFedToday)
             ElevatedButton(
               onPressed: () {
@@ -338,18 +333,14 @@ class _FeedingCard extends ConsumerWidget {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.amber,
-                minimumSize: const Size(double.infinity, 44),
+                minimumSize: const Size(double.infinity, AppSizes.buttonHeight),
               ),
               child: const Text('練習に戻る'),
             ),
           if (pet.isFedToday)
             Text(
               '連続 ${pet.consecutiveFeedDays} 日達成！🎉',
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Colors.orange,
-              ),
+              style: AppTypography.labelLarge.copyWith(color: kAccentOrange),
             ),
         ],
       ),
@@ -370,32 +361,32 @@ class _EvolutionInfoCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.green.shade50,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppSizes.borderRadius),
         border: Border.all(color: Colors.green.shade200),
       ),
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.allPaddingMd,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             '✨ 進化',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 12),
+          AppSpacing.verticalSpacerSm,
           if (nextEvolution != null)
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'あと $nextEvolution レベルで進化します！',
-                  style: const TextStyle(fontSize: 14),
+                  style: AppTypography.bodySmall,
                 ),
-                const SizedBox(height: 8),
+                AppSpacing.verticalSpacerXs,
                 Row(
                   children: [
                     Expanded(
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
+                        borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
                         child: LinearProgressIndicator(
                           value: (pet.level / (pet.currentStage.requiredLevel + 10))
                               .clamp(0.0, 1.0),
@@ -410,14 +401,14 @@ class _EvolutionInfoCard extends StatelessWidget {
               ],
             )
           else
-            const Text(
+            Text(
               '🎉 マスター！最高段階に到達しました！',
-              style: TextStyle(fontSize: 14, color: Colors.green),
+              style: AppTypography.bodySmall.copyWith(color: kAccentGreen),
             ),
-          const SizedBox(height: 12),
+          AppSpacing.verticalSpacerSm,
           Text(
             '進化日時: ${pet.evolveDates.length}回',
-            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+            style: AppTypography.bodySmall.copyWith(color: kTextMuted),
           ),
         ],
       ),
@@ -440,27 +431,27 @@ class _DecorationsCard extends ConsumerWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.purple.shade50,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppSizes.borderRadius),
         border: Border.all(color: Colors.purple.shade200),
       ),
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.allPaddingMd,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             '🎀 装飾品',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 12),
+          AppSpacing.verticalSpacerSm,
           if (pet.decorationIds.isEmpty)
             Text(
               'まだ装飾品を装備していません。\nコインで買ってみよう！',
-              style: TextStyle(color: Colors.grey[700]),
+              style: AppTypography.bodySmall.copyWith(color: kTextMuted),
             )
           else
             Wrap(
-              spacing: 8,
-              runSpacing: 8,
+              spacing: AppSpacing.xs,
+              runSpacing: AppSpacing.xs,
               children: pet.decorationIds.map((id) {
                 final decoration = PetDecorationPresets.fromId(id);
                 if (decoration == null) return const SizedBox();
@@ -474,7 +465,7 @@ class _DecorationsCard extends ConsumerWidget {
                 );
               }).toList(),
             ),
-          const SizedBox(height: 12),
+          AppSpacing.verticalSpacerSm,
           ElevatedButton(
             onPressed: () {
               // ショップ画面へ（要実装）
@@ -484,7 +475,7 @@ class _DecorationsCard extends ConsumerWidget {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.purple,
-              minimumSize: const Size(double.infinity, 40),
+              minimumSize: const Size(double.infinity, AppSizes.buttonHeight),
             ),
             child: const Text('装飾品を探す'),
           ),
