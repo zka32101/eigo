@@ -6,7 +6,9 @@ import '../models/badge_model.dart';
 import '../models/stage.dart';
 import '../providers/level_provider.dart';
 import '../theme/app_theme.dart';
+import '../theme/spacing.dart';
 import '../widgets/xp_bar.dart';
+import '../widgets/result_screen_components.dart';
 
 class ResultScreen extends ConsumerStatefulWidget {
   final Map<String, dynamic> args;
@@ -86,31 +88,31 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                _ResultHeader(
+                ImprovedResultHeader(
                   isPassed: isPassed,
                   isExcellent: isExcellent,
                   accuracy: accuracy,
                   score: score,
                   xpGained: xpGained,
                 ),
-                const SizedBox(height: 12),
+                AppSpacing.verticalSpacerMd,
                 // XPバー（レベル進捗）
                 if (xpGained > 0) XpBar(level: level),
-                const SizedBox(height: 12),
-                _SkillResultCards(
+                AppSpacing.verticalSpacerMd,
+                ImprovedSkillResultCards(
                   speakingAvg: speakingAvg,
                   listeningAccuracy: listeningAccuracy,
                   duration: duration,
                 ),
-                const SizedBox(height: 16),
-                _ContentPieChart(stage: stage),
+                AppSpacing.verticalSpacerLg,
+                ImprovedContentBreakdown(stage: stage),
                 if (newBadges.isNotEmpty) ...[
-                  const SizedBox(height: 16),
-                  _NewBadgesCard(badges: newBadges),
+                  AppSpacing.verticalSpacerLg,
+                  ImprovedNewBadgesCard(badges: newBadges),
                 ],
-                const SizedBox(height: 24),
+                AppSpacing.verticalSpacerXxl,
                 _ActionButtons(stage: stage, isPassed: isPassed),
-                const SizedBox(height: 32),
+                AppSpacing.verticalSpacerXxl,
               ],
             ),
           ),
@@ -138,274 +140,7 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
   }
 }
 
-// ─── Result Header ──────────────────────────────────────────────
-
-class _ResultHeader extends StatelessWidget {
-  final bool isPassed;
-  final bool isExcellent;
-  final double accuracy;
-  final int score;
-  final int xpGained;
-  const _ResultHeader({
-    required this.isPassed,
-    required this.isExcellent,
-    required this.accuracy,
-    required this.score,
-    this.xpGained = 0,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final emoji = isExcellent ? '🏆' : isPassed ? '⭐' : '💪';
-    final message = isExcellent ? 'すばらしい！パーフェクトに近い！' : isPassed ? 'クリア！よくできました！' : 'もう少し！もう一度挑戦しよう！';
-    final color = isPassed ? kAccentGreen : kAccentOrange;
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          children: [
-            Text(emoji, style: const TextStyle(fontSize: 64)),
-            const SizedBox(height: 8),
-            Text(
-              message,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: color),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _ResultStat('スコア', '$score点', kPrimaryColor),
-                _ResultStat('正解率', '${(accuracy * 100).round()}%', color),
-                if (xpGained > 0)
-                  _ResultStat('XP獲得', '+$xpGained', const Color(0xFFFFD700)),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _ResultStat extends StatelessWidget {
-  final String label;
-  final String value;
-  final Color color;
-  const _ResultStat(this.label, this.value, this.color);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(value, style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: color)),
-        Text(label, style: const TextStyle(fontSize: 14, color: kTextMuted)),
-      ],
-    );
-  }
-}
-
-// ─── Skill Result Cards ─────────────────────────────────────────
-
-class _SkillResultCards extends StatelessWidget {
-  final int speakingAvg;
-  final int listeningAccuracy;
-  final Duration duration;
-  const _SkillResultCards({
-    required this.speakingAvg,
-    required this.listeningAccuracy,
-    required this.duration,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final mins = duration.inMinutes;
-    final secs = duration.inSeconds % 60;
-
-    return Row(
-      children: [
-        Expanded(child: _SkillResultCard(icon: '👂', label: 'リスニング', value: '$listeningAccuracy%', color: kListeningColor)),
-        const SizedBox(width: 8),
-        Expanded(child: _SkillResultCard(icon: '🎤', label: 'スピーキング', value: '$speakingAvg点', color: kSpeakingColor)),
-        const SizedBox(width: 8),
-        Expanded(child: _SkillResultCard(icon: '⏱️', label: '時間', value: '$mins:${secs.toString().padLeft(2, '0')}', color: kAccentOrange)),
-      ],
-    );
-  }
-}
-
-class _SkillResultCard extends StatelessWidget {
-  final String icon;
-  final String label;
-  final String value;
-  final Color color;
-  const _SkillResultCard({required this.icon, required this.label, required this.value, required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
-        child: Column(
-          children: [
-            Text(icon, style: const TextStyle(fontSize: 24)),
-            const SizedBox(height: 4),
-            Text(value, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: color)),
-            Text(label, style: const TextStyle(fontSize: 11, color: kTextMuted)),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ─── Content Pie Chart ──────────────────────────────────────────
-
-class _ContentPieChart extends StatelessWidget {
-  final Stage stage;
-  const _ContentPieChart({required this.stage});
-
-  @override
-  Widget build(BuildContext context) {
-    final total = stage.questions.length;
-    if (total == 0) return const SizedBox.shrink();
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('このレッスンの内容', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 12),
-            SizedBox(
-              height: 160,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: PieChart(
-                      PieChartData(
-                        sections: [
-                          if (stage.listeningCount > 0)
-                            PieChartSectionData(
-                              value: stage.listeningCount.toDouble(),
-                              color: kListeningColor,
-                              title: '${(stage.listeningCount / total * 100).round()}%',
-                              titleStyle: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
-                              radius: 60,
-                            ),
-                          if (stage.speakingCount > 0)
-                            PieChartSectionData(
-                              value: stage.speakingCount.toDouble(),
-                              color: kSpeakingColor,
-                              title: '${(stage.speakingCount / total * 100).round()}%',
-                              titleStyle: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
-                              radius: 60,
-                            ),
-                          if (stage.readingCount > 0)
-                            PieChartSectionData(
-                              value: stage.readingCount.toDouble(),
-                              color: kReadingColor,
-                              title: '${(stage.readingCount / total * 100).round()}%',
-                              titleStyle: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
-                              radius: 60,
-                            ),
-                          if (stage.writingCount > 0)
-                            PieChartSectionData(
-                              value: stage.writingCount.toDouble(),
-                              color: kWritingColor,
-                              title: '${(stage.writingCount / total * 100).round()}%',
-                              titleStyle: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
-                              radius: 60,
-                            ),
-                        ],
-                        sectionsSpace: 2,
-                        centerSpaceRadius: 20,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _Legend('👂 Listening', kListeningColor, stage.listeningCount),
-                      _Legend('🎤 Speaking', kSpeakingColor, stage.speakingCount),
-                      _Legend('📖 Reading', kReadingColor, stage.readingCount),
-                      _Legend('✏️ Writing', kWritingColor, stage.writingCount),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _Legend extends StatelessWidget {
-  final String label;
-  final Color color;
-  final int count;
-  const _Legend(this.label, this.color, this.count);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Row(
-        children: [
-          Container(width: 12, height: 12, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
-          const SizedBox(width: 6),
-          Text('$label: $count問', style: const TextStyle(fontSize: 12, color: kTextDark)),
-        ],
-      ),
-    );
-  }
-}
-
-// ─── New Badges Card ────────────────────────────────────────────
-
-class _NewBadgesCard extends StatelessWidget {
-  final List<BadgeModel> badges;
-  const _NewBadgesCard({required this.badges});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      color: const Color(0xFFFFF9E6),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('🎉 新しいバッジ獲得！',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: kAccentOrange)),
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 12,
-              children: badges.map((b) => Column(
-                children: [
-                  Text(b.emoji, style: const TextStyle(fontSize: 40)),
-                  Text(b.title, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
-                  SizedBox(
-                    width: 80,
-                    child: Text(b.description,
-                        style: const TextStyle(fontSize: 10, color: kTextMuted),
-                        textAlign: TextAlign.center),
-                  ),
-                ],
-              )).toList(),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+// Old component classes removed (now using ImprovedXxx components from result_screen_components.dart)
 
 // ─── Action Buttons ─────────────────────────────────────────────
 
