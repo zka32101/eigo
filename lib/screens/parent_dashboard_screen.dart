@@ -4,6 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/progress_provider.dart';
 import '../providers/speaking_history_provider.dart';
 import '../theme/app_theme.dart';
+import '../theme/spacing.dart';
+import '../theme/sizes.dart';
+import '../theme/typography.dart';
 import '../widgets/skill_progress_bar.dart';
 import '../widgets/speaking_score_ring.dart';
 
@@ -28,22 +31,22 @@ class ParentDashboardScreen extends ConsumerWidget {
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.allPaddingMd,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _OverviewCard(progress: progress, history: history),
-            const SizedBox(height: 16),
+            AppSpacing.verticalSpacerMd,
             _SpeakingRingsRow(history: history),
-            const SizedBox(height: 16),
+            AppSpacing.verticalSpacerMd,
             _SpeakingDetailCard(progress: progress, history: history),
-            const SizedBox(height: 16),
+            AppSpacing.verticalSpacerMd,
             _WeeklyProgressCard(history: history),
-            const SizedBox(height: 16),
+            AppSpacing.verticalSpacerMd,
             _AIAdviceCard(progress: progress, history: history),
-            const SizedBox(height: 16),
+            AppSpacing.verticalSpacerMd,
             _ParentActionCard(progress: progress),
-            const SizedBox(height: 32),
+            AppSpacing.verticalSpacerXxl,
           ],
         ),
       ),
@@ -65,13 +68,13 @@ class _OverviewCard extends StatelessWidget {
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.allPaddingMd,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('📊 今週の学習サマリー',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: kTextDark)),
-            const SizedBox(height: 12),
+            Text('📊 今週の学習サマリー',
+                style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold, color: kTextDark)),
+            AppSpacing.verticalSpacerXs,
             Row(
               children: [
                 Expanded(child: _OverviewStat('📚', 'レッスン', '${progress.totalLessons}回', kPrimaryColor)),
@@ -80,9 +83,9 @@ class _OverviewCard extends StatelessWidget {
               ],
             ),
             if (improvement != 0) ...[
-              const SizedBox(height: 10),
+              AppSpacing.verticalSpacerXs,
               const Divider(height: 1),
-              const SizedBox(height: 10),
+              AppSpacing.verticalSpacerXs,
               Row(
                 children: [
                   Icon(
@@ -90,10 +93,10 @@ class _OverviewCard extends StatelessWidget {
                     color: improvement > 0 ? kAccentGreen : kAccentRed,
                     size: 18,
                   ),
-                  const SizedBox(width: 6),
+                  AppSpacing.horizontalSpacerXs,
                   Text(
                     '先週比: ${improvement > 0 ? '+' : ''}${improvement.round()}点',
-                    style: TextStyle(
+                    style: AppTypography.bodySmall.copyWith(
                       color: improvement > 0 ? kAccentGreen : kAccentRed,
                       fontWeight: FontWeight.bold,
                       fontSize: 13,
@@ -102,7 +105,7 @@ class _OverviewCard extends StatelessWidget {
                   const Spacer(),
                   Text(
                     improvement > 0 ? '調子がいいです！🌟' : 'もう少し頑張ろう💪',
-                    style: TextStyle(
+                    style: AppTypography.bodySmall.copyWith(
                       color: improvement > 0 ? kAccentGreen : kAccentOrange,
                       fontSize: 13,
                     ),
@@ -129,8 +132,8 @@ class _OverviewStat extends StatelessWidget {
     return Column(
       children: [
         Text(icon, style: const TextStyle(fontSize: 24)),
-        Text(value, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: color)),
-        Text(label, style: const TextStyle(fontSize: 11, color: kTextMuted)),
+        Text(value, style: AppTypography.headlineSmall.copyWith(fontWeight: FontWeight.bold, color: color)),
+        Text(label, style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 11)),
       ],
     );
   }
@@ -154,12 +157,12 @@ class _SpeakingRingsRow extends StatelessWidget {
         Expanded(
           child: Card(
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: AppSpacing.allPaddingMd,
               child: Column(
                 children: [
                   SpeakingScoreRing(score: todayScore, size: 72),
-                  const SizedBox(height: 4),
-                  const Text('今日のスコア', style: TextStyle(fontSize: 11, color: kTextMuted)),
+                  AppSpacing.verticalSpacerXs,
+                  Text('今日のスコア', style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 11)),
                 ],
               ),
             ),
@@ -168,12 +171,12 @@ class _SpeakingRingsRow extends StatelessWidget {
         Expanded(
           child: Card(
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: AppSpacing.allPaddingMd,
               child: Column(
                 children: [
                   SpeakingScoreRing(score: avgScore, size: 72),
-                  const SizedBox(height: 4),
-                  const Text('今週の平均', style: TextStyle(fontSize: 11, color: kTextMuted)),
+                  AppSpacing.verticalSpacerXs,
+                  Text('今週の平均', style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 11)),
                 ],
               ),
             ),
@@ -182,16 +185,16 @@ class _SpeakingRingsRow extends StatelessWidget {
         Expanded(
           child: Card(
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: AppSpacing.allPaddingMd,
               child: Column(
                 children: [
                   Text(
                     '$weekTotal',
-                    style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: kSpeakingColor),
+                    style: AppTypography.headlineLarge.copyWith(fontWeight: FontWeight.bold, color: kSpeakingColor),
                   ),
-                  const Text('回', style: TextStyle(color: kTextMuted)),
-                  const SizedBox(height: 4),
-                  const Text('今週の練習', style: TextStyle(fontSize: 11, color: kTextMuted)),
+                  Text('回', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+                  AppSpacing.verticalSpacerXs,
+                  Text('今週の練習', style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 11)),
                 ],
               ),
             ),
@@ -213,13 +216,13 @@ class _SpeakingDetailCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.allPaddingMd,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('🎤 スピーキング詳細',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: kTextDark)),
-            const SizedBox(height: 16),
+            Text('🎤 スピーキング詳細',
+                style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold, color: kTextDark)),
+            AppSpacing.verticalSpacerMd,
             SkillProgressBar(
               icon: '🗣️',
               label: '単語発音',
@@ -227,7 +230,7 @@ class _SpeakingDetailCard extends StatelessWidget {
               color: kSpeakingColor,
               trailing: '${history.weeklyWordCount}/30個',
             ),
-            const SizedBox(height: 10),
+            AppSpacing.verticalSpacerXs,
             SkillProgressBar(
               icon: '💬',
               label: 'フレーズ',
@@ -235,7 +238,7 @@ class _SpeakingDetailCard extends StatelessWidget {
               color: kListeningColor,
               trailing: '${history.weeklyPhraseCount}/40個',
             ),
-            const SizedBox(height: 10),
+            AppSpacing.verticalSpacerXs,
             SkillProgressBar(
               icon: '🗨️',
               label: '会話形式',
@@ -243,18 +246,18 @@ class _SpeakingDetailCard extends StatelessWidget {
               color: kAccentGreen,
               trailing: '${history.weeklyConversationCount}/20回',
             ),
-            const Divider(height: 24),
+            Divider(height: AppSpacing.xl),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('累計スピーキング練習', style: TextStyle(fontWeight: FontWeight.bold, color: kTextDark)),
+                Text('累計スピーキング練習', style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold, color: kTextDark)),
                 Row(
                   children: [
                     Text(
                       '${progress.totalSpeakingPractice}',
-                      style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: kSpeakingColor),
+                      style: AppTypography.headlineLarge.copyWith(fontWeight: FontWeight.bold, color: kSpeakingColor),
                     ),
-                    const Text(' 個', style: TextStyle(color: kTextMuted)),
+                    Text(' 個', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
                   ],
                 ),
               ],
@@ -291,19 +294,19 @@ class _WeeklyProgressCard extends StatelessWidget {
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.allPaddingMd,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('📈 スピーキングスコア推移（週）',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                Text('📈 スピーキングスコア推移（週）',
+                    style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold)),
                 if (improvement != 0)
                   Text(
                     '${improvement > 0 ? '+' : ''}${improvement.round()}点',
-                    style: TextStyle(
+                    style: AppTypography.bodySmall.copyWith(
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
                       color: improvement > 0 ? kAccentGreen : kAccentRed,
@@ -311,7 +314,7 @@ class _WeeklyProgressCard extends StatelessWidget {
                   ),
               ],
             ),
-            const SizedBox(height: 16),
+            AppSpacing.verticalSpacerMd,
             SizedBox(
               height: 160,
               child: LineChart(
@@ -331,7 +334,7 @@ class _WeeklyProgressCard extends StatelessWidget {
                         reservedSize: 32,
                         getTitlesWidget: (val, meta) => Text(
                           '${val.round()}',
-                          style: const TextStyle(fontSize: 10, color: kTextMuted),
+                          style: AppTypography.bodySmall.copyWith(fontSize: 10, color: kTextMuted),
                         ),
                         interval: 25,
                       ),
@@ -344,8 +347,8 @@ class _WeeklyProgressCard extends StatelessWidget {
                           final dayOfWeek = now.subtract(Duration(days: 6 - val.round())).weekday - 1;
                           if (dayOfWeek < 0 || dayOfWeek >= days.length) return const SizedBox.shrink();
                           return Padding(
-                            padding: const EdgeInsets.only(top: 4),
-                            child: Text(days[dayOfWeek], style: const TextStyle(fontSize: 11, color: kTextMuted)),
+                            padding: EdgeInsets.only(top: 4),
+                            child: Text(days[dayOfWeek], style: AppTypography.bodySmall.copyWith(fontSize: 11, color: kTextMuted)),
                           );
                         },
                       ),
@@ -430,17 +433,17 @@ class _AIAdviceCard extends StatelessWidget {
     return Card(
       color: const Color(0xFFF0F7FF),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.allPaddingMd,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('💬 AIからの親へのアドバイス',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: kPrimaryColor)),
-            const SizedBox(height: 12),
+            Text('💬 AIからの親へのアドバイス',
+                style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold, color: kPrimaryColor)),
+            AppSpacing.verticalSpacerXs,
             _AdviceSection('✨ お子さんの成長', growth),
-            const SizedBox(height: 10),
+            AppSpacing.verticalSpacerXs,
             _AdviceSection('🎯 今の課題', challenge),
-            const SizedBox(height: 10),
+            AppSpacing.verticalSpacerXs,
             _AdviceSection('🏠 親ができる支援', parentAction),
           ],
         ),
@@ -459,9 +462,9 @@ class _AdviceSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: const TextStyle(fontWeight: FontWeight.bold, color: kTextDark, fontSize: 14)),
-        const SizedBox(height: 4),
-        Text(body, style: const TextStyle(color: kTextMuted, fontSize: 13, height: 1.5)),
+        Text(title, style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold, color: kTextDark, fontSize: 14)),
+        AppSpacing.verticalSpacerXs,
+        Text(body, style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 13, height: 1.5)),
       ],
     );
   }
@@ -478,13 +481,13 @@ class _ParentActionCard extends StatelessWidget {
     return Card(
       color: const Color(0xFFFFF3E0),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.allPaddingMd,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('📋 今週のアクションリスト',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: kAccentOrange)),
-            const SizedBox(height: 12),
+            Text('📋 今週のアクションリスト',
+                style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold, color: kAccentOrange)),
+            AppSpacing.verticalSpacerXs,
             _ActionItem('毎日5分のリスニング練習を続けよう', progress.streakDays >= 3),
             _ActionItem('スピーキング10問チャレンジ', progress.totalSpeakingPractice >= 10),
             _ActionItem('ステージ1をクリアする', progress.clearedStages.contains('stage_1')),
@@ -505,7 +508,7 @@ class _ActionItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
           Icon(
@@ -513,11 +516,11 @@ class _ActionItem extends StatelessWidget {
             color: done ? kAccentGreen : Colors.grey,
             size: 20,
           ),
-          const SizedBox(width: 8),
+          AppSpacing.horizontalSpacerXs,
           Expanded(
             child: Text(
               text,
-              style: TextStyle(
+              style: AppTypography.labelLarge.copyWith(
                 fontSize: 14,
                 color: done ? kAccentGreen : kTextDark,
                 decoration: done ? TextDecoration.lineThrough : null,
