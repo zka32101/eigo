@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/purchase_provider.dart';
 import '../theme/app_theme.dart';
+import '../theme/spacing.dart';
+import '../theme/sizes.dart';
+import '../theme/typography.dart';
 
 enum PlanType { lite, pro, plus, premium }
 
@@ -23,47 +26,47 @@ class _UpgradeScreenState extends ConsumerState<UpgradeScreen> {
         backgroundColor: kPrimaryColor,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.allPaddingMd,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _HeroSection(),
-            const SizedBox(height: 20),
+            AppSpacing.verticalSpacerLg,
             _ComparisonHeader(),
-            const SizedBox(height: 12),
+            AppSpacing.verticalSpacerXs,
             _PlanCard(
               plan: PlanType.lite,
               selected: _selected == PlanType.lite,
               onTap: () => setState(() => _selected = PlanType.lite),
             ),
-            const SizedBox(height: 8),
+            AppSpacing.verticalSpacerXs,
             _PlanCard(
               plan: PlanType.pro,
               selected: _selected == PlanType.pro,
               isRecommended: true,
               onTap: () => setState(() => _selected = PlanType.pro),
             ),
-            const SizedBox(height: 8),
+            AppSpacing.verticalSpacerXs,
             _PlanCard(
               plan: PlanType.plus,
               selected: _selected == PlanType.plus,
               onTap: () => setState(() => _selected = PlanType.plus),
             ),
-            const SizedBox(height: 8),
+            AppSpacing.verticalSpacerXs,
             _PlanCard(
               plan: PlanType.premium,
               selected: _selected == PlanType.premium,
               onTap: () => setState(() => _selected = PlanType.premium),
             ),
-            const SizedBox(height: 24),
+            AppSpacing.verticalSpacerXl,
             _SubscribeButton(plan: _selected),
-            const SizedBox(height: 12),
+            AppSpacing.verticalSpacerXs,
             _TrialBanner(),
-            const SizedBox(height: 20),
+            AppSpacing.verticalSpacerLg,
             _FeatureComparisonTable(),
-            const SizedBox(height: 16),
+            AppSpacing.verticalSpacerMd,
             _Disclaimer(),
-            const SizedBox(height: 32),
+            AppSpacing.verticalSpacerXxl,
           ],
         ),
       ),
@@ -75,28 +78,28 @@ class _HeroSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(AppSpacing.xl),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [kPrimaryColor, kPrimaryLight],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
       ),
       child: Column(
         children: [
           const Text('🎤', style: TextStyle(fontSize: 48)),
-          const SizedBox(height: 12),
-          const Text(
+          AppSpacing.verticalSpacerXs,
+          Text(
             'スピーキング力を\n本物にしよう！',
-            style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold, height: 1.4),
+            style: AppTypography.headlineLarge.copyWith(color: Colors.white, height: 1.4),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 8),
-          const Text(
+          AppSpacing.verticalSpacerXs,
+          Text(
             'AI発音チェック × 親向け詳細フィードバック',
-            style: TextStyle(color: Colors.white70, fontSize: 13),
+            style: AppTypography.bodySmall.copyWith(color: Colors.white70),
             textAlign: TextAlign.center,
           ),
         ],
@@ -112,10 +115,10 @@ class _ComparisonHeader extends StatelessWidget {
       children: [
         const Expanded(child: Divider()),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
+          padding: EdgeInsets.symmetric(horizontal: AppSpacing.xs),
           child: Text(
             'プランを選択',
-            style: TextStyle(color: Colors.grey.shade600, fontSize: 13, fontWeight: FontWeight.bold),
+            style: AppTypography.bodySmall.copyWith(color: Colors.grey.shade600, fontWeight: FontWeight.bold, fontSize: 13),
           ),
         ),
         const Expanded(child: Divider()),
@@ -217,7 +220,7 @@ class _PlanCard extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
           border: Border.all(
             color: selected ? color : Colors.grey.shade200,
             width: selected ? 2.5 : 1,
@@ -227,7 +230,7 @@ class _PlanCard extends StatelessWidget {
               : [],
         ),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: AppSpacing.allPaddingMd,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -243,21 +246,21 @@ class _PlanCard extends StatelessWidget {
                     ),
                     child: selected ? const Icon(Icons.check, color: Colors.white, size: 12) : null,
                   ),
-                  const SizedBox(width: 10),
+                  AppSpacing.horizontalSpacerXs,
                   Text(
                     _planName(plan),
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: selected ? color : kTextDark),
+                    style: AppTypography.headlineSmall.copyWith(fontWeight: FontWeight.bold, color: selected ? color : kTextDark),
                   ),
-                  const SizedBox(width: 8),
+                  AppSpacing.horizontalSpacerXs,
                   if (isRecommended)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      padding: EdgeInsets.symmetric(horizontal: AppSpacing.xs, vertical: 2),
                       decoration: BoxDecoration(
                         color: color.withAlpha(26),
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                         border: Border.all(color: color.withAlpha(76)),
                       ),
-                      child: Text('おすすめ', style: TextStyle(fontSize: 10, color: color, fontWeight: FontWeight.bold)),
+                      child: Text('おすすめ', style: AppTypography.bodySmall.copyWith(color: color, fontWeight: FontWeight.bold, fontSize: 10)),
                     ),
                   const Spacer(),
                   Column(
@@ -265,25 +268,25 @@ class _PlanCard extends StatelessWidget {
                     children: [
                       Text(
                         _planPrice(plan),
-                        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: selected ? color : kTextDark),
+                        style: AppTypography.headlineLarge.copyWith(fontWeight: FontWeight.bold, color: selected ? color : kTextDark),
                       ),
-                      const Text('/月', style: TextStyle(fontSize: 11, color: kTextMuted)),
+                      Text('/月', style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 11)),
                     ],
                   ),
                 ],
               ),
-              const SizedBox(height: 6),
+              AppSpacing.verticalSpacerXs,
               Padding(
-                padding: const EdgeInsets.only(left: 30),
-                child: Text(_planSubtitle(plan), style: const TextStyle(color: kTextMuted, fontSize: 13)),
+                padding: EdgeInsets.only(left: 30),
+                child: Text(_planSubtitle(plan), style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 13)),
               ),
               if (selected) ...[
-                const SizedBox(height: 12),
+                AppSpacing.verticalSpacerXs,
                 const Divider(height: 1),
-                const SizedBox(height: 12),
+                AppSpacing.verticalSpacerXs,
                 ..._planFeatures(plan).map((f) => Padding(
-                  padding: const EdgeInsets.only(bottom: 4, left: 4),
-                  child: Text(f, style: TextStyle(
+                  padding: EdgeInsets.only(bottom: AppSpacing.xs, left: 4),
+                  child: Text(f, style: AppTypography.bodySmall.copyWith(
                     fontSize: 13,
                     color: f.startsWith('✅') ? kTextDark : Colors.grey,
                   )),
@@ -319,15 +322,15 @@ class _SubscribeButton extends ConsumerWidget {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: color,
-        padding: const EdgeInsets.symmetric(vertical: 18),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSizes.borderRadius)),
       ),
       onPressed: isLoading ? null : () => _showPurchaseDialog(context, ref, plan),
       child: isLoading
           ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
           : Text(
               '${_planName(plan)} プランに登録する（${_planPrice(plan)}/月）',
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+              style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold, color: Colors.white),
             ),
     );
   }
@@ -342,10 +345,10 @@ class _SubscribeButton extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('${_planPrice(plan)}/月 で申し込みます。'),
-            const SizedBox(height: 8),
-            const Text(
+            AppSpacing.verticalSpacerXs,
+            Text(
               'App Store / Google Play の決済を通じて請求されます。\nいつでもキャンセル可能です。',
-              style: TextStyle(fontSize: 13, color: kTextMuted),
+              style: AppTypography.bodySmall.copyWith(fontSize: 13, color: kTextMuted),
             ),
           ],
         ),
@@ -376,20 +379,20 @@ class _TrialBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: EdgeInsets.all(AppSpacing.xs),
       decoration: BoxDecoration(
         color: kAccentGreen.withAlpha(26),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppSizes.borderRadius),
         border: Border.all(color: kAccentGreen.withAlpha(76)),
       ),
-      child: const Row(
+      child: Row(
         children: [
-          Text('🎁', style: TextStyle(fontSize: 20)),
-          SizedBox(width: 10),
+          const Text('🎁', style: TextStyle(fontSize: 20)),
+          AppSpacing.horizontalSpacerXs,
           Expanded(
             child: Text(
               '2週間無料トライアル実施中！\nすべてのプランで全機能をお試しいただけます。',
-              style: TextStyle(fontSize: 13, color: kAccentGreen, fontWeight: FontWeight.bold),
+              style: AppTypography.bodySmall.copyWith(fontSize: 13, color: kAccentGreen, fontWeight: FontWeight.bold),
             ),
           ),
         ],
@@ -403,12 +406,12 @@ class _FeatureComparisonTable extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.allPaddingMd,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('機能比較', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 12),
+            Text('機能比較', style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold)),
+            AppSpacing.verticalSpacerXs,
             Table(
               columnWidths: const {
                 0: FlexColumnWidth(2.5),
@@ -438,15 +441,15 @@ class _FeatureComparisonTable extends StatelessWidget {
   }
 
   TableRow _tableHeader() {
-    const style = TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: kTextMuted);
+    final style = AppTypography.bodySmall.copyWith(fontWeight: FontWeight.bold, color: kTextMuted, fontSize: 12);
     return TableRow(
       decoration: BoxDecoration(
         border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
       ),
       children: [
-        const Padding(padding: EdgeInsets.only(bottom: 8), child: Text('機能', style: style)),
+        Padding(padding: EdgeInsets.only(bottom: 8), child: Text('機能', style: style)),
         ...['Lite', 'Pro', 'Plus', '⭐'].map((t) => Padding(
-          padding: const EdgeInsets.only(bottom: 8),
+          padding: EdgeInsets.only(bottom: 8),
           child: Text(t, style: style, textAlign: TextAlign.center),
         )),
       ],
@@ -455,7 +458,7 @@ class _FeatureComparisonTable extends StatelessWidget {
 
   TableRow _tableRow(String label, bool lite, bool pro, bool plus, bool premium) {
     Widget cell(bool v) => Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
+      padding: EdgeInsets.symmetric(vertical: 6),
       child: Icon(
         v ? Icons.check_circle : Icons.remove,
         size: 16,
@@ -465,8 +468,8 @@ class _FeatureComparisonTable extends StatelessWidget {
 
     return TableRow(children: [
       Padding(
-        padding: const EdgeInsets.symmetric(vertical: 6),
-        child: Text(label, style: const TextStyle(fontSize: 13, color: kTextDark)),
+        padding: EdgeInsets.symmetric(vertical: 6),
+        child: Text(label, style: AppTypography.bodySmall.copyWith(fontSize: 13, color: kTextDark)),
       ),
       Align(alignment: Alignment.center, child: cell(lite)),
       Align(alignment: Alignment.center, child: cell(pro)),
@@ -479,11 +482,11 @@ class _FeatureComparisonTable extends StatelessWidget {
 class _Disclaimer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return const Text(
+    return Text(
       '※ サブスクリプションは App Store / Google Play のアカウントに請求されます。\n'
       '現在の期間が終了する24時間前までに解約しない限り、自動的に更新されます。\n'
       'いつでも設定からキャンセルできます。',
-      style: TextStyle(fontSize: 11, color: kTextMuted, height: 1.5),
+      style: AppTypography.bodySmall.copyWith(fontSize: 11, color: kTextMuted, height: 1.5),
     );
   }
 }
