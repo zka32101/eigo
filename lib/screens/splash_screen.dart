@@ -5,6 +5,9 @@ import '../providers/coin_provider.dart';
 import '../services/firebase_service.dart';
 import '../services/notification_service.dart';
 import '../theme/app_theme.dart';
+import '../theme/spacing.dart';
+import '../theme/sizes.dart';
+import '../theme/typography.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -82,26 +85,25 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
             children: [
               ScaleTransition(
                 scale: _scale,
-                child: const Text('🇬🇧', style: TextStyle(fontSize: 80)),
+                child: Text('🇬🇧', style: AppTypography.headlineLarge),
               ),
-              const SizedBox(height: 20),
+              AppSpacing.verticalSpacerLg,
               FadeTransition(
                 opacity: _fade,
-                child: const Column(
+                child: Column(
                   children: [
                     Text(
                       '英語コレ！',
-                      style: TextStyle(
+                      style: AppTypography.headlineSmall.copyWith(
                         color: Colors.white,
-                        fontSize: 36,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 2,
                       ),
                     ),
-                    SizedBox(height: 8),
+                    AppSpacing.verticalSpacerXs,
                     Text(
                       'Listening & Speaking',
-                      style: TextStyle(color: Colors.white70, fontSize: 16),
+                      style: AppTypography.labelLarge.copyWith(color: Colors.white70),
                     ),
                   ],
                 ),
