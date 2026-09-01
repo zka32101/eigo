@@ -123,7 +123,7 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
                               children: [
                                 Text(
                                   profile.avatar,
-                                  style: const TextStyle(fontSize: 48),
+                                  style: AppTypography.headlineSmall.copyWith(fontSize: 48),
                                 ),
                                 AppSpacing.verticalSpacerXs,
                                 Text(
@@ -256,7 +256,7 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
                                   child: Center(
                                     child: Text(
                                       avatar,
-                                      style: const TextStyle(fontSize: 32),
+                                      style: AppTypography.headlineSmall.copyWith(fontSize: 32),
                                     ),
                                   ),
                                 ),
