@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/level_provider.dart';
 import '../providers/speaking_history_provider.dart';
 import '../theme/app_theme.dart';
+import '../theme/spacing.dart';
+import '../theme/sizes.dart';
+import '../theme/typography.dart';
 import '../widgets/xp_bar.dart';
 
 class StudyCalendarScreen extends ConsumerWidget {
@@ -26,18 +29,18 @@ class StudyCalendarScreen extends ConsumerWidget {
         ],
       ),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.allPaddingMd,
         children: [
           XpBar(level: level),
-          const SizedBox(height: 12),
+          AppSpacing.verticalSpacerXs,
           _MonthCalendar(history: history),
-          const SizedBox(height: 16),
+          AppSpacing.verticalSpacerSm,
           _HeatmapLegend(),
-          const SizedBox(height: 16),
+          AppSpacing.verticalSpacerSm,
           _WeeklyStats(history: history),
-          const SizedBox(height: 16),
+          AppSpacing.verticalSpacerSm,
           _RecentActivityList(history: history),
-          const SizedBox(height: 32),
+          AppSpacing.verticalSpacerXxl,
         ],
       ),
     );
@@ -96,7 +99,7 @@ class _MonthCalendarState extends State<_MonthCalendar> {
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(AppSpacing.md),
         child: Column(
           children: [
             // ナビゲーション
@@ -109,7 +112,7 @@ class _MonthCalendarState extends State<_MonthCalendar> {
                 ),
                 Text(
                   '${_displayMonth.year}年${_displayMonth.month}月',
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: kTextDark),
+                  style: AppTypography.headlineSmall.copyWith(color: kTextDark),
                 ),
                 IconButton(
                   icon: Icon(Icons.chevron_right, color: isCurrentMonth ? Colors.grey.shade300 : kTextDark),
@@ -117,20 +120,19 @@ class _MonthCalendarState extends State<_MonthCalendar> {
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            AppSpacing.verticalSpacerXs,
             // 曜日ヘッダー
             Row(
               children: ['日', '月', '火', '水', '木', '金', '土'].map((d) => Expanded(
                 child: Center(
-                  child: Text(d, style: TextStyle(
-                    fontSize: 12,
+                  child: Text(d, style: AppTypography.bodySmall.copyWith(
                     fontWeight: FontWeight.bold,
                     color: d == '日' ? kAccentRed : d == '土' ? kPrimaryColor : kTextMuted,
                   )),
                 ),
               )).toList(),
             ),
-            const SizedBox(height: 4),
+            AppSpacing.verticalSpacerXs,
             // カレンダーグリッド
             GridView.builder(
               shrinkWrap: true,
@@ -196,8 +198,7 @@ class _DayCell extends StatelessWidget {
       child: Center(
         child: Text(
           '$day',
-          style: TextStyle(
-            fontSize: 13,
+          style: AppTypography.bodySmall.copyWith(
             fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
             color: hasRecord
                 ? Colors.white
@@ -223,7 +224,7 @@ class _HeatmapLegend extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          const Text('スコア低 ', style: TextStyle(fontSize: 11, color: kTextMuted)),
+          Text('スコア低 ', style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 11)),
           ...[kSpeakingColor, kAccentOrange, kPrimaryColor, kAccentGreen].map((c) =>
             Container(
               width: 14,
@@ -232,7 +233,7 @@ class _HeatmapLegend extends StatelessWidget {
               decoration: BoxDecoration(color: c.withAlpha(180), borderRadius: BorderRadius.circular(3)),
             ),
           ),
-          const Text(' 高', style: TextStyle(fontSize: 11, color: kTextMuted)),
+          Text(' 高', style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 11)),
         ],
       ),
     );
@@ -254,13 +255,13 @@ class _WeeklyStats extends StatelessWidget {
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(AppSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('📊 今週のサマリー',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: kTextDark)),
-            const SizedBox(height: 12),
+            Text('📊 今週のサマリー',
+                style: AppTypography.labelLarge.copyWith(color: kTextDark)),
+            AppSpacing.verticalSpacerXs,
             Row(
               children: [
                 Expanded(child: _WeekStat('📅', '学習日数', '$studyDays日', kPrimaryColor)),
@@ -286,8 +287,8 @@ class _WeekStat extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     children: [
       Text(icon, style: const TextStyle(fontSize: 22)),
-      Text(value, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: color)),
-      Text(label, style: const TextStyle(fontSize: 11, color: kTextMuted)),
+      Text(value, style: AppTypography.labelLarge.copyWith(color: color)),
+      Text(label, style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 11)),
     ],
   );
 }
@@ -302,23 +303,23 @@ class _RecentActivityList extends StatelessWidget {
   Widget build(BuildContext context) {
     final recent = history.records.reversed.take(14).toList();
     if (recent.isEmpty) {
-      return const Card(
+      return Card(
         child: Padding(
-          padding: EdgeInsets.all(24),
-          child: Center(child: Text('まだ学習記録がありません', style: TextStyle(color: kTextMuted))),
+          padding: EdgeInsets.all(AppSpacing.xl),
+          child: Center(child: Text('まだ学習記録がありません', style: AppTypography.bodySmall.copyWith(color: kTextMuted))),
         ),
       );
     }
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(AppSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('📋 最近の学習履歴',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: kTextDark)),
-            const SizedBox(height: 12),
+            Text('📋 最近の学習履歴',
+                style: AppTypography.labelLarge.copyWith(color: kTextDark)),
+            AppSpacing.verticalSpacerXs,
             ...recent.map((r) {
               final dateStr = '${r.date.month}/${r.date.day}（${_weekdayLabel(r.date.weekday)}）';
               final scoreColor = r.avgScore >= 85
@@ -327,25 +328,25 @@ class _RecentActivityList extends StatelessWidget {
                       ? kPrimaryColor
                       : kAccentOrange;
               return Padding(
-                padding: const EdgeInsets.only(bottom: 10),
+                padding: EdgeInsets.only(bottom: AppSpacing.sm),
                 child: Row(
                   children: [
                     Container(
                       width: 8, height: 8,
-                      margin: const EdgeInsets.only(right: 10),
+                      margin: EdgeInsets.only(right: AppSpacing.sm),
                       decoration: BoxDecoration(color: scoreColor, shape: BoxShape.circle),
                     ),
-                    Text(dateStr, style: const TextStyle(fontSize: 13, color: kTextMuted)),
-                    const SizedBox(width: 8),
+                    Text(dateStr, style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+                    AppSpacing.horizontalSpacerXs,
                     Expanded(
                       child: Text(
                         '単語${r.wordCount}・フレーズ${r.phraseCount}・会話${r.conversationCount}',
-                        style: const TextStyle(fontSize: 13, color: kTextDark),
+                        style: AppTypography.bodySmall.copyWith(color: kTextDark),
                       ),
                     ),
                     Text(
                       '${r.avgScore.round()}点',
-                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: scoreColor),
+                      style: AppTypography.bodySmall.copyWith(fontWeight: FontWeight.bold, color: scoreColor),
                     ),
                   ],
                 ),
