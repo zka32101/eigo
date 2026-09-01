@@ -38,7 +38,9 @@ import 'screens/teacher_mode_screen.dart';
 import 'screens/shop_screen.dart';
 import 'screens/learning_pace_screen.dart';
 import 'screens/character_collection_screen.dart';
+import 'screens/ad_settings_screen.dart';
 import 'services/notification_service.dart';
+import 'services/ad_service.dart';
 import 'services/firebase_service.dart';
 import 'providers/morning_notification_provider.dart';
 import 'providers/coin_provider.dart';
@@ -60,6 +62,9 @@ Future<void> main() async {
 
   // Firebase初期化（未設定時はgraceful fallbackでローカルのみ動作）
   await FirebaseService().init();
+
+  // AdMob初期化
+  await AdService().initialize();
 
   // 保存済みコイン残高を読み込んでから起動（未読み込みのままだと0のみで
   // 上書きされ、既存残高が消失するため必須）
@@ -118,6 +123,7 @@ class EigoKoreApp extends ConsumerWidget {
         '/shop': (context) => const ShopScreen(),
         '/learning-pace': (context) => const LearningPaceScreen(),
         '/character-collection': (context) => const CharacterCollectionScreen(),
+        '/ad-settings': (context) => const AdSettingsScreen(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/test-prep-result') {
