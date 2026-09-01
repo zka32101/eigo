@@ -8,6 +8,9 @@ import '../providers/progress_provider.dart';
 import '../services/speech_service.dart';
 import '../services/tts_service.dart';
 import '../theme/app_theme.dart';
+import '../theme/spacing.dart';
+import '../theme/sizes.dart';
+import '../theme/typography.dart';
 
 class ConversationScreen extends ConsumerStatefulWidget {
   const ConversationScreen({super.key});
@@ -58,14 +61,14 @@ class _SelectionScreen extends StatelessWidget {
         elevation: 0,
       ),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.allPaddingMd,
         children: [
-          const Text('シナリオを選ぼう！',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: kTextDark)),
-          const SizedBox(height: 4),
-          const Text('AIキャラクターと英語で会話練習しよう',
-            style: TextStyle(fontSize: 13, color: kTextMuted)),
-          const SizedBox(height: 16),
+          Text('シナリオを選ぼう！',
+            style: AppTypography.headlineSmall.copyWith(color: kTextDark)),
+          AppSpacing.verticalSpacerXs,
+          Text('AIキャラクターと英語で会話練習しよう',
+            style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+          AppSpacing.verticalSpacerSm,
           ...allConversations.map((s) => _ScriptCard(script: s, onTap: () => onSelect(s))),
         ],
       ),
@@ -81,28 +84,28 @@ class _ScriptCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      margin: EdgeInsets.only(bottom: AppSpacing.xs),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge)),
       elevation: 2,
       child: InkWell(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: AppSpacing.allPaddingMd,
           child: Row(
             children: [
-              Text(script.emoji, style: const TextStyle(fontSize: 40)),
-              const SizedBox(width: 16),
+              Text(script.emoji, style: AppTypography.headlineSmall.copyWith(fontSize: 40)),
+              AppSpacing.horizontalSpacerSm,
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(script.titleJa,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: kTextDark)),
-                    const SizedBox(height: 4),
-                    Text(script.title, style: const TextStyle(fontSize: 12, color: kPrimaryColor)),
-                    const SizedBox(height: 4),
-                    Text(script.situation, style: const TextStyle(fontSize: 12, color: kTextMuted)),
+                      style: AppTypography.labelLarge.copyWith(color: kTextDark)),
+                    AppSpacing.verticalSpacerXs,
+                    Text(script.title, style: AppTypography.bodySmall.copyWith(color: kPrimaryColor)),
+                    AppSpacing.verticalSpacerXs,
+                    Text(script.situation, style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
                   ],
                 ),
               ),
@@ -135,38 +138,38 @@ class _IntroScreen extends StatelessWidget {
       ),
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.all(32),
+          padding: EdgeInsets.all(AppSpacing.xxl),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(script.emoji, style: const TextStyle(fontSize: 80)),
-              const SizedBox(height: 16),
+              Text(script.emoji, style: AppTypography.headlineLarge),
+              AppSpacing.verticalSpacerSm,
               Text(script.titleJa,
-                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: kTextDark)),
-              const SizedBox(height: 8),
+                style: AppTypography.headlineMedium.copyWith(color: kTextDark)),
+              AppSpacing.verticalSpacerXs,
               Container(
-                padding: const EdgeInsets.all(16),
+                padding: AppSpacing.allPaddingMd,
                 decoration: BoxDecoration(
                   color: kPrimaryColor.withAlpha(20),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
                 ),
                 child: Text(script.situation,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 15, color: kPrimaryDark)),
+                  style: AppTypography.bodySmall.copyWith(color: kPrimaryDark)),
               ),
-              const SizedBox(height: 12),
-              Text('全${script.turns.length}ターン', style: const TextStyle(color: kTextMuted, fontSize: 13)),
-              const SizedBox(height: 32),
+              AppSpacing.verticalSpacerXs,
+              Text('全${script.turns.length}ターン', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+              AppSpacing.verticalSpacerXxl,
               ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: kPrimaryColor,
-                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: AppSpacing.sm),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge)),
                 ),
                 onPressed: onStart,
                 icon: const Icon(Icons.play_arrow, color: Colors.white),
-                label: const Text('スタート！',
-                  style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                label: Text('スタート！',
+                  style: AppTypography.labelLarge.copyWith(color: Colors.white)),
               ),
             ],
           ),
@@ -316,7 +319,7 @@ class _ConversationPlayScreenState extends ConsumerState<_ConversationPlayScreen
               Expanded(
                 child: ListView.builder(
                   controller: _scrollController,
-                  padding: const EdgeInsets.all(16),
+                  padding: AppSpacing.allPaddingMd,
                   itemCount: _bubbles.length + (_isAiSpeaking ? 1 : 0),
                   itemBuilder: (ctx, i) {
                     if (i == _bubbles.length) {
@@ -334,7 +337,7 @@ class _ConversationPlayScreenState extends ConsumerState<_ConversationPlayScreen
               else if (isUserTurn)
                 _buildUserInputBar()
               else
-                const SizedBox(height: 12),
+                AppSpacing.verticalSpacerXs,
             ],
           ),
           Align(
@@ -354,7 +357,7 @@ class _ConversationPlayScreenState extends ConsumerState<_ConversationPlayScreen
   Widget _buildUserInputBar() {
     final turn = _currentTurn;
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.allPaddingMd,
       decoration: const BoxDecoration(
         color: Colors.white,
         boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, -2))],
@@ -364,46 +367,46 @@ class _ConversationPlayScreenState extends ConsumerState<_ConversationPlayScreen
         children: [
           Row(
             children: [
-              const Text('🎙️ あなたの番！', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: kSpeakingColor)),
+              Text('🎙️ あなたの番！', style: AppTypography.bodySmall.copyWith(fontWeight: FontWeight.bold, color: kSpeakingColor)),
               const Spacer(),
               if (turn.hint != null)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
                   decoration: BoxDecoration(
                     color: kPrimaryColor.withAlpha(20),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                   ),
                   child: Text('ヒント: ${turn.hint}',
-                    style: const TextStyle(fontSize: 11, color: kPrimaryColor)),
+                    style: AppTypography.bodySmall.copyWith(color: kPrimaryColor, fontSize: 11)),
                 ),
             ],
           ),
-          const SizedBox(height: 4),
-          Text(turn.textJa, style: const TextStyle(fontSize: 13, color: kTextMuted)),
+          AppSpacing.verticalSpacerXs,
+          Text(turn.textJa, style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
           if (_recognizedText.isNotEmpty) ...[
-            const SizedBox(height: 4),
-            Text('"$_recognizedText"', style: const TextStyle(fontSize: 13, color: kTextDark, fontStyle: FontStyle.italic)),
+            AppSpacing.verticalSpacerXs,
+            Text('"$_recognizedText"', style: AppTypography.bodySmall.copyWith(color: kTextDark, fontStyle: FontStyle.italic)),
           ],
-          const SizedBox(height: 8),
+          AppSpacing.verticalSpacerXs,
           Row(
             children: [
               Expanded(
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: _isListening ? kAccentRed : kSpeakingColor,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSizes.borderRadius)),
                   ),
                   onPressed: _isListening ? _stopAndSubmit : _startListening,
                   icon: Icon(_isListening ? Icons.stop : Icons.mic, color: Colors.white, size: 18),
                   label: Text(_isListening ? '停止' : '話す',
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                    style: AppTypography.bodySmall.copyWith(color: Colors.white, fontWeight: FontWeight.bold)),
                 ),
               ),
-              const SizedBox(width: 8),
+              AppSpacing.horizontalSpacerXs,
               TextButton(
                 onPressed: _skipUserTurn,
-                child: const Text('スキップ', style: TextStyle(color: kTextMuted, fontSize: 12)),
+                child: Text('スキップ', style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 12)),
               ),
             ],
           ),
@@ -415,23 +418,23 @@ class _ConversationPlayScreenState extends ConsumerState<_ConversationPlayScreen
   Widget _buildCompletedBar() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(AppSpacing.lg),
       decoration: const BoxDecoration(
         color: Colors.white,
         boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, -2))],
       ),
       child: Column(
         children: [
-          const Text('🎉 会話完了！ +20コイン', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: kAccentGreen)),
-          const SizedBox(height: 12),
+          Text('🎉 会話完了！ +20コイン', style: AppTypography.labelLarge.copyWith(color: kAccentGreen)),
+          AppSpacing.verticalSpacerXs,
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: kPrimaryColor,
               minimumSize: const Size(double.infinity, 46),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSizes.borderRadius)),
             ),
             onPressed: widget.onComplete,
-            child: const Text('シナリオ選択に戻る', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            child: Text('シナリオ選択に戻る', style: AppTypography.labelLarge.copyWith(color: Colors.white)),
           ),
         ],
       ),
@@ -451,28 +454,28 @@ class _ChatBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: EdgeInsets.only(bottom: AppSpacing.xs),
       child: Row(
         mainAxisAlignment: isAi ? MainAxisAlignment.start : MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (isAi) ...[
             CircleAvatar(backgroundColor: kPrimaryColor, radius: 18, child: const Text('🤖', style: TextStyle(fontSize: 16))),
-            const SizedBox(width: 8),
+            AppSpacing.horizontalSpacerXs,
           ],
           Flexible(
             child: Column(
               crossAxisAlignment: isAi ? CrossAxisAlignment.start : CrossAxisAlignment.end,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding: EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
                   decoration: BoxDecoration(
                     color: isAi ? Colors.white : kPrimaryColor,
                     borderRadius: BorderRadius.only(
-                      topLeft: const Radius.circular(16),
-                      topRight: const Radius.circular(16),
-                      bottomLeft: Radius.circular(isAi ? 4 : 16),
-                      bottomRight: Radius.circular(isAi ? 16 : 4),
+                      topLeft: Radius.circular(AppSizes.borderRadiusLarge),
+                      topRight: Radius.circular(AppSizes.borderRadiusLarge),
+                      bottomLeft: Radius.circular(isAi ? 4 : AppSizes.borderRadiusLarge),
+                      bottomRight: Radius.circular(isAi ? AppSizes.borderRadiusLarge : 4),
                     ),
                     boxShadow: [BoxShadow(color: Colors.black.withAlpha(13), blurRadius: 6)],
                   ),
@@ -481,16 +484,15 @@ class _ChatBubble extends StatelessWidget {
                     children: [
                       Text(
                         isAi ? text : (userInput ?? text),
-                        style: TextStyle(
+                        style: AppTypography.bodySmall.copyWith(
                           color: isAi ? kTextDark : Colors.white,
-                          fontSize: 15,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      const SizedBox(height: 2),
+                      AppSpacing.verticalSpacerXs,
                       Text(
                         textJa,
-                        style: TextStyle(
+                        style: AppTypography.bodySmall.copyWith(
                           color: isAi ? kTextMuted : Colors.white70,
                           fontSize: 11,
                         ),
@@ -502,7 +504,7 @@ class _ChatBubble extends StatelessWidget {
             ),
           ),
           if (!isAi) ...[
-            const SizedBox(width: 8),
+            AppSpacing.horizontalSpacerXs,
             CircleAvatar(backgroundColor: kSpeakingColor, radius: 18, child: const Text('😊', style: TextStyle(fontSize: 16))),
           ],
         ],
@@ -515,16 +517,16 @@ class _TypingBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: EdgeInsets.only(bottom: AppSpacing.xs),
       child: Row(
         children: [
           CircleAvatar(backgroundColor: kPrimaryColor, radius: 18, child: const Text('🤖', style: TextStyle(fontSize: 16))),
-          const SizedBox(width: 8),
+          AppSpacing.horizontalSpacerXs,
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
             ),
             child: const Text('…', style: TextStyle(fontSize: 18, color: kTextMuted, letterSpacing: 4)),
           ),

@@ -4,6 +4,10 @@ import 'package:flutter_tts/flutter_tts.dart';
 import '../data/stage_data.dart';
 import '../providers/pronunciation_provider.dart';
 import '../models/stage.dart';
+import '../theme/app_theme.dart';
+import '../theme/spacing.dart';
+import '../theme/sizes.dart';
+import '../theme/typography.dart';
 
 class PronunciationCheckScreen extends ConsumerStatefulWidget {
   final Stage stage;
@@ -82,26 +86,23 @@ class _PronunciationCheckScreenState
               result != null && result.word == word && pronunciationState.isCheckingComplete;
 
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
+            padding: AppSpacing.allPaddingLg,
             child: Column(
               children: [
                 // Progress
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 24),
+                  padding: EdgeInsets.only(bottom: AppSpacing.xl),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
                         '${index + 1}/${_wordsToCheck.length}',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
-                        ),
+                        style: AppTypography.bodySmall.copyWith(color: Colors.grey),
                       ),
-                      const SizedBox(width: 12),
+                      AppSpacing.horizontalSpacerXs,
                       Expanded(
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(4),
+                          borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
                           child: LinearProgressIndicator(
                             value: (index + 1) / _wordsToCheck.length,
                             minHeight: 6,
@@ -114,24 +115,22 @@ class _PronunciationCheckScreenState
 
                 // Word Display
                 Container(
-                  padding: const EdgeInsets.all(24),
+                  padding: EdgeInsets.all(AppSpacing.xl),
                   decoration: BoxDecoration(
                     color: Colors.blue[50],
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
                   ),
                   child: Column(
                     children: [
-                      const Text('発音してください', style: TextStyle(color: Colors.grey)),
-                      const SizedBox(height: 16),
+                      Text('発音してください', style: AppTypography.bodySmall.copyWith(color: Colors.grey)),
+                      AppSpacing.verticalSpacerSm,
                       Text(
                         word,
-                        style: const TextStyle(
-                          fontSize: 40,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF378ADD),
+                        style: AppTypography.headlineLarge.copyWith(
+                          color: const Color(0xFF378ADD),
                         ),
                       ),
-                      const SizedBox(height: 24),
+                      AppSpacing.verticalSpacerXl,
                       FloatingActionButton.extended(
                         onPressed: () async {
                           await ref
@@ -145,7 +144,7 @@ class _PronunciationCheckScreenState
                     ],
                   ),
                 ),
-                const SizedBox(height: 32),
+                AppSpacing.verticalSpacerXxl,
 
                 // Recording Button
                 if (!pronunciationState.isCheckingComplete ||
@@ -169,23 +168,23 @@ class _PronunciationCheckScreenState
                       size: 36,
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  AppSpacing.verticalSpacerXs,
                   Text(
                     pronunciationState.isListening
                         ? '話してください...'
                         : 'マイクボタンを押して発音',
-                    style: const TextStyle(color: Colors.grey),
+                    style: AppTypography.bodySmall.copyWith(color: Colors.grey),
                   ),
                 ],
 
                 // Result Display
                 if (isCurrentWord) ...[
-                  const SizedBox(height: 24),
+                  AppSpacing.verticalSpacerXl,
                   Container(
-                    padding: const EdgeInsets.all(16),
+                    padding: AppSpacing.allPaddingMd,
                     decoration: BoxDecoration(
                       color: result!.isPassed ? Colors.green[50] : Colors.orange[50],
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                       border: Border.all(
                         color: result.isPassed ? Colors.green : Colors.orange,
                       ),
@@ -197,7 +196,7 @@ class _PronunciationCheckScreenState
                           children: [
                             Text(
                               'あなたの発音: ${result.userPronunciation}',
-                              style: const TextStyle(fontSize: 14),
+                              style: AppTypography.bodySmall,
                             ),
                             Text(
                               result.feedbackEmoji,
@@ -205,9 +204,9 @@ class _PronunciationCheckScreenState
                             ),
                           ],
                         ),
-                        const SizedBox(height: 12),
+                        AppSpacing.verticalSpacerXs,
                         ClipRRect(
-                          borderRadius: BorderRadius.circular(4),
+                          borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
                           child: LinearProgressIndicator(
                             value: result.accuracy,
                             minHeight: 8,
@@ -217,27 +216,25 @@ class _PronunciationCheckScreenState
                             ),
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        AppSpacing.verticalSpacerXs,
                         Text(
                           result.accuracyPercentage,
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                          style: AppTypography.labelLarge.copyWith(
                             color: result.isPassed
                                 ? Colors.green
                                 : Colors.orange,
                           ),
                         ),
-                        const SizedBox(height: 12),
+                        AppSpacing.verticalSpacerXs,
                         Text(
                           result.feedback,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 13),
+                          style: AppTypography.bodySmall,
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  AppSpacing.verticalSpacerXl,
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -258,24 +255,24 @@ class _PronunciationCheckScreenState
                         index < _wordsToCheck.length - 1
                             ? '次の単語へ'
                             : '完了',
-                        style: const TextStyle(fontSize: 16),
+                        style: AppTypography.labelLarge,
                       ),
                     ),
                   ),
                 ],
 
                 if (pronunciationState.errorMessage != null) ...[
-                  const SizedBox(height: 16),
+                  AppSpacing.verticalSpacerSm,
                   Container(
-                    padding: const EdgeInsets.all(12),
+                    padding: AppSpacing.allPaddingXs,
                     decoration: BoxDecoration(
                       color: Colors.red[50],
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                       border: Border.all(color: Colors.red),
                     ),
                     child: Text(
                       pronunciationState.errorMessage!,
-                      style: const TextStyle(color: Colors.red, fontSize: 12),
+                      style: AppTypography.bodySmall.copyWith(color: Colors.red),
                     ),
                   ),
                 ],

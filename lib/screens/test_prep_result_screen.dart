@@ -1,6 +1,9 @@
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
+import '../theme/spacing.dart';
+import '../theme/sizes.dart';
+import '../theme/typography.dart';
 
 class TestPrepResultScreen extends StatefulWidget {
   final Map<String, dynamic> args;
@@ -56,24 +59,24 @@ class _TestPrepResultScreenState extends State<TestPrepResultScreen> {
       body: Stack(
         children: [
           SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+            padding: AppSpacing.allPaddingMd,
             child: Column(
               children: [
-                const SizedBox(height: 16),
+                AppSpacing.verticalSpacerMd,
                 // 結果ヘッダー
                 Card(
                   child: Padding(
-                    padding: const EdgeInsets.all(28),
+                    padding: EdgeInsets.all(AppSpacing.xl),
                     child: Column(
                       children: [
-                        Text(emoji, style: const TextStyle(fontSize: 64)),
-                        const SizedBox(height: 12),
+                        Text(emoji, style: AppTypography.headlineLarge),
+                        AppSpacing.verticalSpacerSm,
                         Text(
                           message,
-                          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: color),
+                          style: AppTypography.headlineSmall.copyWith(fontWeight: FontWeight.bold, color: color),
                           textAlign: TextAlign.center,
                         ),
-                        const SizedBox(height: 20),
+                        AppSpacing.verticalSpacerLg,
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
@@ -86,38 +89,38 @@ class _TestPrepResultScreenState extends State<TestPrepResultScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                AppSpacing.verticalSpacerMd,
                 // 弱点改善メッセージ
                 Card(
                   color: const Color(0xFFF0FFF4),
                   child: Padding(
-                    padding: const EdgeInsets.all(16),
+                    padding: AppSpacing.allPaddingMd,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('📈 弱点対策の効果',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: kAccentGreen)),
-                        const SizedBox(height: 10),
+                        Text('📈 弱点対策の効果',
+                            style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold, color: kAccentGreen)),
+                        AppSpacing.verticalSpacerSm,
                         if (isExcellent)
-                          const Text(
+                          Text(
                             '素晴らしい！弱点問題を90%以上正解しました。\nこれらの問題はもはや弱点ではありません！',
-                            style: TextStyle(color: kTextDark, fontSize: 14, height: 1.5),
+                            style: AppTypography.bodySmall.copyWith(color: kTextDark, height: 1.5),
                           )
                         else if (isPassed)
-                          const Text(
+                          Text(
                             '弱点問題への対策ができています。\n繰り返し練習することで、さらに定着します。',
-                            style: TextStyle(color: kTextDark, fontSize: 14, height: 1.5),
+                            style: AppTypography.bodySmall.copyWith(color: kTextDark, height: 1.5),
                           )
                         else
-                          const Text(
+                          Text(
                             'まだ弱点が残っています。\n聞いてから真似する練習を繰り返しましょう。',
-                            style: TextStyle(color: kTextDark, fontSize: 14, height: 1.5),
+                            style: AppTypography.bodySmall.copyWith(color: kTextDark, height: 1.5),
                           ),
                       ],
                     ),
                   ),
                 ),
-                const SizedBox(height: 24),
+                AppSpacing.verticalSpacerLg,
                 // アクションボタン
                 SizedBox(
                   width: double.infinity,
@@ -130,11 +133,11 @@ class _TestPrepResultScreenState extends State<TestPrepResultScreen> {
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: kAccentRed,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
                     ),
                   ),
                 ),
-                const SizedBox(height: 12),
+                AppSpacing.verticalSpacerSm,
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton.icon(
@@ -142,12 +145,12 @@ class _TestPrepResultScreenState extends State<TestPrepResultScreen> {
                     label: const Text('ホームへ'),
                     onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/home', (_) => false),
                     style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
                       foregroundColor: kPrimaryColor,
                     ),
                   ),
                 ),
-                const SizedBox(height: 32),
+                AppSpacing.verticalSpacerXl,
               ],
             ),
           ),
@@ -176,8 +179,8 @@ class _Stat extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(value, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: color)),
-        Text(label, style: const TextStyle(fontSize: 13, color: kTextMuted)),
+        Text(value, style: AppTypography.headlineSmall.copyWith(fontWeight: FontWeight.bold, color: color)),
+        Text(label, style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
       ],
     );
   }

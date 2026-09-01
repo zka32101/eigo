@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
+import '../theme/spacing.dart';
+import '../theme/sizes.dart';
+import '../theme/typography.dart';
 
 class PrivacyPolicyScreen extends StatelessWidget {
   const PrivacyPolicyScreen({super.key});
@@ -11,8 +14,8 @@ class PrivacyPolicyScreen extends StatelessWidget {
         title: const Text('プライバシーポリシー'),
         backgroundColor: kPrimaryColor,
       ),
-      body: const SingleChildScrollView(
-        padding: EdgeInsets.all(16),
+      body: SingleChildScrollView(
+        padding: AppSpacing.allPaddingMd,
         child: SelectableText(
           '''英語コレ！プライバシーポリシー
 
@@ -35,7 +38,7 @@ info@petitworks.example.com
 
 5. 変更について
 本ポリシーは予告なく変更される場合があります。''',
-          style: TextStyle(fontSize: 14, height: 1.7, color: kTextDark),
+          style: AppTypography.bodySmall.copyWith(height: 1.7, color: kTextDark),
         ),
       ),
     );

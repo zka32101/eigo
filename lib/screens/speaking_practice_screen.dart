@@ -10,6 +10,9 @@ import '../providers/speaking_history_provider.dart';
 import '../services/speech_service.dart';
 import '../services/tts_service.dart';
 import '../theme/app_theme.dart';
+import '../theme/spacing.dart';
+import '../theme/sizes.dart';
+import '../theme/typography.dart';
 import '../widgets/speaking_score_ring.dart';
 
 /// スピーキング集中練習モード
@@ -173,16 +176,16 @@ class _SpeakingPracticeScreenState extends ConsumerState<SpeakingPracticeScreen>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: AppSpacing.allPaddingMd,
           color: kSpeakingColor.withAlpha(20),
-          child: const Row(
+          child: Row(
             children: [
-              Text('🎤', style: TextStyle(fontSize: 28)),
-              SizedBox(width: 12),
+              const Text('🎤', style: TextStyle(fontSize: 28)),
+              AppSpacing.horizontalSpacerXs,
               Expanded(
                 child: Text(
                   'ステージを選んでスピーキングだけを集中練習しよう！',
-                  style: TextStyle(fontSize: 14, color: kTextDark, fontWeight: FontWeight.bold),
+                  style: AppTypography.labelLarge.copyWith(color: kTextDark),
                 ),
               ),
             ],
@@ -190,7 +193,7 @@ class _SpeakingPracticeScreenState extends ConsumerState<SpeakingPracticeScreen>
         ),
         Expanded(
           child: ListView.builder(
-            padding: const EdgeInsets.all(16),
+            padding: AppSpacing.allPaddingMd,
             itemCount: allStages.length,
             itemBuilder: (_, i) {
               final stage = allStages[i];
@@ -199,14 +202,14 @@ class _SpeakingPracticeScreenState extends ConsumerState<SpeakingPracticeScreen>
               final speakAvg = progress.stageSpeakingAvg[stage.id];
 
               return Card(
-                margin: const EdgeInsets.only(bottom: 10),
+                margin: EdgeInsets.only(bottom: AppSpacing.xs),
                 color: isLocked ? Colors.grey.shade100 : Colors.white,
                 child: ListTile(
                   leading: Container(
                     width: 48, height: 48,
                     decoration: BoxDecoration(
                       color: isLocked ? Colors.grey.shade200 : kSpeakingColor.withAlpha(26),
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                     ),
                     child: Center(
                       child: isLocked
@@ -216,28 +219,27 @@ class _SpeakingPracticeScreenState extends ConsumerState<SpeakingPracticeScreen>
                   ),
                   title: Text(
                     '${stage.titleJa}（${stage.title}）',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
+                    style: AppTypography.labelLarge.copyWith(
                       color: isLocked ? Colors.grey : kTextDark,
                     ),
                   ),
                   subtitle: Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        padding: EdgeInsets.symmetric(horizontal: AppSpacing.xs, vertical: 2),
                         decoration: BoxDecoration(
                           color: kSpeakingColor.withAlpha(26),
-                          borderRadius: BorderRadius.circular(6),
+                          borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
                         ),
                         child: Text(
                           '🎤 ${stage.speakingCount}問',
-                          style: const TextStyle(fontSize: 11, color: kSpeakingColor, fontWeight: FontWeight.bold),
+                          style: AppTypography.bodySmall.copyWith(color: kSpeakingColor, fontWeight: FontWeight.bold, fontSize: 11),
                         ),
                       ),
                       if (speakAvg != null) ...[
-                        const SizedBox(width: 6),
+                        SizedBox(width: AppSpacing.xs),
                         Text('前回: ${speakAvg.round()}点',
-                            style: const TextStyle(fontSize: 11, color: kTextMuted)),
+                            style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 11)),
                       ],
                     ],
                   ),
@@ -263,18 +265,18 @@ class _SpeakingPracticeScreenState extends ConsumerState<SpeakingPracticeScreen>
           children: [
             // ヘッダー
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
               color: kSpeakingColor,
               child: Row(
                 children: [
                   Text(
                     '${_selectedStage!.emoji} ${_selectedStage!.titleJa}',
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    style: AppTypography.labelLarge.copyWith(color: Colors.white),
                   ),
                   const Spacer(),
                   Text(
                     '${_qIndex + 1} / ${_questions.length}',
-                    style: const TextStyle(color: Colors.white70),
+                    style: AppTypography.bodySmall.copyWith(color: Colors.white70),
                   ),
                 ],
               ),
@@ -287,48 +289,48 @@ class _SpeakingPracticeScreenState extends ConsumerState<SpeakingPracticeScreen>
             ),
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(20),
+                padding: AppSpacing.allPaddingLg,
                 child: Column(
                   children: [
                     // 問題カード
                     Card(
                       elevation: 6,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge)),
                       child: Container(
                         width: double.infinity,
-                        padding: const EdgeInsets.all(28),
+                        padding: EdgeInsets.all(AppSpacing.xl),
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
                             colors: [kSpeakingColor, Color(0xFFFF6B9D)],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ),
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
                         ),
                         child: Column(
                           children: [
                             if (q.imageEmoji != null)
                               Text(q.imageEmoji!, style: const TextStyle(fontSize: 56)),
-                            const SizedBox(height: 12),
+                            AppSpacing.verticalSpacerXs,
                             Text(
                               q.textJa.replaceAll('言ってみよう', '').replaceAll('英語で', '').trim(),
-                              style: const TextStyle(color: Colors.white70, fontSize: 14),
+                              style: AppTypography.bodySmall.copyWith(color: Colors.white70),
                             ),
-                            const SizedBox(height: 6),
+                            AppSpacing.verticalSpacerXs,
                             Text(
                               q.text,
-                              style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
+                              style: AppTypography.headlineLarge.copyWith(color: Colors.white),
                               textAlign: TextAlign.center,
                             ),
                             if (q.phonetic != null) ...[
-                              const SizedBox(height: 6),
-                              Text(q.phonetic!, style: const TextStyle(color: Colors.white60, fontSize: 14, fontStyle: FontStyle.italic)),
+                              AppSpacing.verticalSpacerXs,
+                              Text(q.phonetic!, style: AppTypography.bodySmall.copyWith(color: Colors.white60, fontStyle: FontStyle.italic)),
                             ],
                           ],
                         ),
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    AppSpacing.verticalSpacerMd,
                     // TTS ボタン
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -339,7 +341,7 @@ class _SpeakingPracticeScreenState extends ConsumerState<SpeakingPracticeScreen>
                           onPressed: () => _tts.speak(q.text),
                           style: ElevatedButton.styleFrom(backgroundColor: kPrimaryColor),
                         ),
-                        const SizedBox(width: 12),
+                        AppSpacing.horizontalSpacerXs,
                         OutlinedButton.icon(
                           icon: const Icon(Icons.slow_motion_video, size: 16),
                           label: const Text('ゆっくり'),
@@ -348,7 +350,7 @@ class _SpeakingPracticeScreenState extends ConsumerState<SpeakingPracticeScreen>
                         ),
                       ],
                     ),
-                    const SizedBox(height: 24),
+                    AppSpacing.verticalSpacerXl,
                     // マイクエリア
                     if (!_answered) ...[
                       GestureDetector(
@@ -369,30 +371,28 @@ class _SpeakingPracticeScreenState extends ConsumerState<SpeakingPracticeScreen>
                           ),
                         ),
                       ),
-                      const SizedBox(height: 12),
+                      AppSpacing.verticalSpacerXs,
                       Text(
                         _isListening ? '聞いています...' : 'タップして発音',
-                        style: TextStyle(
-                          fontSize: 16,
+                        style: AppTypography.labelLarge.copyWith(
                           color: _isListening ? kSpeakingColor : kTextMuted,
-                          fontWeight: _isListening ? FontWeight.bold : FontWeight.normal,
                         ),
                       ),
                       if (_recognizedText.isNotEmpty)
                         Padding(
-                          padding: const EdgeInsets.only(top: 12),
+                          padding: EdgeInsets.only(top: AppSpacing.xs),
                           child: Text('"$_recognizedText"',
-                              style: const TextStyle(fontSize: 16, color: kTextDark)),
+                              style: AppTypography.labelLarge.copyWith(color: kTextDark)),
                         ),
                     ] else ...[
                       SpeakingScoreRing(score: _speakingScore, size: 100),
-                      const SizedBox(height: 12),
+                      AppSpacing.verticalSpacerXs,
                       Text(
                         _speech.getFeedback(_speakingScore),
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold),
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 20),
+                      AppSpacing.verticalSpacerLg,
                       Row(
                         children: [
                           Expanded(
@@ -403,7 +403,7 @@ class _SpeakingPracticeScreenState extends ConsumerState<SpeakingPracticeScreen>
                               style: OutlinedButton.styleFrom(foregroundColor: kSpeakingColor),
                             ),
                           ),
-                          const SizedBox(width: 12),
+                          AppSpacing.horizontalSpacerXs,
                           Expanded(
                             child: ElevatedButton.icon(
                               icon: Icon(_qIndex >= _questions.length - 1 ? Icons.flag : Icons.arrow_forward),
@@ -455,19 +455,19 @@ class _PracticeResultDialog extends StatelessWidget {
     final perfect = scores.where((s) => s >= 85).length;
 
     return AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      contentPadding: const EdgeInsets.all(24),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge)),
+      contentPadding: EdgeInsets.all(AppSpacing.xl),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(avg >= 80 ? '🎉' : avg >= 60 ? '😊' : '💪', style: const TextStyle(fontSize: 56)),
-          const SizedBox(height: 8),
+          AppSpacing.verticalSpacerXs,
           Text(
             avg >= 80 ? 'すばらしい練習でした！' : avg >= 60 ? 'よく頑張りました！' : 'もう一度挑戦しよう！',
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: AppTypography.headlineSmall.copyWith(fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 16),
+          AppSpacing.verticalSpacerMd,
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -476,7 +476,7 @@ class _PracticeResultDialog extends StatelessWidget {
               _Stat('85点↑', '$perfect/${questions.length}問', kAccentOrange),
             ],
           ),
-          const SizedBox(height: 20),
+          AppSpacing.verticalSpacerLg,
           Row(
             children: [
               Expanded(
@@ -485,7 +485,7 @@ class _PracticeResultDialog extends StatelessWidget {
                   child: const Text('もう一度'),
                 ),
               ),
-              const SizedBox(width: 12),
+              AppSpacing.horizontalSpacerXs,
               Expanded(
                 child: ElevatedButton(
                   onPressed: onBack,
@@ -510,8 +510,8 @@ class _Stat extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Column(
     children: [
-      Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: color)),
-      Text(label, style: const TextStyle(fontSize: 12, color: kTextMuted)),
+      Text(value, style: AppTypography.headlineSmall.copyWith(fontWeight: FontWeight.bold, color: color)),
+      Text(label, style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 12)),
     ],
   );
 }

@@ -4,6 +4,10 @@ import 'package:flutter_tts/flutter_tts.dart';
 import '../data/vocabulary_data.dart';
 import '../models/question.dart';
 import '../theme/app_theme.dart';
+import '../theme/spacing.dart';
+import '../theme/sizes.dart';
+import '../theme/typography.dart';
+import '../widgets/educational_illustrations.dart';
 
 class VocabularyScreen extends ConsumerStatefulWidget {
   const VocabularyScreen({super.key});
@@ -91,17 +95,17 @@ class _VocabularyScreenState extends ConsumerState<VocabularyScreen> {
             const Expanded(child: Center(child: Text('単語が見つかりません')))
           else ...[
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: AppSpacing.horizontalPaddingLg + const EdgeInsets.symmetric(vertical: 8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     '${_currentIndex + 1} / ${_filteredWords.length}',
-                    style: const TextStyle(color: kTextMuted, fontSize: 13),
+                    style: AppTypography.bodySmall.copyWith(color: kTextMuted),
                   ),
                   Text(
                     vocabCategories[_filteredWords[_currentIndex].category] ?? _filteredWords[_currentIndex].category,
-                    style: const TextStyle(color: kTextMuted, fontSize: 13),
+                    style: AppTypography.bodySmall.copyWith(color: kTextMuted),
                   ),
                 ],
               ),
@@ -113,7 +117,7 @@ class _VocabularyScreenState extends ConsumerState<VocabularyScreen> {
             ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: AppSpacing.allPaddingMd,
                 child: GestureDetector(
                   onTap: () => setState(() => _isFlipped = !_isFlipped),
                   child: AnimatedSwitcher(
@@ -151,7 +155,7 @@ class _VocabularyScreenState extends ConsumerState<VocabularyScreen> {
                 }
               }),
             ),
-            const SizedBox(height: 16),
+            AppSpacing.verticalSpacerMd,
           ],
         ],
       ),
@@ -176,7 +180,7 @@ class _FilterBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: AppSpacing.allPaddingMd,
       child: Column(
         children: [
           SingleChildScrollView(
@@ -196,10 +200,10 @@ class _FilterBar extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 4),
+          AppSpacing.verticalSpacerSm,
           Row(
             children: [
-              const Text('難易度: ', style: TextStyle(fontSize: 12, color: kTextMuted)),
+              Text('難易度: ', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
               _DiffChip(label: 'すべて', selected: selectedDifficulty == null, onTap: () => onDifficultyChanged(null)),
               _DiffChip(label: '初級', selected: selectedDifficulty == DifficultyLevel.beginner, onTap: () => onDifficultyChanged(DifficultyLevel.beginner)),
               _DiffChip(label: '中級', selected: selectedDifficulty == DifficultyLevel.intermediate, onTap: () => onDifficultyChanged(DifficultyLevel.intermediate)),
@@ -281,10 +285,10 @@ class _FrontCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge)),
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
           gradient: const LinearGradient(
             colors: [kPrimaryColor, Color(0xFF5B9BD5)],
             begin: Alignment.topLeft,
@@ -297,31 +301,40 @@ class _FrontCard extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(word.emoji, style: const TextStyle(fontSize: 72)),
-                  const SizedBox(height: 16),
+                  // Visual vocabulary aid with enhanced design
+                  Container(
+                    width: 120,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withAlpha(30),
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white.withAlpha(80), width: 2),
+                    ),
+                    child: Center(
+                      child: Text(word.emoji, style: AppTypography.headlineLarge.copyWith(fontSize: 72)),
+                    ),
+                  ),
+                  AppSpacing.verticalSpacerMd,
                   Text(
                     showJapanese ? word.japanese : word.english,
-                    style: const TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
+                    style: AppTypography.displaySmall.copyWith(
                       color: Colors.white,
                     ),
                     textAlign: TextAlign.center,
                   ),
                   if (!showJapanese && word.phonetic.isNotEmpty) ...[
-                    const SizedBox(height: 8),
+                    AppSpacing.verticalSpacerSm,
                     Text(
                       word.phonetic,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white.withAlpha(200),
+                      style: AppTypography.bodyLarge.copyWith(
+                        color: Colors.white70,
                       ),
                     ),
                   ],
-                  const SizedBox(height: 24),
-                  const Text(
+                  AppSpacing.verticalSpacerLg,
+                  Text(
                     'タップして裏を見る',
-                    style: TextStyle(fontSize: 13, color: Colors.white70),
+                    style: AppTypography.bodySmall.copyWith(color: Colors.white70),
                   ),
                 ],
               ),
@@ -358,11 +371,11 @@ class _BackCard extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(word.emoji, style: const TextStyle(fontSize: 48)),
-                const SizedBox(height: 16),
+                Text(word.emoji, style: AppTypography.headlineSmall.copyWith(fontSize: 48)),
+                AppSpacing.verticalSpacerMd,
                 Text(
                   showJapanese ? word.english : word.japanese,
-                  style: const TextStyle(
+                  style: AppTypography.headlineSmall.copyWith(
                     fontSize: 36,
                     fontWeight: FontWeight.bold,
                     color: kTextDark,
@@ -370,22 +383,22 @@ class _BackCard extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
                 if (showJapanese && word.phonetic.isNotEmpty) ...[
-                  const SizedBox(height: 8),
+                  AppSpacing.verticalSpacerXs,
                   Text(
                     word.phonetic,
-                    style: const TextStyle(fontSize: 16, color: kTextMuted),
+                    style: AppTypography.bodySmall.copyWith(color: kTextMuted),
                   ),
                 ],
-                const SizedBox(height: 8),
+                AppSpacing.verticalSpacerXs,
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding: EdgeInsets.symmetric(horizontal: AppSpacing.xs, vertical: AppSpacing.xs),
                   decoration: BoxDecoration(
                     color: _diffColor(word.difficulty).withAlpha(26),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                   ),
                   child: Text(
                     _diffLabel(word.difficulty),
-                    style: TextStyle(
+                    style: AppTypography.bodySmall.copyWith(
                       fontSize: 12,
                       color: _diffColor(word.difficulty),
                       fontWeight: FontWeight.bold,

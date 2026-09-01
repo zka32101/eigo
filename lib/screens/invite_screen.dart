@@ -5,6 +5,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../providers/coin_provider.dart';
 import '../providers/progress_provider.dart';
 import '../theme/app_theme.dart';
+import '../theme/spacing.dart';
+import '../theme/sizes.dart';
+import '../theme/typography.dart';
 
 class InviteScreen extends ConsumerStatefulWidget {
   const InviteScreen({super.key});
@@ -104,47 +107,47 @@ class _InviteScreenState extends ConsumerState<InviteScreen> {
         elevation: 0,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(AppSpacing.lg),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // ヘッダー
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.all(AppSpacing.lg),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
                   colors: [kAccentGreen, Color(0xFF2E7D32)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
               ),
-              child: const Column(
+              child: Column(
                 children: [
-                  Text('👫', style: TextStyle(fontSize: 48)),
-                  SizedBox(height: 8),
+                  Text('👫', style: AppTypography.headlineLarge),
+                  AppSpacing.verticalSpacerXs,
                   Text('ともだちを招待しよう！',
-                    style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-                  SizedBox(height: 4),
+                    style: AppTypography.labelLarge.copyWith(color: Colors.white)),
+                  AppSpacing.verticalSpacerXs,
                   Text('招待コードを使うと\n🪙 50コインもらえる！',
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white70, fontSize: 13)),
+                    style: AppTypography.bodySmall.copyWith(color: Colors.white70)),
                 ],
               ),
             ),
 
-            const SizedBox(height: 24),
+            AppSpacing.verticalSpacerLg,
 
             // 自分の招待コード
-            const Text('📋 あなたの招待コード',
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: kTextDark)),
-            const SizedBox(height: 8),
+            Text('📋 あなたの招待コード',
+              style: AppTypography.labelLarge.copyWith(color: kTextDark)),
+            AppSpacing.verticalSpacerXs,
             Container(
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.all(AppSpacing.lg),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                 border: Border.all(color: kAccentGreen, width: 2),
                 boxShadow: [BoxShadow(color: kAccentGreen.withAlpha(40), blurRadius: 10)],
               ),
@@ -152,20 +155,18 @@ class _InviteScreenState extends ConsumerState<InviteScreen> {
                 children: [
                   Text(
                     _inviteCode,
-                    style: const TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
+                    style: AppTypography.headlineSmall.copyWith(
                       color: kAccentGreen,
                       letterSpacing: 8,
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  AppSpacing.verticalSpacerSm,
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: kAccentGreen,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSizes.borderRadius)),
                       ),
                       onPressed: _copyCode,
                       icon: const Icon(Icons.copy, color: Colors.white, size: 18),
@@ -176,34 +177,34 @@ class _InviteScreenState extends ConsumerState<InviteScreen> {
               ),
             ),
 
-            const SizedBox(height: 8),
+            AppSpacing.verticalSpacerXs,
             Text('招待した人数: $_invitedCount 人',
-              style: const TextStyle(fontSize: 13, color: kTextMuted)),
+              style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
 
-            const SizedBox(height: 24),
+            AppSpacing.verticalSpacerLg,
 
             // 招待コード入力
-            const Text('🎁 友達のコードを入力',
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: kTextDark)),
-            const SizedBox(height: 8),
+            Text('🎁 友達のコードを入力',
+              style: AppTypography.labelLarge.copyWith(color: kTextDark)),
+            AppSpacing.verticalSpacerXs,
             if (_codeEntered)
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(20),
+                padding: EdgeInsets.all(AppSpacing.lg),
                 decoration: BoxDecoration(
                   color: kAccentGreen.withAlpha(20),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                   border: Border.all(color: kAccentGreen),
                 ),
-                child: const Column(
+                child: Column(
                   children: [
-                    Text('✅', style: TextStyle(fontSize: 40)),
-                    SizedBox(height: 8),
+                    Text('✅', style: AppTypography.headlineLarge),
+                    AppSpacing.verticalSpacerXs,
                     Text('コード適用完了！',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: kAccentGreen)),
-                    SizedBox(height: 4),
+                      style: AppTypography.labelLarge.copyWith(color: kAccentGreen)),
+                    AppSpacing.verticalSpacerXs,
                     Text('🪙 50コイン獲得！',
-                      style: TextStyle(fontSize: 14, color: kAccentGreen, fontWeight: FontWeight.bold)),
+                      style: AppTypography.labelLarge.copyWith(color: kAccentGreen)),
                   ],
                 ),
               )
@@ -214,9 +215,9 @@ class _InviteScreenState extends ConsumerState<InviteScreen> {
                 maxLength: 6,
                 decoration: InputDecoration(
                   hintText: '6文字のコードを入力',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSizes.borderRadius)),
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                     borderSide: const BorderSide(color: kAccentGreen, width: 2),
                   ),
                   errorText: _errorMessage,
@@ -225,50 +226,48 @@ class _InviteScreenState extends ConsumerState<InviteScreen> {
                   fillColor: Colors.white,
                   prefixIcon: const Icon(Icons.vpn_key, color: kAccentGreen),
                 ),
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+                style: AppTypography.labelLarge.copyWith(
                   letterSpacing: 6,
                 ),
               ),
-              const SizedBox(height: 8),
+              AppSpacing.verticalSpacerXs,
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: kAccentGreen,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSizes.borderRadius)),
                   ),
                   onPressed: _enterCode,
-                  child: const Text('コードを使う 🎁',
-                    style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                  child: Text('コードを使う 🎁',
+                    style: AppTypography.labelLarge.copyWith(color: Colors.white)),
                 ),
               ),
             ],
 
-            const SizedBox(height: 24),
+            AppSpacing.verticalSpacerLg,
 
             // 特典説明
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(AppSpacing.md),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(AppSizes.borderRadius),
               ),
-              child: const Column(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('🎯 招待特典',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: kTextDark)),
-                  SizedBox(height: 8),
-                  _BenefitRow(emoji: '🪙', text: 'コードを入力すると 50コイン獲得'),
-                  _BenefitRow(emoji: '👑', text: '5人招待でプレミアムバッジ獲得'),
-                  _BenefitRow(emoji: '🎁', text: '招待された友達も 50コインもらえる'),
+                    style: AppTypography.labelLarge.copyWith(color: kTextDark)),
+                  AppSpacing.verticalSpacerXs,
+                  const _BenefitRow(emoji: '🪙', text: 'コードを入力すると 50コイン獲得'),
+                  const _BenefitRow(emoji: '👑', text: '5人招待でプレミアムバッジ獲得'),
+                  const _BenefitRow(emoji: '🎁', text: '招待された友達も 50コインもらえる'),
                 ],
               ),
             ),
-            const SizedBox(height: 32),
+            AppSpacing.verticalSpacerXl,
           ],
         ),
       ),
@@ -283,12 +282,12 @@ class _BenefitRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(top: 6),
+    padding: EdgeInsets.only(top: AppSpacing.xs),
     child: Row(
       children: [
         Text(emoji, style: const TextStyle(fontSize: 18)),
-        const SizedBox(width: 8),
-        Text(text, style: const TextStyle(fontSize: 13, color: kTextDark)),
+        AppSpacing.horizontalSpacerXs,
+        Text(text, style: AppTypography.bodySmall.copyWith(color: kTextDark)),
       ],
     ),
   );

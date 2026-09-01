@@ -3,6 +3,9 @@ import '../models/question.dart';
 import '../models/stage.dart';
 import '../services/tts_service.dart';
 import '../theme/app_theme.dart';
+import '../theme/spacing.dart';
+import '../theme/sizes.dart';
+import '../theme/typography.dart';
 
 class WordReviewScreen extends StatefulWidget {
   final Stage stage;
@@ -45,11 +48,11 @@ class _WordReviewScreenState extends State<WordReviewScreen> {
         backgroundColor: kPrimaryColor,
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 16),
+            padding: EdgeInsets.only(right: AppSpacing.lg),
             child: Center(
               child: Text(
                 '${_currentIndex + 1} / ${_cards.length}',
-                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                style: AppTypography.labelLarge.copyWith(color: Colors.white),
               ),
             ),
           ),
@@ -66,7 +69,7 @@ class _WordReviewScreenState extends State<WordReviewScreen> {
           ),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.all(24),
+              padding: EdgeInsets.all(AppSpacing.xl),
               child: Column(
                 children: [
                   // フラッシュカード
@@ -80,13 +83,13 @@ class _WordReviewScreenState extends State<WordReviewScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  AppSpacing.verticalSpacerMd,
                   // ヒント
                   Text(
                     _showBack ? '表に戻すにはタップ' : 'タップして意味を確認',
-                    style: const TextStyle(color: kTextMuted, fontSize: 13),
+                    style: AppTypography.bodySmall.copyWith(color: kTextMuted),
                   ),
-                  const SizedBox(height: 20),
+                  AppSpacing.verticalSpacerLg,
                   // ボタン列
                   Row(
                     children: [
@@ -96,7 +99,7 @@ class _WordReviewScreenState extends State<WordReviewScreen> {
                         onPressed: () => _tts.speak(_current.text),
                         style: IconButton.styleFrom(foregroundColor: kPrimaryColor),
                       ),
-                      const SizedBox(width: 8),
+                      AppSpacing.horizontalSpacerXs,
                       // ゆっくりボタン
                       OutlinedButton.icon(
                         icon: const Icon(Icons.slow_motion_video, size: 16),
@@ -111,7 +114,7 @@ class _WordReviewScreenState extends State<WordReviewScreen> {
                         onPressed: _currentIndex > 0 ? _prev : null,
                         style: IconButton.styleFrom(backgroundColor: Colors.grey.shade200),
                       ),
-                      const SizedBox(width: 8),
+                      AppSpacing.horizontalSpacerXs,
                       // 次へ
                       ElevatedButton.icon(
                         icon: Icon(_currentIndex < _cards.length - 1 ? Icons.arrow_forward : Icons.check),
@@ -120,7 +123,7 @@ class _WordReviewScreenState extends State<WordReviewScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  AppSpacing.verticalSpacerMd,
                 ],
               ),
             ),
@@ -140,7 +143,7 @@ class _FrontCard extends StatelessWidget {
     return Card(
       key: const ValueKey('front'),
       elevation: 8,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge)),
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
@@ -149,9 +152,9 @@ class _FrontCard extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
         ),
-        padding: const EdgeInsets.all(32),
+        padding: EdgeInsets.all(AppSpacing.xxl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -160,10 +163,8 @@ class _FrontCard extends StatelessWidget {
             const SizedBox(height: 20),
             Text(
               question.text,
-              style: const TextStyle(
+              style: AppTypography.headlineLarge.copyWith(
                 color: Colors.white,
-                fontSize: 36,
-                fontWeight: FontWeight.bold,
                 letterSpacing: 1,
               ),
               textAlign: TextAlign.center,
@@ -172,7 +173,7 @@ class _FrontCard extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 question.phonetic!,
-                style: const TextStyle(color: Colors.white70, fontSize: 16, fontStyle: FontStyle.italic),
+                style: AppTypography.bodySmall.copyWith(color: Colors.white70, fontStyle: FontStyle.italic),
               ),
             ],
           ],
@@ -191,15 +192,15 @@ class _BackCard extends StatelessWidget {
     return Card(
       key: const ValueKey('back'),
       elevation: 8,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge)),
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
           border: Border.all(color: kPrimaryColor.withAlpha(76), width: 2),
         ),
-        padding: const EdgeInsets.all(32),
+        padding: EdgeInsets.all(AppSpacing.xxl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -209,30 +210,28 @@ class _BackCard extends StatelessWidget {
               question.textJa.contains('言ってみよう') || question.textJa.contains('聞いて')
                   ? question.correctAnswer
                   : question.textJa,
-              style: const TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
+              style: AppTypography.headlineSmall.copyWith(
                 color: kTextDark,
               ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: AppSpacing.allPaddingMd,
               decoration: BoxDecoration(
                 color: kBgLight,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(AppSizes.borderRadius),
               ),
               child: Text(
                 question.text,
-                style: const TextStyle(fontSize: 22, color: kPrimaryColor, fontWeight: FontWeight.bold),
+                style: AppTypography.labelLarge.copyWith(fontSize: 22, color: kPrimaryColor),
               ),
             ),
             if (question.phonetic != null) ...[
               const SizedBox(height: 8),
               Text(
                 question.phonetic!,
-                style: const TextStyle(fontSize: 14, color: kTextMuted, fontStyle: FontStyle.italic),
+                style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontStyle: FontStyle.italic),
               ),
             ],
           ],
