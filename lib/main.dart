@@ -45,6 +45,7 @@ import 'screens/leaderboard_screen.dart';
 import 'screens/friends_screen.dart';
 import 'screens/analytics_screen.dart';
 import 'screens/notification_management_screen.dart';
+import 'screens/achievements_screen.dart';
 import 'services/notification_service.dart';
 import 'services/ad_service.dart';
 import 'services/firebase_service.dart';
@@ -136,6 +137,7 @@ class EigoKoreApp extends ConsumerWidget {
         '/friends': (context) => const FriendsScreen(),
         '/analytics': (context) => const AnalyticsScreen(),
         '/notifications': (context) => const NotificationManagementScreen(),
+        '/achievements': (context) => const AchievementsScreen(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/test-prep-result') {
