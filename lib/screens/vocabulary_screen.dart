@@ -116,7 +116,7 @@ class _VocabularyScreenState extends ConsumerState<VocabularyScreen> {
             ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: AppSpacing.allPaddingMd,
                 child: GestureDetector(
                   onTap: () => setState(() => _isFlipped = !_isFlipped),
                   child: AnimatedSwitcher(
@@ -154,7 +154,7 @@ class _VocabularyScreenState extends ConsumerState<VocabularyScreen> {
                 }
               }),
             ),
-            const SizedBox(height: 16),
+            AppSpacing.verticalSpacerMd,
           ],
         ],
       ),
@@ -300,7 +300,7 @@ class _FrontCard extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(word.emoji, style: const TextStyle(fontSize: 72)),
+                  Text(word.emoji, style: AppTypography.headlineLarge.copyWith(fontSize: 72)),
                   AppSpacing.verticalSpacerMd,
                   Text(
                     showJapanese ? word.japanese : word.english,
@@ -358,11 +358,11 @@ class _BackCard extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(word.emoji, style: const TextStyle(fontSize: 48)),
-                const SizedBox(height: 16),
+                Text(word.emoji, style: AppTypography.headlineSmall.copyWith(fontSize: 48)),
+                AppSpacing.verticalSpacerMd,
                 Text(
                   showJapanese ? word.english : word.japanese,
-                  style: const TextStyle(
+                  style: AppTypography.headlineSmall.copyWith(
                     fontSize: 36,
                     fontWeight: FontWeight.bold,
                     color: kTextDark,
@@ -370,22 +370,22 @@ class _BackCard extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
                 if (showJapanese && word.phonetic.isNotEmpty) ...[
-                  const SizedBox(height: 8),
+                  AppSpacing.verticalSpacerXs,
                   Text(
                     word.phonetic,
-                    style: const TextStyle(fontSize: 16, color: kTextMuted),
+                    style: AppTypography.bodySmall.copyWith(color: kTextMuted),
                   ),
                 ],
-                const SizedBox(height: 8),
+                AppSpacing.verticalSpacerXs,
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding: EdgeInsets.symmetric(horizontal: AppSpacing.xs, vertical: AppSpacing.xs),
                   decoration: BoxDecoration(
                     color: _diffColor(word.difficulty).withAlpha(26),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                   ),
                   child: Text(
                     _diffLabel(word.difficulty),
-                    style: TextStyle(
+                    style: AppTypography.bodySmall.copyWith(
                       fontSize: 12,
                       color: _diffColor(word.difficulty),
                       fontWeight: FontWeight.bold,
