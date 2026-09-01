@@ -9,6 +9,9 @@ import '../providers/progress_provider.dart';
 import '../services/speech_service.dart';
 import '../services/tts_service.dart';
 import '../theme/app_theme.dart';
+import '../theme/spacing.dart';
+import '../theme/sizes.dart';
+import '../theme/typography.dart';
 import '../widgets/speaking_score_ring.dart';
 
 class DailyChallengeScreen extends ConsumerStatefulWidget {
@@ -134,7 +137,7 @@ class _DailyChallengeScreenState extends ConsumerState<DailyChallengeScreen> {
     final total = _questions.length;
 
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.allPaddingMd,
       child: Column(
         children: [
           // 進捗バー
@@ -154,56 +157,56 @@ class _DailyChallengeScreenState extends ConsumerState<DailyChallengeScreen> {
               ),
             )),
           ),
-          const SizedBox(height: 8),
-          Text('${_currentIndex + 1} / $total', style: const TextStyle(color: kTextMuted, fontSize: 13)),
-          const SizedBox(height: 24),
+          AppSpacing.verticalSpacerXs,
+          Text('${_currentIndex + 1} / $total', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+          AppSpacing.verticalSpacerXl,
 
           // 問題カード
           Expanded(
             child: Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(24),
+              padding: EdgeInsets.all(AppSpacing.xl),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(24),
+                borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge * 2),
                 boxShadow: [BoxShadow(color: Colors.black.withAlpha(20), blurRadius: 12, offset: const Offset(0, 4))],
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(q.imageEmoji ?? '🎤', style: const TextStyle(fontSize: 72)),
-                  const SizedBox(height: 16),
+                  AppSpacing.verticalSpacerSm,
                   Text(q.text,
-                    style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: kTextDark),
+                    style: AppTypography.headlineLarge.copyWith(color: kTextDark),
                     textAlign: TextAlign.center,
                   ),
                   if (q.phonetic != null) ...[
-                    const SizedBox(height: 4),
-                    Text(q.phonetic!, style: const TextStyle(fontSize: 14, color: kTextMuted)),
+                    AppSpacing.verticalSpacerXs,
+                    Text(q.phonetic!, style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
                   ],
-                  const SizedBox(height: 8),
+                  AppSpacing.verticalSpacerXs,
                   TextButton.icon(
                     onPressed: _speak,
                     icon: const Icon(Icons.volume_up, color: kPrimaryColor),
-                    label: const Text('聞く', style: TextStyle(color: kPrimaryColor)),
+                    label: Text('聞く', style: AppTypography.labelLarge.copyWith(color: kPrimaryColor)),
                   ),
-                  const SizedBox(height: 24),
-                  const Text('⬇ 英語で言ってみよう！', style: TextStyle(fontSize: 14, color: kTextMuted)),
-                  const SizedBox(height: 16),
+                  AppSpacing.verticalSpacerXl,
+                  Text('⬇ 英語で言ってみよう！', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+                  AppSpacing.verticalSpacerSm,
                   // スコアリング
                   if (_score > 0) ...[
                     SpeakingScoreRing(score: _score, size: 80),
-                    const SizedBox(height: 8),
-                    Text(_recognizedText, style: const TextStyle(fontSize: 14, color: kTextMuted)),
+                    AppSpacing.verticalSpacerXs,
+                    Text(_recognizedText, style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
                   ] else if (_recognizedText.isNotEmpty) ...[
-                    Text(_recognizedText, style: const TextStyle(fontSize: 16, color: kTextDark)),
+                    Text(_recognizedText, style: AppTypography.labelLarge.copyWith(color: kTextDark)),
                   ],
                 ],
               ),
             ),
           ),
 
-          const SizedBox(height: 20),
+          AppSpacing.verticalSpacerLg,
 
           // ボタン
           if (_score > 0)
@@ -212,13 +215,13 @@ class _DailyChallengeScreenState extends ConsumerState<DailyChallengeScreen> {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: kAccentOrange,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge)),
                 ),
                 onPressed: _next,
                 child: Text(
                   _currentIndex + 1 >= _questions.length ? '結果を見る 🎉' : '次へ →',
-                  style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                  style: AppTypography.labelLarge.copyWith(color: Colors.white),
                 ),
               ),
             )
@@ -228,18 +231,18 @@ class _DailyChallengeScreenState extends ConsumerState<DailyChallengeScreen> {
               child: ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: _isListening ? kAccentRed : kSpeakingColor,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge)),
                 ),
                 onPressed: _isListening ? _stopAndScore : _startListening,
                 icon: Icon(_isListening ? Icons.stop : Icons.mic, color: Colors.white),
                 label: Text(
                   _isListening ? '録音停止' : '話す 🎤',
-                  style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                  style: AppTypography.labelLarge.copyWith(color: Colors.white),
                 ),
               ),
             ),
-          const SizedBox(height: 16),
+          AppSpacing.verticalSpacerSm,
         ],
       ),
     );
@@ -252,44 +255,44 @@ class _DailyChallengeScreenState extends ConsumerState<DailyChallengeScreen> {
 
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(AppSpacing.xl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text('🎉', style: TextStyle(fontSize: 64)),
-            const SizedBox(height: 8),
-            const Text('デイリーチャレンジ完了！', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: kTextDark)),
-            const SizedBox(height: 24),
+            AppSpacing.verticalSpacerXs,
+            Text('デイリーチャレンジ完了！', style: AppTypography.headlineMedium.copyWith(color: kTextDark)),
+            AppSpacing.verticalSpacerXl,
             SpeakingScoreRing(score: avg, size: 120),
-            const SizedBox(height: 8),
-            Text('グレード: $grade', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: kAccentOrange)),
-            const SizedBox(height: 24),
+            AppSpacing.verticalSpacerXs,
+            Text('グレード: $grade', style: AppTypography.headlineSmall.copyWith(color: kAccentOrange)),
+            AppSpacing.verticalSpacerXl,
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl, vertical: AppSpacing.md),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
                 border: Border.all(color: kAccentOrange, width: 2),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Text('🪙', style: TextStyle(fontSize: 28)),
-                  const SizedBox(width: 8),
+                  AppSpacing.horizontalSpacerXs,
                   Text('+$bonus コイン獲得！',
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: kAccentOrange)),
+                    style: AppTypography.labelLarge.copyWith(color: kAccentOrange)),
                 ],
               ),
             ),
-            const SizedBox(height: 32),
+            AppSpacing.verticalSpacerXxl,
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: kAccentOrange,
-                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                padding: EdgeInsets.symmetric(horizontal: 40, vertical: AppSpacing.sm),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge)),
               ),
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('ホームに戻る', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+              child: Text('ホームに戻る', style: AppTypography.labelLarge.copyWith(color: Colors.white)),
             ),
           ],
         ),
@@ -303,22 +306,22 @@ class _AlreadyDoneScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: EdgeInsets.all(AppSpacing.xxl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text('✅', style: TextStyle(fontSize: 72)),
-            const SizedBox(height: 16),
-            const Text('今日のチャレンジは完了！',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: kTextDark)),
-            const SizedBox(height: 8),
-            const Text('明日またチャレンジしよう！',
-              style: TextStyle(fontSize: 15, color: kTextMuted)),
-            const SizedBox(height: 32),
+            AppSpacing.verticalSpacerSm,
+            Text('今日のチャレンジは完了！',
+              style: AppTypography.headlineSmall.copyWith(color: kTextDark)),
+            AppSpacing.verticalSpacerXs,
+            Text('明日またチャレンジしよう！',
+              style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+            AppSpacing.verticalSpacerXxl,
             ElevatedButton(
               style: ElevatedButton.styleFrom(backgroundColor: kAccentOrange),
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('戻る', style: TextStyle(color: Colors.white)),
+              child: Text('戻る', style: AppTypography.labelLarge.copyWith(color: Colors.white)),
             ),
           ],
         ),
