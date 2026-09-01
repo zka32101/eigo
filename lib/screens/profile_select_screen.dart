@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/user_profile_provider.dart';
 import '../models/user_profile.dart';
+import '../theme/app_theme.dart';
+import '../theme/spacing.dart';
+import '../theme/sizes.dart';
+import '../theme/typography.dart';
 
 class ProfileSelectScreen extends ConsumerStatefulWidget {
   const ProfileSelectScreen({super.key});
@@ -62,7 +66,7 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
             // Header
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 16),
+              padding: EdgeInsets.symmetric(vertical: AppSpacing.lg, horizontal: AppSpacing.md),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [const Color(0xFF378ADD), const Color(0xFF1E5BA8)],
@@ -70,23 +74,16 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
                   end: Alignment.bottomRight,
                 ),
               ),
-              child: const Column(
+              child: Column(
                 children: [
                   Text(
                     '英語コレ！',
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+                    style: AppTypography.headlineLarge.copyWith(color: Colors.white),
                   ),
-                  SizedBox(height: 8),
+                  AppSpacing.verticalSpacerXs,
                   Text(
                     'プロフィールを選択または作成',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.white70,
-                    ),
+                    style: AppTypography.bodySmall.copyWith(color: Colors.white70),
                   ),
                 ],
               ),
@@ -95,24 +92,21 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
             // Existing Profiles
             if (profiles.isNotEmpty)
               Padding(
-                padding: const EdgeInsets.all(16),
+                padding: AppSpacing.allPaddingMd,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       '📚 プロフィール',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: AppTypography.labelLarge,
                     ),
-                    const SizedBox(height: 12),
+                    AppSpacing.verticalSpacerXs,
                     GridView.count(
                       crossAxisCount: 2,
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      crossAxisSpacing: 12,
-                      mainAxisSpacing: 12,
+                      crossAxisSpacing: AppSpacing.md,
+                      mainAxisSpacing: AppSpacing.md,
                       children: profiles.map((profile) {
                         return GestureDetector(
                           onTap: () => _selectProfile(profile),
@@ -122,7 +116,7 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
                                 color: const Color(0xFFDDD),
                                 width: 0.5,
                               ),
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                             ),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -131,36 +125,30 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
                                   profile.avatar,
                                   style: const TextStyle(fontSize: 48),
                                 ),
-                                const SizedBox(height: 8),
+                                AppSpacing.verticalSpacerXs,
                                 Text(
                                   profile.name,
                                   textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: AppTypography.labelLarge,
                                 ),
-                                const SizedBox(height: 4),
+                                AppSpacing.verticalSpacerXs,
                                 Text(
                                   '${profile.grade}年生',
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey,
-                                  ),
+                                  style: AppTypography.bodySmall.copyWith(color: Colors.grey),
                                 ),
-                                const SizedBox(height: 8),
+                                AppSpacing.verticalSpacerXs,
                                 Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 4,
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: AppSpacing.sm,
+                                    vertical: AppSpacing.xs,
                                   ),
                                   decoration: BoxDecoration(
                                     color: const Color(0xFFF0F0F0),
-                                    borderRadius: BorderRadius.circular(4),
+                                    borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
                                   ),
                                   child: Text(
                                     '💰 ${profile.coinsEarned}',
-                                    style: const TextStyle(fontSize: 12),
+                                    style: AppTypography.bodySmall,
                                   ),
                                 ),
                               ],
@@ -175,18 +163,15 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
 
             // Create New Profile Section
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: AppSpacing.allPaddingMd,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     '➕ 新しいプロフィール',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: AppTypography.labelLarge,
                   ),
-                  const SizedBox(height: 16),
+                  AppSpacing.verticalSpacerSm,
 
                   // Name Input
                   TextField(
@@ -194,28 +179,28 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
                     decoration: InputDecoration(
                       hintText: '名前を入力',
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                       ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 12,
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: AppSpacing.sm,
+                        vertical: AppSpacing.sm,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  AppSpacing.verticalSpacerSm,
 
                   // Grade Selection
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text('学年を選択'),
-                      const SizedBox(height: 8),
+                      AppSpacing.verticalSpacerXs,
                       Row(
                         children: List.generate(6, (i) {
                           final grade = i + 1;
                           return Expanded(
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 4),
+                              padding: EdgeInsets.symmetric(horizontal: AppSpacing.xs),
                               child: ElevatedButton(
                                 onPressed: () {
                                   setState(() => _selectedGrade = grade);
@@ -236,14 +221,14 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  AppSpacing.verticalSpacerSm,
 
                   // Avatar Selection
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text('アバターを選択'),
-                      const SizedBox(height: 8),
+                      AppSpacing.verticalSpacerXs,
                       SizedBox(
                         height: 60,
                         child: ListView.builder(
@@ -252,7 +237,7 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
                           itemBuilder: (context, index) {
                             final avatar = _avatars[index];
                             return Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8),
+                              padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm),
                               child: GestureDetector(
                                 onTap: () {
                                   setState(() => _selectedAvatar = avatar);
@@ -266,7 +251,7 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
                                           : Colors.grey[300]!,
                                       width: _selectedAvatar == avatar ? 2 : 0.5,
                                     ),
-                                    borderRadius: BorderRadius.circular(8),
+                                    borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                                   ),
                                   child: Center(
                                     child: Text(
@@ -282,7 +267,7 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 24),
+                  AppSpacing.verticalSpacerXl,
 
                   // Create Button
                   SizedBox(
@@ -294,12 +279,9 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
                         backgroundColor: const Color(0xFF378ADD),
                         foregroundColor: Colors.white,
                       ),
-                      child: const Text(
+                      child: Text(
                         '作成してスタート',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: AppTypography.labelLarge.copyWith(color: Colors.white),
                       ),
                     ),
                   ),
