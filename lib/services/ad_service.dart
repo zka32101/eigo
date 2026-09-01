@@ -77,7 +77,7 @@ class AdService {
         onAdFailedToLoad: (error) {
           print('Interstitial ad failed to load: $error');
           _interstitialAds[adUnitId] = null;
-          onAdFailedToLoad?.call(_interstitialAds[adUnitId] ?? _DummyAd(), error);
+          onAdFailedToLoad?.call(error);
         },
       ),
     );
@@ -114,7 +114,7 @@ class AdService {
         onAdFailedToLoad: (error) {
           print('Rewarded ad failed to load: $error');
           _rewardedAds[adUnitId] = null;
-          onAdFailedToLoad?.call(_rewardedAds[adUnitId] ?? _DummyAd(), error);
+          onAdFailedToLoad?.call(error);
         },
       ),
     );
