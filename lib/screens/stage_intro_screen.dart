@@ -3,6 +3,9 @@ import 'package:flutter_tts/flutter_tts.dart';
 import '../data/stage_intro_data.dart';
 import '../models/stage.dart';
 import '../theme/app_theme.dart';
+import '../theme/spacing.dart';
+import '../theme/sizes.dart';
+import '../theme/typography.dart';
 
 class StageIntroScreen extends StatefulWidget {
   final Stage stage;
@@ -43,35 +46,35 @@ class _StageIntroScreenState extends State<StageIntroScreen> {
         title: Text('${widget.stage.emoji} ${widget.stage.titleJa}'),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.allPaddingLg,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // ヘッダーカード
             _HeaderCard(stage: widget.stage, intro: intro),
-            const SizedBox(height: 16),
+            AppSpacing.verticalSpacerMd,
 
             if (intro != null) ...[
               // キー単語
               _VocabSection(intro: intro, tts: _tts),
-              const SizedBox(height: 16),
+              AppSpacing.verticalSpacerMd,
 
               // 文法・使い方ティップス
               _TipCard(intro: intro),
-              const SizedBox(height: 16),
+              AppSpacing.verticalSpacerMd,
 
               // 例文
               _ExampleCard(intro: intro, tts: _tts),
-              const SizedBox(height: 16),
+              AppSpacing.verticalSpacerMd,
             ] else ...[
               // データなしの場合は問題タイプ説明
               _QuestionTypeInfo(stage: widget.stage),
-              const SizedBox(height: 16),
+              AppSpacing.verticalSpacerMd,
             ],
 
             // 問題構成
             _ContentBreakdownCard(stage: widget.stage),
-            const SizedBox(height: 24),
+            AppSpacing.verticalSpacerXxl,
 
             // スタートボタン
             SizedBox(
@@ -80,20 +83,20 @@ class _StageIntroScreenState extends State<StageIntroScreen> {
                 icon: const Icon(Icons.play_arrow, size: 28),
                 label: const Text(
                   'レッスンスタート！',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: AppTypography.headlineSmall,
                 ),
                 onPressed: _startLesson,
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: EdgeInsets.symmetric(vertical: AppSpacing.lg),
                   backgroundColor: kAccentGreen,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
                   ),
                 ),
               ),
             ),
-            const SizedBox(height: 32),
+            AppSpacing.verticalSpacerXxl,
           ],
         ),
       ),
@@ -113,41 +116,39 @@ class _HeaderCard extends StatelessWidget {
     return Card(
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
           gradient: const LinearGradient(
             colors: [kPrimaryColor, Color(0xFF5B9BD5)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
         ),
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(AppSpacing.lg),
         child: Column(
           children: [
             Text(stage.emoji, style: const TextStyle(fontSize: 56)),
-            const SizedBox(height: 8),
+            AppSpacing.verticalSpacerXs,
             Text(
               stage.titleJa,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+              style: AppTypography.headlineMedium.copyWith(
                 color: Colors.white,
               ),
             ),
             Text(
               stage.title,
-              style: TextStyle(fontSize: 14, color: Colors.white.withAlpha(200)),
+              style: AppTypography.bodySmall.copyWith(color: Colors.white.withAlpha(200)),
             ),
             if (intro != null) ...[
-              const SizedBox(height: 12),
+              AppSpacing.verticalSpacerSm,
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.xs),
                 decoration: BoxDecoration(
                   color: Colors.white.withAlpha(30),
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge * 2),
                 ),
                 child: Text(
                   intro!.overviewJa,
-                  style: const TextStyle(color: Colors.white, fontSize: 13),
+                  style: AppTypography.bodySmall.copyWith(color: Colors.white),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -172,10 +173,10 @@ class _VocabSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Padding(
-          padding: EdgeInsets.only(left: 4, bottom: 8),
+          padding: EdgeInsets.only(left: AppSpacing.xs, bottom: AppSpacing.xs),
           child: Text(
             '📝 キーワード',
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: kTextDark),
+            style: AppTypography.labelLarge.copyWith(color: kTextDark),
           ),
         ),
         GridView.count(
@@ -204,17 +205,15 @@ class _VocabChip extends StatelessWidget {
       child: Card(
         elevation: 2,
         child: Padding(
-          padding: const EdgeInsets.all(8),
+          padding: AppSpacing.allPaddingSm,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(vocab.emoji, style: const TextStyle(fontSize: 24)),
-              const SizedBox(height: 4),
+              AppSpacing.verticalSpacerXs,
               Text(
                 vocab.english,
-                style: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
+                style: AppTypography.labelLarge.copyWith(
                   color: kPrimaryColor,
                 ),
                 textAlign: TextAlign.center,
@@ -222,13 +221,13 @@ class _VocabChip extends StatelessWidget {
               ),
               Text(
                 vocab.japanese,
-                style: const TextStyle(fontSize: 11, color: kTextMuted),
+                style: AppTypography.bodySmall.copyWith(color: kTextMuted),
                 textAlign: TextAlign.center,
               ),
               if (vocab.phonetic.isNotEmpty)
                 Text(
                   vocab.phonetic,
-                  style: const TextStyle(fontSize: 9, color: kTextMuted),
+                  style: AppTypography.bodySmall.copyWith(fontSize: 9, color: kTextMuted),
                   textAlign: TextAlign.center,
                 ),
             ],
@@ -250,28 +249,26 @@ class _TipCard extends StatelessWidget {
     return Card(
       color: const Color(0xFFFFF8E1),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.allPaddingLg,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text('💡', style: TextStyle(fontSize: 28)),
-            const SizedBox(width: 12),
+            AppSpacing.horizontalSpacerSm,
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
                     'ポイント！',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
+                    style: AppTypography.labelLarge.copyWith(
                       color: kAccentOrange,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  AppSpacing.verticalSpacerXs,
                   Text(
                     intro.tipJa,
-                    style: const TextStyle(fontSize: 13, color: kTextDark, height: 1.5),
+                    style: AppTypography.bodySmall.copyWith(color: kTextDark, height: 1.5),
                   ),
                 ],
               ),
@@ -295,15 +292,15 @@ class _ExampleCard extends StatelessWidget {
     return Card(
       color: kPrimaryColor.withAlpha(13),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.allPaddingLg,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
               '🗣️ 例文',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: kTextDark),
+              style: AppTypography.labelLarge.copyWith(color: kTextDark),
             ),
-            const SizedBox(height: 10),
+            AppSpacing.verticalSpacerSm,
             Row(
               children: [
                 Expanded(
@@ -312,16 +309,14 @@ class _ExampleCard extends StatelessWidget {
                     children: [
                       Text(
                         intro.exampleEn,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                        style: AppTypography.headlineSmall.copyWith(
                           color: kPrimaryColor,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      AppSpacing.verticalSpacerXs,
                       Text(
                         intro.exampleJa,
-                        style: const TextStyle(fontSize: 13, color: kTextMuted),
+                        style: AppTypography.bodySmall.copyWith(color: kTextMuted),
                       ),
                     ],
                   ),
@@ -349,15 +344,15 @@ class _ContentBreakdownCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.allPaddingLg,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
               '📊 このレッスンの内容',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              style: AppTypography.labelLarge,
             ),
-            const SizedBox(height: 12),
+            AppSpacing.verticalSpacerSm,
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -371,7 +366,7 @@ class _ContentBreakdownCard extends StatelessWidget {
                   _TypeCount('✏️', 'ライティング', stage.writingCount, kWritingColor),
               ],
             ),
-            const SizedBox(height: 12),
+            AppSpacing.verticalSpacerSm,
             Text(
               '合計 ${stage.questions.length} 問',
               style: const TextStyle(
@@ -403,9 +398,9 @@ class _TypeCount extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           '$count問',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: color),
+          style: AppTypography.labelLarge.copyWith(color: color),
         ),
-        Text(label, style: const TextStyle(fontSize: 10, color: kTextMuted)),
+        Text(label, style: AppTypography.bodySmall.copyWith(fontSize: 10, color: kTextMuted)),
       ],
     );
   }
@@ -428,7 +423,7 @@ class _QuestionTypeInfo extends StatelessWidget {
           children: [
             Text(
               '🎯 学習内容',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              style: AppTypography.labelLarge,
             ),
             SizedBox(height: 10),
             _InfoRow('👂 リスニング', '英語を聞いて正解を選ぼう'),
@@ -450,11 +445,11 @@ class _InfoRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
       child: Row(
         children: [
-          SizedBox(width: 110, child: Text(type, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold))),
-          Expanded(child: Text(desc, style: const TextStyle(fontSize: 12, color: kTextMuted))),
+          SizedBox(width: 110, child: Text(type, style: AppTypography.labelMedium)),
+          Expanded(child: Text(desc, style: AppTypography.labelMedium.copyWith(color: kTextMuted))),
         ],
       ),
     );
