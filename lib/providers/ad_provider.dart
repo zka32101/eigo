@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../models/ad_model.dart';
+import '../services/logger_service.dart';
 
 final adPlacementsProvider = StateNotifierProvider<AdPlacementsNotifier, List<AdPlacement>>((ref) {
   return AdPlacementsNotifier();
@@ -25,7 +26,7 @@ class AdPlacementsNotifier extends StateNotifier<List<AdPlacement>> {
             decoded.map((json) => AdPlacement.fromJson(json as Map<String, dynamic>)).toList();
         state = items;
       } catch (e) {
-        print('Error loading ad placements: $e');
+        LoggerService.error('Error loading ad placements', tag: 'AdPlacementsNotifier', exception: e);
         state = defaultAdPlacements;
       }
     }
@@ -111,7 +112,7 @@ class AdLimitsNotifier extends StateNotifier<AdLimits> {
         final json = jsonDecode(jsonString) as Map<String, dynamic>;
         state = AdLimits.fromJson(json);
       } catch (e) {
-        print('Error loading ad limits: $e');
+        LoggerService.error('Error loading ad limits', tag: 'AdLimitsNotifier', exception: e);
       }
     }
   }
@@ -153,7 +154,7 @@ class AdHistoryNotifier extends StateNotifier<List<AdViewRecord>> {
             decoded.map((json) => AdViewRecord.fromJson(json as Map<String, dynamic>)).toList();
         state = items;
       } catch (e) {
-        print('Error loading ad history: $e');
+        LoggerService.error('Error loading ad history', tag: 'AdHistoryNotifier', exception: e);
       }
     }
   }

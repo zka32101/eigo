@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../models/plush_toy_model.dart';
+import '../services/logger_service.dart';
 
 // === Providers ===
 
@@ -57,7 +58,7 @@ class PlushToyCharacterNotifier extends StateNotifier<PlushToyCharacter?> {
         state = PlushToyCharacter.fromJson(jsonDecode(jsonString));
       }
     } catch (e) {
-      print('Failed to load plush toy character: $e');
+      LoggerService.error('Failed to load plush toy character', tag: 'PlushToyCharacterNotifier', exception: e);
     }
   }
 
@@ -67,7 +68,7 @@ class PlushToyCharacterNotifier extends StateNotifier<PlushToyCharacter?> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_storageKey, jsonEncode(state!.toJson()));
     } catch (e) {
-      print('Failed to save plush toy character: $e');
+      LoggerService.error('Failed to save plush toy character', tag: 'PlushToyCharacterNotifier', exception: e);
     }
   }
 
@@ -150,7 +151,7 @@ class CurrentSessionNotifier extends StateNotifier<PlushToySession?> {
         state = PlushToySession.fromJson(jsonDecode(jsonString));
       }
     } catch (e) {
-      print('Failed to load current session: $e');
+      LoggerService.error('Failed to load current session', tag: 'CurrentSessionNotifier', exception: e);
     }
   }
 
@@ -160,7 +161,7 @@ class CurrentSessionNotifier extends StateNotifier<PlushToySession?> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_storageKey, jsonEncode(state!.toJson()));
     } catch (e) {
-      print('Failed to save current session: $e');
+      LoggerService.error('Failed to save current session', tag: 'CurrentSessionNotifier', exception: e);
     }
   }
 
@@ -258,7 +259,7 @@ class CurrentSessionNotifier extends StateNotifier<PlushToySession?> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(_storageKey);
     } catch (e) {
-      print('Failed to clear session: $e');
+      LoggerService.error('Failed to clear session', tag: 'CurrentSessionNotifier', exception: e);
     }
   }
 }
@@ -281,7 +282,7 @@ class ConversationHistoryNotifier extends StateNotifier<List<PlushToyConversatio
             .toList();
       }
     } catch (e) {
-      print('Failed to load conversation history: $e');
+      LoggerService.error('Failed to load conversation history', tag: 'ConversationHistoryNotifier', exception: e);
     }
   }
 
@@ -291,7 +292,7 @@ class ConversationHistoryNotifier extends StateNotifier<List<PlushToyConversatio
       final jsonList = state.map((e) => e.toJson()).toList();
       await prefs.setString(_storageKey, jsonEncode(jsonList));
     } catch (e) {
-      print('Failed to save conversation history: $e');
+      LoggerService.error('Failed to save conversation history', tag: 'ConversationHistoryNotifier', exception: e);
     }
   }
 
@@ -358,7 +359,7 @@ class PlushToyStatsNotifier extends StateNotifier<PlushToyStats> {
         state = PlushToyStats.fromJson(jsonDecode(jsonString));
       }
     } catch (e) {
-      print('Failed to load plush toy stats: $e');
+      LoggerService.error('Failed to load plush toy stats', tag: 'PlushToyStatsNotifier', exception: e);
     }
   }
 
@@ -367,7 +368,7 @@ class PlushToyStatsNotifier extends StateNotifier<PlushToyStats> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_storageKey, jsonEncode(state.toJson()));
     } catch (e) {
-      print('Failed to save plush toy stats: $e');
+      LoggerService.error('Failed to save plush toy stats', tag: 'PlushToyStatsNotifier', exception: e);
     }
   }
 
@@ -475,7 +476,7 @@ class PlushToyProgressNotifier extends StateNotifier<PlushToyProgress?> {
         );
       }
     } catch (e) {
-      print('Failed to load plush toy progress: $e');
+      LoggerService.error('Failed to load plush toy progress', tag: 'PlushToyProgressNotifier', exception: e);
     }
   }
 
@@ -485,7 +486,7 @@ class PlushToyProgressNotifier extends StateNotifier<PlushToyProgress?> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_storageKey, jsonEncode(state!.toJson()));
     } catch (e) {
-      print('Failed to save plush toy progress: $e');
+      LoggerService.error('Failed to save plush toy progress', tag: 'PlushToyProgressNotifier', exception: e);
     }
   }
 

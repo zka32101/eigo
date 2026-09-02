@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../models/pet_model.dart';
+import '../services/logger_service.dart';
 
 /// 現在のペットプロバイダー
 final currentPetProvider = StateNotifierProvider<PetNotifier, Pet?>((ref) {
@@ -76,7 +77,7 @@ class PetNotifier extends StateNotifier<Pet?> {
         state = Pet.fromJson(json);
       }
     } catch (e) {
-      print('Error loading pet: $e');
+      LoggerService.error('Error loading pet', tag: 'PetNotifier', exception: e);
     }
   }
 
@@ -230,7 +231,7 @@ class PetNotifier extends StateNotifier<Pet?> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_petStorageKey, jsonEncode(state!.toJson()));
     } catch (e) {
-      print('Error saving pet: $e');
+      LoggerService.error('Error saving pet', tag: 'PetNotifier', exception: e);
     }
   }
 
@@ -241,7 +242,7 @@ class PetNotifier extends StateNotifier<Pet?> {
       await prefs.remove(_petStorageKey);
       state = null;
     } catch (e) {
-      print('Error deleting pet: $e');
+      LoggerService.error('Error deleting pet', tag: 'PetNotifier', exception: e);
     }
   }
 }
@@ -273,7 +274,7 @@ class PetStatsNotifier extends StateNotifier<PetStats> {
         state = PetStats.fromJson(json);
       }
     } catch (e) {
-      print('Error loading pet stats: $e');
+      LoggerService.error('Error loading pet stats', tag: 'PetStatsNotifier', exception: e);
     }
   }
 
@@ -296,7 +297,7 @@ class PetStatsNotifier extends StateNotifier<PetStats> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_statsStorageKey, jsonEncode(state.toJson()));
     } catch (e) {
-      print('Error saving pet stats: $e');
+      LoggerService.error('Error saving pet stats', tag: 'PetStatsNotifier', exception: e);
     }
   }
 

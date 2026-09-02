@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../models/friend_model.dart';
+import '../services/logger_service.dart';
 
 /// フレンド一覧を管理
 final friendListProvider =
@@ -27,7 +28,7 @@ class FriendListNotifier extends StateNotifier<List<Friend>> {
             decoded.map((json) => Friend.fromJson(json as Map<String, dynamic>)).toList();
         state = items;
       } catch (e) {
-        print('Error loading friends: $e');
+        LoggerService.error('Error loading friends', tag: 'FriendListNotifier', exception: e);
       }
     }
   }
@@ -106,7 +107,7 @@ class FriendRequestsNotifier extends StateNotifier<List<FriendRequest>> {
             .toList();
         state = items;
       } catch (e) {
-        print('Error loading friend requests: $e');
+        LoggerService.error('Error loading friend requests', tag: 'FriendRequestsNotifier', exception: e);
       }
     }
   }
