@@ -278,6 +278,51 @@ Future<AdminReport?> generateDailyReportAction(
   return report;
 }
 
+// ===== Audit Log Providers =====
+
+/// Get audit log entries
+final auditLogEntriesProvider = FutureProvider.family<List<Map<String, dynamic>>, Map<String, dynamic>>(
+  (ref, params) async {
+    final service = ref.watch(adminDashboardServiceProvider);
+    return service.getAuditLogEntries(
+      adminId: params['adminId'],
+      action: params['action'],
+      days: params['days'] ?? 30,
+      limit: params['limit'] ?? 100,
+    );
+  },
+);
+
+/// Get audit log stats
+final auditLogStatsProvider = FutureProvider.family<Map<String, dynamic>, int>(
+  (ref, days) async {
+    final service = ref.watch(adminDashboardServiceProvider);
+    return service.getAuditLogStats(days: days);
+  },
+);
+
+/// Log admin action
+Future<void> logAdminActionAction(
+  WidgetRef ref, {
+  required String adminId,
+  required String action,
+  required String description,
+  String? targetId,
+  Map<String, dynamic>? details,
+}) async {
+  final service = ref.read(adminDashboardServiceProvider);
+  await service.logAdminAction(
+    adminId: adminId,
+    action: action,
+    description: description,
+    targetId: targetId,
+    details: details,
+  );
+
+  // Refresh audit logs
+  ref.refresh(auditLogStatsProvider(30));
+}
+
 // ===== Admin Auth Providers (Placeholder) =====
 
 /// Current admin user (from auth)

@@ -538,6 +538,115 @@ class AdminDashboardService {
       return [];
     }
   }
+
+  // ===== Audit Logging =====
+
+  /// Log admin action for audit trail
+  Future<void> logAdminAction({
+    required String adminId,
+    required String action,
+    required String description,
+    String? targetId,
+    Map<String, dynamic>? details,
+  }) async {
+    try {
+      final logEntry = {
+        'adminId': adminId,
+        'action': action,
+        'description': description,
+        'targetId': targetId,
+        'details': details ?? {},
+        'timestamp': Timestamp.now(),
+        'ipAddress': 'unknown', // TODO: Get from request
+      };
+
+      await _firestore
+          .collection('admin')
+          .doc('auditLog')
+          .collection('entries')
+          .add(logEntry);
+
+      print('[AdminService] Audit log entry created: $action by $adminId');
+    } catch (e) {
+      print('[AdminService] Error logging admin action: $e');
+    }
+  }
+
+  /// Get audit log entries
+  Future<List<Map<String, dynamic>>> getAuditLogEntries({
+    String? adminId,
+    String? action,
+    int days = 30,
+    int limit = 100,
+  }) async {
+    try {
+      final startDate = DateTime.now().subtract(Duration(days: days));
+      var query = _firestore
+          .collection('admin')
+          .doc('auditLog')
+          .collection('entries')
+          .where('timestamp', isGreaterThanOrEqualTo: startDate) as Query;
+
+      if (adminId != null) {
+        query = query.where('adminId', isEqualTo: adminId);
+      }
+
+      if (action != null) {
+        query = query.where('action', isEqualTo: action);
+      }
+
+      final snapshot = await query
+          .orderBy('timestamp', descending: true)
+          .limit(limit)
+          .get();
+
+      return snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+    } catch (e) {
+      print('[AdminService] Error getting audit log: $e');
+      return [];
+    }
+  }
+
+  /// Get audit log stats
+  Future<Map<String, dynamic>> getAuditLogStats({int days = 30}) async {
+    try {
+      final startDate = DateTime.now().subtract(Duration(days: days));
+      final snapshot = await _firestore
+          .collection('admin')
+          .doc('auditLog')
+          .collection('entries')
+          .where('timestamp', isGreaterThanOrEqualTo: startDate)
+          .get();
+
+      final entries = snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+
+      // Count actions by type
+      final actionCounts = <String, int>{};
+      final adminCounts = <String, int>{};
+
+      for (final entry in entries) {
+        final action = entry['action'] as String?;
+        final adminId = entry['adminId'] as String?;
+
+        if (action != null) {
+          actionCounts[action] = (actionCounts[action] ?? 0) + 1;
+        }
+        if (adminId != null) {
+          adminCounts[adminId] = (adminCounts[adminId] ?? 0) + 1;
+        }
+      }
+
+      return {
+        'totalActions': entries.length,
+        'actionCounts': actionCounts,
+        'adminCounts': adminCounts,
+        'period': 'last_$days days',
+      };
+    } catch (e) {
+      print('[AdminService] Error getting audit log stats: $e');
+      return {};
+    }
+  }
 }
 
 extension on DateTime {
