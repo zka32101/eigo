@@ -3,10 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/user_profile_provider.dart';
 import '../models/user_profile.dart';
 import '../models/avatar_model.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
+import '../design_system/design_system.dart';
 
 class ProfileSelectScreen extends ConsumerStatefulWidget {
   const ProfileSelectScreen({super.key});
@@ -87,12 +84,12 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
                 children: [
                   Text(
                     '英語コレ！',
-                    style: AppTypography.headlineLarge.copyWith(color: Colors.white),
+                    style: AppTypography.headlineLarge.copyWith(color: AppColors.textWhite),
                   ),
                   AppSpacing.verticalSpacerXs,
                   Text(
                     'プロフィールを選択または作成',
-                    style: AppTypography.bodySmall.copyWith(color: Colors.white70),
+                    style: AppTypography.bodySmall.copyWith(color: AppColors.textWhite.withOpacity(0.7)),
                   ),
                 ],
               ),
@@ -132,7 +129,7 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
                               children: [
                                 Text(
                                   profile.avatar,
-                                  style: AppTypography.headlineSmall.copyWith(fontSize: 48),
+                                  style: AppTypography.headlineSmall.copyWith(fontSize: AppTypography.displayLarge.fontSize! * 1.5),
                                 ),
                                 AppSpacing.verticalSpacerXs,
                                 Text(
@@ -143,7 +140,7 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
                                 AppSpacing.verticalSpacerXs,
                                 Text(
                                   '${profile.grade}年生',
-                                  style: AppTypography.bodySmall.copyWith(color: Colors.grey),
+                                  style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                                 ),
                                 AppSpacing.verticalSpacerXs,
                                 Container(
@@ -217,10 +214,10 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: _selectedGrade == grade
                                       ? const Color(0xFF378ADD)
-                                      : Colors.grey[200],
+                                      : AppColors.bgLight,
                                   foregroundColor: _selectedGrade == grade
-                                      ? Colors.white
-                                      : Colors.black,
+                                      ? AppColors.textWhite
+                                      : AppColors.textPrimary,
                                 ),
                                 child: Text('$grade年'),
                               ),
@@ -240,7 +237,7 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
                       AppSpacing.verticalSpacerXs,
                       Text(
                         '※ ロック中のアバターはショップで購入できます',
-                        style: AppTypography.bodySmall.copyWith(color: Colors.grey[600]),
+                        style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                       ),
                       AppSpacing.verticalSpacerXs,
                       SizedBox(
@@ -272,18 +269,18 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
                                       border: Border.all(
                                         color: isSelected
                                             ? const Color(0xFF378ADD)
-                                            : Colors.grey[300]!,
+                                            : AppColors.bgLight,
                                         width: isSelected ? 2 : 0.5,
                                       ),
                                       borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-                                      color: canSelect ? Colors.white : Colors.grey[100],
+                                      color: canSelect ? AppColors.textWhite : AppColors.bgLight.withAlpha(50),
                                     ),
                                     child: Column(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         Text(
                                           avatar.emoji,
-                                          style: AppTypography.headlineSmall.copyWith(fontSize: 28),
+                                          style: AppTypography.headlineSmall.copyWith(fontSize: AppTypography.displayMedium.fontSize),
                                         ),
                                       ],
                                     ),
@@ -292,19 +289,19 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
                                     Container(
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-                                        color: Colors.black.withAlpha(120),
+                                        color: AppColors.textPrimary.withAlpha(120),
                                       ),
                                       child: Center(
                                         child: Column(
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
-                                            const Icon(Icons.lock, color: Colors.white, size: 20),
+                                            const Icon(Icons.lock, color: AppColors.textWhite, size: 20),
                                             AppSpacing.verticalSpacerXs,
                                             Text(
                                               '🪙 ${avatar.price}',
                                               style: AppTypography.bodySmall.copyWith(
-                                                color: Colors.white,
-                                                fontSize: 10,
+                                                color: AppColors.textWhite,
+                                                fontSize: AppTypography.labelSmall.fontSize,
                                               ),
                                             ),
                                           ],
@@ -329,11 +326,11 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
                       onPressed: _createProfile,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF378ADD),
-                        foregroundColor: Colors.white,
+                        foregroundColor: AppColors.textWhite,
                       ),
                       child: Text(
                         '作成してスタート',
-                        style: AppTypography.labelLarge.copyWith(color: Colors.white),
+                        style: AppTypography.labelLarge.copyWith(color: AppColors.textWhite),
                       ),
                     ),
                   ),
