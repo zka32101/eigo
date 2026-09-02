@@ -1,266 +1,483 @@
-class DailyStats {
-  final String date; // YYYY-MM-DD
-  final int questsCompleted;
-  final int correctAnswers;
-  final int totalAnswers;
-  final int coinsEarned;
-  final int studyMinutes;
-  final Map<String, dynamic> categoryStats; // {categoryId: {correct, total}}
+import 'package:flutter/foundation.dart';
 
-  const DailyStats({
-    required this.date,
-    required this.questsCompleted,
-    required this.correctAnswers,
-    required this.totalAnswers,
-    required this.coinsEarned,
-    required this.studyMinutes,
-    required this.categoryStats,
-  });
+/// Analytics event types tracked throughout the game
+enum AnalyticsEventType {
+  // Conversation events
+  conversationStarted,
+  conversationCompleted,
+  conversationFailed,
+  npcInteraction,
 
-  factory DailyStats.fromJson(Map<String, dynamic> json) => DailyStats(
-        date: json['date'] as String,
-        questsCompleted: json['questsCompleted'] as int,
-        correctAnswers: json['correctAnswers'] as int,
-        totalAnswers: json['totalAnswers'] as int,
-        coinsEarned: json['coinsEarned'] as int,
-        studyMinutes: json['studyMinutes'] as int,
-        categoryStats: Map<String, dynamic>.from(json['categoryStats'] as Map),
-      );
+  // Achievement events
+  achievementUnlocked,
+  achievementProgressed,
 
-  Map<String, dynamic> toJson() => {
-        'date': date,
-        'questsCompleted': questsCompleted,
-        'correctAnswers': correctAnswers,
-        'totalAnswers': totalAnswers,
-        'coinsEarned': coinsEarned,
-        'studyMinutes': studyMinutes,
-        'categoryStats': categoryStats,
-      };
+  // Social events
+  friendRequestSent,
+  friendRequestAccepted,
+  friendRemoved,
+  challengeCreated,
+  challengeStarted,
+  challengeCompleted,
+  challengeFailed,
+
+  // Leaderboard events
+  rankChanged,
+  topTenAchieved,
+  top50Achieved,
+
+  // Streak events
+  streakStarted,
+  streakMaintained,
+  streakBroken,
+  streakMilestoneReached,
+
+  // Session events
+  sessionStarted,
+  sessionEnded,
+  appOpened,
+  appClosed,
+
+  // Store/Purchase events
+  coinsPurchased,
+  premiumActivated,
+  itemPurchased,
+
+  // Engagement events
+  dailyLoginMilestone,
+  weeklyActiveCheck,
+  monthlyActiveCheck,
 }
 
-class MonthlyStats {
-  final String month; // YYYY-MM
-  final int totalQuestsCompleted;
-  final int totalCorrectAnswers;
-  final int totalAnswers;
-  final double accuracyRate; // 0.0 ~ 1.0
-  final int totalStudyMinutes;
-  final int totalCoinsEarned;
-  final int studyDaysCount; // 学習した日数
-  final Map<String, dynamic> categoryStats; // {categoryId: {correct, total, accuracy}}
+/// Single analytics event
+class AnalyticsEvent {
+  final String eventId;
+  final String userId;
+  final AnalyticsEventType type;
+  final DateTime timestamp;
+  final Map<String, dynamic> properties;
+  final String? sessionId;
+  final String? deviceId;
 
-  const MonthlyStats({
-    required this.month,
-    required this.totalQuestsCompleted,
-    required this.totalCorrectAnswers,
-    required this.totalAnswers,
-    required this.accuracyRate,
-    required this.totalStudyMinutes,
-    required this.totalCoinsEarned,
-    required this.studyDaysCount,
-    required this.categoryStats,
+  // Context fields
+  final int? xpGained;
+  final int? coinsGained;
+  final String? relatedUserId;
+  final String? relatedChallengeId;
+  final int? currentLevel;
+  final int? currentRank;
+
+  AnalyticsEvent({
+    required this.eventId,
+    required this.userId,
+    required this.type,
+    required this.timestamp,
+    this.properties = const {},
+    this.sessionId,
+    this.deviceId,
+    this.xpGained,
+    this.coinsGained,
+    this.relatedUserId,
+    this.relatedChallengeId,
+    this.currentLevel,
+    this.currentRank,
   });
 
-  factory MonthlyStats.fromJson(Map<String, dynamic> json) => MonthlyStats(
-        month: json['month'] as String,
-        totalQuestsCompleted: json['totalQuestsCompleted'] as int,
-        totalCorrectAnswers: json['totalCorrectAnswers'] as int,
-        totalAnswers: json['totalAnswers'] as int,
-        accuracyRate: (json['accuracyRate'] as num).toDouble(),
-        totalStudyMinutes: json['totalStudyMinutes'] as int,
-        totalCoinsEarned: json['totalCoinsEarned'] as int,
-        studyDaysCount: json['studyDaysCount'] as int,
-        categoryStats: Map<String, dynamic>.from(json['categoryStats'] as Map),
-      );
+  Map<String, dynamic> toFirestore() {
+    return {
+      'eventId': eventId,
+      'userId': userId,
+      'type': type.toString(),
+      'timestamp': timestamp.toIso8601String(),
+      'properties': properties,
+      'sessionId': sessionId,
+      'deviceId': deviceId,
+      'xpGained': xpGained,
+      'coinsGained': coinsGained,
+      'relatedUserId': relatedUserId,
+      'relatedChallengeId': relatedChallengeId,
+      'currentLevel': currentLevel,
+      'currentRank': currentRank,
+    };
+  }
 
-  Map<String, dynamic> toJson() => {
-        'month': month,
-        'totalQuestsCompleted': totalQuestsCompleted,
-        'totalCorrectAnswers': totalCorrectAnswers,
-        'totalAnswers': totalAnswers,
-        'accuracyRate': accuracyRate,
-        'totalStudyMinutes': totalStudyMinutes,
-        'totalCoinsEarned': totalCoinsEarned,
-        'studyDaysCount': studyDaysCount,
-        'categoryStats': categoryStats,
-      };
+  factory AnalyticsEvent.fromFirestore(Map<String, dynamic> doc) {
+    return AnalyticsEvent(
+      eventId: doc['eventId'] as String,
+      userId: doc['userId'] as String,
+      type: _parseEventType(doc['type'] as String),
+      timestamp: DateTime.parse(doc['timestamp'] as String),
+      properties: Map<String, dynamic>.from(doc['properties'] as Map? ?? {}),
+      sessionId: doc['sessionId'] as String?,
+      deviceId: doc['deviceId'] as String?,
+      xpGained: doc['xpGained'] as int?,
+      coinsGained: doc['coinsGained'] as int?,
+      relatedUserId: doc['relatedUserId'] as String?,
+      relatedChallengeId: doc['relatedChallengeId'] as String?,
+      currentLevel: doc['currentLevel'] as int?,
+      currentRank: doc['currentRank'] as int?,
+    );
+  }
 
-  double get accuracyPercentage => accuracyRate * 100;
+  static AnalyticsEventType _parseEventType(String typeStr) {
+    return AnalyticsEventType.values.firstWhere(
+      (e) => e.toString() == typeStr,
+      orElse: () => AnalyticsEventType.conversationCompleted,
+    );
+  }
 }
 
-/// 週間レポート
-class WeeklyReport {
-  final DateTime weekStartDate;
-  final int totalMinutesStudied;
-  final int totalLessonsCompleted;
-  final int totalCoinsEarned;
-  final int averageMinutesPerDay;
+/// Analytics period types
+enum AnalyticsPeriod {
+  daily,
+  weekly,
+  monthly,
+  allTime,
+}
+
+/// Aggregated player analytics for a period
+class PlayerAnalytics {
+  final String userId;
+  final AnalyticsPeriod period;
+  final DateTime dateStart;
+  final DateTime dateEnd;
+
+  // Conversation metrics
+  final int totalConversations;
+  final int successfulConversations;
+  final double conversionRate;
+  final int totalConversationDuration;
+
+  // Achievement metrics
+  final int achievementsUnlocked;
+  final int achievementProgress;
+
+  // Social metrics
+  final int friendsAdded;
+  final int friendsRemoved;
+  final int challengesCreated;
+  final int challengesCompleted;
+  final int challengeWins;
+  final double challengeWinRate;
+
+  // Progression metrics
+  final int xpGained;
+  final int coinsGained;
+  final int levelGains;
+  final int? currentRank;
+  final int rankImprovement;
+
+  // Engagement metrics
+  final int sessionCount;
+  final int totalPlayTime; // seconds
+  final int averageSessionDuration; // seconds
   final int daysActive;
-  final List<DailyStudyRecord> dailyRecords;
-  final List<String> topTopics;
-  final bool weeklyGoalAchieved;
+  final int? currentStreak;
 
-  const WeeklyReport({
-    required this.weekStartDate,
-    required this.totalMinutesStudied,
-    required this.totalLessonsCompleted,
-    required this.totalCoinsEarned,
-    required this.averageMinutesPerDay,
+  // Derived scores
+  final double engagementScore;
+  final String engagementTier;
+
+  PlayerAnalytics({
+    required this.userId,
+    required this.period,
+    required this.dateStart,
+    required this.dateEnd,
+    required this.totalConversations,
+    required this.successfulConversations,
+    required this.conversionRate,
+    required this.totalConversationDuration,
+    required this.achievementsUnlocked,
+    required this.achievementProgress,
+    required this.friendsAdded,
+    required this.friendsRemoved,
+    required this.challengesCreated,
+    required this.challengesCompleted,
+    required this.challengeWins,
+    required this.challengeWinRate,
+    required this.xpGained,
+    required this.coinsGained,
+    required this.levelGains,
+    this.currentRank,
+    required this.rankImprovement,
+    required this.sessionCount,
+    required this.totalPlayTime,
+    required this.averageSessionDuration,
     required this.daysActive,
-    required this.dailyRecords,
-    this.topTopics = const [],
-    this.weeklyGoalAchieved = false,
+    this.currentStreak,
+    required this.engagementScore,
+    required this.engagementTier,
   });
 
-  Map<String, dynamic> toJson() => {
-        'weekStartDate': weekStartDate.toIso8601String(),
-        'totalMinutesStudied': totalMinutesStudied,
-        'totalLessonsCompleted': totalLessonsCompleted,
-        'totalCoinsEarned': totalCoinsEarned,
-        'averageMinutesPerDay': averageMinutesPerDay,
-        'daysActive': daysActive,
-        'dailyRecords': dailyRecords.map((r) => r.toJson()).toList(),
-        'topTopics': topTopics,
-        'weeklyGoalAchieved': weeklyGoalAchieved,
-      };
+  Map<String, dynamic> toFirestore() {
+    return {
+      'userId': userId,
+      'period': period.toString(),
+      'dateStart': dateStart.toIso8601String(),
+      'dateEnd': dateEnd.toIso8601String(),
+      'totalConversations': totalConversations,
+      'successfulConversations': successfulConversations,
+      'conversionRate': conversionRate,
+      'totalConversationDuration': totalConversationDuration,
+      'achievementsUnlocked': achievementsUnlocked,
+      'achievementProgress': achievementProgress,
+      'friendsAdded': friendsAdded,
+      'friendsRemoved': friendsRemoved,
+      'challengesCreated': challengesCreated,
+      'challengesCompleted': challengesCompleted,
+      'challengeWins': challengeWins,
+      'challengeWinRate': challengeWinRate,
+      'xpGained': xpGained,
+      'coinsGained': coinsGained,
+      'levelGains': levelGains,
+      'currentRank': currentRank,
+      'rankImprovement': rankImprovement,
+      'sessionCount': sessionCount,
+      'totalPlayTime': totalPlayTime,
+      'averageSessionDuration': averageSessionDuration,
+      'daysActive': daysActive,
+      'currentStreak': currentStreak,
+      'engagementScore': engagementScore,
+      'engagementTier': engagementTier,
+    };
+  }
 
-  factory WeeklyReport.fromJson(Map<String, dynamic> json) => WeeklyReport(
-        weekStartDate: DateTime.parse(json['weekStartDate'] as String),
-        totalMinutesStudied: json['totalMinutesStudied'] as int,
-        totalLessonsCompleted: json['totalLessonsCompleted'] as int,
-        totalCoinsEarned: json['totalCoinsEarned'] as int,
-        averageMinutesPerDay: json['averageMinutesPerDay'] as int,
-        daysActive: json['daysActive'] as int,
-        dailyRecords: (json['dailyRecords'] as List<dynamic>)
-            .map((r) => DailyStudyRecord.fromJson(r as Map<String, dynamic>))
-            .toList(),
-        topTopics: List<String>.from(json['topTopics'] as List? ?? []),
-        weeklyGoalAchieved: json['weeklyGoalAchieved'] as bool? ?? false,
-      );
+  factory PlayerAnalytics.fromFirestore(Map<String, dynamic> doc) {
+    return PlayerAnalytics(
+      userId: doc['userId'] as String,
+      period: AnalyticsPeriod.values.firstWhere(
+        (e) => e.toString() == doc['period'],
+        orElse: () => AnalyticsPeriod.daily,
+      ),
+      dateStart: DateTime.parse(doc['dateStart'] as String),
+      dateEnd: DateTime.parse(doc['dateEnd'] as String),
+      totalConversations: doc['totalConversations'] as int? ?? 0,
+      successfulConversations: doc['successfulConversations'] as int? ?? 0,
+      conversionRate: doc['conversionRate'] as double? ?? 0.0,
+      totalConversationDuration: doc['totalConversationDuration'] as int? ?? 0,
+      achievementsUnlocked: doc['achievementsUnlocked'] as int? ?? 0,
+      achievementProgress: doc['achievementProgress'] as int? ?? 0,
+      friendsAdded: doc['friendsAdded'] as int? ?? 0,
+      friendsRemoved: doc['friendsRemoved'] as int? ?? 0,
+      challengesCreated: doc['challengesCreated'] as int? ?? 0,
+      challengesCompleted: doc['challengesCompleted'] as int? ?? 0,
+      challengeWins: doc['challengeWins'] as int? ?? 0,
+      challengeWinRate: doc['challengeWinRate'] as double? ?? 0.0,
+      xpGained: doc['xpGained'] as int? ?? 0,
+      coinsGained: doc['coinsGained'] as int? ?? 0,
+      levelGains: doc['levelGains'] as int? ?? 0,
+      currentRank: doc['currentRank'] as int?,
+      rankImprovement: doc['rankImprovement'] as int? ?? 0,
+      sessionCount: doc['sessionCount'] as int? ?? 0,
+      totalPlayTime: doc['totalPlayTime'] as int? ?? 0,
+      averageSessionDuration: doc['averageSessionDuration'] as int? ?? 0,
+      daysActive: doc['daysActive'] as int? ?? 0,
+      currentStreak: doc['currentStreak'] as int?,
+      engagementScore: doc['engagementScore'] as double? ?? 0.0,
+      engagementTier: doc['engagementTier'] as String? ?? 'medium',
+    );
+  }
 }
 
-/// 日次学習データ
-class DailyStudyRecord {
+/// Engagement score and tier
+class EngagementScore {
+  final String userId;
+  final double score; // 0-100
+  final EngagementTier tier;
+  final DateTime calculatedAt;
+
+  // Component scores
+  final double conversationScore;
+  final double socialScore;
+  final double progressionScore;
+  final double consistencyScore;
+  final double retentionScore;
+
+  EngagementScore({
+    required this.userId,
+    required this.score,
+    required this.tier,
+    required this.calculatedAt,
+    required this.conversationScore,
+    required this.socialScore,
+    required this.progressionScore,
+    required this.consistencyScore,
+    required this.retentionScore,
+  });
+
+  Map<String, dynamic> toFirestore() {
+    return {
+      'userId': userId,
+      'score': score,
+      'tier': tier.toString(),
+      'calculatedAt': calculatedAt.toIso8601String(),
+      'conversationScore': conversationScore,
+      'socialScore': socialScore,
+      'progressionScore': progressionScore,
+      'consistencyScore': consistencyScore,
+      'retentionScore': retentionScore,
+    };
+  }
+
+  factory EngagementScore.fromFirestore(Map<String, dynamic> doc) {
+    return EngagementScore(
+      userId: doc['userId'] as String,
+      score: doc['score'] as double? ?? 0.0,
+      tier: EngagementTier.values.firstWhere(
+        (e) => e.toString().contains(doc['tier'] as String? ?? 'medium'),
+        orElse: () => EngagementTier.medium,
+      ),
+      calculatedAt: DateTime.parse(doc['calculatedAt'] as String),
+      conversationScore: doc['conversationScore'] as double? ?? 0.0,
+      socialScore: doc['socialScore'] as double? ?? 0.0,
+      progressionScore: doc['progressionScore'] as double? ?? 0.0,
+      consistencyScore: doc['consistencyScore'] as double? ?? 0.0,
+      retentionScore: doc['retentionScore'] as double? ?? 0.0,
+    );
+  }
+}
+
+/// Engagement tier classification
+enum EngagementTier {
+  churned,      // No activity in 30+ days
+  low,          // Some activity but irregular
+  medium,       // Regular player, few daily logins
+  high,         // Very active, consistent engagement
+  hardcore,     // Daily player with high social engagement
+}
+
+extension EngagementTierHelper on EngagementTier {
+  String displayName() {
+    switch (this) {
+      case EngagementTier.churned:
+        return 'Churned';
+      case EngagementTier.low:
+        return 'Low Engagement';
+      case EngagementTier.medium:
+        return 'Regular Player';
+      case EngagementTier.high:
+        return 'Very Active';
+      case EngagementTier.hardcore:
+        return 'Hardcore';
+    }
+  }
+
+  String description() {
+    switch (this) {
+      case EngagementTier.churned:
+        return 'No activity in 30+ days';
+      case EngagementTier.low:
+        return 'Some activity but irregular';
+      case EngagementTier.medium:
+        return 'Regular player, few daily logins';
+      case EngagementTier.high:
+        return 'Very active, consistent engagement';
+      case EngagementTier.hardcore:
+        return 'Daily player with high social engagement';
+    }
+  }
+
+  int minScore() {
+    switch (this) {
+      case EngagementTier.churned:
+        return 0;
+      case EngagementTier.low:
+        return 20;
+      case EngagementTier.medium:
+        return 40;
+      case EngagementTier.high:
+        return 70;
+      case EngagementTier.hardcore:
+        return 85;
+    }
+  }
+}
+
+/// Daily game-wide metrics
+class DailyMetrics {
   final DateTime date;
-  final int minutesStudied;
-  final int lessonsCompleted;
-  final int coinsEarned;
-  final bool streakMaintained;
-  final List<String> topicsStudied;
+  final int dailyActiveUsers;
+  final int newPlayers;
+  final int churnedPlayers;
 
-  const DailyStudyRecord({
+  // Engagement
+  final double averageSessionDuration;
+  final double averageConversationsPerUser;
+  final double conversationCompletionRate;
+
+  // Social
+  final int friendRequestsSent;
+  final int challengesCreated;
+  final int challengesCompleted;
+
+  // Progression
+  final int totalXpDistributed;
+  final int totalCoinsDistributed;
+  final int achievementsUnlocked;
+
+  // Retention
+  final double dayOneRetention;
+  final double day7Retention;
+  final double day30Retention;
+
+  DailyMetrics({
     required this.date,
-    required this.minutesStudied,
-    required this.lessonsCompleted,
-    required this.coinsEarned,
-    required this.streakMaintained,
-    this.topicsStudied = const [],
+    required this.dailyActiveUsers,
+    required this.newPlayers,
+    required this.churnedPlayers,
+    required this.averageSessionDuration,
+    required this.averageConversationsPerUser,
+    required this.conversationCompletionRate,
+    required this.friendRequestsSent,
+    required this.challengesCreated,
+    required this.challengesCompleted,
+    required this.totalXpDistributed,
+    required this.totalCoinsDistributed,
+    required this.achievementsUnlocked,
+    required this.dayOneRetention,
+    required this.day7Retention,
+    required this.day30Retention,
   });
 
-  Map<String, dynamic> toJson() => {
-        'date': date.toIso8601String(),
-        'minutesStudied': minutesStudied,
-        'lessonsCompleted': lessonsCompleted,
-        'coinsEarned': coinsEarned,
-        'streakMaintained': streakMaintained,
-        'topicsStudied': topicsStudied,
-      };
+  Map<String, dynamic> toFirestore() {
+    return {
+      'date': date.toIso8601String(),
+      'dailyActiveUsers': dailyActiveUsers,
+      'newPlayers': newPlayers,
+      'churnedPlayers': churnedPlayers,
+      'averageSessionDuration': averageSessionDuration,
+      'averageConversationsPerUser': averageConversationsPerUser,
+      'conversationCompletionRate': conversationCompletionRate,
+      'friendRequestsSent': friendRequestsSent,
+      'challengesCreated': challengesCreated,
+      'challengesCompleted': challengesCompleted,
+      'totalXpDistributed': totalXpDistributed,
+      'totalCoinsDistributed': totalCoinsDistributed,
+      'achievementsUnlocked': achievementsUnlocked,
+      'dayOneRetention': dayOneRetention,
+      'day7Retention': day7Retention,
+      'day30Retention': day30Retention,
+    };
+  }
 
-  factory DailyStudyRecord.fromJson(Map<String, dynamic> json) =>
-      DailyStudyRecord(
-        date: DateTime.parse(json['date'] as String),
-        minutesStudied: json['minutesStudied'] as int,
-        lessonsCompleted: json['lessonsCompleted'] as int,
-        coinsEarned: json['coinsEarned'] as int,
-        streakMaintained: json['streakMaintained'] as bool,
-        topicsStudied: List<String>.from(json['topicsStudied'] as List? ?? []),
-      );
-}
-
-/// 学習進度統計
-class LearningProgressStats {
-  final int totalLessonsCompleted;
-  final int totalMinutesStudied;
-  final int currentLevel;
-  final double levelProgress; // 0.0 - 1.0
-  final int totalCoinsEarned;
-  final int currentStreak;
-  final int longestStreak;
-  final double accuracyRate; // 0.0 - 100.0
-  final List<String> completedTopics;
-
-  const LearningProgressStats({
-    required this.totalLessonsCompleted,
-    required this.totalMinutesStudied,
-    required this.currentLevel,
-    required this.levelProgress,
-    required this.totalCoinsEarned,
-    required this.currentStreak,
-    required this.longestStreak,
-    required this.accuracyRate,
-    this.completedTopics = const [],
-  });
-
-  Map<String, dynamic> toJson() => {
-        'totalLessonsCompleted': totalLessonsCompleted,
-        'totalMinutesStudied': totalMinutesStudied,
-        'currentLevel': currentLevel,
-        'levelProgress': levelProgress,
-        'totalCoinsEarned': totalCoinsEarned,
-        'currentStreak': currentStreak,
-        'longestStreak': longestStreak,
-        'accuracyRate': accuracyRate,
-        'completedTopics': completedTopics,
-      };
-
-  factory LearningProgressStats.fromJson(Map<String, dynamic> json) =>
-      LearningProgressStats(
-        totalLessonsCompleted: json['totalLessonsCompleted'] as int,
-        totalMinutesStudied: json['totalMinutesStudied'] as int,
-        currentLevel: json['currentLevel'] as int,
-        levelProgress: (json['levelProgress'] as num).toDouble(),
-        totalCoinsEarned: json['totalCoinsEarned'] as int,
-        currentStreak: json['currentStreak'] as int,
-        longestStreak: json['longestStreak'] as int,
-        accuracyRate: (json['accuracyRate'] as num).toDouble(),
-        completedTopics: List<String>.from(json['completedTopics'] as List? ?? []),
-      );
-}
-
-/// 勉強成果ログ
-class AchievementLog {
-  final String achievementId;
-  final String title;
-  final String description;
-  final String icon;
-  final DateTime unlockedAt;
-  final int rarity; // 1-5, 5 = 最もレア
-
-  const AchievementLog({
-    required this.achievementId,
-    required this.title,
-    required this.description,
-    required this.icon,
-    required this.unlockedAt,
-    required this.rarity,
-  });
-
-  Map<String, dynamic> toJson() => {
-        'achievementId': achievementId,
-        'title': title,
-        'description': description,
-        'icon': icon,
-        'unlockedAt': unlockedAt.toIso8601String(),
-        'rarity': rarity,
-      };
-
-  factory AchievementLog.fromJson(Map<String, dynamic> json) =>
-      AchievementLog(
-        achievementId: json['achievementId'] as String,
-        title: json['title'] as String,
-        description: json['description'] as String,
-        icon: json['icon'] as String,
-        unlockedAt: DateTime.parse(json['unlockedAt'] as String),
-        rarity: json['rarity'] as int,
-      );
+  factory DailyMetrics.fromFirestore(Map<String, dynamic> doc) {
+    return DailyMetrics(
+      date: DateTime.parse(doc['date'] as String),
+      dailyActiveUsers: doc['dailyActiveUsers'] as int? ?? 0,
+      newPlayers: doc['newPlayers'] as int? ?? 0,
+      churnedPlayers: doc['churnedPlayers'] as int? ?? 0,
+      averageSessionDuration: doc['averageSessionDuration'] as double? ?? 0.0,
+      averageConversationsPerUser: doc['averageConversationsPerUser'] as double? ?? 0.0,
+      conversationCompletionRate: doc['conversationCompletionRate'] as double? ?? 0.0,
+      friendRequestsSent: doc['friendRequestsSent'] as int? ?? 0,
+      challengesCreated: doc['challengesCreated'] as int? ?? 0,
+      challengesCompleted: doc['challengesCompleted'] as int? ?? 0,
+      totalXpDistributed: doc['totalXpDistributed'] as int? ?? 0,
+      totalCoinsDistributed: doc['totalCoinsDistributed'] as int? ?? 0,
+      achievementsUnlocked: doc['achievementsUnlocked'] as int? ?? 0,
+      dayOneRetention: doc['dayOneRetention'] as double? ?? 0.0,
+      day7Retention: doc['day7Retention'] as double? ?? 0.0,
+      day30Retention: doc['day30Retention'] as double? ?? 0.0,
+    );
+  }
 }
