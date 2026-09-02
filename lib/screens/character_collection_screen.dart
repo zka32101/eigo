@@ -153,64 +153,98 @@ class _RarityView extends ConsumerWidget {
       'legendary': const Color(0xFFFFD700),
     };
 
-    return SingleChildScrollView(
+    // Build rarity sections for ListView
+    final raritySections = <Map<String, dynamic>>[];
+    for (final rarity in rarities) {
+      final byRarity = collection.where((c) => c.character.rarity == rarity).toList();
+      raritySections.add({
+        'type': 'header',
+        'rarity': rarity,
+      });
+      raritySections.add({
+        'type': 'spacer',
+      });
+
+      if (byRarity.isEmpty) {
+        raritySections.add({
+          'type': 'empty',
+        });
+      } else {
+        for (final character in byRarity) {
+          raritySections.add({
+            'type': 'character',
+            'collected': character,
+          });
+        }
+      }
+
+      raritySections.add({
+        'type': 'spacer_lg',
+      });
+    }
+    raritySections.add({'type': 'bottom_spacer'});
+
+    return ListView.builder(
       padding: AppSpacing.allPaddingLg,
-      child: Column(
-        children: [
-          ...rarities.map((rarity) {
+      itemCount: raritySections.length,
+      itemBuilder: (context, index) {
+        final section = raritySections[index];
+
+        switch (section['type']) {
+          case 'header':
+            final rarity = section['rarity'] as String;
             final byRarity = collection.where((c) => c.character.rarity == rarity).toList();
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            return Row(
               children: [
-                Row(
-                  children: [
-                    Text(
-                      rarityEmojis[rarity]!,
-                      style: const TextStyle(fontSize: 20),
-                    ),
-                    AppSpacing.horizontalSpacerMd,
-                    Text(
-                      '${rarityLabels[rarity]} (${byRarity.length})',
-                      style: AppTypography.headlineSmall.copyWith(
-                        color: rarityColors[rarity],
-                      ),
-                    ),
-                  ],
+                Text(
+                  rarityEmojis[rarity]!,
+                  style: const TextStyle(fontSize: 20),
                 ),
-                AppSpacing.verticalSpacerMd,
-                if (byRarity.isEmpty)
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
-                    child: Text(
-                      'まだこのレアリティのキャラクターは収集していません',
-                      style: AppTypography.bodySmall.copyWith(color: kTextMuted),
-                    ),
-                  )
-                else
-                  GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 0.85,
-                      crossAxisSpacing: 12,
-                      mainAxisSpacing: 12,
-                    ),
-                    itemCount: byRarity.length,
-                    itemBuilder: (context, index) {
-                      return _CharacterCard(
-                        collected: byRarity[index],
-                        onTap: () => _showCharacterDetail(context, byRarity[index]),
-                      );
-                    },
+                AppSpacing.horizontalSpacerMd,
+                Text(
+                  '${rarityLabels[rarity]} (${byRarity.length})',
+                  style: AppTypography.headlineSmall.copyWith(
+                    color: rarityColors[rarity],
                   ),
-                AppSpacing.verticalSpacerLg,
+                ),
               ],
             );
-          }).toList(),
-          AppSpacing.verticalSpacerXxl,
-        ],
-      ),
+
+          case 'spacer':
+            return AppSpacing.verticalSpacerMd;
+
+          case 'spacer_lg':
+            return AppSpacing.verticalSpacerLg;
+
+          case 'empty':
+            return Padding(
+              padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
+              child: Text(
+                'まだこのレアリティのキャラクターは収集していません',
+                style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+              ),
+            );
+
+          case 'character':
+            final collected = section['collected'] as CollectedCharacter;
+            return Padding(
+              padding: const EdgeInsets.all(6),
+              child: GestureDetector(
+                onTap: () => _showCharacterDetail(context, collected),
+                child: _CharacterCard(
+                  collected: collected,
+                  onTap: () => _showCharacterDetail(context, collected),
+                ),
+              ),
+            );
+
+          case 'bottom_spacer':
+            return AppSpacing.verticalSpacerXxl;
+
+          default:
+            return const SizedBox();
+        }
+      },
     );
   }
 
