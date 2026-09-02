@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/english_town_model.dart';
+import '../models/english_town_advanced.dart';
 import '../providers/english_town_provider.dart';
 import '../providers/english_town_rewards_provider.dart';
+import '../providers/english_town_polish_provider.dart';
 import '../design_system/design_system.dart';
+import '../widgets/animated_reward_card.dart';
 
 /// English-Only Town Reward Screen
 ///
@@ -33,64 +36,89 @@ class EnglishTownRewardScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final soundEnabled = ref.watch(soundEffectsEnabledProvider);
+    final particlesEnabled = ref.watch(particleEffectsEnabledProvider);
+    final animationConfig = ref.watch(rewardAnimationConfigProvider);
+    final animationMultiplier = ref.watch(animationDurationMultiplierProvider);
+
     return Scaffold(
       backgroundColor: AppColors.bgLight,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: AppSpacing.allPaddingMd,
-          child: Column(
-            children: [
-              SizedBox(height: AppSpacing.lg),
-
-              // Reward header with animation
-              _buildRewardHeader(),
-
-              SizedBox(height: AppSpacing.lg),
-
-              // XP and Coin rewards
-              _buildRewardCards(),
-
-              SizedBox(height: AppSpacing.lg),
-
-              // Achievements unlocked
-              if (achievementsUnlocked.isNotEmpty)
-                _buildAchievementsSection(),
-
-              // Milestones reached
-              if (milestonesUnlocked.isNotEmpty)
-                _buildMilestonesSection(),
-
-              // NPC message
-              if (npcMessage != null)
-                _buildNPCMessage(),
-
-              // Next unlock info
-              _buildNextUnlockInfo(ref),
-
-              SizedBox(height: AppSpacing.lg),
-
-              // Continue button
-              ElevatedButton(
-                onPressed: onContinue ?? () => Navigator.pop(context),
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: AppSpacing.lg * 2,
-                    vertical: AppSpacing.md,
+      body: Stack(
+        children: [
+          // Confetti background (if particles enabled)
+          if (particlesEnabled)
+            Positioned.fill(
+              child: IgnorePointer(
+                child: ConfettiAnimation(
+                  isPlaying: true,
+                  duration: Duration(
+                    milliseconds:
+                        (animationConfig.holdDuration.inMilliseconds * animationMultiplier).toInt(),
                   ),
-                  backgroundColor: AppColors.accentGreen,
-                ),
-                child: Text(
-                  'Continue',
-                  style: AppTypography.labelLarge.copyWith(
-                    color: Colors.white,
-                  ),
+                  particleCount: 40,
                 ),
               ),
+            ),
 
-              SizedBox(height: AppSpacing.lg),
-            ],
+          // Main content
+          SingleChildScrollView(
+            child: Padding(
+              padding: AppSpacing.allPaddingMd,
+              child: Column(
+                children: [
+                  SizedBox(height: AppSpacing.lg),
+
+                  // Reward header with animation
+                  _buildRewardHeader(),
+
+                  SizedBox(height: AppSpacing.lg),
+
+                  // XP and Coin rewards with animation
+                  _buildAnimatedRewardCards(animationConfig, animationMultiplier),
+
+                  SizedBox(height: AppSpacing.lg),
+
+                  // Achievements unlocked
+                  if (achievementsUnlocked.isNotEmpty)
+                    _buildAchievementsSection(),
+
+                  // Milestones reached
+                  if (milestonesUnlocked.isNotEmpty)
+                    _buildMilestonesSection(),
+
+                  // NPC message
+                  if (npcMessage != null)
+                    _buildNPCMessage(),
+
+                  // Next unlock info
+                  _buildNextUnlockInfo(ref),
+
+                  SizedBox(height: AppSpacing.lg),
+
+                  // Continue button
+                  ElevatedButton(
+                    onPressed: onContinue ?? () => Navigator.pop(context),
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: AppSpacing.lg * 2,
+                        vertical: AppSpacing.md,
+                      ),
+                      backgroundColor: AppColors.accentGreen,
+                    ),
+                    child: Text(
+                      'Continue',
+                      style: AppTypography.labelLarge.copyWith(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: AppSpacing.lg),
+                ],
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -122,7 +150,41 @@ class EnglishTownRewardScreen extends ConsumerWidget {
     );
   }
 
-  /// Build XP and coin reward cards
+  /// Build animated XP and coin reward cards
+  Widget _buildAnimatedRewardCards(
+    RewardAnimationConfig config,
+    double animationMultiplier,
+  ) {
+    final duration = Duration(
+      milliseconds: (config.slideInDuration.inMilliseconds * animationMultiplier).toInt(),
+    );
+
+    return Row(
+      children: [
+        Expanded(
+          child: AnimatedRewardCard(
+            emoji: '⚡',
+            label: 'XP Earned',
+            value: xpEarned.toString(),
+            color: AppColors.accentOrange,
+            animationDuration: duration,
+          ),
+        ),
+        SizedBox(width: AppSpacing.md),
+        Expanded(
+          child: AnimatedRewardCard(
+            emoji: '💰',
+            label: 'Coins Earned',
+            value: coinsEarned.toString(),
+            color: AppColors.warning,
+            animationDuration: duration,
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Build XP and coin reward cards (fallback without animation)
   Widget _buildRewardCards() {
     return Row(
       children: [
