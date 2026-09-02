@@ -1,11 +1,8 @@
+import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/notification_model.dart';
 import '../providers/notification_settings_provider.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
 
 class NotificationManagementScreen extends ConsumerWidget {
   const NotificationManagementScreen({super.key});
@@ -19,11 +16,11 @@ class NotificationManagementScreen extends ConsumerWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('🔔 通知'),
-          backgroundColor: kPrimaryColor,
+          backgroundColor: AppColors.primary,
           bottom: TabBar(
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.white70,
-            indicatorColor: kAccentOrange,
+            labelColor: AppColors.textWhite,
+            unselectedLabelColor: AppColors.textWhite.withOpacity(0.7),
+            indicatorColor: AppColors.accentOrange,
             tabs: [
               const Tab(text: '設定'),
               Tab(
@@ -37,13 +34,13 @@ class NotificationManagementScreen extends ConsumerWidget {
                         child: Container(
                           padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: kAccentRed,
+                            color: AppColors.error,
                             shape: BoxShape.circle,
                           ),
                           child: Text(
                             '$unreadCount',
                             style: const TextStyle(
-                              color: Colors.white,
+                              color: AppColors.textWhite,
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
                             ),
@@ -85,7 +82,7 @@ class _NotificationSettingsTab extends ConsumerWidget {
           Container(
             padding: AppSpacing.allPaddingMd,
             decoration: BoxDecoration(
-              color: Colors.grey[50],
+              color: AppColors.bgLight,
               borderRadius: BorderRadius.circular(AppSizes.borderRadius),
             ),
             child: Column(
@@ -101,7 +98,7 @@ class _NotificationSettingsTab extends ConsumerWidget {
                           AppSpacing.verticalSpacerXs,
                           Text(
                             '通知時に音が出ます',
-                            style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                            style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                           ),
                         ],
                       ),
@@ -111,7 +108,7 @@ class _NotificationSettingsTab extends ConsumerWidget {
                       onChanged: (value) {
                         ref.read(notificationSettingsProvider.notifier).setSoundEnabled(value);
                       },
-                      activeColor: kAccentGreen,
+                      activeColor: AppColors.accentGreen,
                     ),
                   ],
                 ),
@@ -127,7 +124,7 @@ class _NotificationSettingsTab extends ConsumerWidget {
                           AppSpacing.verticalSpacerXs,
                           Text(
                             '通知時に端末が振動します',
-                            style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                            style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                           ),
                         ],
                       ),
@@ -137,7 +134,7 @@ class _NotificationSettingsTab extends ConsumerWidget {
                       onChanged: (value) {
                         ref.read(notificationSettingsProvider.notifier).setVibrationEnabled(value);
                       },
-                      activeColor: kAccentGreen,
+                      activeColor: AppColors.accentGreen,
                     ),
                   ],
                 ),
@@ -238,7 +235,7 @@ class _NotificationHistoryTab extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.notifications_none, size: 64, color: kTextMuted),
+            const Icon(Icons.notifications_none, size: 64, color: AppColors.textMuted),
             AppSpacing.verticalSpacerMd,
             const Text('通知がありません'),
           ],
@@ -254,7 +251,7 @@ class _NotificationHistoryTab extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('${notifications.length}件の通知', style: AppTypography.labelSmall.copyWith(color: kTextMuted)),
+              Text('${notifications.length}件の通知', style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted)),
               if (notifications.any((n) => !n.isRead))
                 TextButton(
                   onPressed: () {
@@ -309,9 +306,9 @@ class _NotificationToggleCard extends StatelessWidget {
     return Container(
       padding: AppSpacing.allPaddingMd,
       decoration: BoxDecoration(
-        color: isEnabled ? kAccentGreen.withAlpha(10) : Colors.grey[50],
+        color: isEnabled ? AppColors.accentGreen.withAlpha(10) : AppColors.bgLight,
         border: Border.all(
-          color: isEnabled ? kAccentGreen.withAlpha(50) : Colors.grey[300]!,
+          color: isEnabled ? AppColors.accentGreen.withAlpha(50) : AppColors.bgLight,
         ),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
       ),
@@ -329,7 +326,7 @@ class _NotificationToggleCard extends StatelessWidget {
                     AppSpacing.verticalSpacerXs,
                     Text(
                       description,
-                      style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                      style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                     ),
                   ],
                 ),
@@ -337,7 +334,7 @@ class _NotificationToggleCard extends StatelessWidget {
               Switch(
                 value: isEnabled,
                 onChanged: onChanged,
-                activeColor: kAccentGreen,
+                activeColor: AppColors.accentGreen,
               ),
             ],
           ),
@@ -378,7 +375,7 @@ class _TimePickerRow extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
                 decoration: BoxDecoration(
-                  color: kPrimaryColor.withAlpha(20),
+                  color: AppColors.primary.withAlpha(20),
                   borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
                 ),
                 child: Text(
@@ -436,9 +433,9 @@ class _NotificationCard extends StatelessWidget {
       child: Container(
         padding: AppSpacing.allPaddingMd,
         decoration: BoxDecoration(
-          color: notification.isRead ? Colors.white : kPrimaryColor.withAlpha(10),
+          color: notification.isRead ? Colors.white : AppColors.primary.withAlpha(10),
           border: Border.all(
-            color: notification.isRead ? Colors.grey[300]! : kPrimaryColor.withAlpha(50),
+            color: notification.isRead ? Colors.grey[300]! : AppColors.primary.withAlpha(50),
           ),
           borderRadius: BorderRadius.circular(AppSizes.borderRadius),
         ),
@@ -451,7 +448,7 @@ class _NotificationCard extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Text(_getTypeLabel(notification.type), style: AppTypography.labelSmall.copyWith(color: kTextMuted)),
+                      Text(_getTypeLabel(notification.type), style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted)),
                       if (!notification.isRead)
                         Padding(
                           padding: EdgeInsets.only(left: AppSpacing.sm),
@@ -459,7 +456,7 @@ class _NotificationCard extends StatelessWidget {
                             width: 8,
                             height: 8,
                             decoration: const BoxDecoration(
-                              color: kAccentRed,
+                              color: AppColors.error,
                               shape: BoxShape.circle,
                             ),
                           ),
@@ -471,14 +468,14 @@ class _NotificationCard extends StatelessWidget {
                   AppSpacing.verticalSpacerXs,
                   Text(
                     notification.message,
-                    style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                    style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                   AppSpacing.verticalSpacerXs,
                   Text(
                     _formatTime(notification.createdAt),
-                    style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 10),
+                    style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, fontSize: 10),
                   ),
                 ],
               ),
