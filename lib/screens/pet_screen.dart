@@ -3,10 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/pet_model.dart';
 import '../providers/pet_provider.dart';
 import '../providers/user_profile_provider.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
+import '../design_system/design_system.dart';
 
 class PetScreen extends ConsumerStatefulWidget {
   const PetScreen({Key? key}) : super(key: key);
@@ -125,12 +122,12 @@ class _PetDisplayCard extends ConsumerWidget {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [Colors.blue.shade50, Colors.blue.shade100],
+          colors: [AppColors.readingColor.withAlpha(25), AppColors.readingColor.withAlpha(50)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
-        border: Border.all(color: Colors.blue.shade200),
+        border: Border.all(color: AppColors.readingColor.withAlpha(80)),
       ),
       padding: EdgeInsets.all(AppSpacing.xl),
       child: Column(
@@ -139,7 +136,7 @@ class _PetDisplayCard extends ConsumerWidget {
           Container(
             height: 200,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.textWhite,
               borderRadius: BorderRadius.circular(AppSizes.borderRadius),
             ),
             child: Center(
@@ -162,7 +159,7 @@ class _PetDisplayCard extends ConsumerWidget {
             children: [
               Column(
                 children: [
-                  Text('名前', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+                  Text('名前', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
                   Text(
                     pet.species.displayName.split(' ').last,
                     style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold),
@@ -171,7 +168,7 @@ class _PetDisplayCard extends ConsumerWidget {
               ),
               Column(
                 children: [
-                  Text('段階', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+                  Text('段階', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
                   Text(
                     pet.currentStage.displayName,
                     style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold),
@@ -180,7 +177,7 @@ class _PetDisplayCard extends ConsumerWidget {
               ),
               Column(
                 children: [
-                  Text('気分', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+                  Text('気分', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
                   Text(
                     pet.currentMood.displayName.split(' ').last,
                     style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold),
@@ -210,7 +207,7 @@ class _PetStatusBar extends StatelessWidget {
           label: 'レベル',
           value: 'Lv ${pet.level}',
           progress: pet.exp / 100,
-          color: Colors.purple,
+          color: AppColors.accentPurple,
           subLabel: '${pet.exp}/100 XP',
         ),
         AppSpacing.verticalSpacerSm,
@@ -220,7 +217,7 @@ class _PetStatusBar extends StatelessWidget {
           label: '満腹度',
           value: '${pet.hunger}%',
           progress: 1 - (pet.hunger / 100),
-          color: Colors.orange,
+          color: AppColors.accentOrange,
           subLabel: pet.hunger > 80 ? '🍽️ ご飯が必要！' : '元気です',
         ),
         AppSpacing.verticalSpacerSm,
@@ -230,7 +227,7 @@ class _PetStatusBar extends StatelessWidget {
           label: '幸福度',
           value: '${pet.happiness}%',
           progress: pet.happiness / 100,
-          color: Colors.pink,
+          color: AppColors.accentPink,
           subLabel: pet.happiness > 80 ? '😊 とても嬉しい！' : '普通',
         ),
       ],
@@ -275,7 +272,7 @@ class _StatusItem extends StatelessWidget {
           child: LinearProgressIndicator(
             value: progress.clamp(0.0, 1.0),
             minHeight: 8,
-            backgroundColor: Colors.grey[200],
+            backgroundColor: AppColors.bgLight,
             valueColor: AlwaysStoppedAnimation<Color>(color),
           ),
         ),
@@ -283,7 +280,7 @@ class _StatusItem extends StatelessWidget {
           AppSpacing.verticalSpacerXs,
           Text(
             subLabel!,
-            style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+            style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
           ),
         ],
       ],
@@ -305,9 +302,9 @@ class _FeedingCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.amber.shade50,
+        color: AppColors.accentOrange.withAlpha(25),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-        border: Border.all(color: Colors.amber.shade200),
+        border: Border.all(color: AppColors.accentOrange.withAlpha(80)),
       ),
       padding: AppSpacing.allPaddingMd,
       child: Column(
@@ -322,7 +319,7 @@ class _FeedingCard extends ConsumerWidget {
             pet.isFedToday
                 ? '✅ 今日はもうエサをやりました！\n明日また会いましょう。'
                 : '📍 発音問題に正解してペットにエサをやろう！\n発音スコア 60点以上でエサやりできます。',
-            style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+            style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
           ),
           AppSpacing.verticalSpacerSm,
           if (!pet.isFedToday)
@@ -332,7 +329,7 @@ class _FeedingCard extends ConsumerWidget {
                 Navigator.pushNamed(context, '/stage-intro', arguments: {'stageId': 1});
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.amber,
+                backgroundColor: AppColors.accentOrange,
                 minimumSize: const Size(double.infinity, AppSizes.buttonHeight),
               ),
               child: const Text('練習に戻る'),
@@ -340,7 +337,7 @@ class _FeedingCard extends ConsumerWidget {
           if (pet.isFedToday)
             Text(
               '連続 ${pet.consecutiveFeedDays} 日達成！🎉',
-              style: AppTypography.labelLarge.copyWith(color: kAccentOrange),
+              style: AppTypography.labelLarge.copyWith(color: AppColors.accentOrange),
             ),
         ],
       ),
@@ -360,9 +357,9 @@ class _EvolutionInfoCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.green.shade50,
+        color: AppColors.accentGreen.withAlpha(25),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-        border: Border.all(color: Colors.green.shade200),
+        border: Border.all(color: AppColors.accentGreen.withAlpha(80)),
       ),
       padding: AppSpacing.allPaddingMd,
       child: Column(
@@ -391,8 +388,8 @@ class _EvolutionInfoCard extends StatelessWidget {
                           value: (pet.level / (pet.currentStage.requiredLevel + 10))
                               .clamp(0.0, 1.0),
                           minHeight: 8,
-                          backgroundColor: Colors.grey[200],
-                          valueColor: const AlwaysStoppedAnimation<Color>(Colors.green),
+                          backgroundColor: AppColors.bgLight,
+                          valueColor: const AlwaysStoppedAnimation<Color>(AppColors.accentGreen),
                         ),
                       ),
                     ),
@@ -403,12 +400,12 @@ class _EvolutionInfoCard extends StatelessWidget {
           else
             Text(
               '🎉 マスター！最高段階に到達しました！',
-              style: AppTypography.bodySmall.copyWith(color: kAccentGreen),
+              style: AppTypography.bodySmall.copyWith(color: AppColors.accentGreen),
             ),
           AppSpacing.verticalSpacerSm,
           Text(
             '進化日時: ${pet.evolveDates.length}回',
-            style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+            style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
           ),
         ],
       ),
@@ -430,9 +427,9 @@ class _DecorationsCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.purple.shade50,
+        color: AppColors.accentPurple.withAlpha(25),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-        border: Border.all(color: Colors.purple.shade200),
+        border: Border.all(color: AppColors.accentPurple.withAlpha(80)),
       ),
       padding: AppSpacing.allPaddingMd,
       child: Column(
@@ -446,7 +443,7 @@ class _DecorationsCard extends ConsumerWidget {
           if (pet.decorationIds.isEmpty)
             Text(
               'まだ装飾品を装備していません。\nコインで買ってみよう！',
-              style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+              style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
             )
           else
             Wrap(
@@ -474,7 +471,7 @@ class _DecorationsCard extends ConsumerWidget {
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.purple,
+              backgroundColor: AppColors.accentPurple,
               minimumSize: const Size(double.infinity, AppSizes.buttonHeight),
             ),
             child: const Text('装飾品を探す'),
