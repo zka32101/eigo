@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../design_system/design_system.dart';
 import '../models/badge_model.dart';
 import '../providers/badge_provider.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
 
 class AchievementsScreen extends ConsumerWidget {
   const AchievementsScreen({super.key});
@@ -19,11 +16,11 @@ class AchievementsScreen extends ConsumerWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('🏆 アチーブメント'),
-          backgroundColor: kPrimaryColor,
+          backgroundColor: AppColors.primary,
           bottom: TabBar(
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.white70,
-            indicatorColor: kAccentOrange,
+            labelColor: AppColors.textWhite,
+            unselectedLabelColor: AppColors.textWhite.withOpacity(0.7),
+            indicatorColor: AppColors.accentOrange,
             tabs: [
               Tab(
                 child: Stack(
@@ -36,14 +33,13 @@ class AchievementsScreen extends ConsumerWidget {
                         child: Container(
                           padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: kAccentOrange,
+                            color: AppColors.accentOrange,
                             shape: BoxShape.circle,
                           ),
                           child: Text(
                             '${badgeState.newlyEarned.length}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
+                            style: AppTypography.labelSmall.copyWith(
+                              color: AppColors.textWhite,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -84,13 +80,13 @@ class _UnlockedBadgesTab extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.card_giftcard_outlined, size: 64, color: kTextMuted),
+            const Icon(Icons.card_giftcard_outlined, size: 64, color: AppColors.textMuted),
             AppSpacing.verticalSpacerMd,
             const Text('獲得したバッジはまだありません'),
             AppSpacing.verticalSpacerSm,
-            const Text(
+            Text(
               'レッスンを完了してバッジを獲得しましょう！',
-              style: TextStyle(color: kTextMuted, fontSize: 12),
+              style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
             ),
           ],
         ),
@@ -105,9 +101,9 @@ class _UnlockedBadgesTab extends StatelessWidget {
           Container(
             padding: AppSpacing.allPaddingMd,
             decoration: BoxDecoration(
-              color: kAccentGreen.withAlpha(20),
+              color: AppColors.accentGreen.withAlpha(20),
               borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-              border: Border.all(color: kAccentGreen.withAlpha(50)),
+              border: Border.all(color: AppColors.accentGreen.withAlpha(50)),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -115,7 +111,7 @@ class _UnlockedBadgesTab extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('獲得バッジ', style: AppTypography.labelSmall.copyWith(color: kTextMuted)),
+                    Text('獲得バッジ', style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted)),
                     AppSpacing.verticalSpacerXs,
                     Text('${earnedBadges.length}個', style: AppTypography.headlineMedium),
                   ],
@@ -123,15 +119,14 @@ class _UnlockedBadgesTab extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(AppSpacing.md),
                   decoration: const BoxDecoration(
-                    color: kAccentGreen,
+                    color: AppColors.accentGreen,
                     shape: BoxShape.circle,
                   ),
                   child: Text(
                     '✓',
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: AppTypography.displaySmall.copyWith(
+                      color: AppColors.textWhite,
                       fontWeight: FontWeight.bold,
-                      fontSize: 24,
                     ),
                   ),
                 ),
@@ -176,14 +171,14 @@ class _UnlockedBadgesTab extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Center(
-              child: Text(badge.badge.emoji, style: const TextStyle(fontSize: 64)),
+              child: Text(badge.badge.emoji, style: TextStyle(fontSize: AppTypography.displayLarge.fontSize! * 2)),
             ),
             AppSpacing.verticalSpacerMd,
             Text(badge.badge.description),
             AppSpacing.verticalSpacerMd,
             Text(
               '獲得日: ${badge.earnedAt.year}年${badge.earnedAt.month}月${badge.earnedAt.day}日',
-              style: const TextStyle(color: kTextMuted, fontSize: 12),
+              style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
             ),
           ],
         ),
@@ -222,10 +217,10 @@ class _ProgressTab extends ConsumerWidget {
             padding: AppSpacing.allPaddingMd,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [kPrimaryColor.withAlpha(20), kPrimaryColor.withAlpha(5)],
+                colors: [AppColors.primary.withAlpha(20), AppColors.primary.withAlpha(5)],
               ),
               borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-              border: Border.all(color: kPrimaryColor.withAlpha(50)),
+              border: Border.all(color: AppColors.primary.withAlpha(50)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -233,7 +228,7 @@ class _ProgressTab extends ConsumerWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('全体進捗', style: AppTypography.labelSmall.copyWith(color: kTextMuted)),
+                    Text('全体進捗', style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted)),
                     Text('${(overallProgress * 100).toStringAsFixed(0)}%', style: AppTypography.labelLarge),
                   ],
                 ),
@@ -243,14 +238,14 @@ class _ProgressTab extends ConsumerWidget {
                   child: LinearProgressIndicator(
                     value: overallProgress,
                     minHeight: 12,
-                    backgroundColor: Colors.grey[300],
-                    valueColor: AlwaysStoppedAnimation(kPrimaryColor),
+                    backgroundColor: AppColors.bgLight,
+                    valueColor: AlwaysStoppedAnimation(AppColors.primary),
                   ),
                 ),
                 AppSpacing.verticalSpacerMd,
                 Text(
                   '$unlockedCount/${progressList.length} バッジ獲得済み',
-                  style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                  style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                 ),
               ],
             ),
@@ -331,13 +326,13 @@ class _BadgeCard extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          border: Border.all(color: Colors.grey[300]!),
+          border: Border.all(color: AppColors.bgLight),
           borderRadius: BorderRadius.circular(AppSizes.borderRadius),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(icon, style: const TextStyle(fontSize: 32)),
+            Text(icon, style: TextStyle(fontSize: AppTypography.displayMedium.fontSize)),
             AppSpacing.verticalSpacerXs,
             Text(
               title,
@@ -360,14 +355,14 @@ class _BadgeProgressCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final progressColor = badge.isUnlocked ? kAccentGreen : kAccentOrange;
+    final progressColor = badge.isUnlocked ? AppColors.accentGreen : AppColors.accentOrange;
 
     return Container(
       padding: AppSpacing.allPaddingMd,
       decoration: BoxDecoration(
-        color: badge.isUnlocked ? kAccentGreen.withAlpha(10) : Colors.grey[50],
+        color: badge.isUnlocked ? AppColors.accentGreen.withAlpha(10) : AppColors.bgLight.withOpacity(0.5),
         border: Border.all(
-          color: badge.isUnlocked ? kAccentGreen.withAlpha(50) : Colors.grey[300]!,
+          color: badge.isUnlocked ? AppColors.accentGreen.withAlpha(50) : Colors.grey[300]!,
         ),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
       ),
@@ -379,7 +374,7 @@ class _BadgeProgressCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Text(badge.icon, style: const TextStyle(fontSize: 28)),
+                  Text(badge.icon, style: TextStyle(fontSize: AppTypography.headlineLarge.fontSize)),
                   AppSpacing.horizontalSpacerMd,
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -388,14 +383,14 @@ class _BadgeProgressCard extends StatelessWidget {
                       AppSpacing.verticalSpacerXs,
                       Text(
                         badge.isUnlocked ? '✓ 獲得済み' : '${badge.currentValue}/${badge.targetValue}',
-                        style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 11),
+                        style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, fontSize: 11),
                       ),
                     ],
                   ),
                 ],
               ),
               if (badge.isUnlocked)
-                const Icon(Icons.check_circle, color: kAccentGreen)
+                const Icon(Icons.check_circle, color: AppColors.accentGreen)
               else
                 Container(
                   padding: EdgeInsets.all(AppSpacing.sm),
@@ -405,10 +400,9 @@ class _BadgeProgressCard extends StatelessWidget {
                   ),
                   child: Text(
                     '${(badge.progress * 100).toStringAsFixed(0)}%',
-                    style: TextStyle(
+                    style: AppTypography.labelSmall.copyWith(
                       color: progressColor,
                       fontWeight: FontWeight.bold,
-                      fontSize: 10,
                     ),
                   ),
                 ),
@@ -421,7 +415,7 @@ class _BadgeProgressCard extends StatelessWidget {
               child: LinearProgressIndicator(
                 value: badge.progress,
                 minHeight: 8,
-                backgroundColor: Colors.grey[300],
+                backgroundColor: AppColors.bgLight,
                 valueColor: AlwaysStoppedAnimation(progressColor),
               ),
             ),
@@ -447,7 +441,7 @@ class _AllBadgeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: isEarned ? Colors.white : Colors.grey[200],
+        color: isEarned ? AppColors.textWhite : AppColors.bgLight,
         border: Border.all(
           color: isEarned ? Colors.grey[300]! : Colors.grey[300]!,
         ),
@@ -459,7 +453,7 @@ class _AllBadgeCard extends StatelessWidget {
           Text(
             icon,
             style: TextStyle(
-              fontSize: 28,
+              fontSize: AppTypography.headlineLarge.fontSize,
               opacity: isEarned ? 1.0 : 0.3,
             ),
           ),
@@ -468,7 +462,7 @@ class _AllBadgeCard extends StatelessWidget {
             title,
             textAlign: TextAlign.center,
             style: AppTypography.labelSmall.copyWith(
-              color: isEarned ? Colors.black : kTextMuted,
+              color: isEarned ? Colors.black : AppColors.textMuted,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -476,7 +470,7 @@ class _AllBadgeCard extends StatelessWidget {
           if (!isEarned)
             Padding(
               padding: EdgeInsets.only(top: AppSpacing.xs),
-              child: const Icon(Icons.lock, size: 16, color: kTextMuted),
+              child: const Icon(Icons.lock, size: AppSizes.iconSizeSmall, color: AppColors.textMuted),
             ),
         ],
       ),
