@@ -1,5 +1,5 @@
+import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
 
 class SkillProgressBar extends StatelessWidget {
   final String icon;
@@ -25,14 +25,14 @@ class SkillProgressBar extends StatelessWidget {
         const SizedBox(width: 8),
         SizedBox(
           width: 72,
-          child: Text(label, style: const TextStyle(fontSize: 13, color: kTextDark)),
+          child: Text(label, style: const TextStyle(fontSize: 13, color: AppColors.textPrimary)),
         ),
         Expanded(
           child: ClipRRect(
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: value.clamp(0.0, 1.0),
-              backgroundColor: Colors.grey.shade200,
+              backgroundColor: AppColors.bgLight,
               valueColor: AlwaysStoppedAnimation<Color>(color),
               minHeight: 8,
             ),

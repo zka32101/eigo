@@ -1,3 +1,4 @@
+import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 
 class DailyMissionProgress extends StatelessWidget {
@@ -48,7 +49,7 @@ class DailyMissionProgress extends StatelessWidget {
                 '$completed/$total 完了',
                 style: const TextStyle(
                   fontSize: 12,
-                  color: Colors.grey,
+                  color: AppColors.textMuted,
                 ),
               ),
             ],
@@ -62,7 +63,7 @@ class DailyMissionProgress extends StatelessWidget {
             child: Text(
               '$percentage%',
               style: const TextStyle(
-                color: Colors.white,
+                color:AppColors.textWhite,
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
               ),

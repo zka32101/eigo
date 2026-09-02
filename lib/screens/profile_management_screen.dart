@@ -1,12 +1,9 @@
+import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:convert';
 import '../models/user_profile.dart';
 import '../providers/user_profile_provider.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
 
 class ProfileManagementScreen extends ConsumerWidget {
   const ProfileManagementScreen({super.key});
@@ -19,7 +16,7 @@ class ProfileManagementScreen extends ConsumerWidget {
       return Scaffold(
         appBar: AppBar(
           title: const Text('👤 プロフィール管理'),
-          backgroundColor: kPrimaryColor,
+          backgroundColor: AppColors.primary,
         ),
         body: const Center(
           child: Text('プロフィールが見つかりません'),
@@ -32,11 +29,11 @@ class ProfileManagementScreen extends ConsumerWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('👤 プロフィール管理'),
-          backgroundColor: kPrimaryColor,
+          backgroundColor: AppColors.primary,
           bottom: const TabBar(
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.white70,
-            indicatorColor: kAccentOrange,
+            labelColor: AppColors.textWhite,
+            unselectedLabelColor: AppColors.textWhite.withOpacity(0.7),
+            indicatorColor: AppColors.accentOrange,
             tabs: [
               Tab(text: '統計情報'),
               Tab(text: 'プライバシー'),
@@ -76,7 +73,7 @@ class _StatisticsTab extends ConsumerWidget {
             padding: AppSpacing.allPaddingLg,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [kPrimaryColor.withAlpha(20), kPrimaryColor.withAlpha(5)],
+                colors: [AppColors.primary.withAlpha(20), AppColors.primary.withAlpha(5)],
               ),
               borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
             ),
@@ -92,7 +89,7 @@ class _StatisticsTab extends ConsumerWidget {
                       AppSpacing.verticalSpacerXs,
                       Text(
                         '${profile.grade}年生 | 作成日: ${profile.createdAt.year}年${profile.createdAt.month}月${profile.createdAt.day}日',
-                        style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                        style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                       ),
                     ],
                   ),
@@ -116,25 +113,25 @@ class _StatisticsTab extends ConsumerWidget {
                 label: '総勉強時間',
                 value: '${profile.totalStudyMinutes}分',
                 icon: '⏱️',
-                color: kPrimaryColor,
+                color: AppColors.primary,
               ),
               _StatCard(
                 label: '獲得コイン',
                 value: '${profile.coinsEarned}🪙',
                 icon: '💰',
-                color: kAccentOrange,
+                color: AppColors.accentOrange,
               ),
               _StatCard(
                 label: '最長連続',
                 value: '${profile.longestStreak}日',
                 icon: '🔥',
-                color: kAccentRed,
+                color: AppColors.error,
               ),
               _StatCard(
                 label: 'クリア数',
                 value: '${profile.stageProgress.length}',
                 icon: '✅',
-                color: kAccentGreen,
+                color: AppColors.accentGreen,
               ),
             ],
           ),
@@ -146,7 +143,7 @@ class _StatisticsTab extends ConsumerWidget {
           Container(
             padding: AppSpacing.allPaddingMd,
             decoration: BoxDecoration(
-              color: Colors.grey[50],
+              color: AppColors.bgLight,
               borderRadius: BorderRadius.circular(AppSizes.borderRadius),
             ),
             child: Column(
@@ -155,7 +152,7 @@ class _StatisticsTab extends ConsumerWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('バッジ獲得', style: AppTypography.labelSmall.copyWith(color: kTextMuted)),
+                    Text('バッジ獲得', style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted)),
                     Text('${profile.unlockedBadges.length}個', style: AppTypography.labelLarge),
                   ],
                 ),
@@ -163,7 +160,7 @@ class _StatisticsTab extends ConsumerWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('ミッション完了', style: AppTypography.labelSmall.copyWith(color: kTextMuted)),
+                    Text('ミッション完了', style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted)),
                     Text('${profile.completedMissions.length}個', style: AppTypography.labelLarge),
                   ],
                 ),
@@ -209,9 +206,9 @@ class _PrivacyTabState extends ConsumerState<_PrivacyTab> {
           Container(
             padding: AppSpacing.allPaddingMd,
             decoration: BoxDecoration(
-              color: showNameInRanking ? kAccentGreen.withAlpha(20) : Colors.grey[50],
+              color: showNameInRanking ? AppColors.accentGreen.withAlpha(20) : Colors.grey[50],
               border: Border.all(
-                color: showNameInRanking ? kAccentGreen : Colors.grey[300]!,
+                color: showNameInRanking ? AppColors.accentGreen :AppColors.bgLight,
               ),
               borderRadius: BorderRadius.circular(AppSizes.borderRadius),
             ),
@@ -228,7 +225,7 @@ class _PrivacyTabState extends ConsumerState<_PrivacyTab> {
                         showNameInRanking
                             ? '他のユーザーはあなたの名前と成績が見えます'
                             : '他のユーザーにはあなたの名前は見えません',
-                        style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                        style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                       ),
                     ],
                   ),
@@ -244,7 +241,7 @@ class _PrivacyTabState extends ConsumerState<_PrivacyTab> {
                         .read(userProfilesProvider.notifier)
                         .updateProfile(updatedProfile);
                   },
-                  activeColor: kAccentGreen,
+                  activeColor: AppColors.accentGreen,
                 ),
               ],
             ),
@@ -252,13 +249,13 @@ class _PrivacyTabState extends ConsumerState<_PrivacyTab> {
           AppSpacing.verticalSpacerLg,
 
           // その他の設定
-          Text('その他のプライバシー設定', style: AppTypography.labelSmall.copyWith(color: kTextMuted)),
+          Text('その他のプライバシー設定', style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted)),
           AppSpacing.verticalSpacerMd,
 
           Container(
             padding: AppSpacing.allPaddingMd,
             decoration: BoxDecoration(
-              color: Colors.grey[50],
+              color: AppColors.bgLight,
               borderRadius: BorderRadius.circular(AppSizes.borderRadius),
             ),
             child: Column(
@@ -307,8 +304,8 @@ class _DataManagementTab extends ConsumerWidget {
           Container(
             padding: AppSpacing.allPaddingMd,
             decoration: BoxDecoration(
-              color: kAccentGreen.withAlpha(20),
-              border: Border.all(color: kAccentGreen.withAlpha(50)),
+              color: AppColors.accentGreen.withAlpha(20),
+              border: Border.all(color: AppColors.accentGreen.withAlpha(50)),
               borderRadius: BorderRadius.circular(AppSizes.borderRadius),
             ),
             child: Column(
@@ -316,7 +313,7 @@ class _DataManagementTab extends ConsumerWidget {
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.cloud_done, color: kAccentGreen, size: 24),
+                    const Icon(Icons.cloud_done, color: AppColors.accentGreen, size: 24),
                     AppSpacing.horizontalSpacerMd,
                     Expanded(
                       child: Column(
@@ -326,7 +323,7 @@ class _DataManagementTab extends ConsumerWidget {
                           AppSpacing.verticalSpacerXs,
                           Text(
                             '最後の更新: ${profile.lastAccessedAt.year}年${profile.lastAccessedAt.month}月${profile.lastAccessedAt.day}日',
-                            style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                            style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                           ),
                         ],
                       ),
@@ -339,7 +336,7 @@ class _DataManagementTab extends ConsumerWidget {
           AppSpacing.verticalSpacerLg,
 
           // データエクスポート
-          Text('データエクスポート', style: AppTypography.labelSmall.copyWith(color: kTextMuted)),
+          Text('データエクスポート', style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted)),
           AppSpacing.verticalSpacerMd,
           SizedBox(
             width: double.infinity,
@@ -349,7 +346,7 @@ class _DataManagementTab extends ConsumerWidget {
               icon: const Icon(Icons.download),
               label: const Text('プロフィールデータをエクスポート'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: kPrimaryColor,
+                backgroundColor: AppColors.primary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                 ),
@@ -359,12 +356,12 @@ class _DataManagementTab extends ConsumerWidget {
           AppSpacing.verticalSpacerSm,
           Text(
             'あなたのプロフィール、成績、統計情報をJSON形式でダウンロードできます',
-            style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+            style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
           ),
           AppSpacing.verticalSpacerLg,
 
           // データインポート
-          Text('データインポート', style: AppTypography.labelSmall.copyWith(color: kTextMuted)),
+          Text('データインポート', style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted)),
           AppSpacing.verticalSpacerMd,
           SizedBox(
             width: double.infinity,
@@ -374,7 +371,7 @@ class _DataManagementTab extends ConsumerWidget {
               icon: const Icon(Icons.upload),
               label: const Text('データをインポート'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: kAccentOrange,
+                backgroundColor: AppColors.accentOrange,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                 ),
@@ -384,7 +381,7 @@ class _DataManagementTab extends ConsumerWidget {
           AppSpacing.verticalSpacerSm,
           Text(
             '以前エクスポートしたデータをインポートできます',
-            style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+            style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
           ),
           AppSpacing.verticalSpacerXxl,
         ],
@@ -397,7 +394,7 @@ class _DataManagementTab extends ConsumerWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const Text('データをコピーしました'),
-        backgroundColor: kAccentGreen,
+        backgroundColor: AppColors.accentGreen,
         duration: const Duration(seconds: 2),
       ),
     );
@@ -443,7 +440,7 @@ class _StatCard extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label, style: AppTypography.labelSmall.copyWith(color: kTextMuted)),
+              Text(label, style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted)),
               AppSpacing.verticalSpacerXs,
               Text(value, style: AppTypography.headlineSmall.copyWith(color: color)),
             ],
@@ -472,7 +469,7 @@ class _PrivacyItem extends StatelessWidget {
         AppSpacing.verticalSpacerXs,
         Text(
           description,
-          style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+          style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
         ),
       ],
     );

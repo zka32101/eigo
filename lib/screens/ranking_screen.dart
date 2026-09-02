@@ -1,12 +1,9 @@
+import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/speaking_history_provider.dart';
 import '../providers/user_profile_provider.dart';
 import '../services/firebase_service.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
 
 class RankingScreen extends ConsumerStatefulWidget {
   const RankingScreen({super.key});
@@ -77,36 +74,36 @@ class _RankingScreenState extends ConsumerState<RankingScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('🏅 週次ランキング'),
-        backgroundColor: kAccentOrange,
+        backgroundColor: AppColors.accentOrange,
       ),
       body: Column(
         children: [
           // ヘッダー
           Container(
             padding: AppSpacing.allPaddingLg,
-            color: kAccentOrange.withAlpha(20),
+            color: AppColors.accentOrange.withAlpha(20),
             child: Column(
               children: [
                 Text(
                   _firebaseAvailable ? '今週のスピーキングランキング' : '今週のスピーキングランキング（デモ）',
-                  style: AppTypography.labelLarge.copyWith(color: kTextDark),
+                  style: AppTypography.labelLarge.copyWith(color: AppColors.textPrimary),
                 ),
                 AppSpacing.verticalSpacerXs,
                 const Text(
                   '週次の平均スピーキングスコアで順位が決まります',
-                  style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                  style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                 ),
                 if (!_firebaseAvailable) ...[
                   AppSpacing.verticalSpacerXs,
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
                     decoration: BoxDecoration(
-                      color: kAccentOrange.withAlpha(30),
+                      color: AppColors.accentOrange.withAlpha(30),
                       borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                     ),
                     child: const Text(
                       '⚠️ オフラインモード: Firebase 接続後に実際のランキングが表示されます',
-                      style: AppTypography.bodySmall.copyWith(color: kAccentOrange),
+                      style: AppTypography.bodySmall.copyWith(color: AppColors.accentOrange),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -117,9 +114,9 @@ class _RankingScreenState extends ConsumerState<RankingScreen> {
           // ランキングリスト
           Expanded(
             child: _loading
-                ? const Center(child: CircularProgressIndicator(color: kAccentOrange))
+                ? const Center(child: CircularProgressIndicator(color: AppColors.accentOrange))
                 : _ranking.isEmpty
-                    ? const Center(child: Text('ランキングデータがありません', style: TextStyle(color: kTextMuted)))
+                    ? const Center(child: Text('ランキングデータがありません', style: TextStyle(color: AppColors.textMuted)))
                     : ListView.builder(
                         padding: AppSpacing.allPaddingLg,
                         itemCount: _ranking.length,
@@ -155,7 +152,7 @@ class _RankingScreenState extends ConsumerState<RankingScreen> {
                   label: const Text('スピーキング練習してランキングに参加！'),
                   onPressed: () => Navigator.of(context).pushNamed('/speaking-practice'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: kAccentOrange,
+                    backgroundColor: AppColors.accentOrange,
                     padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
                   ),
                 ),
@@ -192,14 +189,14 @@ class _RankCard extends StatelessWidget {
             ? const Color(0xFFC0C0C0)
             : rank == 3
                 ? const Color(0xFFCD7F32)
-                : kTextMuted;
+                : AppColors.textMuted;
 
     return Card(
       margin: EdgeInsets.only(bottom: AppSpacing.sm),
-      color: isMe ? kPrimaryColor.withAlpha(15) : Colors.white,
+      color: isMe ? AppColors.primary.withAlpha(15) :AppColors.textWhite,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
-        side: isMe ? const BorderSide(color: kPrimaryColor, width: 2) : BorderSide.none,
+        side: isMe ? const BorderSide(color: AppColors.primary, width: 2) : BorderSide.none,
       ),
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
@@ -228,7 +225,7 @@ class _RankCard extends StatelessWidget {
                       Text(
                         displayName,
                         style: AppTypography.labelLarge.copyWith(
-                          color: isMe ? kPrimaryColor : kTextDark,
+                          color: isMe ? AppColors.primary : AppColors.textPrimary,
                         ),
                       ),
                       if (isMe) ...[
@@ -236,17 +233,17 @@ class _RankCard extends StatelessWidget {
                         Container(
                           padding: EdgeInsets.symmetric(horizontal: AppSpacing.xs, vertical: AppSpacing.xs),
                           decoration: BoxDecoration(
-                            color: kPrimaryColor.withAlpha(26),
+                            color: AppColors.primary.withAlpha(26),
                             borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
                           ),
-                          child: Text('あなた', style: AppTypography.bodySmall.copyWith(fontSize: 10, color: kPrimaryColor, fontWeight: FontWeight.bold)),
+                          child: Text('あなた', style: AppTypography.bodySmall.copyWith(fontSize: 10, color: AppColors.primary, fontWeight: FontWeight.bold)),
                         ),
                       ],
                     ],
                   ),
                   Text(
                     '練習 $practiceCount回',
-                    style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                    style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                   ),
                 ],
               ),
@@ -259,10 +256,10 @@ class _RankCard extends StatelessWidget {
                   '${score.round()}点',
                   style: AppTypography.labelLarge.copyWith(
                     fontSize: 20,
-                    color: score >= 85 ? kAccentGreen : score >= 70 ? kPrimaryColor : kTextMuted,
+                    color: score >= 85 ? AppColors.accentGreen : score >= 70 ? AppColors.primary : AppColors.textMuted,
                   ),
                 ),
-                Text('平均', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+                Text('平均', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
               ],
             ),
           ],

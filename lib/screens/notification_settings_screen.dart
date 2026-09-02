@@ -1,11 +1,8 @@
+import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/settings_provider.dart';
 import '../services/notification_service.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
 
 class NotificationSettingsScreen extends ConsumerStatefulWidget {
   const NotificationSettingsScreen({Key? key}) : super(key: key);
@@ -142,7 +139,7 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                   AppSpacing.verticalSpacerXs,
                   Text(
                     '毎朝、ランダムな英語フレーズで練習を促します',
-                    style: AppTypography.bodySmall.copyWith(color: Colors.grey[600]),
+                    style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                   ),
                 ],
               ),
@@ -165,11 +162,11 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                     AppSpacing.verticalSpacerSm,
                     ListTile(
                       contentPadding: EdgeInsets.zero,
-                      leading: const Icon(Icons.schedule, color: Colors.blue),
+                      leading: const Icon(Icons.schedule, color: AppColors.readingColor),
                       title: Text(
                         '${_selectedTime.hour.toString().padLeft(2, '0')}:${_selectedTime.minute.toString().padLeft(2, '0')}',
                         style: AppTypography.headlineSmall.copyWith(
-                          color: Colors.blue,
+                          color: AppColors.readingColor,
                         ),
                       ),
                       trailing: const Icon(Icons.edit),
@@ -178,7 +175,7 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                     AppSpacing.verticalSpacerXs,
                     Text(
                       '例: 7:00 AM に毎日通知します',
-                      style: AppTypography.bodySmall.copyWith(color: Colors.grey[600]),
+                      style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                     ),
                     AppSpacing.verticalSpacerSm,
                     Text(
@@ -214,7 +211,7 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
 
           // 情報
           Card(
-            color: Colors.blue[50],
+            color: AppColors.bgLight,
             child: Padding(
               padding: AppSpacing.allPaddingMd,
               child: Column(
@@ -237,7 +234,7 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                   Text(
                     '※ 通知を受け取るにはデバイスの通知許可が必要です',
                     style: AppTypography.bodySmall.copyWith(
-                      color: Colors.grey[700],
+                      color: AppColors.textPrimary,
                     ),
                   ),
                 ],
@@ -263,8 +260,8 @@ class _PresetButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: () => onPressed(hour, minute),
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.blue[100],
-        foregroundColor: Colors.blue[900],
+        backgroundColor: AppColors.primary.withAlpha(25),
+        foregroundColor: AppColors.primaryDark,
         padding: EdgeInsets.symmetric(horizontal: AppSpacing.xs, vertical: AppSpacing.xs),
       ),
       child: Text(label, style: AppTypography.bodySmall),

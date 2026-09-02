@@ -1,3 +1,4 @@
+import '../design_system/design_system.dart';
 import 'package:confetti/confetti.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -7,10 +8,6 @@ import '../data/stage_data.dart';
 import '../models/question.dart';
 import '../services/speech_service.dart';
 import '../services/tts_service.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
 import '../widgets/speaking_score_ring.dart';
 
 class PronunciationBattleScreen extends ConsumerStatefulWidget {
@@ -129,8 +126,8 @@ class _PronunciationBattleScreenState
       backgroundColor: const Color(0xFFF3F0FF),
       appBar: AppBar(
         title: const Text('🎤 発音バトル'),
-        backgroundColor: kSpeakingColor,
-        foregroundColor: Colors.white,
+        backgroundColor: AppColors.speakingColor,
+        foregroundColor: AppColors.textWhite,
         elevation: 0,
       ),
       body: Stack(
@@ -142,7 +139,7 @@ class _PronunciationBattleScreenState
           children: [
             // 問題選択
             Text('問題を選ぼう',
-              style: AppTypography.labelLarge.copyWith(color: kTextDark)),
+              style: AppTypography.labelLarge.copyWith(color: AppColors.textPrimary)),
             AppSpacing.verticalSpacerXs,
             SizedBox(
               height: 48,
@@ -158,14 +155,14 @@ class _PronunciationBattleScreenState
                     child: Container(
                       padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
                       decoration: BoxDecoration(
-                        color: selected ? kSpeakingColor : Colors.white,
+                        color: selected ? AppColors.speakingColor :AppColors.textWhite,
                         borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
-                        border: Border.all(color: kSpeakingColor, width: selected ? 0 : 1),
+                        border: Border.all(color: AppColors.speakingColor, width: selected ? 0 : 1),
                       ),
                       child: Text(
                         q.text,
                         style: AppTypography.bodySmall.copyWith(
-                          color: selected ? Colors.white : kSpeakingColor,
+                          color: selected ? Colors.white : AppColors.speakingColor,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -183,9 +180,9 @@ class _PronunciationBattleScreenState
                 width: double.infinity,
                 padding: EdgeInsets.all(AppSpacing.xl),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color:AppColors.textWhite,
                   borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
-                  boxShadow: [BoxShadow(color: Colors.black.withAlpha(15), blurRadius: 10)],
+                  boxShadow: [BoxShadow(color: AppColors.textPrimary.withAlpha(15), blurRadius: 10)],
                 ),
                 child: Column(
                   children: [
@@ -193,17 +190,17 @@ class _PronunciationBattleScreenState
                       style: AppTypography.headlineLarge),
                     AppSpacing.verticalSpacerXs,
                     Text(_selectedQuestion!.text,
-                      style: AppTypography.headlineLarge.copyWith(color: kTextDark)),
+                      style: AppTypography.headlineLarge.copyWith(color: AppColors.textPrimary)),
                     if (_selectedQuestion!.phonetic != null) ...[
                       AppSpacing.verticalSpacerXs,
                       Text(_selectedQuestion!.phonetic!,
-                        style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+                        style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
                     ],
                     AppSpacing.verticalSpacerSm,
                     TextButton.icon(
                       onPressed: _speak,
-                      icon: const Icon(Icons.volume_up, color: kPrimaryColor),
-                      label: const Text('手本を聞く', style: TextStyle(color: kPrimaryColor)),
+                      icon: const Icon(Icons.volume_up, color: AppColors.primary),
+                      label: const Text('手本を聞く', style: TextStyle(color: AppColors.primary)),
                     ),
                   ],
                 ),
@@ -218,7 +215,7 @@ class _PronunciationBattleScreenState
                     child: _ScoreCard(
                       label: '🏆 自己ベスト',
                       score: _bestScore,
-                      color: kAccentOrange,
+                      color: AppColors.accentOrange,
                       dimmed: _bestScore == 0,
                     ),
                   ),
@@ -227,7 +224,7 @@ class _PronunciationBattleScreenState
                     child: _ScoreCard(
                       label: '⚡ 今回',
                       score: _hasResult ? _currentScore : 0,
-                      color: kSpeakingColor,
+                      color: AppColors.speakingColor,
                       dimmed: !_hasResult,
                     ),
                   ),
@@ -251,7 +248,7 @@ class _PronunciationBattleScreenState
                           : '📈 ベストまで ${_bestScore - _currentScore}点',
                       style: AppTypography.bodySmall.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: _currentScore >= _bestScore ? kAccentGreen : kAccentOrange,
+                        color: _currentScore >= _bestScore ? AppColors.accentGreen : AppColors.accentOrange,
                       ),
                     ),
                   ),
@@ -263,13 +260,13 @@ class _PronunciationBattleScreenState
               // 過去スコアグラフ
               if (_pastScores.length >= 2) ...[
                 Text('過去の推移',
-                  style: AppTypography.labelLarge.copyWith(color: kTextDark)),
+                  style: AppTypography.labelLarge.copyWith(color: AppColors.textPrimary)),
                 AppSpacing.verticalSpacerXs,
                 Container(
                   height: 120,
                   padding: EdgeInsets.all(AppSpacing.xs),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color:AppColors.textWhite,
                     borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                   ),
                   child: LineChart(LineChartData(
@@ -283,12 +280,12 @@ class _PronunciationBattleScreenState
                             .map((e) => FlSpot(e.key.toDouble(), e.value.toDouble()))
                             .toList(),
                         isCurved: true,
-                        color: kSpeakingColor,
+                        color: AppColors.speakingColor,
                         barWidth: 3,
                         dotData: const FlDotData(show: true),
                         belowBarData: BarAreaData(
                           show: true,
-                          color: kSpeakingColor.withAlpha(40),
+                          color: AppColors.speakingColor.withAlpha(40),
                         ),
                       ),
                     ],
@@ -299,7 +296,7 @@ class _PronunciationBattleScreenState
 
               if (_recognizedText.isNotEmpty && _hasResult) ...[
                 Text('認識: "$_recognizedText"',
-                  style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontStyle: FontStyle.italic)),
+                  style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, fontStyle: FontStyle.italic)),
                 AppSpacing.verticalSpacerSm,
               ],
 
@@ -308,15 +305,15 @@ class _PronunciationBattleScreenState
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: _isListening ? kAccentRed : kSpeakingColor,
+                    backgroundColor: _isListening ? AppColors.error : AppColors.speakingColor,
                     padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSizes.borderRadius)),
                   ),
                   onPressed: _isListening ? _stopAndScore : _startListening,
-                  icon: Icon(_isListening ? Icons.stop : Icons.mic, color: Colors.white),
+                  icon: Icon(_isListening ? Icons.stop : Icons.mic, color: AppColors.textWhite),
                   label: Text(
                     _isListening ? '録音停止' : (_hasResult ? 'もう一度挑戦 🔄' : '話す 🎤'),
-                    style: AppTypography.labelLarge.copyWith(color: Colors.white),
+                    style: AppTypography.labelLarge.copyWith(color: AppColors.textWhite),
                   ),
                 ),
               ),
@@ -353,19 +350,19 @@ class _ScoreCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: dimmed ? Colors.grey.shade100 : color.withAlpha(20),
+        color: dimmed ? AppColors.textMuted.shade100 : color.withAlpha(20),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-        border: Border.all(color: dimmed ? Colors.grey.shade300 : color.withAlpha(80)),
+        border: Border.all(color: dimmed ? AppColors.textMuted.shade300 : color.withAlpha(80)),
       ),
       child: Column(
         children: [
-          Text(label, style: AppTypography.bodySmall.copyWith(color: dimmed ? Colors.grey : color, fontWeight: FontWeight.bold)),
+          Text(label, style: AppTypography.bodySmall.copyWith(color: dimmed ? AppColors.textMuted : color, fontWeight: FontWeight.bold)),
           AppSpacing.verticalSpacerXs,
           Text(
             dimmed ? '--' : '$score',
-            style: AppTypography.headlineSmall.copyWith(fontWeight: FontWeight.bold, color: dimmed ? Colors.grey : color),
+            style: AppTypography.headlineSmall.copyWith(fontWeight: FontWeight.bold, color: dimmed ? AppColors.textMuted : color),
           ),
-          Text('点', style: AppTypography.bodySmall.copyWith(color: dimmed ? Colors.grey : color)),
+          Text('点', style: AppTypography.bodySmall.copyWith(color: dimmed ? AppColors.textMuted : color)),
         ],
       ),
     );

@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../design_system/design_system.dart';
 import '../models/ad_model.dart';
 import '../providers/ad_provider.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
 
 class AdSettingsScreen extends ConsumerWidget {
   const AdSettingsScreen({super.key});
@@ -23,11 +20,11 @@ class AdSettingsScreen extends ConsumerWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('📺 広告設定'),
-          backgroundColor: kPrimaryColor,
+          backgroundColor: AppColors.primary,
           bottom: const TabBar(
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.white70,
-            indicatorColor: Colors.orange,
+            labelColor: AppColors.textWhite,
+            unselectedLabelColor: AppColors.textWhite.withOpacity(0.7),
+            indicatorColor: AppColors.accentOrange,
             tabs: [
               Tab(text: '広告配置'),
               Tab(text: '制限設定'),
@@ -66,7 +63,7 @@ class _AdPlacementsTab extends ConsumerWidget {
         children: [
           Text('広告配置管理', style: AppTypography.headlineSmall),
           AppSpacing.verticalSpacerSm,
-          Text('各広告配置を有効/無効に設定できます', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+          Text('各広告配置を有効/無効に設定できます', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
           AppSpacing.verticalSpacerLg,
           ...groupedByPlacement.entries.expand((entry) {
             final placement = entry.key;
@@ -82,12 +79,12 @@ class _AdPlacementsTab extends ConsumerWidget {
               Container(
                 padding: AppSpacing.allPaddingMd,
                 decoration: BoxDecoration(
-                  color: kPrimaryColor.withAlpha(10),
+                  color: AppColors.primary.withAlpha(10),
                   borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                 ),
                 child: Text(
                   placementLabels[placement] ?? placement,
-                  style: AppTypography.labelLarge.copyWith(color: kPrimaryColor),
+                  style: AppTypography.labelLarge.copyWith(color: AppColors.primary),
                 ),
               ),
               AppSpacing.verticalSpacerMd,
@@ -119,8 +116,8 @@ class _AdPlacementCard extends ConsumerWidget {
     return Container(
       padding: AppSpacing.allPaddingMd,
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: Colors.grey[300]!),
+        color: AppColors.textWhite,
+        border: Border.all(color: AppColors.bgLight),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
       ),
       child: Row(
@@ -137,7 +134,7 @@ class _AdPlacementCard extends ConsumerWidget {
                 AppSpacing.verticalSpacerXs,
                 Text(
                   'Unit ID: ${ad.adUnitId.substring(0, 20)}...',
-                  style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 11),
+                  style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted),
                 ),
               ],
             ),
@@ -151,7 +148,7 @@ class _AdPlacementCard extends ConsumerWidget {
                 ref.read(adPlacementsProvider.notifier).disableAd(ad.id);
               }
             },
-            activeColor: kAccentGreen,
+            activeColor: AppColors.accentGreen,
           ),
         ],
       ),
@@ -212,9 +209,9 @@ class _AdLimitsTabState extends ConsumerState<_AdLimitsTab> {
           Container(
             padding: AppSpacing.allPaddingMd,
             decoration: BoxDecoration(
-              color: kAccentGreen.withAlpha(20),
+              color: AppColors.accentGreen.withAlpha(20),
               borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-              border: Border.all(color: kAccentGreen.withAlpha(50)),
+              border: Border.all(color: AppColors.accentGreen.withAlpha(50)),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -222,23 +219,23 @@ class _AdLimitsTabState extends ConsumerState<_AdLimitsTab> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('本日の広告表示回数', style: AppTypography.labelSmall.copyWith(color: kTextMuted)),
+                    Text('本日の広告表示回数', style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted)),
                     AppSpacing.verticalSpacerXs,
                     Text(
                       '$widget.todayCount / ${widget.limits.maxDailyAds}',
-                      style: AppTypography.headlineMedium.copyWith(color: kAccentGreen),
+                      style: AppTypography.headlineMedium.copyWith(color: AppColors.accentGreen),
                     ),
                   ],
                 ),
                 Container(
                   padding: AppSpacing.allPaddingMd,
                   decoration: BoxDecoration(
-                    color: kAccentGreen,
+                    color: AppColors.accentGreen,
                     shape: BoxShape.circle,
                   ),
                   child: Text(
                     '${((widget.todayCount / widget.limits.maxDailyAds) * 100).toStringAsFixed(0)}%',
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    style: AppTypography.labelLarge.copyWith(color: AppColors.textWhite, fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
@@ -247,7 +244,7 @@ class _AdLimitsTabState extends ConsumerState<_AdLimitsTab> {
           AppSpacing.verticalSpacerLg,
 
           // 制限設定
-          Text('設定項目', style: AppTypography.labelSmall.copyWith(color: kTextMuted)),
+          Text('設定項目', style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted)),
           AppSpacing.verticalSpacerMd,
 
           // 1日の最大広告数
@@ -292,7 +289,7 @@ class _AdLimitsTabState extends ConsumerState<_AdLimitsTab> {
             height: 48,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: kPrimaryColor,
+                backgroundColor: AppColors.primary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                 ),
@@ -308,13 +305,13 @@ class _AdLimitsTabState extends ConsumerState<_AdLimitsTab> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('設定を保存しました'),
-                    backgroundColor: Colors.green,
+                    backgroundColor: AppColors.success,
                   ),
                 );
               },
               child: const Text(
                 '設定を保存',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                style: AppTypography.bodyLarge.copyWith(fontWeight: FontWeight.bold, color: AppColors.textWhite),
               ),
             ),
           ),
@@ -345,14 +342,14 @@ class _LimitSettingCard extends StatelessWidget {
     return Container(
       padding: AppSpacing.allPaddingMd,
       decoration: BoxDecoration(
-        color: Colors.grey[50],
-        border: Border.all(color: Colors.grey[300]!),
+        color: AppColors.bgLight.withOpacity(0.5),
+        border: Border.all(color: AppColors.bgLight),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: AppTypography.labelSmall.copyWith(color: kTextMuted)),
+          Text(label, style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted)),
           AppSpacing.verticalSpacerMd,
           Row(
             children: [
@@ -369,7 +366,7 @@ class _LimitSettingCard extends StatelessWidget {
                   onChanged: (newValue) {
                     onChanged(newValue.toInt());
                   },
-                  activeColor: kPrimaryColor,
+                  activeColor: AppColors.primary,
                 ),
               ),
               IconButton(
@@ -382,12 +379,12 @@ class _LimitSettingCard extends StatelessWidget {
                   vertical: AppSpacing.sm,
                 ),
                 decoration: BoxDecoration(
-                  color: kPrimaryColor.withAlpha(20),
+                  color: AppColors.primary.withAlpha(20),
                   borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
                 ),
                 child: Text(
                   '$value',
-                  style: AppTypography.labelLarge.copyWith(color: kPrimaryColor),
+                  style: AppTypography.labelLarge.copyWith(color: AppColors.primary),
                 ),
               ),
             ],

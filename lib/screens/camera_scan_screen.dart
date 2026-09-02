@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/camera_scan_model.dart';
 import '../providers/camera_scan_provider.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
+import '../design_system/design_system.dart';
 
 class CameraScanScreen extends ConsumerWidget {
   const CameraScanScreen({super.key});
@@ -20,11 +17,11 @@ class CameraScanScreen extends ConsumerWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('📸 カメラ単語スキャン'),
-          backgroundColor: kPrimaryColor,
+          backgroundColor: AppColors.primary,
           bottom: TabBar(
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.white70,
-            indicatorColor: kAccentOrange,
+            labelColor: AppColors.textWhite,
+            unselectedLabelColor: AppColors.textWhite,
+            indicatorColor: AppColors.accentOrange,
             tabs: [
               Tab(child: Stack(
                 children: [
@@ -36,13 +33,13 @@ class CameraScanScreen extends ConsumerWidget {
                       child: Container(
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: kAccentOrange,
+                          color: AppColors.accentOrange,
                           shape: BoxShape.circle,
                         ),
                         child: Text(
                           '${stats.totalItems}',
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: AppColors.textWhite,
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
                           ),
@@ -146,9 +143,9 @@ class _CameraScanTabState extends ConsumerState<_CameraScanTab> {
             margin: AppSpacing.allPaddingLg,
             padding: AppSpacing.allPaddingLg,
             decoration: BoxDecoration(
-              color: kPrimaryColor.withAlpha(10),
+              color: AppColors.primary.withAlpha(10),
               borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-              border: Border.all(color: kPrimaryColor.withAlpha(50)),
+              border: Border.all(color: AppColors.primary.withAlpha(50)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -166,8 +163,8 @@ class _CameraScanTabState extends ConsumerState<_CameraScanTab> {
                     icon: const Icon(Icons.camera_alt),
                     label: const Text('カメラを起動'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: kPrimaryColor,
-                      foregroundColor: Colors.white,
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: AppColors.textWhite,
                       padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
                     ),
                   ),
@@ -206,8 +203,8 @@ class _CameraSelectItem extends StatelessWidget {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(color: Colors.grey[300]!),
+          color: AppColors.textWhite,
+          border: Border.all(color: AppColors.bgLight),
           borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
         ),
         child: Column(
@@ -236,12 +233,12 @@ class _RecentScanCard extends ConsumerWidget {
       margin: AppSpacing.allPaddingLg,
       padding: AppSpacing.allPaddingMd,
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: kPrimaryColor.withAlpha(50)),
+        color: AppColors.textWhite,
+        border: Border.all(color: AppColors.primary.withAlpha(50)),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(10),
+            color: AppColors.textPrimary.withAlpha(10),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -262,7 +259,7 @@ class _RecentScanCard extends ConsumerWidget {
                 : Center(
                     child: Text(
                       'アイテムが認識されませんでした',
-                      style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                      style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                     ),
                   ),
             loading: () => Center(
@@ -297,7 +294,7 @@ class _RecognitionContent extends StatelessWidget {
         Container(
           padding: AppSpacing.allPaddingMd,
           decoration: BoxDecoration(
-            color: kPrimaryColor.withAlpha(10),
+            color: AppColors.primary.withAlpha(10),
             borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
           ),
           child: Column(
@@ -306,7 +303,7 @@ class _RecognitionContent extends StatelessWidget {
               Text(
                 result.objectName.toUpperCase(),
                 style: AppTypography.headlineSmall.copyWith(
-                  color: kPrimaryColor,
+                  color: AppColors.primary,
                 ),
               ),
               AppSpacing.verticalSpacerSm,
@@ -318,7 +315,7 @@ class _RecognitionContent extends StatelessWidget {
               Text(
                 result.pronunciationIPA,
                 style: AppTypography.bodySmall.copyWith(
-                  color: kTextMuted,
+                  color: AppColors.textMuted,
                   fontStyle: FontStyle.italic,
                 ),
               ),
@@ -332,7 +329,7 @@ class _RecognitionContent extends StatelessWidget {
                         Text(
                           'カテゴリー',
                           style: AppTypography.labelSmall.copyWith(
-                            color: kTextMuted,
+                            color: AppColors.textMuted,
                           ),
                         ),
                         AppSpacing.verticalSpacerXs,
@@ -350,14 +347,14 @@ class _RecognitionContent extends StatelessWidget {
                         Text(
                           '認識度',
                           style: AppTypography.labelSmall.copyWith(
-                            color: kTextMuted,
+                            color: AppColors.textMuted,
                           ),
                         ),
                         AppSpacing.verticalSpacerXs,
                         Text(
                           '${(result.confidence * 100).toStringAsFixed(0)}%',
                           style: AppTypography.labelLarge.copyWith(
-                            color: kAccentGreen,
+                            color: AppColors.accentGreen,
                           ),
                         ),
                       ],
@@ -428,7 +425,7 @@ class _ResultBottomSheet extends ConsumerWidget {
     return Container(
       padding: AppSpacing.allPaddingLg,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.textWhite,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(AppSizes.borderRadius),
           topRight: Radius.circular(AppSizes.borderRadius),
@@ -443,7 +440,7 @@ class _ResultBottomSheet extends ConsumerWidget {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey[300],
+                  color: AppColors.bgLight,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -453,7 +450,7 @@ class _ResultBottomSheet extends ConsumerWidget {
             Text(
               result.objectName.toUpperCase(),
               style: AppTypography.headlineMedium.copyWith(
-                color: kPrimaryColor,
+                color: AppColors.primary,
               ),
             ),
             AppSpacing.verticalSpacerSm,
@@ -470,8 +467,8 @@ class _ResultBottomSheet extends ConsumerWidget {
               child: LinearProgressIndicator(
                 value: result.confidence,
                 minHeight: 8,
-                backgroundColor: Colors.grey[300],
-                valueColor: AlwaysStoppedAnimation(kAccentGreen),
+                backgroundColor: AppColors.bgLight,
+                valueColor: AlwaysStoppedAnimation(AppColors.accentGreen),
               ),
             ),
             AppSpacing.verticalSpacerSm,
@@ -480,12 +477,12 @@ class _ResultBottomSheet extends ConsumerWidget {
               children: [
                 Text(
                   '認識度',
-                  style: AppTypography.labelSmall.copyWith(color: kTextMuted),
+                  style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted),
                 ),
                 Text(
                   '${(result.confidence * 100).toStringAsFixed(0)}%',
                   style: AppTypography.labelLarge.copyWith(
-                    color: kAccentGreen,
+                    color: AppColors.accentGreen,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -503,7 +500,7 @@ class _ResultBottomSheet extends ConsumerWidget {
                       Text(
                         'カテゴリー',
                         style: AppTypography.labelSmall.copyWith(
-                          color: kTextMuted,
+                          color: AppColors.textMuted,
                         ),
                       ),
                       AppSpacing.verticalSpacerXs,
@@ -521,7 +518,7 @@ class _ResultBottomSheet extends ConsumerWidget {
                       Text(
                         '発音',
                         style: AppTypography.labelSmall.copyWith(
-                          color: kTextMuted,
+                          color: AppColors.textMuted,
                         ),
                       ),
                       AppSpacing.verticalSpacerXs,
@@ -541,7 +538,7 @@ class _ResultBottomSheet extends ConsumerWidget {
             // Description
             Text(
               '説明',
-              style: AppTypography.labelSmall.copyWith(color: kTextMuted),
+              style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted),
             ),
             AppSpacing.verticalSpacerXs,
             Text(
@@ -571,8 +568,8 @@ class _ResultBottomSheet extends ConsumerWidget {
                 icon: const Icon(Icons.add),
                 label: const Text('辞書に追加'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: kAccentGreen,
-                  foregroundColor: Colors.white,
+                  backgroundColor: AppColors.accentGreen,
+                  foregroundColor: AppColors.textWhite,
                   padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
                 ),
               ),
@@ -602,13 +599,13 @@ class _MyDictionaryTab extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.photo_library_outlined, size: 64, color: kTextMuted),
+            const Icon(Icons.photo_library_outlined, size: 64, color: AppColors.textMuted),
             AppSpacing.verticalSpacerMd,
             const Text('まだアイテムがありません'),
             AppSpacing.verticalSpacerSm,
             const Text(
               'カメラでアイテムをスキャンしましょう！',
-              style: TextStyle(color: kTextMuted, fontSize: 12),
+              style: TextStyle(color: AppColors.textMuted, fontSize: 12),
             ),
           ],
         ),
@@ -659,10 +656,10 @@ class _StatsCard extends StatelessWidget {
       padding: AppSpacing.allPaddingMd,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [kPrimaryColor.withAlpha(20), kPrimaryColor.withAlpha(5)],
+          colors: [AppColors.primary.withAlpha(20), AppColors.primary.withAlpha(5)],
         ),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-        border: Border.all(color: kPrimaryColor.withAlpha(50)),
+        border: Border.all(color: AppColors.primary.withAlpha(50)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -672,7 +669,7 @@ class _StatsCard extends StatelessWidget {
               Text('📸', style: const TextStyle(fontSize: 28)),
               AppSpacing.verticalSpacerXs,
               Text('${stats.totalItems}', style: AppTypography.headlineMedium),
-              Text('アイテム', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+              Text('アイテム', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
             ],
           ),
           Column(
@@ -680,7 +677,7 @@ class _StatsCard extends StatelessWidget {
               Text('🔥', style: const TextStyle(fontSize: 28)),
               AppSpacing.verticalSpacerXs,
               Text('${stats.currentStreak}', style: AppTypography.headlineMedium),
-              Text('日連続', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+              Text('日連続', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
             ],
           ),
           Column(
@@ -688,7 +685,7 @@ class _StatsCard extends StatelessWidget {
               Text('⭐', style: const TextStyle(fontSize: 28)),
               AppSpacing.verticalSpacerXs,
               Text('${stats.categories.length}', style: AppTypography.headlineMedium),
-              Text('カテゴリー', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+              Text('カテゴリー', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
             ],
           ),
         ],
@@ -726,8 +723,8 @@ class _CategoryChip extends StatelessWidget {
           vertical: AppSpacing.sm,
         ),
         decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(color: Colors.grey[300]!),
+          color: AppColors.textWhite,
+          border: Border.all(color: AppColors.bgLight),
           borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
         ),
         child: Row(
@@ -740,7 +737,7 @@ class _CategoryChip extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(category.categoryName, style: AppTypography.labelSmall),
-                Text('$count個', style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 10)),
+                Text('$count個', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, fontSize: 10)),
               ],
             ),
           ],
@@ -764,7 +761,7 @@ class _CategoryItemsSheet extends StatelessWidget {
     return Container(
       padding: AppSpacing.allPaddingLg,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.textWhite,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(AppSizes.borderRadius),
           topRight: Radius.circular(AppSizes.borderRadius),
@@ -813,8 +810,8 @@ class _VocabularyCard extends StatelessWidget {
       margin: EdgeInsets.only(bottom: AppSpacing.md),
       padding: AppSpacing.allPaddingMd,
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: Colors.grey[300]!),
+        color: AppColors.textWhite,
+        border: Border.all(color: AppColors.bgLight),
         borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
       ),
       child: Column(
@@ -822,7 +819,7 @@ class _VocabularyCard extends StatelessWidget {
         children: [
           Text(
             vocab.englishWord.toUpperCase(),
-            style: AppTypography.labelLarge.copyWith(color: kPrimaryColor),
+            style: AppTypography.labelLarge.copyWith(color: AppColors.primary),
           ),
           AppSpacing.verticalSpacerXs,
           Text(vocab.japaneseWord, style: AppTypography.labelLarge),
@@ -830,7 +827,7 @@ class _VocabularyCard extends StatelessWidget {
           Text(
             vocab.pronunciation,
             style: AppTypography.bodySmall.copyWith(
-              color: kTextMuted,
+              color: AppColors.textMuted,
               fontStyle: FontStyle.italic,
             ),
           ),
@@ -854,16 +851,16 @@ class _TipsSection extends StatelessWidget {
       margin: AppSpacing.allPaddingLg,
       padding: AppSpacing.allPaddingMd,
       decoration: BoxDecoration(
-        color: kAccentOrange.withAlpha(10),
+        color: AppColors.accentOrange.withAlpha(10),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-        border: Border.all(color: kAccentOrange.withAlpha(50)),
+        border: Border.all(color: AppColors.accentOrange.withAlpha(50)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '💡 スキャンのコツ',
-            style: AppTypography.labelLarge.copyWith(color: kAccentOrange),
+            style: AppTypography.labelLarge.copyWith(color: AppColors.accentOrange),
           ),
           AppSpacing.verticalSpacerMd,
           _TipItem('明るい場所で撮ってください'),
@@ -887,7 +884,7 @@ class _TipItem extends StatelessWidget {
       padding: EdgeInsets.only(bottom: AppSpacing.sm),
       child: Row(
         children: [
-          const Text('✓ ', style: TextStyle(color: kAccentOrange, fontWeight: FontWeight.bold)),
+          const Text('✓ ', style: TextStyle(color: AppColors.accentOrange, fontWeight: FontWeight.bold)),
           Expanded(
             child: Text(
               text,

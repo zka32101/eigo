@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/learning_pace_model.dart';
 import '../providers/learning_pace_provider.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
+import '../design_system/design_system.dart';
 
 class LearningPaceScreen extends ConsumerWidget {
   const LearningPaceScreen({super.key});
@@ -18,7 +15,7 @@ class LearningPaceScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('📊 学習ペース設定'),
-        backgroundColor: kPrimaryColor,
+        backgroundColor: AppColors.primary,
         elevation: 0,
       ),
       body: paceRecommendation.when(
@@ -28,7 +25,7 @@ class LearningPaceScreen extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.trending_up, size: 64, color: kTextMuted),
+                  const Icon(Icons.trending_up, size: 64, color: AppColors.textMuted),
                   AppSpacing.verticalSpacerMd,
                   const Text('学習データを分析中...'),
                 ],
@@ -91,7 +88,7 @@ class LearningPaceScreen extends ConsumerWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const CircularProgressIndicator(color: kPrimaryColor),
+              const CircularProgressIndicator(color: AppColors.primary),
               AppSpacing.verticalSpacerMd,
               const Text('学習ペースを分析中...'),
             ],
@@ -101,7 +98,7 @@ class LearningPaceScreen extends ConsumerWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline, size: 64, color: kAccentRed),
+              const Icon(Icons.error_outline, size: 64, color: AppColors.accentRed),
               AppSpacing.verticalSpacerMd,
               Text('エラーが発生しました: $error'),
             ],
@@ -126,10 +123,10 @@ class _RecommendationCard extends StatelessWidget {
       padding: AppSpacing.allPaddingLg,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [kPrimaryColor.withAlpha(20), kPrimaryColor.withAlpha(5)],
+          colors: [AppColors.primary.withAlpha(20), AppColors.primary.withAlpha(5)],
         ),
         borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
-        border: Border.all(color: kPrimaryColor.withAlpha(50)),
+        border: Border.all(color: AppColors.primary.withAlpha(50)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -137,13 +134,13 @@ class _RecommendationCard extends StatelessWidget {
           // ペースレベル表示
           Row(
             children: [
-              Text(paceEmoji, style: const TextStyle(fontSize: 48)),
+              Text(paceEmoji, style: TextStyle(fontSize: AppTypography.displayLarge.fontSize! * 1.5)),
               AppSpacing.horizontalSpacerMd,
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('推奨ペース', style: AppTypography.labelSmall.copyWith(color: kTextMuted)),
+                    Text('推奨ペース', style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted)),
                     Text(paceLabel, style: AppTypography.headlineMedium),
                   ],
                 ),
@@ -156,13 +153,13 @@ class _RecommendationCard extends StatelessWidget {
           Container(
             padding: AppSpacing.allPaddingMd,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.textWhite,
               borderRadius: BorderRadius.circular(AppSizes.borderRadius),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('推奨理由', style: AppTypography.labelSmall.copyWith(color: kTextMuted)),
+                Text('推奨理由', style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted)),
                 AppSpacing.verticalSpacerSm,
                 Text(recommendation.reason, style: AppTypography.bodyMedium),
               ],
@@ -209,7 +206,7 @@ class _RecommendationCard extends StatelessWidget {
                 child: LinearProgressIndicator(
                   value: recommendation.confidenceScore / 100,
                   minHeight: 8,
-                  backgroundColor: Colors.grey[300],
+                  backgroundColor: AppColors.bgLight,
                   valueColor: AlwaysStoppedAnimation<Color>(
                     _getConfidenceColor(recommendation.confidenceScore),
                   ),
@@ -221,7 +218,7 @@ class _RecommendationCard extends StatelessWidget {
 
           // アドバイス
           if (recommendation.tips.isNotEmpty) ...[
-            Text('💡 アドバイス', style: AppTypography.labelSmall.copyWith(color: kTextMuted)),
+            Text('💡 アドバイス', style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted)),
             AppSpacing.verticalSpacerSm,
             ...recommendation.tips.map((tip) {
               return Padding(
@@ -262,9 +259,9 @@ class _RecommendationCard extends StatelessWidget {
   }
 
   Color _getConfidenceColor(int score) {
-    if (score >= 80) return kAccentGreen;
-    if (score >= 70) return kAccentOrange;
-    return kAccentRed;
+    if (score >= 80) return AppColors.accentGreen;
+    if (score >= 70) return AppColors.accentOrange;
+    return AppColors.accentRed;
   }
 }
 
@@ -332,16 +329,16 @@ class _PaceButton extends StatelessWidget {
       child: Container(
         padding: AppSpacing.allPaddingMd,
         decoration: BoxDecoration(
-          color: isSelected ? kPrimaryColor.withAlpha(20) : Colors.transparent,
+          color: isSelected ? AppColors.primary.withAlpha(20) : Colors.transparent,
           border: Border.all(
-            color: isSelected ? kPrimaryColor : Colors.grey[300]!,
+            color: isSelected ? AppColors.primary : AppColors.bgLight,
             width: isSelected ? 2 : 1,
           ),
           borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
         ),
         child: Row(
           children: [
-            Text(emoji, style: const TextStyle(fontSize: 40)),
+            Text(emoji, style: TextStyle(fontSize: AppTypography.displayMedium.fontSize! * 1.43)),
             AppSpacing.horizontalSpacerMd,
             Expanded(
               child: Column(
@@ -351,7 +348,7 @@ class _PaceButton extends StatelessWidget {
                   AppSpacing.verticalSpacerXs,
                   Text(
                     description,
-                    style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                    style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                   ),
                 ],
               ),
@@ -360,10 +357,10 @@ class _PaceButton extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: kPrimaryColor,
+                  color: AppColors.primary,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.check, color: Colors.white, size: 20),
+                child: const Icon(Icons.check, color: AppColors.textWhite, size: 20),
               ),
           ],
         ),
@@ -403,9 +400,9 @@ class _StartTimeSelectorState extends State<_StartTimeSelector> {
     return Container(
       padding: AppSpacing.allPaddingMd,
       decoration: BoxDecoration(
-        color: Colors.grey[50],
+        color: AppColors.bgLight.withAlpha(30),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-        border: Border.all(color: Colors.grey[300]!),
+        border: Border.all(color: AppColors.bgLight),
       ),
       child: Column(
         children: [
@@ -441,7 +438,7 @@ class _StartTimeSelectorState extends State<_StartTimeSelector> {
           AppSpacing.verticalSpacerMd,
           Text(
             '毎日 ${selectedHour.toString().padLeft(2, '0')}:${selectedMinute.toString().padLeft(2, '0')} に学習開始',
-            style: AppTypography.labelSmall.copyWith(color: kTextMuted),
+            style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted),
           ),
         ],
       ),
@@ -504,10 +501,10 @@ class _NotificationToggle extends StatelessWidget {
     return Container(
       padding: AppSpacing.allPaddingMd,
       decoration: BoxDecoration(
-        color: enabled ? kAccentGreen.withAlpha(20) : Colors.grey[50],
+        color: enabled ? AppColors.accentGreen.withAlpha(20) : AppColors.bgLight.withAlpha(30),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
         border: Border.all(
-          color: enabled ? kAccentGreen : Colors.grey[300]!,
+          color: enabled ? AppColors.accentGreen : AppColors.bgLight,
         ),
       ),
       child: Row(
@@ -524,7 +521,7 @@ class _NotificationToggle extends StatelessWidget {
                 AppSpacing.verticalSpacerXs,
                 Text(
                   enabled ? '通知が有効です' : '通知が無効です',
-                  style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                  style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                 ),
               ],
             ),
@@ -532,7 +529,7 @@ class _NotificationToggle extends StatelessWidget {
           Switch(
             value: enabled,
             onChanged: onToggled,
-            activeColor: kAccentGreen,
+            activeColor: AppColors.accentGreen,
           ),
         ],
       ),
@@ -556,16 +553,16 @@ class _InfoBox extends StatelessWidget {
     return Container(
       padding: AppSpacing.allPaddingMd,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.textWhite,
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-        border: Border.all(color: Colors.grey[200]!),
+        border: Border.all(color: AppColors.bgLight),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(icon, style: const TextStyle(fontSize: 24)),
+          Text(icon, style: TextStyle(fontSize: AppTypography.displaySmall.fontSize)),
           AppSpacing.verticalSpacerXs,
-          Text(label, style: AppTypography.labelSmall.copyWith(color: kTextMuted)),
+          Text(label, style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted)),
           Text(value, style: AppTypography.labelLarge),
         ],
       ),

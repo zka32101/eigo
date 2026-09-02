@@ -1,13 +1,10 @@
+import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import '../data/stage_data.dart';
 import '../providers/pronunciation_provider.dart';
 import '../models/stage.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
 
 class PronunciationCheckScreen extends ConsumerStatefulWidget {
   final Stage stage;
@@ -97,7 +94,7 @@ class _PronunciationCheckScreenState
                     children: [
                       Text(
                         '${index + 1}/${_wordsToCheck.length}',
-                        style: AppTypography.bodySmall.copyWith(color: Colors.grey),
+                        style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                       ),
                       AppSpacing.horizontalSpacerXs,
                       Expanded(
@@ -117,12 +114,12 @@ class _PronunciationCheckScreenState
                 Container(
                   padding: EdgeInsets.all(AppSpacing.xl),
                   decoration: BoxDecoration(
-                    color: Colors.blue[50],
+                    color: AppColors.readingColor[50],
                     borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
                   ),
                   child: Column(
                     children: [
-                      Text('発音してください', style: AppTypography.bodySmall.copyWith(color: Colors.grey)),
+                      Text('発音してください', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
                       AppSpacing.verticalSpacerSm,
                       Text(
                         word,
@@ -139,7 +136,7 @@ class _PronunciationCheckScreenState
                         },
                         icon: const Icon(Icons.volume_up),
                         label: const Text('例を聞く'),
-                        backgroundColor: Colors.amber,
+                        backgroundColor: AppColors.accentOrange,
                       ),
                     ],
                   ),
@@ -159,7 +156,7 @@ class _PronunciationCheckScreenState
                             .read(pronunciationStateProvider.notifier)
                             .startListening(),
                     backgroundColor: pronunciationState.isListening
-                        ? Colors.red
+                        ? AppColors.error
                         : const Color(0xFF378ADD),
                     child: Icon(
                       pronunciationState.isListening
@@ -173,7 +170,7 @@ class _PronunciationCheckScreenState
                     pronunciationState.isListening
                         ? '話してください...'
                         : 'マイクボタンを押して発音',
-                    style: AppTypography.bodySmall.copyWith(color: Colors.grey),
+                    style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                   ),
                 ],
 
@@ -183,10 +180,10 @@ class _PronunciationCheckScreenState
                   Container(
                     padding: AppSpacing.allPaddingMd,
                     decoration: BoxDecoration(
-                      color: result!.isPassed ? Colors.green[50] : Colors.orange[50],
+                      color: result!.isPassed ? AppColors.accentGreen[50] : AppColors.accentOrange[50],
                       borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                       border: Border.all(
-                        color: result.isPassed ? Colors.green : Colors.orange,
+                        color: result.isPassed ? AppColors.accentGreen : AppColors.accentOrange,
                       ),
                     ),
                     child: Column(
@@ -210,9 +207,9 @@ class _PronunciationCheckScreenState
                           child: LinearProgressIndicator(
                             value: result.accuracy,
                             minHeight: 8,
-                            backgroundColor: Colors.grey[300],
+                            backgroundColor: AppColors.textMuted[300],
                             valueColor: AlwaysStoppedAnimation<Color>(
-                              result.isPassed ? Colors.green : Colors.orange,
+                              result.isPassed ? AppColors.accentGreen : AppColors.accentOrange,
                             ),
                           ),
                         ),
@@ -221,8 +218,8 @@ class _PronunciationCheckScreenState
                           result.accuracyPercentage,
                           style: AppTypography.labelLarge.copyWith(
                             color: result.isPassed
-                                ? Colors.green
-                                : Colors.orange,
+                                ? AppColors.accentGreen
+                                : AppColors.accentOrange,
                           ),
                         ),
                         AppSpacing.verticalSpacerXs,
@@ -266,13 +263,13 @@ class _PronunciationCheckScreenState
                   Container(
                     padding: AppSpacing.allPaddingXs,
                     decoration: BoxDecoration(
-                      color: Colors.red[50],
+                      color: AppColors.error[50],
                       borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-                      border: Border.all(color: Colors.red),
+                      border: Border.all(color: AppColors.error),
                     ),
                     child: Text(
                       pronunciationState.errorMessage!,
-                      style: AppTypography.bodySmall.copyWith(color: Colors.red),
+                      style: AppTypography.bodySmall.copyWith(color: AppColors.error),
                     ),
                   ),
                 ],

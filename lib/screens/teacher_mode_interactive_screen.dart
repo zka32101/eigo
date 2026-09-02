@@ -1,11 +1,8 @@
+import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/teacher_mode_model.dart';
 import '../providers/teacher_mode_provider.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
 
 class TeacherModeInteractiveScreen extends ConsumerStatefulWidget {
   final String phrase;
@@ -135,7 +132,7 @@ class _TeacherModeInteractiveScreenState
       return Scaffold(
         appBar: AppBar(
           title: const Text('🧑‍🏫 先生ごっこ'),
-          backgroundColor: kPrimaryColor,
+          backgroundColor: AppColors.primary,
         ),
         body: const Center(child: CircularProgressIndicator()),
       );
@@ -145,7 +142,7 @@ class _TeacherModeInteractiveScreenState
       return Scaffold(
         appBar: AppBar(
           title: const Text('🧑‍🏫 先生ごっこ'),
-          backgroundColor: kPrimaryColor,
+          backgroundColor: AppColors.primary,
         ),
         body: const Center(child: CircularProgressIndicator()),
       );
@@ -158,7 +155,7 @@ class _TeacherModeInteractiveScreenState
     return Scaffold(
       appBar: AppBar(
         title: const Text('🧑‍🏫 先生ごっこ'),
-        backgroundColor: kPrimaryColor,
+        backgroundColor: AppColors.primary,
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -191,9 +188,9 @@ class _TeacherModeInteractiveScreenState
     return Container(
       padding: AppSpacing.allPaddingMd,
       decoration: BoxDecoration(
-        color: kPrimaryColor.withAlpha(10),
+        color: AppColors.primary.withAlpha(10),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-        border: Border.all(color: kPrimaryColor.withAlpha(30)),
+        border: Border.all(color: AppColors.primary.withAlpha(30)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -211,8 +208,8 @@ class _TeacherModeInteractiveScreenState
             child: LinearProgressIndicator(
               value: percentage / 100,
               minHeight: 8,
-              backgroundColor: Colors.grey[300],
-              valueColor: const AlwaysStoppedAnimation(kPrimaryColor),
+              backgroundColor: AppColors.bgLight,
+              valueColor: const AlwaysStoppedAnimation(AppColors.primary),
             ),
           ),
         ],
@@ -230,42 +227,42 @@ class _TeacherModeInteractiveScreenState
     return Container(
       padding: AppSpacing.allPaddingMd,
       decoration: BoxDecoration(
-        color: kAccentOrange.withAlpha(10),
+        color: AppColors.accentOrange.withAlpha(10),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-        border: Border.all(color: kAccentOrange.withAlpha(50)),
+        border: Border.all(color: AppColors.accentOrange.withAlpha(50)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Chip(
             label: Text(mistakeTypeLabel ?? 'ミス'),
-            backgroundColor: kAccentOrange.withAlpha(30),
-            labelStyle: const TextStyle(color: kAccentOrange, fontWeight: FontWeight.bold),
+            backgroundColor: AppColors.accentOrange.withAlpha(30),
+            labelStyle: const TextStyle(color: AppColors.accentOrange, fontWeight: FontWeight.bold),
           ),
           AppSpacing.verticalSpacerMd,
           Text(
             'AIの先生が言ったこと:',
-            style: AppTypography.labelSmall.copyWith(color: kTextMuted),
+            style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted),
           ),
           AppSpacing.verticalSpacerSm,
           Container(
             padding: AppSpacing.allPaddingMd,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color:AppColors.textWhite,
               borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
             ),
             child: Text(
               '"${mistake.mistakeText}"',
               style: AppTypography.headlineSmall.copyWith(
                 fontStyle: FontStyle.italic,
-                color: kAccentOrange,
+                color: AppColors.accentOrange,
               ),
             ),
           ),
           AppSpacing.verticalSpacerMd,
           Text(
             '説明: ${mistake.explanation}',
-            style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+            style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
           ),
         ],
       ),
@@ -285,13 +282,13 @@ class _TeacherModeInteractiveScreenState
           controller: _responseController,
           decoration: InputDecoration(
             hintText: 'ここに正しい言い方を入力してください',
-            prefixIcon: const Icon(Icons.edit, color: kPrimaryColor),
+            prefixIcon: const Icon(Icons.edit, color: AppColors.primary),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppSizes.borderRadius),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-              borderSide: const BorderSide(color: kPrimaryColor, width: 2),
+              borderSide: const BorderSide(color: AppColors.primary, width: 2),
             ),
           ),
           maxLines: 2,
@@ -304,15 +301,15 @@ class _TeacherModeInteractiveScreenState
           child: ElevatedButton(
             onPressed: _showFeedback ? null : _submitResponse,
             style: ElevatedButton.styleFrom(
-              backgroundColor: kAccentGreen,
-              disabledBackgroundColor: Colors.grey[300],
+              backgroundColor: AppColors.accentGreen,
+              disabledBackgroundColor: AppColors.bgLight,
             ),
             child: const Text(
               '答えを確認',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color:AppColors.textWhite,
               ),
             ),
           ),
@@ -327,10 +324,10 @@ class _TeacherModeInteractiveScreenState
       child: Container(
         padding: AppSpacing.allPaddingMd,
         decoration: BoxDecoration(
-          color: isCorrect ? kAccentGreen.withAlpha(10) : Colors.red.withAlpha(10),
+          color: isCorrect ? AppColors.accentGreen.withAlpha(10) : Colors.red.withAlpha(10),
           borderRadius: BorderRadius.circular(AppSizes.borderRadius),
           border: Border.all(
-            color: isCorrect ? kAccentGreen.withAlpha(50) : Colors.red.withAlpha(50),
+            color: isCorrect ? AppColors.accentGreen.withAlpha(50) : Colors.red.withAlpha(50),
           ),
         ),
         child: Column(
@@ -341,7 +338,7 @@ class _TeacherModeInteractiveScreenState
                 Text(
                   isCorrect ? '✓ 正解！' : '✗ もう一度',
                   style: AppTypography.headlineSmall.copyWith(
-                    color: isCorrect ? kAccentGreen : Colors.red,
+                    color: isCorrect ? AppColors.accentGreen : Colors.red,
                   ),
                 ),
                 const Spacer(),
@@ -385,7 +382,7 @@ class _SessionResultsDialog extends StatelessWidget {
           Center(
             child: Text(
               '${accuracy.toStringAsFixed(0)}%',
-              style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold, color: kAccentGreen),
+              style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold, color: AppColors.accentGreen),
             ),
           ),
           AppSpacing.verticalSpacerMd,
@@ -400,7 +397,7 @@ class _SessionResultsDialog extends StatelessWidget {
           AppSpacing.verticalSpacerSm,
           Text(
             '学習フレーズ: ${session.phrase}',
-            style: const TextStyle(fontStyle: FontStyle.italic, color: kTextMuted),
+            style: const TextStyle(fontStyle: FontStyle.italic, color: AppColors.textMuted),
           ),
         ],
       ),
@@ -419,7 +416,7 @@ class _SessionResultsDialog extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(color: kTextMuted)),
+          Text(label, style: const TextStyle(color: AppColors.textMuted)),
           Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
         ],
       ),

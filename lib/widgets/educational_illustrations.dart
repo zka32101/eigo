@@ -1,3 +1,4 @@
+import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 
 /// Custom SVG-based illustrations for educational content
@@ -364,19 +365,19 @@ class _GamificationPainter extends CustomPainter {
     );
 
     // Badge star in center
-    final starPaint = Paint()..color = Colors.yellow.shade300;
+    final starPaint = Paint()..color = AppColors.accentOrange.withAlpha(25);
     _drawStar(canvas, Offset(centerX - 20, centerY - 20), 5, starPaint);
 
     // Star particles
     canvas.drawCircle(
       Offset(centerX + 20, centerY - 15),
       3,
-      Paint()..color = Colors.amber.shade300,
+      Paint()..color = AppColors.accentOrange.withAlpha(25),
     );
     canvas.drawCircle(
       Offset(centerX + 15, centerY - 25),
       2.5,
-      Paint()..color = Colors.amber.shade300,
+      Paint()..color = AppColors.accentOrange.withAlpha(25),
     );
   }
 
@@ -458,7 +459,7 @@ class ProgressVisualization extends StatelessWidget {
             child: LinearProgressIndicator(
               value: progress.clamp(0.0, 1.0),
               minHeight: 8,
-              backgroundColor: Colors.grey.shade200,
+              backgroundColor: AppColors.bgLight,
               valueColor: AlwaysStoppedAnimation<Color>(color),
             ),
           ),
@@ -509,7 +510,7 @@ class LearningMethodCard extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             description,
-            style: const TextStyle(fontSize: 10, color: Colors.grey),
+            style: const TextStyle(fontSize: 10, color: AppColors.textMuted),
             textAlign: TextAlign.center,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,

@@ -8,10 +8,7 @@ import '../providers/level_provider.dart';
 import '../providers/progress_provider.dart';
 import '../providers/study_time_provider.dart';
 import '../providers/weakness_provider.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
+import '../design_system/design_system.dart';
 import '../widgets/streak_badge.dart';
 import '../widgets/streak_card.dart';
 import '../widgets/study_time_card.dart';
@@ -41,12 +38,12 @@ class HomeScreen extends ConsumerWidget {
           SliverAppBar(
             expandedHeight: 120,
             pinned: true,
-            backgroundColor: kPrimaryColor,
+            backgroundColor: AppColors.primary,
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [kPrimaryColor, kPrimaryDark],
+                    colors: [AppColors.primary, AppColors.primaryDark],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -73,7 +70,7 @@ class HomeScreen extends ConsumerWidget {
                                       ...profiles.map((p) => Container(
                                         margin: EdgeInsets.only(bottom: AppSpacing.xs),
                                         child: ListTile(
-                                          leading: Text(p.avatar, style: const TextStyle(fontSize: 24)),
+                                          leading: Text(p.avatar, style: TextStyle(fontSize: AppTypography.displaySmall.fontSize)),
                                           title: Text(p.name),
                                           subtitle: Text('${p.grade}年生'),
                                           trailing: Row(
@@ -82,10 +79,10 @@ class HomeScreen extends ConsumerWidget {
                                               if (currentUser?.id == p.id)
                                                 Padding(
                                                   padding: EdgeInsets.only(right: AppSpacing.xs),
-                                                  child: const Icon(Icons.check, color: kAccentGreen, size: 20),
+                                                  child: const Icon(Icons.check, color: AppColors.accentGreen, size: 20),
                                                 ),
                                               IconButton(
-                                                icon: const Icon(Icons.edit, color: kTextMuted, size: 20),
+                                                icon: const Icon(Icons.edit, color: AppColors.textMuted, size: 20),
                                                 onPressed: () {
                                                   Navigator.pop(ctx);
                                                   Navigator.of(context).push(
@@ -125,7 +122,7 @@ class HomeScreen extends ConsumerWidget {
                               );
                             },
                             child: Text('${currentUser?.avatar ?? '👧'} ${currentUser?.name ?? 'プロフィール'}',
-                              style: AppTypography.labelLarge.copyWith(color: Colors.white, fontWeight: FontWeight.bold)),
+                              style: AppTypography.labelLarge.copyWith(color:AppColors.textWhite, fontWeight: FontWeight.bold)),
                           ),
                           AppSpacing.horizontalSpacerXs,
                           Expanded(
@@ -135,7 +132,7 @@ class HomeScreen extends ConsumerWidget {
                               children: [
                                 Text(
                                   '英語コレ！',
-                                  style: AppTypography.labelLarge.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+                                  style: AppTypography.labelLarge.copyWith(color:AppColors.textWhite, fontWeight: FontWeight.bold),
                                 ),
                                 Row(
                                   children: [
@@ -143,7 +140,7 @@ class HomeScreen extends ConsumerWidget {
                                     AppSpacing.horizontalSpacerXs,
                                     Text(
                                       'コイン: ${coins.totalCoins}🪙',
-                                      style: AppTypography.bodySmall.copyWith(color: Colors.white70),
+                                      style: AppTypography.bodySmall.copyWith(color: AppColors.textWhite.withOpacity(0.7)),
                                     ),
                                   ],
                                 ),
@@ -152,7 +149,7 @@ class HomeScreen extends ConsumerWidget {
                           ),
                           Builder(
                             builder: (ctx) => IconButton(
-                              icon: const Icon(Icons.calendar_today, color: Colors.white70, size: 20),
+                              icon: Icon(Icons.calendar_today, color: AppColors.textWhite.withOpacity(0.7), size: 20),
                               onPressed: () => Navigator.of(ctx).pushNamed('/calendar'),
                               tooltip: 'カレンダー',
                             ),
@@ -234,39 +231,39 @@ class _QuickActions extends StatelessWidget {
         children: [
           Row(
             children: [
-              _QuickBtn('⚡ デイリー\nチャレンジ', kAccentOrange, '/daily-challenge'),
+              _QuickBtn('⚡ デイリー\nチャレンジ', AppColors.accentOrange, '/daily-challenge'),
               AppSpacing.horizontalSpacerXs,
-              _QuickBtn('🎤 発音\nバトル', kSpeakingColor, '/pronunciation-battle'),
+              _QuickBtn('🎤 発音\nバトル', AppColors.speakingColor, '/pronunciation-battle'),
               AppSpacing.horizontalSpacerXs,
-              _QuickBtn('💬 会話\nシミュ', kPrimaryColor, '/conversation'),
+              _QuickBtn('💬 会話\nシミュ', AppColors.primary, '/conversation'),
             ],
           ),
           AppSpacing.verticalSpacerXs,
           Row(
             children: [
-              _QuickBtn('👨‍👩‍👧 親子\nチャレンジ', const Color(0xFFE91E63), '/parent-child'),
+              _QuickBtn('👨‍👩‍👧 親子\nチャレンジ', AppColors.accentPink, '/parent-child'),
               AppSpacing.horizontalSpacerXs,
-              _QuickBtn('👫 友達\n招待', kAccentGreen, '/invite'),
+              _QuickBtn('👫 友達\n招待', AppColors.accentGreen, '/invite'),
               AppSpacing.horizontalSpacerXs,
-              _QuickBtn('🎯 テスト\n対策', kAccentRed, '/test-prep'),
+              _QuickBtn('🎯 テスト\n対策', AppColors.accentRed, '/test-prep'),
             ],
           ),
           AppSpacing.verticalSpacerXs,
           Row(
             children: [
-              _QuickBtn('🤖 AI\nフリートーク', const Color(0xFF7C3AED), '/ai-freetalk'),
+              _QuickBtn('🤖 AI\nフリートーク', AppColors.accentPurple, '/ai-freetalk'),
               AppSpacing.horizontalSpacerXs,
-              _QuickBtn('📖 単語\nカード', const Color(0xFF059669), '/vocabulary'),
+              _QuickBtn('📖 単語\nカード', AppColors.accentGreen, '/vocabulary'),
               AppSpacing.horizontalSpacerXs,
-              _QuickBtn('📅 カレンダー', kListeningColor, '/calendar'),
+              _QuickBtn('📅 カレンダー', AppColors.listeningColor, '/calendar'),
             ],
           ),
           AppSpacing.verticalSpacerXs,
           Row(
             children: [
-              _QuickBtn('🐾 ペット\n育成', const Color(0xFFFF7043), '/pet'),
+              _QuickBtn('🐾 ペット\n育成', AppColors.accentOrange, '/pet'),
               AppSpacing.horizontalSpacerXs,
-              _QuickBtn('🧑‍🏫 先生\nごっこ', const Color(0xFF26A69A), '/teacher-mode'),
+              _QuickBtn('🧑‍🏫 先生\nごっこ', AppColors.readingColor, '/teacher-mode'),
               AppSpacing.horizontalSpacerXs,
               const Expanded(child: SizedBox.shrink()),
             ],
@@ -296,7 +293,7 @@ class _QuickBtn extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
             child: Text(
               label,
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: color),
+              style: AppTypography.labelSmall.copyWith(fontWeight: FontWeight.bold, color: color),
               textAlign: TextAlign.center,
             ),
           ),
@@ -328,28 +325,28 @@ class _ImprovedSkillBreakdown extends StatelessWidget {
           ImprovedSkillProgressCard(
             skillName: 'Listening',
             progress: 0.35,
-            skillColor: kListeningColor,
+            skillColor: AppColors.listeningColor,
             questions: 12,
           ),
           AppSpacing.verticalSpacerMd,
           ImprovedSkillProgressCard(
             skillName: 'Speaking',
             progress: 0.40,
-            skillColor: kSpeakingColor,
+            skillColor: AppColors.speakingColor,
             questions: 14,
           ),
           AppSpacing.verticalSpacerMd,
           ImprovedSkillProgressCard(
             skillName: 'Reading',
             progress: 0.15,
-            skillColor: kReadingColor,
+            skillColor: AppColors.readingColor,
             questions: 5,
           ),
           AppSpacing.verticalSpacerMd,
           ImprovedSkillProgressCard(
             skillName: 'Writing',
             progress: 0.10,
-            skillColor: kWritingColor,
+            skillColor: AppColors.writingColor,
             questions: 3,
           ),
           AppSpacing.verticalSpacerLg,
@@ -361,8 +358,8 @@ class _ImprovedSkillBreakdown extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('全体進捗', style: AppTypography.labelLarge.copyWith(color: kTextDark)),
-                    Text('$cleared / $total ステージ', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+                    Text('全体進捗', style: AppTypography.labelLarge.copyWith(color: AppColors.textPrimary)),
+                    Text('$cleared / $total ステージ', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
                   ],
                 ),
                 AppSpacing.verticalSpacerSm,
@@ -370,8 +367,8 @@ class _ImprovedSkillBreakdown extends StatelessWidget {
                   borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                   child: LinearProgressIndicator(
                     value: rate,
-                    backgroundColor: Colors.grey.shade200,
-                    valueColor: const AlwaysStoppedAnimation<Color>(kPrimaryColor),
+                    backgroundColor: AppColors.bgLight,
+                    valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
                     minHeight: 8,
                   ),
                 ),
@@ -402,7 +399,7 @@ class _RecentBadges extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('バッジ', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  Text('バッジ', style: AppTypography.bodyLarge.copyWith(fontWeight: FontWeight.bold)),
                   TextButton(
                     onPressed: () => Navigator.of(context).pushNamed('/badges'),
                     child: const Text('すべて見る'),
@@ -413,8 +410,8 @@ class _RecentBadges extends StatelessWidget {
                 spacing: 8,
                 children: recent.map((b) => Column(
                   children: [
-                    Text(b.badge.emoji, style: const TextStyle(fontSize: 32)),
-                    Text(b.badge.title, style: const TextStyle(fontSize: 10, color: kTextMuted)),
+                    Text(b.badge.emoji, style: TextStyle(fontSize: AppTypography.displayMedium.fontSize)),
+                    Text(b.badge.title, style: const TextStyle(fontSize: 10, color: AppColors.textMuted)),
                   ],
                 )).toList(),
               ),

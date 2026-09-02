@@ -1,3 +1,4 @@
+import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -59,7 +60,6 @@ import 'services/ad_service.dart';
 import 'services/firebase_service.dart';
 import 'providers/morning_notification_provider.dart';
 import 'providers/coin_provider.dart';
-import 'theme/app_theme.dart' show buildAppTheme, buildDarkAppTheme, kPrimaryColor, kTextMuted;
 import 'providers/user_profile_provider.dart';
 
 Future<void> main() async {
@@ -232,9 +232,9 @@ class _RootShellState extends ConsumerState<RootShell> {
         currentIndex: _tab,
         onTap: (i) => setState(() => _tab = i),
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: kPrimaryColor,
-        unselectedItemColor: kTextMuted,
-        backgroundColor: Colors.white,
+        selectedItemColor: AppColors.primary,
+        unselectedItemColor: AppColors.textMuted,
+        backgroundColor:AppColors.textWhite,
         elevation: 8,
         selectedFontSize: 11,
         unselectedFontSize: 10,

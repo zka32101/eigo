@@ -13,10 +13,7 @@ import '../providers/weakness_provider.dart';
 import '../services/speech_service.dart';
 import '../services/tts_service.dart';
 import '../services/pronunciation_pet_integration_service.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
+import '../design_system/design_system.dart';
 import '../widgets/speaking_score_ring.dart';
 import '../widgets/lesson_screen_components.dart';
 import '../providers/user_profile_provider.dart';
@@ -239,7 +236,7 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
           SnackBar(
             content: Text(feedbackResult.generateFeedback()),
             duration: const Duration(seconds: 2),
-            backgroundColor: feedbackResult.coinsEarned > 0 ? Colors.green : Colors.blue,
+            backgroundColor: feedbackResult.coinsEarned > 0 ? AppColors.success : AppColors.info,
           ),
         );
       }
@@ -262,9 +259,9 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
     final progress = (_qIndex + 1) / questions.length;
 
     return Scaffold(
-      backgroundColor: kBgLight,
+      backgroundColor: AppColors.bgLight,
       appBar: AppBar(
-        backgroundColor: kPrimaryColor,
+        backgroundColor: AppColors.primary,
         title: Text('${widget.stage.emoji} ${widget.stage.titleJa}'),
         actions: [
           Padding(
@@ -272,7 +269,7 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
             child: Center(
               child: Text(
                 '${_qIndex + 1} / ${questions.length}',
-                style: AppTypography.labelLarge.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+                style: AppTypography.labelLarge.copyWith(color: AppColors.textWhite, fontWeight: FontWeight.bold),
               ),
             ),
           ),
@@ -355,7 +352,7 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
               confettiController: _confetti,
               blastDirectionality: BlastDirectionality.explosive,
               shouldLoop: false,
-              colors: const [kPrimaryColor, kAccentGreen, kAccentOrange, kSpeakingColor],
+              colors: const [AppColors.primary, AppColors.accentGreen, AppColors.accentOrange, AppColors.speakingColor],
             ),
           ),
         ],
@@ -366,10 +363,10 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
 
 Color _questionTypeColor(QuestionType t) {
   switch (t) {
-    case QuestionType.listening: return kListeningColor;
-    case QuestionType.speaking: return kSpeakingColor;
-    case QuestionType.reading: return kReadingColor;
-    case QuestionType.writing: return kWritingColor;
+    case QuestionType.listening: return AppColors.listeningColor;
+    case QuestionType.speaking: return AppColors.speakingColor;
+    case QuestionType.reading: return AppColors.readingColor;
+    case QuestionType.writing: return AppColors.writingColor;
   }
 }
 
@@ -415,7 +412,7 @@ class _SpeakingArea extends StatelessWidget {
             if (!speakingDone) ...[
               Text(
                 'マイクに向かって発音してみよう！',
-                style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold, color: kTextDark),
+                style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                 textAlign: TextAlign.center,
               ),
               AppSpacing.verticalSpacerLg,
@@ -427,14 +424,14 @@ class _SpeakingArea extends StatelessWidget {
                   height: 80,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: isListening ? kSpeakingColor : kPrimaryColor,
+                    color: isListening ? AppColors.speakingColor : AppColors.primary,
                     boxShadow: isListening
-                        ? [BoxShadow(color: kSpeakingColor.withAlpha(102), blurRadius: 20, spreadRadius: 5)]
+                        ? [BoxShadow(color: AppColors.speakingColor.withAlpha(102), blurRadius: 20, spreadRadius: 5)]
                         : [],
                   ),
                   child: Icon(
                     isListening ? Icons.mic : Icons.mic_none,
-                    color: Colors.white,
+                    color: AppColors.textWhite,
                     size: 36,
                   ),
                 ),
@@ -443,7 +440,7 @@ class _SpeakingArea extends StatelessWidget {
               Text(
                 isListening ? '聞いています...' : 'タップして話す',
                 style: AppTypography.bodySmall.copyWith(
-                  color: isListening ? kSpeakingColor : kTextMuted,
+                  color: isListening ? AppColors.speakingColor : AppColors.textMuted,
                   fontWeight: isListening ? FontWeight.bold : FontWeight.normal,
                 ),
               ),
@@ -452,12 +449,12 @@ class _SpeakingArea extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(AppSpacing.xs),
                   decoration: BoxDecoration(
-                    color: kBgLight,
+                    color: AppColors.bgLight,
                     borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                   ),
                   child: Text(
                     '"$recognizedText"',
-                    style: AppTypography.labelLarge.copyWith(color: kTextDark),
+                    style: AppTypography.labelLarge.copyWith(color: AppColors.textPrimary),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -496,11 +493,11 @@ class _SpeakingScoreWidget extends StatelessWidget {
           AppSpacing.verticalSpacerXs,
           Text(
             'あなた: "$recognized"',
-            style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+            style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
           ),
           Text(
             '正解: "$expected"',
-            style: AppTypography.bodySmall.copyWith(color: kAccentGreen, fontWeight: FontWeight.bold),
+            style: AppTypography.bodySmall.copyWith(color: AppColors.accentGreen, fontWeight: FontWeight.bold),
           ),
         ],
       ],

@@ -1,6 +1,6 @@
+import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import '../providers/level_provider.dart';
-import '../theme/app_theme.dart';
 
 /// XP バーウィジェット（compact/full 両対応）
 class XpBar extends StatelessWidget {
@@ -26,7 +26,7 @@ class _CompactXpBar extends StatelessWidget {
       children: [
         Text(
           '${level.rankEmoji} Lv.${level.level}',
-          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.white),
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppColors.textWhite),
         ),
         const SizedBox(width: 8),
         Expanded(
@@ -34,7 +34,7 @@ class _CompactXpBar extends StatelessWidget {
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: level.progressToNext,
-              backgroundColor: Colors.white24,
+              backgroundColor: AppColors.textWhite24,
               valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFFFD700)),
               minHeight: 6,
             ),
@@ -43,7 +43,7 @@ class _CompactXpBar extends StatelessWidget {
         const SizedBox(width: 6),
         Text(
           '${level.xpToNextLevel}XP',
-          style: const TextStyle(fontSize: 11, color: Colors.white70),
+          style: const TextStyle(fontSize: 11, color: AppColors.textWhite.withOpacity(0.7)),
         ),
       ],
     );
@@ -74,11 +74,11 @@ class _FullXpBar extends StatelessWidget {
                       children: [
                         Text(
                           'Lv.${level.level}  ${level.rank}',
-                          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: kTextDark),
+                          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                         ),
                         Text(
                           '累計 ${level.totalXp} XP',
-                          style: const TextStyle(fontSize: 11, color: kTextMuted),
+                          style: const TextStyle(fontSize: 11, color: AppColors.textMuted),
                         ),
                       ],
                     ),
@@ -89,7 +89,7 @@ class _FullXpBar extends StatelessWidget {
                   children: [
                     Text(
                       'Lv.${level.level + 1} まで',
-                      style: const TextStyle(fontSize: 11, color: kTextMuted),
+                      style: const TextStyle(fontSize: 11, color: AppColors.textMuted),
                     ),
                     Text(
                       '${level.xpToNextLevel} XP',
@@ -104,7 +104,7 @@ class _FullXpBar extends StatelessWidget {
               borderRadius: BorderRadius.circular(6),
               child: LinearProgressIndicator(
                 value: level.progressToNext,
-                backgroundColor: Colors.grey.shade200,
+                backgroundColor: AppColors.bgLight,
                 valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFFFD700)),
                 minHeight: 12,
               ),
@@ -112,7 +112,7 @@ class _FullXpBar extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               '${level.currentLevelXp} / ${level.xpNeededForNext} XP',
-              style: const TextStyle(fontSize: 11, color: kTextMuted),
+              style: const TextStyle(fontSize: 11, color: AppColors.textMuted),
             ),
           ],
         ),
@@ -141,7 +141,7 @@ class LevelUpOverlay extends StatelessWidget {
     return GestureDetector(
       onTap: onDismiss,
       child: Container(
-        color: Colors.black54,
+        color: AppColors.textPrimary.withOpacity(0.54),
         child: Center(
           child: Card(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
@@ -159,13 +159,13 @@ class LevelUpOverlay extends StatelessWidget {
                   const SizedBox(height: 6),
                   Text(
                     'Lv.$newLevel  $rank',
-                    style: const TextStyle(fontSize: 18, color: kTextDark),
+                    style: const TextStyle(fontSize: 18, color: AppColors.textPrimary),
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: onDismiss,
                     style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFFD700)),
-                    child: const Text('やった！', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                    child: const Text('やった！', style: TextStyle(color:AppColors.textWhite, fontWeight: FontWeight.bold)),
                   ),
                 ],
               ),

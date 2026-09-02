@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../design_system/design_system.dart';
 import '../models/passport_model.dart';
 import '../providers/passport_provider.dart';
 import '../providers/user_profile_provider.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
 
 class PassportScreen extends ConsumerStatefulWidget {
   const PassportScreen({Key? key}) : super(key: key);
@@ -40,7 +37,7 @@ class _PassportScreenState extends ConsumerState<PassportScreen> {
             children: [
               // タブバー
               Container(
-                color: Colors.white,
+                color:AppColors.textWhite,
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
@@ -136,7 +133,7 @@ class _TabButton extends StatelessWidget {
         decoration: BoxDecoration(
           border: Border(
             bottom: BorderSide(
-              color: isSelected ? kPrimaryColor : Colors.transparent,
+              color: isSelected ? AppColors.primary : Colors.transparent,
               width: 3,
             ),
           ),
@@ -144,7 +141,7 @@ class _TabButton extends StatelessWidget {
         child: Text(
           label,
           style: AppTypography.labelMedium.copyWith(
-            color: isSelected ? kPrimaryColor : kTextMuted,
+            color: isSelected ? AppColors.primary : AppColors.textMuted,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
           ),
         ),
@@ -212,12 +209,12 @@ class _ProfileCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [Colors.purple.shade50, Colors.blue.shade50],
+          colors: [AppColors.bgLight, AppColors.bgLight.withOpacity(0.7)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
-        border: Border.all(color: Colors.purple.shade200),
+        border: Border.all(color: AppColors.accentPurple.withOpacity(0.2)),
       ),
       padding: EdgeInsets.all(AppSpacing.xl),
       child: Column(
@@ -226,17 +223,18 @@ class _ProfileCard extends StatelessWidget {
             width: 100,
             height: 100,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color:AppColors.textWhite,
               borderRadius: BorderRadius.circular(AppSizes.borderRadius),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: AppColors.textPrimary.withAlpha(25),
                   blurRadius: 8,
                 )
               ],
             ),
-            child: const Center(
-              child: Text('🌍', style: TextStyle(fontSize: 60)),
+            child: Center(
+              child: Text('🌍',
+                style: TextStyle(fontSize: AppTypography.displayLarge.fontSize! * 2)),
             ),
           ),
           AppSpacing.verticalSpacerMd,
@@ -249,7 +247,7 @@ class _ProfileCard extends StatelessWidget {
           AppSpacing.verticalSpacerXs,
           Text(
             '小学${profile.overallGrade}年生',
-            style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+            style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
           ),
           AppSpacing.verticalSpacerMd,
           Row(
@@ -261,12 +259,12 @@ class _ProfileCard extends StatelessWidget {
                     '${profile.connectedApps.values.where((v) => v).length}',
                     style: AppTypography.headlineSmall.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Colors.purple,
+                      color: AppColors.accentPurple,
                     ),
                   ),
                   Text(
                     'アプリ接続',
-                    style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                    style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                   ),
                 ],
               ),
@@ -276,12 +274,12 @@ class _ProfileCard extends StatelessWidget {
                     '${profile.overallGrade}',
                     style: AppTypography.headlineSmall.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Colors.green,
+                      color: AppColors.accentGreen,
                     ),
                   ),
                   Text(
                     'グレード',
-                    style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                    style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                   ),
                 ],
               ),
@@ -303,9 +301,9 @@ class _RankingCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.orange.shade50,
+        color: AppColors.accentOrange.withOpacity(0.1),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-        border: Border.all(color: Colors.orange.shade200),
+        border: Border.all(color: AppColors.accentOrange.withOpacity(0.3)),
       ),
       padding: AppSpacing.allPaddingMd,
       child: Column(
@@ -323,14 +321,14 @@ class _RankingCard extends StatelessWidget {
                 children: [
                   Text(
                     '全国順位',
-                    style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                    style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                   ),
                   AppSpacing.verticalSpacerXs,
                   Text(
                     '${summary.globalRank}位',
                     style: AppTypography.headlineMedium.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: kAccentOrange,
+                      color: AppColors.accentOrange,
                     ),
                   ),
                 ],
@@ -339,14 +337,14 @@ class _RankingCard extends StatelessWidget {
                 children: [
                   Text(
                     '友達内順位',
-                    style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                    style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                   ),
                   AppSpacing.verticalSpacerXs,
                   Text(
                     '${summary.friendsRank}位',
                     style: AppTypography.headlineMedium.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Colors.purple,
+                      color: AppColors.accentPurple,
                     ),
                   ),
                 ],
@@ -372,9 +370,9 @@ class _XPProgressCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.blue.shade50,
+        color: AppColors.readingColor.withOpacity(0.1),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-        border: Border.all(color: Colors.blue.shade200),
+        border: Border.all(color: AppColors.readingColor.withOpacity(0.3)),
       ),
       padding: AppSpacing.allPaddingMd,
       child: Column(
@@ -392,7 +390,7 @@ class _XPProgressCard extends StatelessWidget {
               Text(
                 '${summary.totalXP} / $maxXP',
                 style: AppTypography.labelMedium.copyWith(
-                  color: kAccentBlue,
+                  color: AppColors.readingColor,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -404,14 +402,14 @@ class _XPProgressCard extends StatelessWidget {
             child: LinearProgressIndicator(
               value: progress,
               minHeight: 12,
-              backgroundColor: Colors.grey[200],
-              valueColor: const AlwaysStoppedAnimation<Color>(kAccentBlue),
+              backgroundColor: AppColors.bgLight,
+              valueColor: const AlwaysStoppedAnimation<Color>(AppColors.readingColor),
             ),
           ),
           AppSpacing.verticalSpacerSm,
           Text(
             '${(progress * 100).toStringAsFixed(0)}% 達成',
-            style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+            style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
           ),
         ],
       ),
@@ -429,9 +427,9 @@ class _SubjectXPCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.green.shade50,
+        color: AppColors.accentGreen.withOpacity(0.1),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-        border: Border.all(color: Colors.green.shade200),
+        border: Border.all(color: AppColors.accentGreen.withOpacity(0.3)),
       ),
       padding: AppSpacing.allPaddingMd,
       child: Column(
@@ -462,7 +460,7 @@ class _SubjectXPCard extends StatelessWidget {
                         '${e.value} XP',
                         style: AppTypography.bodySmall.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: kAccentGreen,
+                          color: AppColors.accentGreen,
                         ),
                       ),
                     ],
@@ -474,9 +472,9 @@ class _SubjectXPCard extends StatelessWidget {
                     child: LinearProgressIndicator(
                       value: (e.value / 2000).clamp(0.0, 1.0),
                       minHeight: 6,
-                      backgroundColor: Colors.grey[200],
+                      backgroundColor: AppColors.bgLight,
                       valueColor:
-                          const AlwaysStoppedAnimation<Color>(kAccentGreen),
+                          const AlwaysStoppedAnimation<Color>(AppColors.accentGreen),
                     ),
                   ),
                 ],
@@ -499,9 +497,9 @@ class _StudyStatsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.pink.shade50,
+        color: AppColors.accentPink.withOpacity(0.1),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-        border: Border.all(color: Colors.pink.shade200),
+        border: Border.all(color: AppColors.accentPink.withOpacity(0.3)),
       ),
       padding: AppSpacing.allPaddingMd,
       child: Column(
@@ -556,7 +554,7 @@ class _StatRow extends StatelessWidget {
             value,
             style: AppTypography.bodySmall.copyWith(
               fontWeight: FontWeight.bold,
-              color: kAccentOrange,
+              color: AppColors.accentOrange,
             ),
           ),
         ],
@@ -574,9 +572,9 @@ class _SubjectsTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final apps = [
-      ('eigo-kore', '📚 英語コレ！', Colors.blue),
-      ('kokugo-kore', '📖 国語コレ！', Colors.red),
-      ('sansu-kore', '🧮 算数コレ！', Colors.green),
+      ('eigo-kore', '📚 英語コレ！', AppColors.readingColor),
+      ('kokugo-kore', '📖 国語コレ！', AppColors.accentRed),
+      ('sansu-kore', '🧮 算数コレ！', AppColors.accentGreen),
     ];
 
     return ListView.builder(
@@ -620,7 +618,7 @@ class _SubjectsTab extends ConsumerWidget {
                             vertical: AppSpacing.xs,
                           ),
                           decoration: BoxDecoration(
-                            color: isConnected ? Colors.green : Colors.grey,
+                            color: isConnected ? AppColors.success : AppColors.textMuted,
                             borderRadius: BorderRadius.circular(
                               AppSizes.borderRadiusSmall,
                             ),
@@ -628,7 +626,7 @@ class _SubjectsTab extends ConsumerWidget {
                           child: Text(
                             isConnected ? '接続中' : '未接続',
                             style: AppTypography.bodySmall.copyWith(
-                              color: Colors.white,
+                              color: AppColors.textWhite,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -770,10 +768,10 @@ class _BadgeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: isUnlocked ? Colors.yellow.shade50 : Colors.grey.shade100,
+        color: isUnlocked ? AppColors.warning.withOpacity(0.1) : AppColors.bgLight,
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
         border: Border.all(
-          color: isUnlocked ? Colors.yellow.shade300 : Colors.grey.shade300,
+          color: isUnlocked ? AppColors.warning.withOpacity(0.4) : AppColors.textMuted.withOpacity(0.3),
         ),
       ),
       padding: AppSpacing.allPaddingMd,
@@ -782,7 +780,7 @@ class _BadgeCard extends StatelessWidget {
         children: [
           Text(
             badge.emoji,
-            style: const TextStyle(fontSize: 40),
+            style: TextStyle(fontSize: AppTypography.displayMedium.fontSize),
           ),
           AppSpacing.verticalSpacerSm,
           Text(
@@ -796,9 +794,8 @@ class _BadgeCard extends StatelessWidget {
           if (!isUnlocked)
             Text(
               '${badge.requiredXP} XP',
-              style: AppTypography.bodySmall.copyWith(
-                color: kTextMuted,
-                fontSize: 10,
+              style: AppTypography.labelSmall.copyWith(
+                color: AppColors.textMuted,
               ),
             ),
         ],
@@ -846,9 +843,9 @@ class _ChallengeCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.purple.shade50,
+        color: AppColors.accentPurple.withOpacity(0.1),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-        border: Border.all(color: Colors.purple.shade200),
+        border: Border.all(color: AppColors.accentPurple.withOpacity(0.3)),
       ),
       padding: AppSpacing.allPaddingMd,
       child: Column(
@@ -861,7 +858,7 @@ class _ChallengeCard extends StatelessWidget {
           AppSpacing.verticalSpacerXs,
           Text(
             challenge.description,
-            style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+            style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
           ),
           AppSpacing.verticalSpacerMd,
           ClipRRect(
@@ -869,8 +866,8 @@ class _ChallengeCard extends StatelessWidget {
             child: LinearProgressIndicator(
               value: progress,
               minHeight: 8,
-              backgroundColor: Colors.grey[200],
-              valueColor: const AlwaysStoppedAnimation<Color>(Colors.purple),
+              backgroundColor: AppColors.bgLight,
+              valueColor: const AlwaysStoppedAnimation<Color>(AppColors.accentPurple),
             ),
           ),
           AppSpacing.verticalSpacerSm,
@@ -880,7 +877,7 @@ class _ChallengeCard extends StatelessWidget {
               Text(
                 'あと $daysLeft 日',
                 style: AppTypography.bodySmall.copyWith(
-                  color: kTextMuted,
+                  color: AppColors.textMuted,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -890,13 +887,13 @@ class _ChallengeCard extends StatelessWidget {
                   vertical: AppSpacing.xs,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.purple.shade100,
+                  color: AppColors.accentPurple.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
                 ),
                 child: Text(
                   '+${challenge.totalXPReward} XP',
                   style: AppTypography.bodySmall.copyWith(
-                    color: Colors.purple,
+                    color: AppColors.accentPurple,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -939,9 +936,9 @@ class _SettingsTab extends ConsumerWidget {
             padding: EdgeInsets.only(bottom: AppSpacing.md),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color:AppColors.textWhite,
                 borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-                border: Border.all(color: Colors.grey.shade200),
+                border: Border.all(color: AppColors.bgLight),
               ),
               padding: AppSpacing.allPaddingMd,
               child: Row(
@@ -976,9 +973,9 @@ class _SettingsTab extends ConsumerWidget {
         AppSpacing.verticalSpacerMd,
         Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color:AppColors.textWhite,
             borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-            border: Border.all(color: Colors.grey.shade200),
+            border: Border.all(color: AppColors.bgLight),
           ),
           padding: AppSpacing.allPaddingMd,
           child: Row(

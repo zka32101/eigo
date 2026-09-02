@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/leaderboard_model.dart';
 import '../providers/leaderboard_provider.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
+import ../design_system/design_system.dartapp_theme.dart';
+import ../design_system/design_system.dartspacing.dart';
+import ../design_system/design_system.dartsizes.dart';
+import ../design_system/design_system.darttypography.dart';
 
 class LeaderboardScreen extends ConsumerWidget {
   const LeaderboardScreen({super.key});
@@ -17,11 +17,11 @@ class LeaderboardScreen extends ConsumerWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('🏆 ランキング'),
-          backgroundColor: kPrimaryColor,
+          backgroundColor: AppColors.primary,
           bottom: const TabBar(
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.white70,
-            indicatorColor: kAccentOrange,
+            labelColor: AppColors.textWhite,
+            unselectedLabelColor: AppColors.textWhite.withOpacity(0.7),
+            indicatorColor: AppColors.accentOrange,
             tabs: [
               Tab(text: 'グローバル'),
               Tab(text: 'フレンド'),
@@ -102,13 +102,13 @@ class _FriendLeaderboardTab extends ConsumerWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.people_outline, size: 64, color: kTextMuted),
+                const Icon(Icons.people_outline, size: 64, color: AppColors.textMuted),
                 AppSpacing.verticalSpacerMd,
                 const Text('フレンドがいません'),
                 AppSpacing.verticalSpacerSm,
                 const Text(
                   'フレンドを追加してランキングを競いましょう',
-                  style: TextStyle(color: kTextMuted, fontSize: 12),
+                  style: TextStyle(color: AppColors.textMuted, fontSize: 12),
                 ),
               ],
             ),
@@ -170,13 +170,13 @@ class _WeeklyLeaderboardTab extends ConsumerWidget {
               Container(
                 padding: AppSpacing.allPaddingMd,
                 decoration: BoxDecoration(
-                  color: kAccentOrange.withAlpha(20),
+                  color: AppColors.accentOrange.withAlpha(20),
                   borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-                  border: Border.all(color: kAccentOrange.withAlpha(50)),
+                  border: Border.all(color: AppColors.accentOrange.withAlpha(50)),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.calendar_today, color: kAccentOrange),
+                    const Icon(Icons.calendar_today, color: AppColors.accentOrange),
                     AppSpacing.horizontalSpacerMd,
                     Expanded(
                       child: Column(
@@ -188,7 +188,7 @@ class _WeeklyLeaderboardTab extends ConsumerWidget {
                           Text(
                             '毎週月曜日にリセット',
                             style: AppTypography.bodySmall
-                                .copyWith(color: kTextMuted),
+                                .copyWith(color: AppColors.textMuted),
                           ),
                         ],
                       ),
@@ -243,15 +243,15 @@ class _CurrentUserCard extends StatelessWidget {
       padding: AppSpacing.allPaddingMd,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [kPrimaryColor.withAlpha(20), kPrimaryColor.withAlpha(5)],
+          colors: [AppColors.primary.withAlpha(20), AppColors.primary.withAlpha(5)],
         ),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-        border: Border.all(color: kPrimaryColor.withAlpha(50)),
+        border: Border.all(color: AppColors.primary.withAlpha(50)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('あなたの順位', style: AppTypography.labelSmall.copyWith(color: kTextMuted)),
+          Text('あなたの順位', style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted)),
           AppSpacing.verticalSpacerMd,
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -267,7 +267,7 @@ class _CurrentUserCard extends StatelessWidget {
                       AppSpacing.verticalSpacerXs,
                       Text(
                         'スコア: ${entry.score}',
-                        style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                        style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                       ),
                     ],
                   ),
@@ -279,13 +279,13 @@ class _CurrentUserCard extends StatelessWidget {
                   vertical: AppSpacing.sm,
                 ),
                 decoration: BoxDecoration(
-                  color: kPrimaryColor,
+                  color: AppColors.primary,
                   borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
                 ),
                 child: Text(
                   '第${entry.rank}位',
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: AppColors.textWhite,
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),
@@ -317,7 +317,7 @@ class _LeaderboardEntryCard extends StatelessWidget {
       case 3:
         return const Color(0xFFCD7F32); // ブロンズ
       default:
-        return kPrimaryColor;
+        return AppColors.primary;
     }
   }
 
@@ -328,9 +328,9 @@ class _LeaderboardEntryCard extends StatelessWidget {
     return Container(
       padding: AppSpacing.allPaddingMd,
       decoration: BoxDecoration(
-        color: isHighlighted ? kPrimaryColor.withAlpha(10) : Colors.white,
+        color: isHighlighted ? AppColors.primary.withAlpha(10) : AppColors.textWhite,
         border: Border.all(
-          color: isHighlighted ? kPrimaryColor.withAlpha(50) : Colors.grey[300]!,
+          color: isHighlighted ? AppColors.primary.withAlpha(50) : Colors.grey[300]!,
         ),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
       ),
@@ -375,7 +375,7 @@ class _LeaderboardEntryCard extends StatelessWidget {
                           Text(
                             'Lv.${entry.level} • ${entry.totalStudyMinutes}分学習',
                             style: AppTypography.bodySmall
-                                .copyWith(color: kTextMuted, fontSize: 11),
+                                .copyWith(color: AppColors.textMuted, fontSize: 11),
                           ),
                         ],
                       ),

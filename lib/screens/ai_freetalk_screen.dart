@@ -1,13 +1,10 @@
+import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import '../providers/claude_conversation_provider.dart';
 import '../providers/user_profile_provider.dart';
 import '../providers/ai_api_key_provider.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
 
 class AiFreetalkScreen extends ConsumerStatefulWidget {
   const AiFreetalkScreen({super.key});
@@ -84,27 +81,27 @@ class _AiFreetalkScreenState extends ConsumerState<AiFreetalkScreen> {
       appBar: AppBar(
         title: const Text('🤖 AIフリートーク'),
         centerTitle: true,
-        backgroundColor: const Color(0xFF378ADD),
+        backgroundColor: AppColors.readingColor,
       ),
       body: Column(
         children: [
           if (conversation.error != null)
             Container(
-              color: Colors.red[50],
+              color: AppColors.error.withAlpha(25),
               padding: AppSpacing.allPaddingXs,
               child: Row(
                 children: [
-                  const Icon(Icons.error, color: Colors.red),
+                  const Icon(Icons.error, color: AppColors.error),
                   AppSpacing.horizontalSpacerXs,
                   Expanded(
                     child: Text(
                       conversation.error!,
-                      style: AppTypography.bodySmall.copyWith(color: Colors.red),
+                      style: AppTypography.bodySmall.copyWith(color: AppColors.error),
                     ),
                   ),
                   GestureDetector(
                     onTap: () => ref.read(claudeConversationProvider.notifier).clearConversation(),
-                    child: const Icon(Icons.close, color: Colors.red),
+                    child: const Icon(Icons.close, color: AppColors.error),
                   ),
                 ],
               ),
@@ -123,7 +120,7 @@ class _AiFreetalkScreenState extends ConsumerState<AiFreetalkScreen> {
                         Text(
                           'Hello! Let\'s chat in English!\n英語でお話ししよう！',
                           textAlign: TextAlign.center,
-                          style: AppTypography.bodySmall.copyWith(color: Colors.grey),
+                          style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                         ),
                       ],
                     ),
@@ -146,7 +143,7 @@ class _AiFreetalkScreenState extends ConsumerState<AiFreetalkScreen> {
                             ),
                             padding: EdgeInsets.symmetric(horizontal: AppSpacing.xs, vertical: AppSpacing.xs),
                             decoration: BoxDecoration(
-                              color: isUser ? const Color(0xFF378ADD) : Colors.grey[100],
+                              color: isUser ? AppColors.readingColor : AppColors.bgLight,
                               borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                             ),
                             child: Column(
@@ -156,7 +153,7 @@ class _AiFreetalkScreenState extends ConsumerState<AiFreetalkScreen> {
                                 Text(
                                   message.text,
                                   style: AppTypography.bodySmall.copyWith(
-                                    color: isUser ? Colors.white : Colors.black,
+                                    color: isUser ? AppColors.textWhite : AppColors.textPrimary,
                                   ),
                                 ),
                                 if (!isUser && !message.isError)
@@ -165,7 +162,7 @@ class _AiFreetalkScreenState extends ConsumerState<AiFreetalkScreen> {
                                     child: const Icon(
                                       Icons.volume_up,
                                       size: 14,
-                                      color: Color(0xFF378ADD),
+                                      color: AppColors.readingColor,
                                     ),
                                   ),
                               ],
@@ -179,7 +176,7 @@ class _AiFreetalkScreenState extends ConsumerState<AiFreetalkScreen> {
           Container(
             padding: AppSpacing.allPaddingXs,
             decoration: BoxDecoration(
-              border: Border(top: BorderSide(color: Colors.grey[200]!)),
+              border: Border(top: BorderSide(color: AppColors.bgLight)),
             ),
             child: Row(
               children: [
@@ -203,7 +200,7 @@ class _AiFreetalkScreenState extends ConsumerState<AiFreetalkScreen> {
                 AppSpacing.horizontalSpacerXs,
                 FloatingActionButton(
                   mini: true,
-                  backgroundColor: const Color(0xFF378ADD),
+                  backgroundColor: AppColors.readingColor,
                   onPressed: conversation.isLoading ? null : _sendMessage,
                   child: conversation.isLoading
                       ? const SizedBox(
@@ -211,7 +208,7 @@ class _AiFreetalkScreenState extends ConsumerState<AiFreetalkScreen> {
                           height: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            valueColor: AlwaysStoppedAnimation<Color>(AppColors.textWhite),
                           ),
                         )
                       : const Icon(Icons.send),

@@ -35,7 +35,7 @@ class ImprovedResultHeader extends StatelessWidget {
         : isPassed
             ? 'クリア！よくできました！'
             : 'もう少し！もう一度挑戦しよう！';
-    final color = isPassed ? kAccentGreen : kAccentOrange;
+    final color = isPassed ? AppColors.accentGreen : AppColors.accentOrange;
 
     return Container(
       decoration: AppComponentStyles.cardDecoration,
@@ -59,7 +59,7 @@ class ImprovedResultHeader extends StatelessWidget {
                 ImprovedResultStat(
                   label: 'スコア',
                   value: '$score点',
-                  color: kPrimaryColor,
+                  color: AppColors.primary,
                 ),
                 ImprovedResultStat(
                   label: '正解率',
@@ -110,7 +110,7 @@ class ImprovedResultStat extends StatelessWidget {
         Text(
           label,
           style: AppTypography.labelMedium.copyWith(
-            color: kTextMuted,
+            color: AppColors.textMuted,
           ),
         ),
       ],
@@ -144,7 +144,7 @@ class ImprovedSkillResultCards extends StatelessWidget {
             icon: '👂',
             label: 'リスニング',
             value: '$listeningAccuracy%',
-            color: kListeningColor,
+            color: AppColors.listeningColor,
           ),
         ),
         AppSpacing.horizontalSpacerSm,
@@ -153,7 +153,7 @@ class ImprovedSkillResultCards extends StatelessWidget {
             icon: '🎤',
             label: 'スピーキング',
             value: '$speakingAvg点',
-            color: kSpeakingColor,
+            color: AppColors.speakingColor,
           ),
         ),
         AppSpacing.horizontalSpacerSm,
@@ -162,7 +162,7 @@ class ImprovedSkillResultCards extends StatelessWidget {
             icon: '⏱️',
             label: '時間',
             value: '$mins:${secs.toString().padLeft(2, '0')}',
-            color: kAccentOrange,
+            color: AppColors.accentOrange,
           ),
         ),
       ],
@@ -204,7 +204,7 @@ class ImprovedSkillResultCard extends StatelessWidget {
             Text(
               label,
               style: AppTypography.bodySmall.copyWith(
-                color: kTextMuted,
+                color: AppColors.textMuted,
               ),
             ),
           ],
@@ -228,9 +228,9 @@ class ImprovedNewBadgesCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: kAccentOrange.withAlpha(25),
+        color: AppColors.accentOrange.withAlpha(25),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-        border: Border.all(color: kAccentOrange, width: 2),
+        border: Border.all(color: AppColors.accentOrange, width: 2),
       ),
       child: Padding(
         padding: AppSpacing.allPaddingLg,
@@ -240,7 +240,7 @@ class ImprovedNewBadgesCard extends StatelessWidget {
             Text(
               '🎉 新しいバッジ獲得！',
               style: AppTypography.labelLarge.copyWith(
-                color: kAccentOrange,
+                color: AppColors.accentOrange,
               ),
             ),
             AppSpacing.verticalSpacerMd,
@@ -268,7 +268,7 @@ class ImprovedNewBadgesCard extends StatelessWidget {
                     Text(
                       b.description,
                       style: AppTypography.bodySmall.copyWith(
-                        color: kTextMuted,
+                        color: AppColors.textMuted,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -308,7 +308,7 @@ class ImprovedContentBreakdown extends StatelessWidget {
             Text(
               'このレッスンの内容',
               style: AppTypography.labelLarge.copyWith(
-                color: kTextDark,
+                color: AppColors.textPrimary,
               ),
             ),
             AppSpacing.verticalSpacerMd,
@@ -318,28 +318,28 @@ class ImprovedContentBreakdown extends StatelessWidget {
                   label: '👂 リスニング',
                   count: stage.listeningCount,
                   total: total,
-                  color: kListeningColor,
+                  color: AppColors.listeningColor,
                 ),
                 AppSpacing.verticalSpacerSm,
                 _BuildContentRow(
                   label: '🎤 スピーキング',
                   count: stage.speakingCount,
                   total: total,
-                  color: kSpeakingColor,
+                  color: AppColors.speakingColor,
                 ),
                 AppSpacing.verticalSpacerSm,
                 _BuildContentRow(
                   label: '📖 リーディング',
                   count: stage.readingCount,
                   total: total,
-                  color: kReadingColor,
+                  color: AppColors.readingColor,
                 ),
                 AppSpacing.verticalSpacerSm,
                 _BuildContentRow(
                   label: '✏️ ライティング',
                   count: stage.writingCount,
                   total: total,
-                  color: kWritingColor,
+                  color: AppColors.writingColor,
                 ),
               ],
             ),
@@ -382,7 +382,7 @@ class _BuildContentRow extends StatelessWidget {
             Text(
               '$count問 ($percentage%)',
               style: AppTypography.bodySmall.copyWith(
-                color: kTextMuted,
+                color: AppColors.textMuted,
               ),
             ),
           ],

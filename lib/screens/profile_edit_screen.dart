@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/user_profile.dart';
 import '../providers/user_profile_provider.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
+import '../design_system/design_system.dart';
 
 class ProfileEditScreen extends ConsumerStatefulWidget {
   final UserProfile profile;
@@ -66,7 +63,7 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('プロフィール編集'),
-        backgroundColor: kPrimaryColor,
+        backgroundColor: AppColors.primary,
       ),
       body: SingleChildScrollView(
         padding: AppSpacing.allPaddingLg,
@@ -79,12 +76,12 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                 children: [
                   Text(
                     widget.profile.avatar,
-                    style: const TextStyle(fontSize: 72),
+                    style: TextStyle(fontSize: AppTypography.displayLarge.fontSize! * 2.25),
                   ),
                   AppSpacing.verticalSpacerMd,
                   Text(
                     '${widget.profile.grade}年生',
-                    style: AppTypography.labelLarge.copyWith(color: kTextMuted),
+                    style: AppTypography.labelLarge.copyWith(color: AppColors.textMuted),
                   ),
                 ],
               ),
@@ -130,11 +127,11 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: _selectedGrade == grade
-                            ? kPrimaryColor
-                            : Colors.grey[200],
+                            ? AppColors.primary
+                            : AppColors.bgLight,
                         foregroundColor: _selectedGrade == grade
-                            ? Colors.white
-                            : Colors.black,
+                            ? AppColors.textWhite
+                            : AppColors.textPrimary,
                       ),
                       child: Text('$grade年'),
                     ),
@@ -148,9 +145,9 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
             Container(
               padding: AppSpacing.allPaddingMd,
               decoration: BoxDecoration(
-                color: kPrimaryColor.withAlpha(10),
+                color: AppColors.primary.withAlpha(10),
                 borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-                border: Border.all(color: kPrimaryColor.withAlpha(30)),
+                border: Border.all(color: AppColors.primary.withAlpha(30)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -158,39 +155,39 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                   Text(
                     '🏅 ランキング設定',
                     style: AppTypography.labelLarge.copyWith(
-                      color: kPrimaryColor,
+                      color: AppColors.primary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   AppSpacing.verticalSpacerSm,
                   Text(
                     'ランキングで名前を表示するかどうかを設定できます',
-                    style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                    style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                   ),
                   AppSpacing.verticalSpacerMd,
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: AppColors.textWhite,
                       borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
-                      border: Border.all(color: Colors.grey[300]!),
+                      border: Border.all(color: AppColors.bgLight),
                     ),
                     child: SwitchListTile(
                       secondary: Icon(
                         _showNameInRanking ? Icons.visibility : Icons.visibility_off,
-                        color: _showNameInRanking ? kAccentGreen : kTextMuted,
+                        color: _showNameInRanking ? AppColors.accentGreen : AppColors.textMuted,
                       ),
                       title: Text(
                         _showNameInRanking ? '名前を表示する' : '名前を表示しない',
                         style: AppTypography.labelMedium.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: _showNameInRanking ? kAccentGreen : kTextMuted,
+                          color: _showNameInRanking ? AppColors.accentGreen : AppColors.textMuted,
                         ),
                       ),
                       subtitle: Text(
                         _showNameInRanking
                             ? 'ランキングであなたの名前が表示されます'
                             : 'ランキングで「ユーザー #XXXX」と匿名表示されます',
-                        style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                        style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                       ),
                       value: _showNameInRanking,
                       onChanged: (value) {
@@ -198,8 +195,8 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                           _showNameInRanking = value;
                         });
                       },
-                      activeThumbColor: kAccentGreen,
-                      activeTrackColor: kAccentGreen.withAlpha(80),
+                      activeThumbColor: AppColors.accentGreen,
+                      activeTrackColor: AppColors.accentGreen.withAlpha(80),
                       contentPadding: EdgeInsets.all(AppSpacing.sm),
                     ),
                   ),
@@ -207,7 +204,7 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                   Container(
                     padding: AppSpacing.allPaddingSm,
                     decoration: BoxDecoration(
-                      color: kAccentOrange.withAlpha(15),
+                      color: AppColors.accentOrange.withAlpha(15),
                       borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
                     ),
                     child: Row(
@@ -217,7 +214,7 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                           padding: EdgeInsets.only(right: AppSpacing.xs, top: 2),
                           child: const Icon(
                             Icons.info_outline,
-                            color: kAccentOrange,
+                            color: AppColors.accentOrange,
                             size: 16,
                           ),
                         ),
@@ -225,7 +222,7 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                           child: Text(
                             '名前を表示しない場合でも、ランキングであなたの順位や成績は常に表示されます。プライバシーを保ちながらランキング参加ができます。',
                             style: AppTypography.bodySmall.copyWith(
-                              color: kTextDark,
+                              color: AppColors.textPrimary,
                               height: 1.5,
                             ),
                           ),
@@ -247,8 +244,8 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                 label: const Text('保存する'),
                 onPressed: _saveProfile,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: kPrimaryColor,
-                  foregroundColor: Colors.white,
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: AppColors.textWhite,
                 ),
               ),
             ),
@@ -262,8 +259,8 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                 label: const Text('このプロフィールを削除'),
                 onPressed: () => _showDeleteConfirmation(),
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.red,
-                  side: const BorderSide(color: Colors.red),
+                  foregroundColor: AppColors.error,
+                  side: const BorderSide(color: AppColors.error),
                 ),
               ),
             ),
@@ -301,9 +298,9 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
+              backgroundColor: AppColors.error,
             ),
-            child: const Text('削除する', style: TextStyle(color: Colors.white)),
+            child: const Text('削除する', style: TextStyle(color: AppColors.textWhite)),
           ),
         ],
       ),

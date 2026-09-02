@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/analytics_model.dart';
 import '../providers/user_profile_provider.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
+import '../design_system/design_system.dart';
 
 class AnalyticsScreen extends ConsumerWidget {
   const AnalyticsScreen({super.key});
@@ -17,11 +14,11 @@ class AnalyticsScreen extends ConsumerWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('📊 学習分析'),
-          backgroundColor: kPrimaryColor,
-          bottom: const TabBar(
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.white70,
-            indicatorColor: kAccentOrange,
+          backgroundColor: AppColors.primary,
+          bottom: TabBar(
+            labelColor: AppColors.textWhite,
+            unselectedLabelColor: AppColors.textWhite.withOpacity(0.7),
+            indicatorColor: AppColors.accentOrange,
             tabs: [
               Tab(text: '進度'),
               Tab(text: '週間'),
@@ -64,9 +61,9 @@ class _ProgressTab extends ConsumerWidget {
           Container(
             padding: AppSpacing.allPaddingMd,
             decoration: BoxDecoration(
-              color: kPrimaryColor.withAlpha(10),
+              color: AppColors.primary.withAlpha(10),
               borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-              border: Border.all(color: kPrimaryColor.withAlpha(50)),
+              border: Border.all(color: AppColors.primary.withAlpha(50)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,7 +71,7 @@ class _ProgressTab extends ConsumerWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('現在のレベル', style: AppTypography.labelSmall.copyWith(color: kTextMuted)),
+                    Text('現在のレベル', style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted)),
                     Text('Lv.25', style: AppTypography.labelLarge),
                   ],
                 ),
@@ -84,12 +81,12 @@ class _ProgressTab extends ConsumerWidget {
                   child: LinearProgressIndicator(
                     value: 0.65,
                     minHeight: 12,
-                    backgroundColor: Colors.grey[300],
-                    valueColor: AlwaysStoppedAnimation(kAccentOrange),
+                    backgroundColor: AppColors.bgLight,
+                    valueColor: AlwaysStoppedAnimation(AppColors.accentOrange),
                   ),
                 ),
                 AppSpacing.verticalSpacerMd,
-                Text('65% 進捗', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+                Text('65% 進捗', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
               ],
             ),
           ),
@@ -109,25 +106,25 @@ class _ProgressTab extends ConsumerWidget {
                 icon: '📚',
                 label: 'レッスン完了',
                 value: '${currentUser.stageProgress.length}',
-                color: kPrimaryColor,
+                color: AppColors.primary,
               ),
               _StatCard(
                 icon: '⏱️',
                 label: '総勉強時間',
                 value: '${currentUser.totalStudyMinutes}分',
-                color: kAccentOrange,
+                color: AppColors.accentOrange,
               ),
               _StatCard(
                 icon: '🪙',
                 label: '獲得コイン',
                 value: '${currentUser.coinsEarned}',
-                color: kAccentGreen,
+                color: AppColors.accentGreen,
               ),
               _StatCard(
                 icon: '🔥',
                 label: '最長連続',
                 value: '${currentUser.longestStreak}日',
-                color: kAccentRed,
+                color: AppColors.error,
               ),
             ],
           ),
@@ -139,7 +136,7 @@ class _ProgressTab extends ConsumerWidget {
           Container(
             padding: AppSpacing.allPaddingMd,
             decoration: BoxDecoration(
-              color: Colors.grey[50],
+              color: AppColors.bgLight,
               borderRadius: BorderRadius.circular(AppSizes.borderRadius),
             ),
             child: Column(
@@ -147,8 +144,8 @@ class _ProgressTab extends ConsumerWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('全体正解率', style: AppTypography.labelSmall.copyWith(color: kTextMuted)),
-                    Text('82%', style: AppTypography.labelLarge.copyWith(color: kAccentGreen)),
+                    Text('全体正解率', style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted)),
+                    Text('82%', style: AppTypography.labelLarge.copyWith(color: AppColors.accentGreen)),
                   ],
                 ),
                 AppSpacing.verticalSpacerMd,
@@ -157,8 +154,8 @@ class _ProgressTab extends ConsumerWidget {
                   child: LinearProgressIndicator(
                     value: 0.82,
                     minHeight: 12,
-                    backgroundColor: Colors.grey[300],
-                    valueColor: AlwaysStoppedAnimation(kAccentGreen),
+                    backgroundColor: AppColors.bgLight,
+                    valueColor: AlwaysStoppedAnimation(AppColors.accentGreen),
                   ),
                 ),
               ],
@@ -183,13 +180,13 @@ class _WeeklyTab extends ConsumerWidget {
           Container(
             padding: AppSpacing.allPaddingMd,
             decoration: BoxDecoration(
-              color: kAccentOrange.withAlpha(20),
+              color: AppColors.accentOrange.withAlpha(20),
               borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-              border: Border.all(color: kAccentOrange.withAlpha(50)),
+              border: Border.all(color: AppColors.accentOrange.withAlpha(50)),
             ),
             child: Row(
               children: [
-                const Icon(Icons.calendar_today, color: kAccentOrange),
+                const Icon(Icons.calendar_today, color: AppColors.accentOrange),
                 AppSpacing.horizontalSpacerMd,
                 Expanded(
                   child: Column(
@@ -199,7 +196,7 @@ class _WeeklyTab extends ConsumerWidget {
                       AppSpacing.verticalSpacerXs,
                       Text(
                         '2026年9月1日 - 9月7日',
-                        style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                        style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                       ),
                     ],
                   ),
@@ -223,25 +220,25 @@ class _WeeklyTab extends ConsumerWidget {
                 icon: '📚',
                 label: 'レッスン',
                 value: '12',
-                color: kPrimaryColor,
+                color: AppColors.primary,
               ),
               _StatCard(
                 icon: '⏱️',
                 label: '勉強時間',
                 value: '480分',
-                color: kAccentOrange,
+                color: AppColors.accentOrange,
               ),
               _StatCard(
                 icon: '🪙',
                 label: 'コイン獲得',
                 value: '2,400',
-                color: kAccentGreen,
+                color: AppColors.accentGreen,
               ),
               _StatCard(
                 icon: '✅',
                 label: '学習日数',
                 value: '5日',
-                color: kAccentRed,
+                color: AppColors.error,
               ),
             ],
           ),
@@ -270,9 +267,9 @@ class _WeeklyTab extends ConsumerWidget {
           child: Container(
             padding: AppSpacing.allPaddingMd,
             decoration: BoxDecoration(
-              color: isActive ? kPrimaryColor.withAlpha(10) : Colors.grey[50],
+              color: isActive ? AppColors.primary.withAlpha(10) : Colors.grey[50],
               border: Border.all(
-                color: isActive ? kPrimaryColor.withAlpha(50) : Colors.grey[300]!,
+                color: isActive ? AppColors.primary.withAlpha(50) : Colors.grey[300]!,
               ),
               borderRadius: BorderRadius.circular(AppSizes.borderRadius),
             ),
@@ -287,7 +284,7 @@ class _WeeklyTab extends ConsumerWidget {
                     Text(
                       isActive ? '${minutes[index]}分学習' : '未学習',
                       style: AppTypography.bodySmall.copyWith(
-                        color: kTextMuted,
+                        color: AppColors.textMuted,
                       ),
                     ),
                   ],
@@ -299,20 +296,20 @@ class _WeeklyTab extends ConsumerWidget {
                       vertical: AppSpacing.sm,
                     ),
                     decoration: BoxDecoration(
-                      color: kAccentGreen,
+                      color: AppColors.accentGreen,
                       borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
                     ),
                     child: const Text(
                       '✓',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppColors.textWhite,
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
                     ),
                   )
                 else
-                  const Icon(Icons.close, color: kTextMuted),
+                  const Icon(Icons.close, color: AppColors.textMuted),
               ],
             ),
           ),
@@ -334,13 +331,13 @@ class _MonthlyTab extends ConsumerWidget {
           Container(
             padding: AppSpacing.allPaddingMd,
             decoration: BoxDecoration(
-              color: kPrimaryColor.withAlpha(10),
+              color: AppColors.primary.withAlpha(10),
               borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-              border: Border.all(color: kPrimaryColor.withAlpha(50)),
+              border: Border.all(color: AppColors.primary.withAlpha(50)),
             ),
             child: Row(
               children: [
-                const Icon(Icons.calendar_month, color: kPrimaryColor),
+                const Icon(Icons.calendar_month, color: AppColors.primary),
                 AppSpacing.horizontalSpacerMd,
                 Expanded(
                   child: Column(
@@ -350,7 +347,7 @@ class _MonthlyTab extends ConsumerWidget {
                       AppSpacing.verticalSpacerXs,
                       Text(
                         '今月の進捗を表示',
-                        style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                        style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                       ),
                     ],
                   ),
@@ -374,25 +371,25 @@ class _MonthlyTab extends ConsumerWidget {
                 icon: '📚',
                 label: 'レッスン',
                 value: '48',
-                color: kPrimaryColor,
+                color: AppColors.primary,
               ),
               _StatCard(
                 icon: '⏱️',
                 label: '勉強時間',
                 value: '1,920分',
-                color: kAccentOrange,
+                color: AppColors.accentOrange,
               ),
               _StatCard(
                 icon: '🪙',
                 label: 'コイン獲得',
                 value: '9,600',
-                color: kAccentGreen,
+                color: AppColors.accentGreen,
               ),
               _StatCard(
                 icon: '📅',
                 label: '学習日数',
                 value: '22日',
-                color: kAccentRed,
+                color: AppColors.error,
               ),
             ],
           ),
@@ -461,7 +458,7 @@ class _StatCard extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label, style: AppTypography.labelSmall.copyWith(color: kTextMuted)),
+              Text(label, style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted)),
               AppSpacing.verticalSpacerXs,
               Text(value, style: AppTypography.headlineSmall.copyWith(color: color)),
             ],
@@ -489,7 +486,7 @@ class _GoalProgressCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = achieved ? kAccentGreen : kAccentOrange;
+    final color = achieved ? AppColors.accentGreen : AppColors.accentOrange;
 
     return Container(
       padding: AppSpacing.allPaddingMd,
@@ -504,12 +501,12 @@ class _GoalProgressCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(title, style: AppTypography.labelSmall.copyWith(color: kTextMuted)),
+              Text(title, style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted)),
               if (achieved)
-                const Text('✓ 達成', style: TextStyle(color: kAccentGreen, fontWeight: FontWeight.bold))
+                const Text('✓ 達成', style: TextStyle(color: AppColors.accentGreen, fontWeight: FontWeight.bold))
               else
                 Text('${(progress * 100).toStringAsFixed(0)}%',
-                    style: const TextStyle(color: kAccentOrange, fontWeight: FontWeight.bold)),
+                    style: const TextStyle(color: AppColors.accentOrange, fontWeight: FontWeight.bold)),
             ],
           ),
           AppSpacing.verticalSpacerMd,
@@ -518,14 +515,14 @@ class _GoalProgressCard extends StatelessWidget {
             child: LinearProgressIndicator(
               value: progress,
               minHeight: 8,
-              backgroundColor: Colors.grey[300],
+              backgroundColor: AppColors.bgLight,
               valueColor: AlwaysStoppedAnimation(color),
             ),
           ),
           AppSpacing.verticalSpacerMd,
           Text(
             '$current / $target',
-            style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+            style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
           ),
         ],
       ),
