@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import '../data/vocabulary_data.dart';
 import '../models/question.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
+import ../design_system/design_system.dartapp_theme.dart';
+import ../design_system/design_system.dartspacing.dart';
+import ../design_system/design_system.dartsizes.dart';
+import ../design_system/design_system.darttypography.dart';
 import '../widgets/educational_illustrations.dart';
 
 class VocabularyScreen extends ConsumerStatefulWidget {
@@ -63,7 +63,7 @@ class _VocabularyScreenState extends ConsumerState<VocabularyScreen> {
     return Scaffold(
       backgroundColor: kBgLight,
       appBar: AppBar(
-        backgroundColor: kPrimaryColor,
+        backgroundColor: AppColors.primary,
         title: const Text('📖 単語カード'),
         centerTitle: true,
         actions: [
@@ -101,11 +101,11 @@ class _VocabularyScreenState extends ConsumerState<VocabularyScreen> {
                 children: [
                   Text(
                     '${_currentIndex + 1} / ${_filteredWords.length}',
-                    style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                    style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                   ),
                   Text(
                     vocabCategories[_filteredWords[_currentIndex].category] ?? _filteredWords[_currentIndex].category,
-                    style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                    style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                   ),
                 ],
               ),
@@ -113,7 +113,7 @@ class _VocabularyScreenState extends ConsumerState<VocabularyScreen> {
             LinearProgressIndicator(
               value: (_currentIndex + 1) / _filteredWords.length,
               backgroundColor: Colors.grey[200],
-              valueColor: const AlwaysStoppedAnimation<Color>(kPrimaryColor),
+              valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
             ),
             Expanded(
               child: Padding(
@@ -179,7 +179,7 @@ class _FilterBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      color: AppColors.textWhite,
       padding: AppSpacing.allPaddingMd,
       child: Column(
         children: [
@@ -203,7 +203,7 @@ class _FilterBar extends StatelessWidget {
           AppSpacing.verticalSpacerSm,
           Row(
             children: [
-              Text('難易度: ', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+              Text('難易度: ', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
               _DiffChip(label: 'すべて', selected: selectedDifficulty == null, onTap: () => onDifficultyChanged(null)),
               _DiffChip(label: '初級', selected: selectedDifficulty == DifficultyLevel.beginner, onTap: () => onDifficultyChanged(DifficultyLevel.beginner)),
               _DiffChip(label: '中級', selected: selectedDifficulty == DifficultyLevel.intermediate, onTap: () => onDifficultyChanged(DifficultyLevel.intermediate)),
@@ -230,14 +230,14 @@ class _CategoryChip extends StatelessWidget {
         margin: const EdgeInsets.only(right: 6),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
         decoration: BoxDecoration(
-          color: selected ? kPrimaryColor : Colors.grey[100],
+          color: selected ? AppColors.primary : Colors.grey[100],
           borderRadius: BorderRadius.circular(16),
         ),
         child: Text(
           label,
           style: TextStyle(
             fontSize: 12,
-            color: selected ? Colors.white : kTextDark,
+            color: selected ? AppColors.textWhite : AppColors.textPrimary,
             fontWeight: selected ? FontWeight.bold : FontWeight.normal,
           ),
         ),
@@ -260,14 +260,14 @@ class _DiffChip extends StatelessWidget {
         margin: const EdgeInsets.only(right: 6),
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
         decoration: BoxDecoration(
-          color: selected ? kAccentOrange : Colors.grey[100],
+          color: selected ? AppColors.accentOrange : Colors.grey[100],
           borderRadius: BorderRadius.circular(12),
         ),
         child: Text(
           label,
           style: TextStyle(
             fontSize: 11,
-            color: selected ? Colors.white : kTextMuted,
+            color: selected ? AppColors.textWhite : AppColors.textMuted,
           ),
         ),
       ),
@@ -290,7 +290,7 @@ class _FrontCard extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
           gradient: const LinearGradient(
-            colors: [kPrimaryColor, Color(0xFF5B9BD5)],
+            colors: [AppColors.primary, Color(0xFF5B9BD5)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -306,9 +306,9 @@ class _FrontCard extends StatelessWidget {
                     width: 120,
                     height: 120,
                     decoration: BoxDecoration(
-                      color: Colors.white.withAlpha(30),
+                      color: AppColors.textWhite.withAlpha(30),
                       shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white.withAlpha(80), width: 2),
+                      border: Border.all(color: AppColors.textWhite.withAlpha(80), width: 2),
                     ),
                     child: Center(
                       child: Text(word.emoji, style: AppTypography.headlineLarge.copyWith(fontSize: 72)),
@@ -318,7 +318,7 @@ class _FrontCard extends StatelessWidget {
                   Text(
                     showJapanese ? word.japanese : word.english,
                     style: AppTypography.displaySmall.copyWith(
-                      color: Colors.white,
+                      color: AppColors.textWhite,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -327,14 +327,14 @@ class _FrontCard extends StatelessWidget {
                     Text(
                       word.phonetic,
                       style: AppTypography.bodyLarge.copyWith(
-                        color: Colors.white70,
+                        color: AppColors.textWhite.withOpacity(0.7),
                       ),
                     ),
                   ],
                   AppSpacing.verticalSpacerLg,
                   Text(
                     'タップして裏を見る',
-                    style: AppTypography.bodySmall.copyWith(color: Colors.white70),
+                    style: AppTypography.bodySmall.copyWith(color: AppColors.textWhite.withOpacity(0.7)),
                   ),
                 ],
               ),
@@ -343,7 +343,7 @@ class _FrontCard extends StatelessWidget {
               top: 12,
               right: 12,
               child: IconButton(
-                icon: const Icon(Icons.volume_up, color: Colors.white),
+                icon: const Icon(Icons.volume_up, color: AppColors.textWhite),
                 onPressed: onSpeak,
               ),
             ),
@@ -378,7 +378,7 @@ class _BackCard extends StatelessWidget {
                   style: AppTypography.headlineSmall.copyWith(
                     fontSize: 36,
                     fontWeight: FontWeight.bold,
-                    color: kTextDark,
+                    color: AppColors.textPrimary,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -386,7 +386,7 @@ class _BackCard extends StatelessWidget {
                   AppSpacing.verticalSpacerXs,
                   Text(
                     word.phonetic,
-                    style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                    style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                   ),
                 ],
                 AppSpacing.verticalSpacerXs,
@@ -412,7 +412,7 @@ class _BackCard extends StatelessWidget {
             top: 12,
             right: 12,
             child: IconButton(
-              icon: const Icon(Icons.volume_up, color: kPrimaryColor),
+              icon: const Icon(Icons.volume_up, color: AppColors.primary),
               onPressed: onSpeak,
             ),
           ),
@@ -423,8 +423,8 @@ class _BackCard extends StatelessWidget {
 
   Color _diffColor(DifficultyLevel d) {
     switch (d) {
-      case DifficultyLevel.beginner:     return kAccentGreen;
-      case DifficultyLevel.intermediate: return kAccentOrange;
+      case DifficultyLevel.beginner:     return AppColors.accentGreen;
+      case DifficultyLevel.intermediate: return AppColors.accentOrange;
       case DifficultyLevel.advanced:     return Colors.red;
     }
   }
@@ -462,8 +462,8 @@ class _NavigationBar extends StatelessWidget {
             icon: const Icon(Icons.arrow_back),
             label: const Text('前へ'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: kTextMuted,
-              foregroundColor: Colors.white,
+              backgroundColor: AppColors.textMuted,
+              foregroundColor: AppColors.textWhite,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             ),
           ),
