@@ -489,3 +489,56 @@ final completedChallengesCountProvider = Provider<int>((ref) {
   final challenges = ref.watch(dailyChallengesProvider);
   return challenges.where((c) => c.isCompleted).length;
 });
+
+/// ==================== CONVERSATION ENGINE (Phase 3) ====================
+
+/// Generate NPC dialogue based on player input
+/// Uses Claude API with context about NPC, location, time of day, and difficulty
+final npcDialogueProvider =
+    FutureProvider.family<String, ({
+      NPC npc,
+      Location location,
+      TimeOfDay timeOfDay,
+      ConversationDifficulty difficulty,
+      String playerMessage,
+      List<ConversationTurn> history,
+    })>((ref, params) async {
+  // This provider will be implemented in Phase 3 with actual Claude API integration
+  // For now, returns a placeholder response
+  await Future.delayed(const Duration(milliseconds: 500));
+  return "That's interesting! Can you tell me more?";
+});
+
+/// Evaluate player's response for correctness and provide feedback
+final responseEvaluationProvider =
+    FutureProvider.family<({
+      int score,
+      String feedback,
+      List<String> vocabulary,
+      bool passed,
+    }), ({
+      String playerResponse,
+      NPC npc,
+      ConversationDifficulty difficulty,
+      String npcExpectation,
+    })>((ref, params) async {
+  // This provider will be implemented in Phase 3 with actual evaluation logic
+  // For now, returns a placeholder evaluation
+  await Future.delayed(const Duration(milliseconds: 300));
+  return (
+    score: 75,
+    feedback: "Good job! Keep practicing.",
+    vocabulary: [],
+    passed: true,
+  );
+});
+
+/// Get speech-to-text input (will be integrated with speech_provider)
+final playerSpeechInputProvider =
+    StateProvider<String>((ref) => '');
+
+/// Track conversation XP earned
+final conversationXpProvider = StateProvider<int>((ref) => 0);
+
+/// Track conversation coins earned
+final conversationCoinsProvider = StateProvider<int>((ref) => 0);
