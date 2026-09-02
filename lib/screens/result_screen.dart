@@ -1,3 +1,4 @@
+import '../design_system/design_system.dart';
 import 'package:confetti/confetti.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -5,10 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/badge_model.dart';
 import '../models/stage.dart';
 import '../providers/level_provider.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
 import '../widgets/xp_bar.dart';
 import '../widgets/result_screen_components.dart';
 
@@ -80,7 +77,7 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
     return Scaffold(
       backgroundColor: kBgLight,
       appBar: AppBar(
-        backgroundColor: kPrimaryColor,
+        backgroundColor: AppColors.primary,
         automaticallyImplyLeading: false,
         title: Text('${stage.emoji} ${stage.titleJa} - 結果'),
       ),
@@ -125,7 +122,7 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
               confettiController: _confetti,
               blastDirectionality: BlastDirectionality.explosive,
               shouldLoop: false,
-              colors: const [kPrimaryColor, kAccentGreen, kSpeakingColor, kAccentOrange],
+              colors: const [AppColors.primary, AppColors.accentGreen, kSpeakingColor, AppColors.accentOrange],
             ),
           ),
           // レベルアップオーバーレイ
@@ -163,8 +160,8 @@ class _ActionButtons extends StatelessWidget {
             onPressed: () => Navigator.of(context).pushNamed('/word-review', arguments: stage),
             style: OutlinedButton.styleFrom(
               padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
-              foregroundColor: kAccentGreen,
-              side: const BorderSide(color: kAccentGreen),
+              foregroundColor: AppColors.accentGreen,
+              side: const BorderSide(color: AppColors.accentGreen),
             ),
           ),
         ),
@@ -190,7 +187,7 @@ class _ActionButtons extends StatelessWidget {
             },
             style: OutlinedButton.styleFrom(
               padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
-              foregroundColor: kPrimaryColor,
+              foregroundColor: AppColors.primary,
             ),
           ),
         ),

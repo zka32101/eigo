@@ -1,12 +1,9 @@
+import '../design_system/design_system.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/progress_provider.dart';
 import '../providers/speaking_history_provider.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
 import '../widgets/skill_progress_bar.dart';
 import '../widgets/speaking_score_ring.dart';
 
@@ -21,7 +18,7 @@ class ParentDashboardScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('👨‍👩‍👧 親向けダッシュボード'),
-        backgroundColor: kPrimaryColor,
+        backgroundColor: AppColors.primary,
         actions: [
           IconButton(
             icon: const Icon(Icons.star),
@@ -73,12 +70,12 @@ class _OverviewCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('📊 今週の学習サマリー',
-                style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold, color: kTextDark)),
+                style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
             AppSpacing.verticalSpacerXs,
             Row(
               children: [
-                Expanded(child: _OverviewStat('📚', 'レッスン', '${progress.totalLessons}回', kPrimaryColor)),
-                Expanded(child: _OverviewStat('🔥', '連続日数', '${progress.streakDays}日', kAccentOrange)),
+                Expanded(child: _OverviewStat('📚', 'レッスン', '${progress.totalLessons}回', AppColors.primary)),
+                Expanded(child: _OverviewStat('🔥', '連続日数', '${progress.streakDays}日', AppColors.accentOrange)),
                 Expanded(child: _OverviewStat('🎤', '週平均', '${weekAvg.round()}点', kSpeakingColor)),
               ],
             ),
@@ -90,14 +87,14 @@ class _OverviewCard extends StatelessWidget {
                 children: [
                   Icon(
                     improvement > 0 ? Icons.trending_up : Icons.trending_down,
-                    color: improvement > 0 ? kAccentGreen : kAccentRed,
+                    color: improvement > 0 ? AppColors.accentGreen : AppColors.error,
                     size: 18,
                   ),
                   AppSpacing.horizontalSpacerXs,
                   Text(
                     '先週比: ${improvement > 0 ? '+' : ''}${improvement.round()}点',
                     style: AppTypography.bodySmall.copyWith(
-                      color: improvement > 0 ? kAccentGreen : kAccentRed,
+                      color: improvement > 0 ? AppColors.accentGreen : AppColors.error,
                       fontWeight: FontWeight.bold,
                       fontSize: 13,
                     ),
@@ -106,7 +103,7 @@ class _OverviewCard extends StatelessWidget {
                   Text(
                     improvement > 0 ? '調子がいいです！🌟' : 'もう少し頑張ろう💪',
                     style: AppTypography.bodySmall.copyWith(
-                      color: improvement > 0 ? kAccentGreen : kAccentOrange,
+                      color: improvement > 0 ? AppColors.accentGreen : AppColors.accentOrange,
                       fontSize: 13,
                     ),
                   ),
@@ -133,7 +130,7 @@ class _OverviewStat extends StatelessWidget {
       children: [
         Text(icon, style: AppTypography.headlineSmall),
         Text(value, style: AppTypography.headlineSmall.copyWith(fontWeight: FontWeight.bold, color: color)),
-        Text(label, style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 11)),
+        Text(label, style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, fontSize: 11)),
       ],
     );
   }
@@ -162,7 +159,7 @@ class _SpeakingRingsRow extends StatelessWidget {
                 children: [
                   SpeakingScoreRing(score: todayScore, size: 72),
                   AppSpacing.verticalSpacerXs,
-                  Text('今日のスコア', style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 11)),
+                  Text('今日のスコア', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, fontSize: 11)),
                 ],
               ),
             ),
@@ -176,7 +173,7 @@ class _SpeakingRingsRow extends StatelessWidget {
                 children: [
                   SpeakingScoreRing(score: avgScore, size: 72),
                   AppSpacing.verticalSpacerXs,
-                  Text('今週の平均', style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 11)),
+                  Text('今週の平均', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, fontSize: 11)),
                 ],
               ),
             ),
@@ -192,9 +189,9 @@ class _SpeakingRingsRow extends StatelessWidget {
                     '$weekTotal',
                     style: AppTypography.headlineLarge.copyWith(fontWeight: FontWeight.bold, color: kSpeakingColor),
                   ),
-                  Text('回', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+                  Text('回', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
                   AppSpacing.verticalSpacerXs,
-                  Text('今週の練習', style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 11)),
+                  Text('今週の練習', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, fontSize: 11)),
                 ],
               ),
             ),
@@ -221,7 +218,7 @@ class _SpeakingDetailCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('🎤 スピーキング詳細',
-                style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold, color: kTextDark)),
+                style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
             AppSpacing.verticalSpacerMd,
             SkillProgressBar(
               icon: '🗣️',
@@ -243,21 +240,21 @@ class _SpeakingDetailCard extends StatelessWidget {
               icon: '🗨️',
               label: '会話形式',
               value: history.weeklyConversationCount / 20,
-              color: kAccentGreen,
+              color: AppColors.accentGreen,
               trailing: '${history.weeklyConversationCount}/20回',
             ),
             Divider(height: AppSpacing.xl),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('累計スピーキング練習', style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold, color: kTextDark)),
+                Text('累計スピーキング練習', style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
                 Row(
                   children: [
                     Text(
                       '${progress.totalSpeakingPractice}',
                       style: AppTypography.headlineLarge.copyWith(fontWeight: FontWeight.bold, color: kSpeakingColor),
                     ),
-                    Text(' 個', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+                    Text(' 個', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
                   ],
                 ),
               ],
@@ -309,7 +306,7 @@ class _WeeklyProgressCard extends StatelessWidget {
                     style: AppTypography.bodySmall.copyWith(
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
-                      color: improvement > 0 ? kAccentGreen : kAccentRed,
+                      color: improvement > 0 ? AppColors.accentGreen : AppColors.error,
                     ),
                   ),
               ],
@@ -323,7 +320,7 @@ class _WeeklyProgressCard extends StatelessWidget {
                     show: true,
                     drawVerticalLine: false,
                     getDrawingHorizontalLine: (v) => FlLine(
-                      color: Colors.grey.shade200,
+                      color: AppColors.bgLight,
                       strokeWidth: 1,
                     ),
                   ),
@@ -334,7 +331,7 @@ class _WeeklyProgressCard extends StatelessWidget {
                         reservedSize: 32,
                         getTitlesWidget: (val, meta) => Text(
                           '${val.round()}',
-                          style: AppTypography.bodySmall.copyWith(fontSize: 10, color: kTextMuted),
+                          style: AppTypography.bodySmall.copyWith(fontSize: 10, color: AppColors.textMuted),
                         ),
                         interval: 25,
                       ),
@@ -348,7 +345,7 @@ class _WeeklyProgressCard extends StatelessWidget {
                           if (dayOfWeek < 0 || dayOfWeek >= days.length) return const SizedBox.shrink();
                           return Padding(
                             padding: EdgeInsets.only(top: AppSpacing.xs),
-                            child: Text(days[dayOfWeek], style: AppTypography.bodySmall.copyWith(fontSize: 11, color: kTextMuted)),
+                            child: Text(days[dayOfWeek], style: AppTypography.bodySmall.copyWith(fontSize: 11, color: AppColors.textMuted)),
                           );
                         },
                       ),
@@ -367,8 +364,8 @@ class _WeeklyProgressCard extends StatelessWidget {
                       dotData: FlDotData(
                         getDotPainter: (spot, x, bar, idx) => FlDotCirclePainter(
                           radius: 4,
-                          color: spot.y >= 80 ? kAccentGreen : kSpeakingColor,
-                          strokeColor: Colors.white,
+                          color: spot.y >= 80 ? AppColors.accentGreen : kSpeakingColor,
+                          strokeColor: AppColors.textWhite,
                           strokeWidth: 2,
                         ),
                       ),
@@ -438,7 +435,7 @@ class _AIAdviceCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('💬 AIからの親へのアドバイス',
-                style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold, color: kPrimaryColor)),
+                style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold, color: AppColors.primary)),
             AppSpacing.verticalSpacerXs,
             _AdviceSection('✨ お子さんの成長', growth),
             AppSpacing.verticalSpacerXs,
@@ -462,9 +459,9 @@ class _AdviceSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold, color: kTextDark, fontSize: 14)),
+        Text(title, style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold, color: AppColors.textPrimary, fontSize: 14)),
         AppSpacing.verticalSpacerXs,
-        Text(body, style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 13, height: 1.5)),
+        Text(body, style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, fontSize: 13, height: 1.5)),
       ],
     );
   }
@@ -486,7 +483,7 @@ class _ParentActionCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('📋 今週のアクションリスト',
-                style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold, color: kAccentOrange)),
+                style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold, color: AppColors.accentOrange)),
             AppSpacing.verticalSpacerXs,
             _ActionItem('毎日5分のリスニング練習を続けよう', progress.streakDays >= 3),
             _ActionItem('スピーキング10問チャレンジ', progress.totalSpeakingPractice >= 10),
@@ -513,7 +510,7 @@ class _ActionItem extends StatelessWidget {
         children: [
           Icon(
             done ? Icons.check_box : Icons.check_box_outline_blank,
-            color: done ? kAccentGreen : Colors.grey,
+            color: done ? AppColors.accentGreen : AppColors.textMuted,
             size: 20,
           ),
           AppSpacing.horizontalSpacerXs,
@@ -522,7 +519,7 @@ class _ActionItem extends StatelessWidget {
               text,
               style: AppTypography.labelLarge.copyWith(
                 fontSize: 14,
-                color: done ? kAccentGreen : kTextDark,
+                color: done ? AppColors.accentGreen : AppColors.textPrimary,
                 decoration: done ? TextDecoration.lineThrough : null,
               ),
             ),
