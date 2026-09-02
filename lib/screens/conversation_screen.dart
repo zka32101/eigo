@@ -2,15 +2,13 @@ import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/conversation_data.dart';
+import '../design_system/design_system.dart';
 import '../providers/coin_provider.dart';
 import '../providers/level_provider.dart';
 import '../providers/progress_provider.dart';
 import '../services/speech_service.dart';
 import '../services/tts_service.dart';
 import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
 
 class ConversationScreen extends ConsumerStatefulWidget {
   const ConversationScreen({super.key});
@@ -53,10 +51,10 @@ class _SelectionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF0F7FF),
+      backgroundColor: AppColors.bgLight,
       appBar: AppBar(
         title: const Text('💬 会話シミュレーション'),
-        backgroundColor: kPrimaryColor,
+        backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         elevation: 0,
       ),
@@ -123,7 +121,7 @@ class _ScriptCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const Icon(Icons.arrow_forward_ios, size: 16, color: kTextMuted),
+              Icon(Icons.arrow_forward_ios, size: AppSizes.iconSizeSmall, color: AppColors.textMuted),
             ],
           ),
         ),
@@ -143,10 +141,10 @@ class _IntroScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF0F7FF),
+      backgroundColor: AppColors.bgLight,
       appBar: AppBar(
         title: Text(script.titleJa),
-        backgroundColor: kPrimaryColor,
+        backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         leading: BackButton(onPressed: onBack),
       ),
@@ -164,26 +162,26 @@ class _IntroScreen extends StatelessWidget {
               Container(
                 padding: AppSpacing.allPaddingMd,
                 decoration: BoxDecoration(
-                  color: kPrimaryColor.withAlpha(20),
+                  color: AppColors.withOpacity(AppColors.primary, 0.1),
                   borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
                 ),
                 child: Text(script.situation,
                   textAlign: TextAlign.center,
-                  style: AppTypography.bodySmall.copyWith(color: kPrimaryDark)),
+                  style: AppTypography.bodySmall.copyWith(color: AppColors.primaryDark)),
               ),
               AppSpacing.verticalSpacerXs,
               Text('全${script.turns.length}ターン', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
               AppSpacing.verticalSpacerXxl,
               ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: kPrimaryColor,
-                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: AppSpacing.sm),
+                  backgroundColor: AppColors.primary,
+                  padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl * 2, vertical: AppSpacing.sm),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge)),
                 ),
                 onPressed: onStart,
                 icon: const Icon(Icons.play_arrow, color: Colors.white),
                 label: Text('スタート！',
-                  style: AppTypography.labelLarge.copyWith(color: Colors.white)),
+                  style: AppTypography.labelLarge.copyWith(color: AppColors.textWhite)),
               ),
             ],
           ),
@@ -310,10 +308,10 @@ class _ConversationPlayScreenState extends ConsumerState<_ConversationPlayScreen
         _currentTurn.speaker == 'user';
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF0F7FF),
+      backgroundColor: AppColors.bgLight,
       appBar: AppBar(
         title: Text('${widget.script.emoji} ${widget.script.titleJa}'),
-        backgroundColor: kPrimaryColor,
+        backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         elevation: 0,
       ),
@@ -325,7 +323,7 @@ class _ConversationPlayScreenState extends ConsumerState<_ConversationPlayScreen
               LinearProgressIndicator(
                 value: _turnIndex / widget.script.turns.length,
                 backgroundColor: Colors.white,
-                color: kPrimaryColor,
+                color: AppColors.primary,
                 minHeight: 4,
               ),
 
@@ -381,25 +379,25 @@ class _ConversationPlayScreenState extends ConsumerState<_ConversationPlayScreen
         children: [
           Row(
             children: [
-              Text('🎙️ あなたの番！', style: AppTypography.bodySmall.copyWith(fontWeight: FontWeight.bold, color: kSpeakingColor)),
+              Text('🎙️ あなたの番！', style: AppTypography.bodySmall.copyWith(fontWeight: FontWeight.bold, color: AppColors.speakingColor)),
               const Spacer(),
               if (turn.hint != null)
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
                   decoration: BoxDecoration(
-                    color: kPrimaryColor.withAlpha(20),
+                    color: AppColors.withOpacity(AppColors.primary, 0.1),
                     borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                   ),
                   child: Text('ヒント: ${turn.hint}',
-                    style: AppTypography.bodySmall.copyWith(color: kPrimaryColor, fontSize: 11)),
+                    style: AppTypography.labelSmall.copyWith(color: AppColors.primary)),
                 ),
             ],
           ),
           AppSpacing.verticalSpacerXs,
-          Text(turn.textJa, style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+          Text(turn.textJa, style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
           if (_recognizedText.isNotEmpty) ...[
             AppSpacing.verticalSpacerXs,
-            Text('"$_recognizedText"', style: AppTypography.bodySmall.copyWith(color: kTextDark, fontStyle: FontStyle.italic)),
+            Text('"$_recognizedText"', style: AppTypography.bodySmall.copyWith(color: AppColors.textPrimary, fontStyle: FontStyle.italic)),
           ],
           AppSpacing.verticalSpacerXs,
           Row(
@@ -407,20 +405,20 @@ class _ConversationPlayScreenState extends ConsumerState<_ConversationPlayScreen
               Expanded(
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: _isListening ? kAccentRed : kSpeakingColor,
+                    backgroundColor: _isListening ? AppColors.error : AppColors.speakingColor,
                     padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSizes.borderRadius)),
                   ),
                   onPressed: _isListening ? _stopAndSubmit : _startListening,
-                  icon: Icon(_isListening ? Icons.stop : Icons.mic, color: Colors.white, size: 18),
+                  icon: Icon(_isListening ? Icons.stop : Icons.mic, color: Colors.white, size: AppSizes.iconSize),
                   label: Text(_isListening ? '停止' : '話す',
-                    style: AppTypography.bodySmall.copyWith(color: Colors.white, fontWeight: FontWeight.bold)),
+                    style: AppTypography.bodySmall.copyWith(color: AppColors.textWhite, fontWeight: FontWeight.bold)),
                 ),
               ),
               AppSpacing.horizontalSpacerXs,
               TextButton(
                 onPressed: _skipUserTurn,
-                child: Text('スキップ', style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 12)),
+                child: Text('スキップ', style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted)),
               ),
             ],
           ),
@@ -474,7 +472,11 @@ class _ChatBubble extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (isAi) ...[
-            CircleAvatar(backgroundColor: kPrimaryColor, radius: 18, child: const Text('🤖', style: TextStyle(fontSize: 16))),
+            CircleAvatar(
+              backgroundColor: AppColors.primary,
+              radius: 18,
+              child: Text('🤖', style: TextStyle(fontSize: AppTypography.headlineSmall.fontSize)),
+            ),
             AppSpacing.horizontalSpacerXs,
           ],
           Flexible(
@@ -484,12 +486,12 @@ class _ChatBubble extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
                   decoration: BoxDecoration(
-                    color: isAi ? Colors.white : kPrimaryColor,
+                    color: isAi ? Colors.white : AppColors.primary,
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(AppSizes.borderRadiusLarge),
                       topRight: Radius.circular(AppSizes.borderRadiusLarge),
-                      bottomLeft: Radius.circular(isAi ? 4 : AppSizes.borderRadiusLarge),
-                      bottomRight: Radius.circular(isAi ? AppSizes.borderRadiusLarge : 4),
+                      bottomLeft: Radius.circular(isAi ? AppSizes.borderRadiusSmall : AppSizes.borderRadiusLarge),
+                      bottomRight: Radius.circular(isAi ? AppSizes.borderRadiusLarge : AppSizes.borderRadiusSmall),
                     ),
                     boxShadow: [BoxShadow(color: Colors.black.withAlpha(13), blurRadius: 6)],
                   ),
@@ -499,16 +501,15 @@ class _ChatBubble extends StatelessWidget {
                       Text(
                         isAi ? text : (userInput ?? text),
                         style: AppTypography.bodySmall.copyWith(
-                          color: isAi ? kTextDark : Colors.white,
+                          color: isAi ? AppColors.textPrimary : Colors.white,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
                       AppSpacing.verticalSpacerXs,
                       Text(
                         textJa,
-                        style: AppTypography.bodySmall.copyWith(
-                          color: isAi ? kTextMuted : Colors.white70,
-                          fontSize: 11,
+                        style: AppTypography.labelSmall.copyWith(
+                          color: isAi ? AppColors.textMuted : Colors.white70,
                         ),
                       ),
                     ],
@@ -519,7 +520,11 @@ class _ChatBubble extends StatelessWidget {
           ),
           if (!isAi) ...[
             AppSpacing.horizontalSpacerXs,
-            CircleAvatar(backgroundColor: kSpeakingColor, radius: 18, child: const Text('😊', style: TextStyle(fontSize: 16))),
+            CircleAvatar(
+              backgroundColor: AppColors.speakingColor,
+              radius: 18,
+              child: Text('😊', style: TextStyle(fontSize: AppTypography.headlineSmall.fontSize)),
+            ),
           ],
         ],
       ),
@@ -534,7 +539,11 @@ class _TypingBubble extends StatelessWidget {
       padding: EdgeInsets.only(bottom: AppSpacing.xs),
       child: Row(
         children: [
-          CircleAvatar(backgroundColor: kPrimaryColor, radius: 18, child: const Text('🤖', style: TextStyle(fontSize: 16))),
+          CircleAvatar(
+            backgroundColor: AppColors.primary,
+            radius: 18,
+            child: Text('🤖', style: TextStyle(fontSize: AppTypography.headlineSmall.fontSize)),
+          ),
           AppSpacing.horizontalSpacerXs,
           Container(
             padding: EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
@@ -542,7 +551,7 @@ class _TypingBubble extends StatelessWidget {
               color: Colors.white,
               borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
             ),
-            child: const Text('…', style: TextStyle(fontSize: 18, color: kTextMuted, letterSpacing: 4)),
+            child: Text('…', style: TextStyle(fontSize: AppTypography.displaySmall.fontSize! / 1.3, color: AppColors.textMuted, letterSpacing: 4)),
           ),
         ],
       ),
