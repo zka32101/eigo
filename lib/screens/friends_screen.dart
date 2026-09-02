@@ -108,105 +108,167 @@ class _FriendListTab extends ConsumerWidget {
     // お気に入りフレンドを取得
     final favoriteFriends =
         ref.watch(friendListProvider.select((f) => f.where((x) => x.isFavorite).toList()));
+    final nonFavoriteFriends = friends.where((f) => !f.isFavorite).toList();
 
-    return SingleChildScrollView(
-      padding: AppSpacing.allPaddingLg,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // フレンド数表示
-          Container(
-            padding: AppSpacing.allPaddingMd,
-            decoration: BoxDecoration(
-              color: kPrimaryColor.withAlpha(10),
-              borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+    // Index mapping:
+    // 0: Header card
+    // 1: Spacer
+    // 2-N: Favorite friends (if any)
+    // N+1: Spacer (if favorites)
+    // N+2: "その他のフレンド" header
+    // N+3: Spacer
+    // N+4 onwards: Non-favorite friends
+
+    int _getItemCount() {
+      int count = 2; // Header + spacer
+      if (favoriteFriends.isNotEmpty) {
+        count += 1 + favoriteFriends.length + 1; // Title + favorites + spacer
+      }
+      count += 2; // "その他のフレンド" title + spacer
+      count += nonFavoriteFriends.length;
+      count += 1; // Bottom spacer
+      return count;
+    }
+
+    Widget _buildItem(int index) {
+      int currentIndex = 0;
+
+      // Header card
+      if (index == currentIndex) {
+        return Container(
+          padding: AppSpacing.allPaddingMd,
+          decoration: BoxDecoration(
+            color: kPrimaryColor.withAlpha(10),
+            borderRadius: BorderRadius.circular(AppSizes.borderRadius),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('フレンド数', style: AppTypography.labelSmall.copyWith(color: kTextMuted)),
+                  AppSpacing.verticalSpacerXs,
+                  Text('${friends.length}人', style: AppTypography.headlineMedium),
+                ],
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md,
+                  vertical: AppSpacing.sm,
+                ),
+                decoration: BoxDecoration(
+                  color: kAccentGreen,
+                  borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
+                ),
+                child: Column(
                   children: [
-                    Text('フレンド数', style: AppTypography.labelSmall.copyWith(color: kTextMuted)),
-                    AppSpacing.verticalSpacerXs,
-                    Text('${friends.length}人', style: AppTypography.headlineMedium),
+                    Text(
+                      '⭐ ${favoriteFriends.length}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const Text(
+                      'お気に入り',
+                      style: TextStyle(color: Colors.white, fontSize: 10),
+                    ),
                   ],
                 ),
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: AppSpacing.md,
-                    vertical: AppSpacing.sm,
-                  ),
-                  decoration: BoxDecoration(
-                    color: kAccentGreen,
-                    borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
-                  ),
-                  child: Column(
-                    children: [
-                      Text(
-                        '⭐ ${favoriteFriends.length}',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                      const Text(
-                        'お気に入り',
-                        style: TextStyle(color: Colors.white, fontSize: 10),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-          AppSpacing.verticalSpacerLg,
+        );
+      }
+      currentIndex++;
 
-          // お気に入りセクション
-          if (favoriteFriends.isNotEmpty) ...[
-            Text('お気に入り', style: AppTypography.headlineSmall),
-            AppSpacing.verticalSpacerMd,
-            ...favoriteFriends.map((friend) {
-              return Padding(
-                padding: EdgeInsets.only(bottom: AppSpacing.md),
-                child: _FriendCard(
-                  friend: friend,
-                  onFavoriteToggle: () {
-                    ref.read(friendListProvider.notifier).toggleFavorite(friend.userId);
-                  },
-                  onRemove: () {
-                    ref.read(friendListProvider.notifier).removeFriend(friend.userId);
-                  },
-                ),
-              );
-            }).toList(),
-            AppSpacing.verticalSpacerLg,
-          ],
+      // Spacer after header
+      if (index == currentIndex) {
+        return AppSpacing.verticalSpacerLg;
+      }
+      currentIndex++;
 
-          // その他フレンド
-          Text('その他のフレンド', style: AppTypography.headlineSmall),
-          AppSpacing.verticalSpacerMd,
-          ...friends
-              .where((f) => !f.isFavorite)
-              .map((friend) {
-                return Padding(
-                  padding: EdgeInsets.only(bottom: AppSpacing.md),
-                  child: _FriendCard(
-                    friend: friend,
-                    onFavoriteToggle: () {
-                      ref.read(friendListProvider.notifier).toggleFavorite(friend.userId);
-                    },
-                    onRemove: () {
-                      ref.read(friendListProvider.notifier).removeFriend(friend.userId);
-                    },
-                  ),
-                );
-              })
-              .toList(),
-          AppSpacing.verticalSpacerXxl,
-        ],
-      ),
+      // Favorite friends section (if any)
+      if (favoriteFriends.isNotEmpty) {
+        // Favorite title
+        if (index == currentIndex) {
+          return Text('お気に入り', style: AppTypography.headlineSmall);
+        }
+        currentIndex++;
+
+        // Favorite spacer
+        if (index == currentIndex) {
+          return AppSpacing.verticalSpacerMd;
+        }
+        currentIndex++;
+
+        // Favorite friend cards
+        if (index < currentIndex + favoriteFriends.length) {
+          final favoriteIndex = index - currentIndex;
+          final friend = favoriteFriends[favoriteIndex];
+          return Padding(
+            padding: EdgeInsets.only(bottom: AppSpacing.md),
+            child: _FriendCard(
+              friend: friend,
+              onFavoriteToggle: () {
+                ref.read(friendListProvider.notifier).toggleFavorite(friend.userId);
+              },
+              onRemove: () {
+                ref.read(friendListProvider.notifier).removeFriend(friend.userId);
+              },
+            ),
+          );
+        }
+        currentIndex += favoriteFriends.length;
+
+        // Spacer after favorites
+        if (index == currentIndex) {
+          return AppSpacing.verticalSpacerLg;
+        }
+        currentIndex++;
+      }
+
+      // "その他のフレンド" title
+      if (index == currentIndex) {
+        return Text('その他のフレンド', style: AppTypography.headlineSmall);
+      }
+      currentIndex++;
+
+      // Spacer
+      if (index == currentIndex) {
+        return AppSpacing.verticalSpacerMd;
+      }
+      currentIndex++;
+
+      // Non-favorite friend cards
+      if (index < currentIndex + nonFavoriteFriends.length) {
+        final friendIndex = index - currentIndex;
+        final friend = nonFavoriteFriends[friendIndex];
+        return Padding(
+          padding: EdgeInsets.only(bottom: AppSpacing.md),
+          child: _FriendCard(
+            friend: friend,
+            onFavoriteToggle: () {
+              ref.read(friendListProvider.notifier).toggleFavorite(friend.userId);
+            },
+            onRemove: () {
+              ref.read(friendListProvider.notifier).removeFriend(friend.userId);
+            },
+          ),
+        );
+      }
+      currentIndex += nonFavoriteFriends.length;
+
+      // Bottom spacer
+      return AppSpacing.verticalSpacerXxl;
+    }
+
+    return ListView.builder(
+      padding: AppSpacing.allPaddingLg,
+      itemCount: _getItemCount(),
+      itemBuilder: (context, index) => _buildItem(index),
     );
   }
 }
@@ -232,45 +294,56 @@ class _FriendRequestsTab extends ConsumerWidget {
       );
     }
 
-    return SingleChildScrollView(
+    return ListView.builder(
       padding: AppSpacing.allPaddingLg,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
+      itemCount: 2 + pendingRequests.length + 1, // Title + spacer + requests + bottom spacer
+      itemBuilder: (context, index) {
+        // Title
+        if (index == 0) {
+          return Text(
             '${pendingRequests.length}個のリクエスト',
             style: AppTypography.headlineSmall,
-          ),
-          AppSpacing.verticalSpacerMd,
-          ...pendingRequests.map((request) {
-            return Padding(
-              padding: EdgeInsets.only(bottom: AppSpacing.md),
-              child: _FriendRequestCard(
-                request: request,
-                onAccept: () {
-                  ref.read(friendRequestsProvider.notifier).acceptRequest(request.requestId);
-                  // フレンドとして追加
-                  ref.read(friendListProvider.notifier).addFriend(
-                    Friend(
-                      userId: request.fromUserId,
-                      name: request.fromUserName,
-                      avatar: request.fromUserAvatar,
-                      level: 1,
-                      coinsEarned: 0,
-                      totalStudyMinutes: 0,
-                      addedAt: DateTime.now(),
-                    ),
-                  );
-                },
-                onReject: () {
-                  ref.read(friendRequestsProvider.notifier).rejectRequest(request.requestId);
-                },
-              ),
-            );
-          }).toList(),
-          AppSpacing.verticalSpacerXxl,
-        ],
-      ),
+          );
+        }
+
+        // Spacer after title
+        if (index == 1) {
+          return AppSpacing.verticalSpacerMd;
+        }
+
+        // Request cards
+        if (index < 2 + pendingRequests.length) {
+          final requestIndex = index - 2;
+          final request = pendingRequests[requestIndex];
+          return Padding(
+            padding: EdgeInsets.only(bottom: AppSpacing.md),
+            child: _FriendRequestCard(
+              request: request,
+              onAccept: () {
+                ref.read(friendRequestsProvider.notifier).acceptRequest(request.requestId);
+                // フレンドとして追加
+                ref.read(friendListProvider.notifier).addFriend(
+                  Friend(
+                    userId: request.fromUserId,
+                    name: request.fromUserName,
+                    avatar: request.fromUserAvatar,
+                    level: 1,
+                    coinsEarned: 0,
+                    totalStudyMinutes: 0,
+                    addedAt: DateTime.now(),
+                  ),
+                );
+              },
+              onReject: () {
+                ref.read(friendRequestsProvider.notifier).rejectRequest(request.requestId);
+              },
+            ),
+          );
+        }
+
+        // Bottom spacer
+        return AppSpacing.verticalSpacerXxl;
+      },
     );
   }
 }
