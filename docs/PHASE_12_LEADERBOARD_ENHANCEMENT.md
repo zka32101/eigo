@@ -295,28 +295,28 @@ gradePromotion/
 
 ## Implementation Phases
 
-### Phase 12 Part 1: Core Infrastructure (Current)
-- [ ] Leaderboard and grade models
-- [ ] LeaderboardService with query methods
-- [ ] GradePromotionService with promotion logic
-- [ ] Riverpod providers and action functions
-- [ ] Firestore schema setup
-- [ ] Auto-promotion job scheduler setup
-- [ ] Comprehensive documentation
+### Phase 12 Part 1: Core Infrastructure ✅
+- [x] Leaderboard and grade models
+- [x] LeaderboardService with query methods
+- [x] GradePromotionService with promotion logic
+- [x] Riverpod providers and action functions
+- [x] Firestore schema setup
+- [x] Auto-promotion job scheduler setup
+- [x] Comprehensive documentation
 
-### Phase 12 Part 2: UI Screens (Next)
-- [ ] Leaderboard selector/grouping UI
-- [ ] Leaderboard display screen
-- [ ] Grade info screen
-- [ ] Stats and analytics screens
-- [ ] Integration with existing game screens
+### Phase 12 Part 2: UI Screens ✅
+- [x] Leaderboard selector/grouping UI
+- [x] Leaderboard display screen
+- [x] Grade info screen
+- [x] Stats and analytics screens
+- [x] Integration with existing game screens
 
-### Phase 12 Part 3: Polish & Optimization
-- [ ] Performance optimization (caching, batching)
-- [ ] Real-time leaderboard updates
-- [ ] Push notifications for rank changes
-- [ ] Seasonal leaderboard resets
-- [ ] Admin controls for manual promotion
+### Phase 12 Part 3: Polish & Optimization ✅
+- [x] Performance optimization (caching, batching)
+- [x] Real-time leaderboard updates
+- [x] Push notifications for rank changes
+- [x] Seasonal leaderboard resets
+- [x] Admin controls for manual promotion
 
 ## Configuration
 
@@ -392,7 +392,199 @@ gradePromotion/
    - Ranking milestones
    - Grade promotion bonuses
 
+## Part 3: Optimization & Polish
+
+### Leaderboard Optimization Service
+Comprehensive caching and real-time update system.
+
+**Components:**
+- `LeaderboardOptimizationService` (lib/services/leaderboard_optimization_service.dart)
+  - 15-minute TTL cache for leaderboard queries
+  - Real-time stream subscriptions for live updates
+  - Listener management for rank change tracking
+  - Seasonal reset with archival of old leaderboards
+  - Batch update operations (500 op limit per write)
+  - Cache statistics and memory estimation
+
+**Key Features:**
+- `getCachedLeaderboard()` - Returns cached data or fetches fresh
+- `streamOverallLeaderboard()` - Real-time overall rankings
+- `streamGradeLeaderboard(grade)` - Real-time per-grade rankings
+- `streamUserRank(userId, groupType)` - Real-time user position tracking
+- `listenToUserRankChanges()` - Setup rank change listener with callback
+- `resetSeasonalLeaderboards()` - Archive and reset for new season
+- `batchUpdateLeaderboards()` - Efficient multi-entry updates
+
+### Rank Change Notification System
+Notification service for competitive feedback.
+
+**Components:**
+- `LeaderboardRankNotificationService` (lib/services/leaderboard_rank_notification_service.dart)
+  - Rank improvement notifications
+  - Milestone badges (top 10, top 50, top 100)
+  - Top position notifications
+  - Grade promotion notifications (automatic, manual, retroactive)
+  - Upcoming promotion reminders (1 week before)
+  - Unread notification tracking
+  - Notification cleanup with expiry
+
+**Notification Types:**
+- `rankImprovement` - User improved rank (with improvement amount)
+- `rankMilestone` - User reached milestone rank (top 10/50/100)
+- `topPosition` - User achieved rank #1
+- `gradePromotion` - User was promoted to new grade
+- `upcomingPromotion` - Reminder 1 week before April 1st
+
+**Features:**
+- `notifyRankChange()` - Create rank improvement notification
+- `notifyRankMilestone()` - Create milestone notification
+- `notifyTopPosition()` - Notify rank #1 achievement
+- `notifyGradePromotion()` - Notify grade change
+- `notifyUpcomingPromotion()` - Pre-promotion reminder
+- `sendPushNotification()` - FCM integration (for Cloud Functions)
+- `getUnreadNotifications()` - User's unread notifications
+- `getNotificationStats()` - Count of read/unread
+- `markAsRead()` / `markAllAsRead()` - Mark notifications read
+- `deleteExpiredNotifications()` - Cleanup old notifications
+
+### Admin Grade Promotion Management
+Admin screen for manual grade management.
+
+**Components:**
+- `AdminGradePromotionScreen` (lib/screens/admin_grade_promotion_screen.dart)
+  - Promotion configuration display (date, max grade, auto-enabled)
+  - Manual single-user promotion
+  - Bulk promotion (by grade or all users)
+  - Promotion history timeline with reasons
+
+**Sections:**
+1. **Promotion Configuration**
+   - Display current promotion date (April 1st)
+   - Show maximum grade level
+   - Toggle auto-promotion on/off
+   - Track last promotion check
+
+2. **Manual Promotion**
+   - Input user ID
+   - Select target grade (4-9)
+   - Create manual promotion record
+
+3. **Bulk Promotion**
+   - Choose promotion mode (by grade, all users)
+   - Select source grade for bulk operation
+   - Confirmation dialog with warning
+   - Progress feedback
+
+4. **Promotion History**
+   - Timeline of recent promotions
+   - User name, grade transition (X年生 → Y年生)
+   - Reason badge (自動/手動/遡及)
+   - Timestamp with relative time display
+
+### Notification Provider Architecture
+
+**Providers:**
+- `leaderboardRankNotificationServiceProvider` - Service instance
+- `unreadNotificationsProvider(userId)` - Get unread for user
+- `notificationStatsProvider(userId)` - Stats (read/unread counts)
+
+**Action Functions:**
+- `notifyRankChangeAction()` - Trigger rank change notification
+- `notifyRankMilestoneAction()` - Trigger milestone notification
+- `notifyTopPositionAction()` - Trigger top position notification
+- `notifyGradePromotionAction()` - Trigger grade promotion notification
+- `notifyUpcomingPromotionAction()` - Trigger pre-promotion reminder
+- `markNotificationAsReadAction()` - Mark single read
+- `markAllNotificationsAsReadAction()` - Mark all read
+
+### Firestore Collections (Part 3)
+
+```
+notifications/{notificationId}
+├─ userId: string
+├─ type: string (rankImprovement|rankMilestone|topPosition|gradePromotion|upcomingPromotion)
+├─ createdAt: Timestamp
+├─ isRead: boolean
+├─ expiresAt: Timestamp (30-day TTL)
+├─ previousRank: int (for rankImprovement)
+├─ newRank: int (for rankImprovement)
+├─ rankImprovement: int (for rankImprovement)
+├─ groupType: string (for rank notifications)
+├─ groupName: string (for rank notifications)
+├─ milestone: string (for rankMilestone)
+├─ currentRank: int (for rankMilestone)
+├─ previousGrade: int (for gradePromotion)
+├─ newGrade: int (for gradePromotion)
+└─ promotionDate: Timestamp (for upcomingPromotion)
+
+leaderboard/archived/{seasonKey}/
+├─ overall/entries/{entryId}
+├─ byGrade/{gradeId}/entries/{entryId}
+├─ byMonth/{monthId}/entries/{entryId}
+└─ combined/{combined_id}/entries/{entryId}
+```
+
+### Performance Optimizations
+
+**Cache Duration**: 15 minutes
+- Automatic expiry checking
+- Manual cache invalidation
+- Per-query cache keys
+- Memory-efficient storage
+
+**Real-time Streaming**:
+- Efficient listener cleanup
+- Per-user listener subscription
+- Automatic resubscription on disconnect
+- Minimal database reads
+
+**Batch Operations**:
+- 500 Firestore operation limit
+- Automatic batch splitting
+- Transaction safety
+- Error handling per batch
+
+### Integration Points
+
+1. **Leaderboard Display Screen**
+   - Listen to real-time rank changes
+   - Display rank badges (medals for top 3)
+   - Show user rank position
+
+2. **Grade Info Screen**
+   - Display promotion countdown
+   - Show upcoming promotion date
+   - List promotion history
+
+3. **Admin Dashboard**
+   - New "학年昇進" (Grade Promotion) tab
+   - Access admin controls
+   - View promotion history
+   - Manual and bulk operations
+
+4. **User Profile / Home Screen**
+   - Show unread notifications count
+   - Display notification badges
+   - Quick access to notifications
+
 ---
 
-**Phase 12 Status**: 🚀 Part 1 - Core Infrastructure (In Progress)
-**Next**: Phase 12 Part 2 - Leaderboard UI Screens
+**Phase 12 Status**: ✅ Complete (All 3 Parts)
+- Part 1: Core Infrastructure (Leaderboard models, services, providers)
+- Part 2: UI Screens (Selector, display, grade info, stats screens)
+- Part 3: Optimization & Polish (Caching, streaming, notifications, admin controls)
+
+**Key Files Implemented:**
+1. `lib/models/leaderboard_model.dart` - Data models
+2. `lib/services/leaderboard_service.dart` - Leaderboard queries
+3. `lib/services/leaderboard_optimization_service.dart` - Caching & streaming
+4. `lib/services/leaderboard_rank_notification_service.dart` - Notifications
+5. `lib/screens/leaderboard_selector_screen.dart` - Type selection
+6. `lib/screens/leaderboard_display_screen.dart` - Main leaderboard view
+7. `lib/screens/grade_info_screen.dart` - Grade progression info
+8. `lib/screens/leaderboard_stats_screen.dart` - Statistics dashboard
+9. `lib/screens/admin_grade_promotion_screen.dart` - Admin controls
+10. `lib/providers/leaderboard_provider.dart` - Riverpod providers
+11. `lib/providers/leaderboard_notification_provider.dart` - Notification providers
+
+**Next**: Phase 13 - Additional Features or Polish Phases

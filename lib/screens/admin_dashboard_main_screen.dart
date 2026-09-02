@@ -5,6 +5,7 @@ import 'admin_moderation_panel_screen.dart';
 import 'admin_reports_dashboard_screen.dart';
 import 'admin_feature_flags_screen.dart';
 import 'admin_audit_log_screen.dart';
+import 'admin_grade_promotion_screen.dart';
 
 /// Main admin dashboard screen with navigation
 class AdminDashboardMainScreen extends StatefulWidget {
@@ -43,6 +44,11 @@ class _AdminDashboardMainScreenState extends State<AdminDashboardMainScreen> {
       label: 'フラグ',
       icon: Icons.flag,
       screen: const AdminFeatureFlagsScreen(),
+    ),
+    (
+      label: '学年昇進',
+      icon: Icons.grade,
+      screen: const AdminGradePromotionScreen(),
     ),
     (
       label: '監査ログ',
@@ -102,6 +108,7 @@ class AdminDashboardDrawer extends StatelessWidget {
       (label: 'モデレーション', icon: Icons.security),
       (label: 'レポート', icon: Icons.assessment),
       (label: 'フラグ', icon: Icons.flag),
+      (label: '学年昇進', icon: Icons.grade),
       (label: 'ログ', icon: Icons.history),
     ];
 
