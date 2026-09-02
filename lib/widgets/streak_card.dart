@@ -1,5 +1,5 @@
+import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
 
 class StreakCard extends StatelessWidget {
   final int days;
@@ -15,11 +15,11 @@ class StreakCard extends StatelessWidget {
   }
 
   Color _getColor() {
-    if (days == 0) return Colors.grey;
+    if (days == 0) return AppColors.textMuted;
     if (days >= 100) return const Color(0xFFFF6B6B);
     if (days >= 30) return const Color(0xFFF59E0B);
-    if (days >= 7) return kAccentOrange;
-    return kPrimaryColor;
+    if (days >= 7) return AppColors.accentOrange;
+    return AppColors.primary;
   }
 
   @override
@@ -62,7 +62,7 @@ class StreakCard extends StatelessWidget {
                     Text(
                       '$days',
                       style: const TextStyle(
-                        color: Colors.white,
+                        color:AppColors.textWhite,
                         fontSize: 36,
                         fontWeight: FontWeight.bold,
                       ),
@@ -70,7 +70,7 @@ class StreakCard extends StatelessWidget {
                     const Text(
                       '日連続',
                       style: TextStyle(
-                        color: Colors.white70,
+                        color: AppColors.textWhite.withOpacity(0.7),
                         fontSize: 14,
                       ),
                     ),
@@ -82,7 +82,7 @@ class StreakCard extends StatelessWidget {
             Text(
               motivation,
               style: const TextStyle(
-                color: Colors.white,
+                color:AppColors.textWhite,
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
               ),
@@ -94,15 +94,15 @@ class StreakCard extends StatelessWidget {
               child: LinearProgressIndicator(
                 value: days == 0 ? 0 : (days >= 30 ? 1.0 : days / 30),
                 minHeight: 6,
-                backgroundColor: Colors.white24,
-                valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                backgroundColor: AppColors.textWhite24,
+                valueColor: const AlwaysStoppedAnimation<Color>(AppColors.textWhite),
               ),
             ),
             const SizedBox(height: 8),
             Text(
               days >= 30 ? '🎉 目標達成！' : '目標: 30日',
               style: const TextStyle(
-                color: Colors.white70,
+                color: AppColors.textWhite.withOpacity(0.7),
                 fontSize: 12,
               ),
             ),

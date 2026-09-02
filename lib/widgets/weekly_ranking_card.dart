@@ -1,3 +1,4 @@
+import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 
 class DailyScore {
@@ -26,11 +27,11 @@ class WeeklyRankingCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color:AppColors.textWhite,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withAlpha(76),
+            color: AppColors.textMuted.withAlpha(76),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -68,7 +69,7 @@ class WeeklyRankingCard extends StatelessWidget {
                         Expanded(
                           child: Text(
                             _getDayLabel(score.fullDate),
-                            style: const TextStyle(fontSize: 12, color: Colors.grey),
+                            style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
                           ),
                         ),
                         Container(
@@ -80,7 +81,7 @@ class WeeklyRankingCard extends StatelessWidget {
                           child: Text(
                             '${score.score}コイン',
                             style: const TextStyle(
-                              color: Colors.white,
+                              color:AppColors.textWhite,
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
                             ),
@@ -107,7 +108,7 @@ class WeeklyRankingCard extends StatelessWidget {
       case 2:
         return const Color(0xFFCD7F32);
       default:
-        return Colors.grey;
+        return AppColors.textMuted;
     }
   }
 }

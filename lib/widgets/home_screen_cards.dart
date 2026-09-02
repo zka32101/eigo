@@ -1,11 +1,7 @@
+import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import '../models/stage.dart';
 import '../models/progress.dart';
-import '../theme/app_theme.dart';
-import '../theme/component_styles.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
 
 /// ホーム画面用の改善されたカードコンポーネント
 /// 新しいデザイン設計トークンを使用
@@ -29,14 +25,14 @@ class ImprovedDailyMissionCard extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           gradient: const LinearGradient(
-            colors: [kPrimaryColor, kPrimaryLight],
+            colors: [AppColors.primary, AppColors.primary.withAlpha(25)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
           boxShadow: [
             BoxShadow(
-              color: kPrimaryColor.withAlpha(76),
+              color: AppColors.primary.withAlpha(76),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -53,7 +49,7 @@ class ImprovedDailyMissionCard extends StatelessWidget {
                     Text(
                       '今日のレッスン',
                       style: AppTypography.bodySmall.copyWith(
-                        color: Colors.white70,
+                        color: AppColors.textWhite.withOpacity(0.7),
                       ),
                     ),
                     AppSpacing.verticalSpacerSm,
@@ -62,7 +58,7 @@ class ImprovedDailyMissionCard extends StatelessWidget {
                           ? '${nextStage!.emoji} ${nextStage!.titleJa}'
                           : '🎉 全ステージクリア！',
                       style: AppTypography.headlineSmall.copyWith(
-                        color: Colors.white,
+                        color:AppColors.textWhite,
                       ),
                     ),
                     AppSpacing.verticalSpacerMd,
@@ -71,8 +67,8 @@ class ImprovedDailyMissionCard extends StatelessWidget {
                         height: AppSizes.buttonHeightSmall,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: kPrimaryColor,
+                            backgroundColor: AppColors.textWhite,
+                            foregroundColor: AppColors.primary,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(
                                 AppSizes.borderRadius,
@@ -140,7 +136,7 @@ class ImprovedStatCard extends StatelessWidget {
               Text(
                 label,
                 style: AppTypography.bodySmall.copyWith(
-                  color: kTextMuted,
+                  color: AppColors.textMuted,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -176,21 +172,21 @@ class ImprovedStatsRow extends StatelessWidget {
             label: 'レッスン',
             value: '$lessonsCount回',
             emoji: '📚',
-            color: kPrimaryColor,
+            color: AppColors.primary,
           ),
           AppSpacing.horizontalSpacerSm,
           ImprovedStatCard(
             label: 'スピーキング',
             value: '$speakingCount個',
             emoji: '🎤',
-            color: kSpeakingColor,
+            color: AppColors.speakingColor,
           ),
           AppSpacing.horizontalSpacerSm,
           ImprovedStatCard(
             label: 'バッジ',
             value: '$badgeCount個',
             emoji: '🏆',
-            color: kAccentOrange,
+            color: AppColors.accentOrange,
           ),
         ],
       ),
@@ -232,7 +228,7 @@ class ImprovedQuickActionButton extends StatelessWidget {
               ),
             ],
             border: isHighlighted
-                ? Border.all(color: Colors.white, width: 2)
+                ? Border.all(color:AppColors.textWhite, width: 2)
                 : null,
           ),
           child: Padding(
@@ -242,7 +238,7 @@ class ImprovedQuickActionButton extends StatelessWidget {
                 label,
                 textAlign: TextAlign.center,
                 style: AppTypography.labelMedium.copyWith(
-                  color: Colors.white,
+                  color:AppColors.textWhite,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -311,7 +307,7 @@ class ImprovedSkillProgressCard extends StatelessWidget {
             Text(
               '$questions 問',
               style: AppTypography.bodySmall.copyWith(
-                color: kTextMuted,
+                color: AppColors.textMuted,
               ),
             ),
           ],
@@ -343,7 +339,7 @@ class ImprovedWeaknessCard extends StatelessWidget {
         onTap: onTap,
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color:AppColors.textWhite,
             borderRadius: BorderRadius.circular(AppSizes.borderRadius),
             border: Border.all(
               color: kErrorColor,
@@ -373,7 +369,7 @@ class ImprovedWeaknessCard extends StatelessWidget {
                       Text(
                         'つまずいた問題',
                         style: AppTypography.bodySmall.copyWith(
-                          color: kTextMuted,
+                          color: AppColors.textMuted,
                         ),
                       ),
                       Text(
@@ -441,7 +437,7 @@ class ImprovedSectionTitle extends StatelessWidget {
           Text(
             title,
             style: AppTypography.headlineSmall.copyWith(
-              color: kTextDark,
+              color: AppColors.textPrimary,
             ),
           ),
         ],

@@ -1,11 +1,7 @@
+import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/question.dart';
-import '../theme/app_theme.dart';
-import '../theme/component_styles.dart';
-import '../theme/sizes.dart';
-import '../theme/spacing.dart';
-import '../theme/typography.dart';
 
 /// レッスン画面用の改善されたコンポーネント
 /// 新しいデザイン設計トークンを全て活用
@@ -20,13 +16,13 @@ class ImprovedSkillBadge extends StatelessWidget {
   Color _getColor(QuestionType t) {
     switch (t) {
       case QuestionType.listening:
-        return kListeningColor;
+        return AppColors.listeningColor;
       case QuestionType.speaking:
-        return kSpeakingColor;
+        return AppColors.speakingColor;
       case QuestionType.reading:
-        return kReadingColor;
+        return AppColors.readingColor;
       case QuestionType.writing:
-        return kWritingColor;
+        return AppColors.writingColor;
     }
   }
 
@@ -102,7 +98,7 @@ class ImprovedQuestionCard extends ConsumerWidget {
             Text(
               question.text,
               style: AppTypography.displaySmall.copyWith(
-                color: kTextDark,
+                color: AppColors.textPrimary,
               ),
               textAlign: TextAlign.center,
             ),
@@ -118,9 +114,9 @@ class ImprovedQuestionCard extends ConsumerWidget {
                   height: AppSizes.buttonHeight,
                   child: FloatingActionButton(
                     mini: false,
-                    backgroundColor: kPrimaryColor,
+                    backgroundColor: AppColors.primary,
                     onPressed: onPlay,
-                    child: const Icon(Icons.volume_up, color: Colors.white),
+                    child: const Icon(Icons.volume_up, color: AppColors.textWhite),
                   ),
                 ),
                 AppSpacing.horizontalSpacerLg,
@@ -129,8 +125,8 @@ class ImprovedQuestionCard extends ConsumerWidget {
                   label: const Text('ゆっくり'),
                   onPressed: onPlaySlow,
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: kPrimaryColor,
-                    side: const BorderSide(color: kPrimaryColor, width: 2),
+                    foregroundColor: AppColors.primary,
+                    side: const BorderSide(color: AppColors.primary, width: 2),
                   ),
                 ),
               ],
@@ -140,7 +136,7 @@ class ImprovedQuestionCard extends ConsumerWidget {
 
             // 区切り線
             Divider(
-              color: kBorderColor,
+              color: AppColors.bgLight,
               thickness: 1,
             ),
 
@@ -151,14 +147,14 @@ class ImprovedQuestionCard extends ConsumerWidget {
               Text(
                 '発音',
                 style: AppTypography.labelMedium.copyWith(
-                  color: kTextMuted,
+                  color: AppColors.textMuted,
                 ),
               ),
               const SizedBox(height: 2),
               Text(
                 question.phonetic!,
                 style: AppTypography.bodyLarge.copyWith(
-                  color: kPrimaryColor,
+                  color: AppColors.primary,
                   fontStyle: FontStyle.italic,
                 ),
                 textAlign: TextAlign.center,
@@ -170,14 +166,14 @@ class ImprovedQuestionCard extends ConsumerWidget {
             Text(
               '日本語',
               style: AppTypography.labelMedium.copyWith(
-                color: kTextMuted,
+                color: AppColors.textMuted,
               ),
             ),
             const SizedBox(height: 2),
             Text(
               question.textJa,
               style: AppTypography.bodyMedium.copyWith(
-                color: kTextMuted,
+                color: AppColors.textMuted,
               ),
               textAlign: TextAlign.center,
             ),
@@ -223,22 +219,22 @@ class ImprovedChoiceArea extends StatelessWidget {
               onTap: answered ? null : () => onSelect(choice),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color:AppColors.textWhite,
                   borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                   border: Border.all(
                     color: isWrong
                         ? kErrorColor
                         : isCorrect && (answered && isSelected)
-                            ? kAccentGreen
+                            ? AppColors.accentGreen
                             : isSelected
-                                ? kPrimaryColor
-                                : kBorderColor,
+                                ? AppColors.primary
+                                : AppColors.bgLight,
                     width: isSelected ? 2 : 1,
                   ),
                   boxShadow: [
                     BoxShadow(
                       color: isSelected
-                          ? (isWrong ? kErrorColor : kPrimaryColor).withAlpha(51)
+                          ? (isWrong ? kErrorColor : AppColors.primary).withAlpha(51)
                           : Colors.transparent,
                       blurRadius: 4,
                       offset: const Offset(0, 2),
@@ -255,7 +251,7 @@ class ImprovedChoiceArea extends StatelessWidget {
                         height: 36,
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? (isWrong ? kErrorColor : kPrimaryColor)
+                              ? (isWrong ? kErrorColor : AppColors.primary)
                               : kBgLight,
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -264,7 +260,7 @@ class ImprovedChoiceArea extends StatelessWidget {
                             String.fromCharCode(65 + index),
                             // A, B, C, D...
                             style: AppTypography.labelLarge.copyWith(
-                              color: isSelected ? Colors.white : kTextMuted,
+                              color: isSelected ? Colors.white : AppColors.textMuted,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -277,7 +273,7 @@ class ImprovedChoiceArea extends StatelessWidget {
                         child: Text(
                           choice,
                           style: AppTypography.bodyLarge.copyWith(
-                            color: kTextDark,
+                            color: AppColors.textPrimary,
                             fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                           ),
                         ),
@@ -287,7 +283,7 @@ class ImprovedChoiceArea extends StatelessWidget {
                       if (answered && isSelected)
                         Icon(
                           isCorrect ? Icons.check_circle : Icons.cancel,
-                          color: isCorrect ? kAccentGreen : kErrorColor,
+                          color: isCorrect ? AppColors.accentGreen : kErrorColor,
                           size: 24,
                         ),
                     ],
@@ -321,10 +317,10 @@ class ImprovedAnswerExplanation extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: isCorrect
-            ? kAccentGreen.withAlpha(25)
+            ? AppColors.accentGreen.withAlpha(25)
             : kErrorColor.withAlpha(25),
         border: Border.all(
-          color: isCorrect ? kAccentGreen : kErrorColor,
+          color: isCorrect ? AppColors.accentGreen : kErrorColor,
           width: 2,
         ),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
@@ -340,7 +336,7 @@ class ImprovedAnswerExplanation extends StatelessWidget {
                 Text(
                   isCorrect ? '✅ 正解！' : '❌ 不正解',
                   style: AppTypography.labelLarge.copyWith(
-                    color: isCorrect ? kAccentGreen : kErrorColor,
+                    color: isCorrect ? AppColors.accentGreen : kErrorColor,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -353,7 +349,7 @@ class ImprovedAnswerExplanation extends StatelessWidget {
             Text(
               '正解: ${question.correctAnswer}',
               style: AppTypography.bodyLarge.copyWith(
-                color: isCorrect ? kAccentGreen : kTextDark,
+                color: isCorrect ? AppColors.accentGreen : AppColors.textPrimary,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -365,14 +361,14 @@ class ImprovedAnswerExplanation extends StatelessWidget {
               Text(
                 '説明',
                 style: AppTypography.labelMedium.copyWith(
-                  color: kTextMuted,
+                  color: AppColors.textMuted,
                 ),
               ),
               const SizedBox(height: 2),
               Text(
                 question.explanation!,
                 style: AppTypography.bodyMedium.copyWith(
-                  color: kTextMuted,
+                  color: AppColors.textMuted,
                   height: 1.5,
                 ),
               ),
@@ -388,9 +384,9 @@ class ImprovedAnswerExplanation extends StatelessWidget {
                     label: const Text('正解を聞く'),
                     onPressed: onPlayCorrect,
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: isCorrect ? kAccentGreen : kErrorColor,
+                      foregroundColor: isCorrect ? AppColors.accentGreen : kErrorColor,
                       side: BorderSide(
-                        color: isCorrect ? kAccentGreen : kErrorColor,
+                        color: isCorrect ? AppColors.accentGreen : kErrorColor,
                       ),
                     ),
                   ),
@@ -425,13 +421,13 @@ class ImprovedScoreBar extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color:AppColors.textWhite,
         border: Border(
-          top: BorderSide(color: kBorderColor, width: 1),
+          top: BorderSide(color: AppColors.bgLight, width: 1),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(13),
+            color: AppColors.textPrimary.withAlpha(13),
             blurRadius: 4,
             offset: const Offset(0, -2),
           ),
@@ -448,14 +444,14 @@ class ImprovedScoreBar extends StatelessWidget {
                 Text(
                   'スコア',
                   style: AppTypography.labelMedium.copyWith(
-                    color: kTextMuted,
+                    color: AppColors.textMuted,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   '$score点',
                   style: AppTypography.numberDisplay.copyWith(
-                    color: kPrimaryColor,
+                    color: AppColors.primary,
                   ),
                 ),
               ],
@@ -463,7 +459,7 @@ class ImprovedScoreBar extends StatelessWidget {
             Container(
               width: 1,
               height: 40,
-              color: kBorderColor,
+              color: AppColors.bgLight,
             ),
             Column(
               mainAxisSize: MainAxisSize.min,
@@ -471,14 +467,14 @@ class ImprovedScoreBar extends StatelessWidget {
                 Text(
                   '正解',
                   style: AppTypography.labelMedium.copyWith(
-                    color: kTextMuted,
+                    color: AppColors.textMuted,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   '$correct/$total',
                   style: AppTypography.numberDisplay.copyWith(
-                    color: kAccentGreen,
+                    color: AppColors.accentGreen,
                   ),
                 ),
               ],
@@ -486,7 +482,7 @@ class ImprovedScoreBar extends StatelessWidget {
             Container(
               width: 1,
               height: 40,
-              color: kBorderColor,
+              color: AppColors.bgLight,
             ),
             Column(
               mainAxisSize: MainAxisSize.min,
@@ -494,14 +490,14 @@ class ImprovedScoreBar extends StatelessWidget {
                 Text(
                   '正答率',
                   style: AppTypography.labelMedium.copyWith(
-                    color: kTextMuted,
+                    color: AppColors.textMuted,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   '$accuracy%',
                   style: AppTypography.numberDisplay.copyWith(
-                    color: kAccentOrange,
+                    color: AppColors.accentOrange,
                   ),
                 ),
               ],
@@ -536,8 +532,8 @@ class ImprovedNextButton extends StatelessWidget {
         icon: Icon(isLast ? Icons.check : Icons.arrow_forward),
         label: Text(isLast ? '結果を見る' : '次へ'),
         style: ElevatedButton.styleFrom(
-          backgroundColor: isLast ? kAccentGreen : kPrimaryColor,
-          foregroundColor: Colors.white,
+          backgroundColor: isLast ? AppColors.accentGreen : AppColors.primary,
+          foregroundColor:AppColors.textWhite,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppSizes.borderRadius),
           ),
@@ -563,13 +559,13 @@ class ImprovedProgressBar extends StatelessWidget {
   Color _getColor(QuestionType t) {
     switch (t) {
       case QuestionType.listening:
-        return kListeningColor;
+        return AppColors.listeningColor;
       case QuestionType.speaking:
-        return kSpeakingColor;
+        return AppColors.speakingColor;
       case QuestionType.reading:
-        return kReadingColor;
+        return AppColors.readingColor;
       case QuestionType.writing:
-        return kWritingColor;
+        return AppColors.writingColor;
     }
   }
 
