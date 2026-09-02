@@ -54,6 +54,33 @@ class AppSettings {
     final m = reminderMinute.toString().padLeft(2, '0');
     return '$h:$m';
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AppSettings &&
+          runtimeType == other.runtimeType &&
+          soundEnabled == other.soundEnabled &&
+          ttsEnabled == other.ttsEnabled &&
+          ttsSpeed == other.ttsSpeed &&
+          notificationEnabled == other.notificationEnabled &&
+          reminderHour == other.reminderHour &&
+          reminderMinute == other.reminderMinute &&
+          autoPlayListening == other.autoPlayListening &&
+          showPhonetics == other.showPhonetics &&
+          childName == other.childName;
+
+  @override
+  int get hashCode =>
+      soundEnabled.hashCode ^
+      ttsEnabled.hashCode ^
+      ttsSpeed.hashCode ^
+      notificationEnabled.hashCode ^
+      reminderHour.hashCode ^
+      reminderMinute.hashCode ^
+      autoPlayListening.hashCode ^
+      showPhonetics.hashCode ^
+      childName.hashCode;
 }
 
 class SettingsNotifier extends StateNotifier<AppSettings> {
@@ -142,6 +169,18 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
   }
 }
 
-final settingsProvider = StateNotifierProvider<SettingsNotifier, AppSettings>(
+/// アプリ設定状態管理プロバイダ
+///
+/// 最適化:
+/// - .autoDispose: ウィジェットが利用されなくなると自動的にリソースを解放
+///   SharedPreferences へのアクセスをキャッシュし、メモリ効率を向上
+/// - AppSettings に == と hashCode を実装
+///   設定変更の比較を正確に行い、不要なリビルドを削減
+///
+/// 使用例:
+/// - final settings = ref.watch(settingsProvider);
+/// - final soundOnly = ref.watch(settingsProvider.select((s) => s.soundEnabled));
+final settingsProvider =
+    StateNotifierProvider.autoDispose<SettingsNotifier, AppSettings>(
   (ref) => SettingsNotifier(),
 );

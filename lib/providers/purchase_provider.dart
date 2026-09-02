@@ -37,6 +37,19 @@ class PurchaseState {
       errorMessage: errorMessage,
     );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is PurchaseState &&
+          runtimeType == other.runtimeType &&
+          activePlan == other.activePlan &&
+          isLoading == other.isLoading &&
+          errorMessage == other.errorMessage;
+
+  @override
+  int get hashCode =>
+      activePlan.hashCode ^ isLoading.hashCode ^ errorMessage.hashCode;
 }
 
 class PurchaseNotifier extends StateNotifier<PurchaseState> {
@@ -86,6 +99,18 @@ class PurchaseNotifier extends StateNotifier<PurchaseState> {
   }
 }
 
-final purchaseProvider = StateNotifierProvider<PurchaseNotifier, PurchaseState>(
+/// 購入プラン状態管理プロバイダ
+///
+/// 最適化:
+/// - .autoDispose: ウィジェットが利用されなくなると自動的にリソースを解放
+///   リスナーが全て削除されると、次回のアクセス時に再初期化される
+/// - PurchaseState に == と hashCode を実装
+///   Riverpod の変更検出を正確に行い、不要なリビルドを削減
+///
+/// 使用例:
+/// - final state = ref.watch(purchaseProvider);
+/// - final isPro = ref.watch(purchaseProvider.select((p) => p.hasProFeatures));
+final purchaseProvider =
+    StateNotifierProvider.autoDispose<PurchaseNotifier, PurchaseState>(
   (ref) => PurchaseNotifier(),
 );
