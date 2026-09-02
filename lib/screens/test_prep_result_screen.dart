@@ -50,7 +50,7 @@ class _TestPrepResultScreenState extends State<TestPrepResultScreen> {
     final color = isPassed ? AppColors.accentGreen : AppColors.accentOrange;
 
     return Scaffold(
-      backgroundColor: kBgLight,
+      backgroundColor: AppColors.bgLight,
       appBar: AppBar(
         backgroundColor: AppColors.error,
         automaticallyImplyLeading: false,

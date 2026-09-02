@@ -75,7 +75,7 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
     final level = ref.watch(levelProvider);
 
     return Scaffold(
-      backgroundColor: kBgLight,
+      backgroundColor: AppColors.bgLight,
       appBar: AppBar(
         backgroundColor: AppColors.primary,
         automaticallyImplyLeading: false,

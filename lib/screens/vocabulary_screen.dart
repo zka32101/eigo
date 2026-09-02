@@ -61,7 +61,7 @@ class _VocabularyScreenState extends ConsumerState<VocabularyScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kBgLight,
+      backgroundColor: AppColors.bgLight,
       appBar: AppBar(
         backgroundColor: AppColors.primary,
         title: const Text('📖 単語カード'),

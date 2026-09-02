@@ -38,7 +38,7 @@ class _StageIntroScreenState extends State<StageIntroScreen> {
     final intro = stageIntroData[widget.stage.id];
 
     return Scaffold(
-      backgroundColor: kBgLight,
+      backgroundColor: AppColors.bgLight,
       appBar: AppBar(
         backgroundColor: AppColors.primary,
         title: Text('${widget.stage.emoji} ${widget.stage.titleJa}'),

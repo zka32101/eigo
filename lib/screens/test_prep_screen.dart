@@ -166,7 +166,7 @@ class _TestPrepScreenState extends ConsumerState<TestPrepScreen> {
     }
 
     return Scaffold(
-      backgroundColor: kBgLight,
+      backgroundColor: AppColors.bgLight,
       appBar: AppBar(
         backgroundColor: AppColors.error,
         title: const Text('🎯 テスト対策モード'),
@@ -417,7 +417,7 @@ class _TestPrepScreenState extends ConsumerState<TestPrepScreen> {
                     AppSpacing.verticalSpacerXs,
                     Container(
                       padding: EdgeInsets.all(AppSpacing.xs),
-                      decoration: BoxDecoration(color: kBgLight, borderRadius: BorderRadius.circular(AppSizes.borderRadius)),
+                      decoration: BoxDecoration(color: AppColors.bgLight, borderRadius: BorderRadius.circular(AppSizes.borderRadius)),
                       child: Text('"$_recognizedText"',
                           style: AppTypography.labelLarge.copyWith(color: AppColors.textPrimary), textAlign: TextAlign.center),
                     ),

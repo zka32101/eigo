@@ -40,7 +40,7 @@ class AppComponentStyles {
   /// セカンダリボタンスタイル
   /// グリーン色のボタン、次点のアクション用
   static ButtonStyle get secondaryButton => ElevatedButton.styleFrom(
-        backgroundColor: kSecondaryColor,
+        backgroundColor: AppColors.accentGreen,
         foregroundColor:AppColors.textWhite,
         minimumSize: const Size(double.infinity, AppSizes.buttonHeight),
         shape: RoundedRectangleBorder(
@@ -154,20 +154,20 @@ class AppComponentStyles {
 
   /// 成功バッジの装飾
   static BoxDecoration get successBadgeDecoration => BoxDecoration(
-        color: kSuccessColor.withAlpha(25),
+        color: AppColors.accentGreen.withAlpha(25),
         borderRadius: BorderRadius.circular(AppSizes.badgeBorderRadius),
         border: Border.all(
-          color: kSuccessColor,
+          color: AppColors.accentGreen,
           width: 1,
         ),
       );
 
   /// 警告バッジの装飾
   static BoxDecoration get warningBadgeDecoration => BoxDecoration(
-        color: kWarningColor.withAlpha(25),
+        color: AppColors.accentOrange.withAlpha(25),
         borderRadius: BorderRadius.circular(AppSizes.badgeBorderRadius),
         border: Border.all(
-          color: kWarningColor,
+          color: AppColors.accentOrange,
           width: 1,
         ),
       );

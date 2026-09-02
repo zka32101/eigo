@@ -216,7 +216,7 @@ class _BackCard extends StatelessWidget {
             Container(
               padding: AppSpacing.allPaddingMd,
               decoration: BoxDecoration(
-                color: kBgLight,
+                color: AppColors.bgLight,
                 borderRadius: BorderRadius.circular(AppSizes.borderRadius),
               ),
               child: Text(
