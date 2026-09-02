@@ -3,10 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/plush_toy_model.dart';
 import '../providers/plush_toy_provider.dart';
 import '../providers/user_profile_provider.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
+import '../design_system/design_system.dart';
 
 class PlushToyScreen extends ConsumerStatefulWidget {
   const PlushToyScreen({Key? key}) : super(key: key);
@@ -89,7 +86,7 @@ class _PlushToyScreenState extends ConsumerState<PlushToyScreen> {
             children: [
               // タブバー
               Container(
-                color: Colors.white,
+                color: AppColors.textWhite,
                 child: TabBar(
                   controller: TabController(
                     length: 3,
@@ -97,9 +94,9 @@ class _PlushToyScreenState extends ConsumerState<PlushToyScreen> {
                     initialIndex: _selectedTab,
                   ),
                   onTap: (index) => setState(() => _selectedTab = index),
-                  indicatorColor: kPrimaryColor,
-                  labelColor: kPrimaryColor,
-                  unselectedLabelColor: kTextMuted,
+                  indicatorColor: AppColors.primary,
+                  labelColor: AppColors.primary,
+                  unselectedLabelColor: AppColors.textMuted,
                   tabs: const [
                     Tab(text: '会話'),
                     Tab(text: '進捗'),
@@ -220,9 +217,9 @@ class _SessionInitiationScreen extends ConsumerWidget {
         // 説明
         Container(
           decoration: BoxDecoration(
-            color: Colors.blue.shade50,
+            color: AppColors.readingColor.withAlpha(25),
             borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-            border: Border.all(color: Colors.blue.shade200),
+            border: Border.all(color: AppColors.readingColor.withAlpha(80)),
           ),
           padding: AppSpacing.allPaddingMd,
           child: Column(
@@ -235,7 +232,7 @@ class _SessionInitiationScreen extends ConsumerWidget {
               AppSpacing.verticalSpacerSm,
               Text(
                 '${character.customName}と英語で会話しましょう！\n画面を見なくても大丈夫です。',
-                style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
               ),
             ],
           ),
@@ -284,18 +281,18 @@ class _TopicCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final difficultyColor = topic.difficulty == 'beginner'
-        ? Colors.green
+        ? AppColors.accentGreen
         : topic.difficulty == 'intermediate'
-            ? Colors.orange
-            : Colors.red;
+            ? AppColors.accentOrange
+            : AppColors.error;
 
     return GestureDetector(
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.textWhite,
           borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-          border: Border.all(color: Colors.grey.shade200),
+          border: Border.all(color: AppColors.bgLight),
         ),
         padding: AppSpacing.allPaddingMd,
         child: Column(
@@ -330,7 +327,7 @@ class _TopicCard extends StatelessWidget {
             AppSpacing.verticalSpacerSm,
             Text(
               topic.description,
-              style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+              style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
@@ -338,7 +335,7 @@ class _TopicCard extends StatelessWidget {
             Text(
               '学習ポイント: ${topic.learningOutcomes.take(2).join(', ')}',
               style: AppTypography.bodySmall.copyWith(
-                color: kAccentGreen,
+                color: AppColors.accentGreen,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -391,7 +388,7 @@ class _SessionConversationScreenState
       children: [
         // セッション情報バー
         Container(
-          color: Colors.blue.shade50,
+          color: AppColors.readingColor.withAlpha(25),
           padding: AppSpacing.allPaddingMd,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -405,7 +402,7 @@ class _SessionConversationScreenState
                   ),
                   Text(
                     'スコア: ${widget.session.averageScore}点',
-                    style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                    style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                   ),
                 ],
               ),
@@ -414,8 +411,8 @@ class _SessionConversationScreenState
                 icon: const Icon(Icons.stop_circle),
                 label: const Text('終了'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red.shade400,
-                  foregroundColor: Colors.white,
+                  backgroundColor: AppColors.error,
+                  foregroundColor: AppColors.textWhite,
                 ),
               ),
             ],
@@ -466,7 +463,7 @@ class _SessionConversationScreenState
                       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
                       child: Container(
                         decoration: BoxDecoration(
-                          color: isUser ? Colors.blue.shade100 : Colors.grey.shade200,
+                          color: isUser ? AppColors.readingColor.withAlpha(50) : AppColors.bgLight,
                           borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                         ),
                         padding: AppSpacing.allPaddingMd,
@@ -489,8 +486,8 @@ class _SessionConversationScreenState
                                 ),
                                 decoration: BoxDecoration(
                                   color: message.pronunciationScore! >= 60
-                                      ? Colors.green.withOpacity(0.2)
-                                      : Colors.orange.withOpacity(0.2),
+                                      ? AppColors.accentGreen.withAlpha(50)
+                                      : AppColors.accentOrange.withAlpha(50),
                                   borderRadius:
                                       BorderRadius.circular(AppSizes.borderRadiusSmall),
                                 ),
@@ -498,8 +495,8 @@ class _SessionConversationScreenState
                                   '発音: ${message.pronunciationScore}点',
                                   style: AppTypography.bodySmall.copyWith(
                                     color: message.pronunciationScore! >= 60
-                                        ? Colors.green
-                                        : Colors.orange,
+                                        ? AppColors.accentGreen
+                                        : AppColors.accentOrange,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -532,7 +529,7 @@ class _SessionConversationScreenState
 
         // 音声制御パネル
         Container(
-          color: Colors.white,
+          color: AppColors.textWhite,
           padding: AppSpacing.allPaddingMd,
           child: Column(
             children: [
@@ -544,7 +541,7 @@ class _SessionConversationScreenState
                       setState(() => _isPlaying = !_isPlaying);
                       // 実装: 音声再生/停止ロジック
                     },
-                    backgroundColor: _isPlaying ? Colors.red : Colors.blue,
+                    backgroundColor: _isPlaying ? AppColors.error : AppColors.readingColor,
                     child: Icon(_isPlaying ? Icons.stop : Icons.mic),
                   ),
                   AppSpacing.horizontalSpacerLg,
@@ -574,7 +571,7 @@ class _SessionConversationScreenState
               AppSpacing.verticalSpacerMd,
               Text(
                 'ハンズフリーモード：マイクで話しかけてください',
-                style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -635,16 +632,16 @@ class _ProgressTab extends StatelessWidget {
               value: 'Lv ${progress.level}',
               subtitle: '次レベルまで: ${progress.experienceToNextLevel} XP',
               progress: 1 - (progress.experienceToNextLevel / 1000),
-              color: Colors.purple,
+              color: AppColors.accentPurple,
             ),
             AppSpacing.verticalSpacerMd,
 
             // マスター済みトピック
             Container(
               decoration: BoxDecoration(
-                color: Colors.green.shade50,
+                color: AppColors.accentGreen.withAlpha(25),
                 borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-                border: Border.all(color: Colors.green.shade200),
+                border: Border.all(color: AppColors.accentGreen.withAlpha(80)),
               ),
               padding: AppSpacing.allPaddingMd,
               child: Column(
@@ -671,7 +668,7 @@ class _ProgressTab extends StatelessWidget {
                               Text(
                                 '${(e.value * 100).toStringAsFixed(0)}%',
                                 style: AppTypography.bodySmall.copyWith(
-                                  color: kAccentGreen,
+                                  color: AppColors.accentGreen,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -683,9 +680,9 @@ class _ProgressTab extends StatelessWidget {
                             child: LinearProgressIndicator(
                               value: e.value,
                               minHeight: 6,
-                              backgroundColor: Colors.grey[200],
+                              backgroundColor: AppColors.bgLight,
                               valueColor:
-                                  const AlwaysStoppedAnimation<Color>(Colors.green),
+                                  const AlwaysStoppedAnimation<Color>(AppColors.accentGreen),
                             ),
                           ),
                         ],
@@ -702,7 +699,7 @@ class _ProgressTab extends StatelessWidget {
               title: 'ハンズフリー率',
               value: '${(progress.handsfreeRatio * 100).toStringAsFixed(0)}%',
               progress: progress.handsfreeRatio,
-              color: Colors.blue,
+              color: AppColors.readingColor,
             ),
             AppSpacing.verticalSpacerMd,
 
@@ -711,7 +708,7 @@ class _ProgressTab extends StatelessWidget {
               title: '発音改善度',
               value: '${(progress.pronunciationImprovement * 100).toStringAsFixed(0)}%',
               progress: progress.pronunciationImprovement,
-              color: Colors.orange,
+              color: AppColors.accentOrange,
             ),
             AppSpacing.verticalSpacerMd,
 
@@ -720,7 +717,7 @@ class _ProgressTab extends StatelessWidget {
               title: '親満足度',
               value: '${progress.parentRating.toStringAsFixed(1)}/5.0',
               progress: progress.parentRating / 5.0,
-              color: Colors.pink,
+              color: AppColors.accentPink,
             ),
           ],
         );
@@ -778,7 +775,7 @@ class _ProgressCard extends StatelessWidget {
             child: LinearProgressIndicator(
               value: progress.clamp(0.0, 1.0),
               minHeight: 8,
-              backgroundColor: Colors.grey[200],
+              backgroundColor: AppColors.bgLight,
               valueColor: AlwaysStoppedAnimation<Color>(color),
             ),
           ),
@@ -786,7 +783,7 @@ class _ProgressCard extends StatelessWidget {
             AppSpacing.verticalSpacerXs,
             Text(
               subtitle!,
-              style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+              style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
             ),
           ],
         ],
@@ -815,9 +812,9 @@ class _CharacterTab extends ConsumerWidget {
         // キャラクター情報
         Container(
           decoration: BoxDecoration(
-            color: Colors.blue.shade50,
+            color: AppColors.readingColor.withAlpha(25),
             borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-            border: Border.all(color: Colors.blue.shade200),
+            border: Border.all(color: AppColors.readingColor.withAlpha(80)),
           ),
           padding: AppSpacing.allPaddingMd,
           child: Column(
@@ -832,7 +829,7 @@ class _CharacterTab extends ConsumerWidget {
               AppSpacing.verticalSpacerXs,
               Text(
                 character.species.description,
-                style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
               ),
               AppSpacing.verticalSpacerMd,
               Row(
@@ -844,12 +841,12 @@ class _CharacterTab extends ConsumerWidget {
                         'Lv ${(character.experiencePoints ~/ 100) + 1}',
                         style: AppTypography.labelLarge.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: Colors.purple,
+                          color: AppColors.accentPurple,
                         ),
                       ),
                       Text(
                         'レベル',
-                        style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                        style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                       ),
                     ],
                   ),
@@ -859,12 +856,12 @@ class _CharacterTab extends ConsumerWidget {
                         '${character.affectionLevel}',
                         style: AppTypography.labelLarge.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: Colors.pink,
+                          color: AppColors.accentPink,
                         ),
                       ),
                       Text(
                         '好感度',
-                        style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                        style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                       ),
                     ],
                   ),
@@ -874,12 +871,12 @@ class _CharacterTab extends ConsumerWidget {
                         '${character.unlockedSkills.length}',
                         style: AppTypography.labelLarge.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: Colors.green,
+                          color: AppColors.accentGreen,
                         ),
                       ),
                       Text(
                         'スキル',
-                        style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                        style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                       ),
                     ],
                   ),
@@ -903,7 +900,7 @@ class _CharacterTab extends ConsumerWidget {
             children: character.unlockedSkills.map((skill) {
               return Chip(
                 label: Text(skill),
-                backgroundColor: Colors.green.shade100,
+                backgroundColor: AppColors.accentGreen.withAlpha(50),
               );
             }).toList(),
           ),
@@ -917,9 +914,9 @@ class _CharacterTab extends ConsumerWidget {
 
             return Container(
               decoration: BoxDecoration(
-                color: Colors.orange.shade50,
+                color: AppColors.accentOrange.withAlpha(25),
                 borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-                border: Border.all(color: Colors.orange.shade200),
+                border: Border.all(color: AppColors.accentOrange.withAlpha(80)),
               ),
               padding: AppSpacing.allPaddingMd,
               child: Column(
@@ -977,12 +974,12 @@ class _CharacterDisplayCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [Colors.purple.shade50, Colors.blue.shade50],
+          colors: [AppColors.accentPurple.withAlpha(25), AppColors.readingColor.withAlpha(25)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
-        border: Border.all(color: Colors.purple.shade200),
+        border: Border.all(color: AppColors.accentPurple.withAlpha(80)),
       ),
       padding: EdgeInsets.all(AppSpacing.xl),
       child: Column(
@@ -991,11 +988,11 @@ class _CharacterDisplayCard extends StatelessWidget {
             width: 150,
             height: 150,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.textWhite,
               borderRadius: BorderRadius.circular(AppSizes.borderRadius),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: AppColors.textPrimary.withOpacity(0.1),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),
@@ -1018,7 +1015,7 @@ class _CharacterDisplayCard extends StatelessWidget {
           AppSpacing.verticalSpacerXs,
           Text(
             character.species.displayName,
-            style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+            style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
           ),
         ],
       ),
@@ -1051,7 +1048,7 @@ class _StatRow extends StatelessWidget {
             value,
             style: AppTypography.bodySmall.copyWith(
               fontWeight: FontWeight.bold,
-              color: kAccentGreen,
+              color: AppColors.accentGreen,
             ),
           ),
         ],
@@ -1107,9 +1104,9 @@ class _CharacterSelectionDialogState extends State<_CharacterSelectionDialog> {
                   onTap: () => setState(() => _selectedSpecies = species),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: isSelected ? Colors.blue.shade100 : Colors.grey.shade50,
+                      color: isSelected ? AppColors.readingColor.withAlpha(50) : AppColors.bgLight.withAlpha(25),
                       border: Border.all(
-                        color: isSelected ? Colors.blue : Colors.grey.shade300,
+                        color: isSelected ? AppColors.readingColor : AppColors.bgLight,
                         width: isSelected ? 2 : 1,
                       ),
                       borderRadius: BorderRadius.circular(AppSizes.borderRadius),
@@ -1132,7 +1129,7 @@ class _CharacterSelectionDialogState extends State<_CharacterSelectionDialog> {
                               Text(
                                 species.description,
                                 style: AppTypography.bodySmall
-                                    .copyWith(color: kTextMuted),
+                                    .copyWith(color: AppColors.textMuted),
                               ),
                             ],
                           ),
