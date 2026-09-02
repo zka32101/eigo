@@ -1,7 +1,9 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../models/english_town_model.dart';
+import '../models/english_town_advanced.dart';
 import 'package:uuid/uuid.dart';
+import 'english_town_dialogue_variation_service.dart';
 
 /// Response from AI dialogue generation
 class NPCDialogueResponse {
@@ -56,6 +58,8 @@ class EnglishTownAIService {
   /// - Location and time of day
   /// - Conversation difficulty
   /// - Conversation history
+  /// - NPC mood state for dialogue variation
+  /// - Weather effects on dialogue tone
   Future<NPCDialogueResponse> generateNPCDialogue({
     required NPC npc,
     required Location location,
@@ -63,6 +67,8 @@ class EnglishTownAIService {
     required ConversationDifficulty difficulty,
     required String playerMessage,
     required List<ConversationTurn> conversationHistory,
+    NPCMoodState mood = NPCMoodState.neutral,
+    WeatherEffect weather = WeatherEffect.cloudy,
   }) async {
     const uuid = Uuid();
     final dialogueId = uuid.v4();
@@ -73,6 +79,8 @@ class EnglishTownAIService {
         location: location,
         timeOfDay: timeOfDay,
         difficulty: difficulty,
+        mood: mood,
+        weather: weather,
       );
 
       final messages = _buildConversationMessages(
@@ -191,8 +199,12 @@ class EnglishTownAIService {
     required Location location,
     required TimeOfDay timeOfDay,
     required ConversationDifficulty difficulty,
+    NPCMoodState mood = NPCMoodState.neutral,
+    WeatherEffect weather = WeatherEffect.cloudy,
   }) {
     final difficultyDesc = _getDifficultyDescription(difficulty);
+    final moodDesc = _getMoodDescription(mood);
+    final weatherDesc = _getWeatherDescription(weather);
 
     return '''You are ${npc.name}, a character in an English-Only Town learning game.
 
@@ -201,6 +213,11 @@ Character Profile:
 - Background: ${npc.backstory}
 - Location: ${location.name} (${location.description})
 - Current Time: ${_getTimeOfDayString(timeOfDay)}
+- Current Mood: $moodDesc
+- Weather: $weatherDesc
+
+Context Notes:
+${EnglishTownDialogueVariationService.getDialogueOpening(mood: mood, timeOfDay: timeOfDay, weather: weather)}
 
 Conversation Guidelines:
 1. Always respond ONLY in English - no translations or code-switching
@@ -210,6 +227,7 @@ Conversation Guidelines:
 5. Be encouraging and supportive of the learner
 6. Ask natural follow-up questions to continue the conversation
 7. If the learner makes a small mistake, continue naturally without stopping to correct
+8. Reflect the mood ($moodDesc) and weather ($weatherDesc) in your tone and suggestions
 
 Difficulty Level: $difficultyDesc
 - Easy: Simple present tense, basic vocabulary, common topics
@@ -362,6 +380,36 @@ Be encouraging. A score of 60+ indicates good understanding.''';
         return 'Evening (6 PM - 9 PM)';
       case TimeOfDay.night:
         return 'Night (9 PM - 6 AM)';
+    }
+  }
+
+  /// Get mood description for system prompt
+  String _getMoodDescription(NPCMoodState mood) {
+    switch (mood) {
+      case NPCMoodState.happy:
+        return 'Happy - cheerful, encouraging, enthusiastic';
+      case NPCMoodState.excited:
+        return 'Excited - energetic, very engaged, animated';
+      case NPCMoodState.neutral:
+        return 'Neutral - calm, balanced, professional';
+      case NPCMoodState.tired:
+        return 'Tired - less engaging, slower responses';
+      case NPCMoodState.sad:
+        return 'Sad - more reserved, less talkative';
+    }
+  }
+
+  /// Get weather description for system prompt
+  String _getWeatherDescription(WeatherEffect weather) {
+    switch (weather) {
+      case WeatherEffect.sunny:
+        return 'Sunny - bright, warm, outdoor activities';
+      case WeatherEffect.rainy:
+        return 'Rainy - cozy indoor atmosphere';
+      case WeatherEffect.cloudy:
+        return 'Cloudy - neutral, peaceful mood';
+      case WeatherEffect.snowy:
+        return 'Snowy - festive, magical atmosphere';
     }
   }
 }
