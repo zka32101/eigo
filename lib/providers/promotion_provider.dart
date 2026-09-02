@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../models/promotion_model.dart';
+import '../services/logger_service.dart';
 
 final promotionalCampaignsProvider =
     StateNotifierProvider<PromotionalCampaignsNotifier, List<PromotionalCampaign>>((ref) {
@@ -27,7 +28,7 @@ class PromotionalCampaignsNotifier extends StateNotifier<List<PromotionalCampaig
             .toList();
         state = campaigns;
       } catch (e) {
-        print('Error loading promotional campaigns: $e');
+        LoggerService.error('Error loading promotional campaigns', tag: 'PromotionalCampaignsNotifier', exception: e);
         state = defaultPromotionalCampaigns;
       }
     }
@@ -161,7 +162,7 @@ class PromotionInteractionNotifier extends StateNotifier<List<PromotionInteracti
             .toList();
         state = interactions;
       } catch (e) {
-        print('Error loading promotion interactions: $e');
+        LoggerService.error('Error loading promotion interactions', tag: 'PromotionInteractionNotifier', exception: e);
       }
     }
   }

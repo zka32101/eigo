@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../models/badge_model.dart';
 import 'progress_provider.dart';
+import '../services/logger_service.dart';
 
 class BadgeState {
   final List<EarnedBadge> earnedBadges;
@@ -111,7 +112,7 @@ class BadgeProgressNotifier extends StateNotifier<List<BadgeProgress>> {
             .toList();
         state = items;
       } catch (e) {
-        print('Error loading badge progress: $e');
+        LoggerService.error('Error loading badge progress', tag: 'BadgeProgressNotifier', exception: e);
       }
     } else {
       _initializeDefaultProgress();

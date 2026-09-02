@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../models/character_model.dart';
+import '../services/logger_service.dart';
 
 final characterCollectionProvider =
     StateNotifierProvider<CharacterCollectionNotifier, List<CollectedCharacter>>((ref) {
@@ -27,7 +28,7 @@ class CharacterCollectionNotifier extends StateNotifier<List<CollectedCharacter>
             .toList();
         state = items;
       } catch (e) {
-        print('Error loading character collection: $e');
+        LoggerService.error('Error loading character collection', tag: 'CharacterCollectionNotifier', exception: e);
       }
     }
   }
