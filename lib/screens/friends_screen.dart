@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../design_system/design_system.dart';
 import '../models/friend_model.dart';
 import '../providers/friend_provider.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
 
 class FriendsScreen extends ConsumerWidget {
   const FriendsScreen({super.key});
@@ -22,11 +19,11 @@ class FriendsScreen extends ConsumerWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('👥 フレンド'),
-          backgroundColor: kPrimaryColor,
+          backgroundColor: AppColors.primary,
           bottom: TabBar(
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.white70,
-            indicatorColor: kAccentOrange,
+            labelColor: AppColors.textWhite,
+            unselectedLabelColor: AppColors.textWhite.withOpacity(0.7),
+            indicatorColor: AppColors.accentOrange,
             tabs: [
               const Tab(text: 'フレンド一覧'),
               Tab(
@@ -40,14 +37,13 @@ class FriendsScreen extends ConsumerWidget {
                         child: Container(
                           padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: kAccentRed,
+                            color: AppColors.accentRed,
                             shape: BoxShape.circle,
                           ),
                           child: Text(
                             '$pendingCount',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
+                            style: AppTypography.labelSmall.copyWith(
+                              color: AppColors.textWhite,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -85,7 +81,7 @@ class _FriendListTab extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.people_outline, size: 64, color: kTextMuted),
+            const Icon(Icons.people_outline, size: 64, color: AppColors.textMuted),
             AppSpacing.verticalSpacerMd,
             const Text('フレンドがいません'),
             AppSpacing.verticalSpacerLg,
@@ -97,7 +93,7 @@ class _FriendListTab extends ConsumerWidget {
               icon: const Icon(Icons.person_add),
               label: const Text('フレンドを追加'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: kPrimaryColor,
+                backgroundColor: AppColors.primary,
               ),
             ),
           ],
@@ -138,7 +134,7 @@ class _FriendListTab extends ConsumerWidget {
         return Container(
           padding: AppSpacing.allPaddingMd,
           decoration: BoxDecoration(
-            color: kPrimaryColor.withAlpha(10),
+            color: AppColors.primary.withAlpha(10),
             borderRadius: BorderRadius.circular(AppSizes.borderRadius),
           ),
           child: Row(
@@ -147,7 +143,7 @@ class _FriendListTab extends ConsumerWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('フレンド数', style: AppTypography.labelSmall.copyWith(color: kTextMuted)),
+                  Text('フレンド数', style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted)),
                   AppSpacing.verticalSpacerXs,
                   Text('${friends.length}人', style: AppTypography.headlineMedium),
                 ],
@@ -158,22 +154,21 @@ class _FriendListTab extends ConsumerWidget {
                   vertical: AppSpacing.sm,
                 ),
                 decoration: BoxDecoration(
-                  color: kAccentGreen,
+                  color: AppColors.accentGreen,
                   borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
                 ),
                 child: Column(
                   children: [
                     Text(
                       '⭐ ${favoriteFriends.length}',
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: AppTypography.bodyLarge.copyWith(
+                        color: AppColors.textWhite,
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
                       ),
                     ),
-                    const Text(
+                    Text(
                       'お気に入り',
-                      style: TextStyle(color: Colors.white, fontSize: 10),
+                      style: AppTypography.labelSmall.copyWith(color: AppColors.textWhite),
                     ),
                   ],
                 ),
@@ -286,7 +281,7 @@ class _FriendRequestsTab extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.mail_outline, size: 64, color: kTextMuted),
+            const Icon(Icons.mail_outline, size: 64, color: AppColors.textMuted),
             AppSpacing.verticalSpacerMd,
             const Text('新しいリクエストはありません'),
           ],
@@ -432,7 +427,7 @@ class _SearchFriendsTabState extends State<_SearchFriendsTab> {
             Center(
               child: Column(
                 children: [
-                  const Icon(Icons.search, size: 64, color: kTextMuted),
+                  const Icon(Icons.search, size: 64, color: AppColors.textMuted),
                   AppSpacing.verticalSpacerMd,
                   const Text('ユーザー名で検索'),
                 ],
@@ -442,7 +437,7 @@ class _SearchFriendsTabState extends State<_SearchFriendsTab> {
             Center(
               child: Column(
                 children: [
-                  const Icon(Icons.person_off, size: 64, color: kTextMuted),
+                  const Icon(Icons.person_off, size: 64, color: AppColors.textMuted),
                   AppSpacing.verticalSpacerMd,
                   const Text('ユーザーが見つかりません'),
                 ],
@@ -454,7 +449,7 @@ class _SearchFriendsTabState extends State<_SearchFriendsTab> {
               children: [
                 Text(
                   '${_searchResults.length}件の検索結果',
-                  style: AppTypography.labelSmall.copyWith(color: kTextMuted),
+                  style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted),
                 ),
                 AppSpacing.verticalSpacerMd,
                 ..._searchResults.asMap().entries.map((entry) {
@@ -467,7 +462,7 @@ class _SearchFriendsTabState extends State<_SearchFriendsTab> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text('${friend.name}さんにフレンドリクエストを送信しました'),
-                            backgroundColor: kAccentGreen,
+                            backgroundColor: AppColors.accentGreen,
                           ),
                         );
                       },
@@ -500,12 +495,12 @@ class _FriendCard extends StatelessWidget {
       padding: AppSpacing.allPaddingMd,
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border.all(color: Colors.grey[300]!),
+        border: Border.all(color: AppColors.bgLight),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
       ),
       child: Row(
         children: [
-          Text(friend.avatar, style: const TextStyle(fontSize: 32)),
+          Text(friend.avatar, style: TextStyle(fontSize: AppTypography.displayMedium.fontSize)),
           AppSpacing.horizontalSpacerMd,
           Expanded(
             child: Column(
@@ -515,7 +510,7 @@ class _FriendCard extends StatelessWidget {
                 AppSpacing.verticalSpacerXs,
                 Text(
                   'Lv.1 • ${friend.totalStudyMinutes}分学習',
-                  style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 11),
+                  style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted),
                 ),
               ],
             ),
@@ -535,7 +530,7 @@ class _FriendCard extends StatelessWidget {
               PopupMenuItem(
                 child: Row(
                   children: const [
-                    Icon(Icons.delete_outline, size: 18, color: kAccentRed),
+                    Icon(Icons.delete_outline, size: 18, color: AppColors.accentRed),
                     AppSpacing.horizontalSpacerSm,
                     Text('削除'),
                   ],
@@ -567,13 +562,13 @@ class _FriendRequestCard extends StatelessWidget {
     return Container(
       padding: AppSpacing.allPaddingMd,
       decoration: BoxDecoration(
-        color: kAccentGreen.withAlpha(10),
-        border: Border.all(color: kAccentGreen.withAlpha(50)),
+        color: AppColors.accentGreen.withAlpha(10),
+        border: Border.all(color: AppColors.accentGreen.withAlpha(50)),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
       ),
       child: Row(
         children: [
-          Text(request.fromUserAvatar, style: const TextStyle(fontSize: 32)),
+          Text(request.fromUserAvatar, style: TextStyle(fontSize: AppTypography.displayMedium.fontSize)),
           AppSpacing.horizontalSpacerMd,
           Expanded(
             child: Column(
@@ -583,7 +578,7 @@ class _FriendRequestCard extends StatelessWidget {
                 AppSpacing.verticalSpacerXs,
                 Text(
                   'リクエスト受信',
-                  style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 11),
+                  style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted),
                 ),
               ],
             ),
@@ -595,10 +590,10 @@ class _FriendRequestCard extends StatelessWidget {
                 ElevatedButton(
                   onPressed: onAccept,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: kAccentGreen,
+                    backgroundColor: AppColors.accentGreen,
                     padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
                   ),
-                  child: const Text('承認', style: TextStyle(fontSize: 12)),
+                  child: Text('承認', style: AppTypography.labelSmall),
                 ),
                 AppSpacing.horizontalSpacerSm,
                 OutlinedButton(
@@ -606,7 +601,7 @@ class _FriendRequestCard extends StatelessWidget {
                   style: OutlinedButton.styleFrom(
                     padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
                   ),
-                  child: const Text('拒否', style: TextStyle(fontSize: 12)),
+                  child: Text('拒否', style: AppTypography.labelSmall),
                 ),
               ],
             ),
@@ -632,12 +627,12 @@ class _SearchResultCard extends StatelessWidget {
       padding: AppSpacing.allPaddingMd,
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border.all(color: Colors.grey[300]!),
+        border: Border.all(color: AppColors.bgLight),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
       ),
       child: Row(
         children: [
-          Text(friend.avatar, style: const TextStyle(fontSize: 32)),
+          Text(friend.avatar, style: TextStyle(fontSize: AppTypography.displayMedium.fontSize)),
           AppSpacing.horizontalSpacerMd,
           Expanded(
             child: Column(
@@ -647,17 +642,17 @@ class _SearchResultCard extends StatelessWidget {
                 AppSpacing.verticalSpacerXs,
                 Text(
                   'Lv.${friend.level} • ${friend.totalStudyMinutes}分学習',
-                  style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 11),
+                  style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted),
                 ),
               ],
             ),
           ),
           ElevatedButton.icon(
             onPressed: onAdd,
-            icon: const Icon(Icons.person_add, size: 16),
+            icon: const Icon(Icons.person_add, size: AppSizes.iconSizeSmall),
             label: const Text('追加'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: kPrimaryColor,
+              backgroundColor: AppColors.primary,
             ),
           ),
         ],
