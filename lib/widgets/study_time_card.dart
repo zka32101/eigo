@@ -1,3 +1,4 @@
+import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import '../providers/study_time_provider.dart';
 
@@ -38,12 +39,12 @@ class StudyTimeCard extends StatelessWidget {
             children: [
               const Text(
                 '今日の学習時間',
-                style: TextStyle(color: Colors.white70, fontSize: 12),
+                style: TextStyle(color: AppColors.textWhite, fontSize: 12),
               ),
               Text(
                 studyTime.todayDisplay,
                 style: const TextStyle(
-                  color: Colors.white,
+                  color:AppColors.textWhite,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
@@ -52,12 +53,12 @@ class StudyTimeCard extends StatelessWidget {
           ),
           const Spacer(),
           if (minutes >= 10)
-            const Icon(Icons.check_circle, color: Colors.white, size: 24)
+            const Icon(Icons.check_circle, color: AppColors.textWhite, size: 24)
           else
             Text(
               '${10 - minutes}分',
               style: const TextStyle(
-                color: Colors.white70,
+                color: AppColors.textWhite,
                 fontSize: 12,
               ),
             ),

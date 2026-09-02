@@ -1,6 +1,6 @@
+import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import '../models/analytics_model.dart';
-import '../theme/app_theme.dart';
 
 class LearningStatsCard extends StatelessWidget {
   final MonthlyStats monthlyStats;
@@ -27,21 +27,21 @@ class LearningStatsCard extends StatelessWidget {
                   monthlyStats.month,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: kPrimaryColor,
+                        color: AppColors.primary,
                       ),
                 ),
                 const Spacer(),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
-                    color: kPrimaryColor.withOpacity(0.1),
+                    color: AppColors.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
                     '正答率: ${monthlyStats.accuracyPercentage.toStringAsFixed(1)}%',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: kPrimaryColor,
+                      color: AppColors.primary,
                     ),
                   ),
                 ),
@@ -91,21 +91,21 @@ class LearningStatsCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: kSecondaryColor.withOpacity(0.1),
+                color: AppColors.accentGreen.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
                 children: [
                   Icon(
                     Icons.calendar_today,
-                    color: kSecondaryColor,
+                    color: AppColors.accentGreen,
                     size: 20,
                   ),
                   const SizedBox(width: 8),
                   Text(
                     '学習日数: ${monthlyStats.studyDaysCount}日',
                     style: TextStyle(
-                      color: kSecondaryColor,
+                      color: AppColors.accentGreen,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -136,7 +136,7 @@ class _StatsTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey[300]!),
+        border: Border.all(color: AppColors.bgLight),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -151,7 +151,7 @@ class _StatsTile extends StatelessWidget {
             title,
             style: TextStyle(
               fontSize: 12,
-              color: Colors.grey[600],
+              color: AppColors.textMuted,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -161,7 +161,7 @@ class _StatsTile extends StatelessWidget {
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: kPrimaryColor,
+              color: AppColors.primary,
             ),
           ),
           const SizedBox(height: 2),
@@ -169,7 +169,7 @@ class _StatsTile extends StatelessWidget {
             subtitle,
             style: TextStyle(
               fontSize: 10,
-              color: Colors.grey[500],
+              color: AppColors.textMuted,
             ),
           ),
         ],
