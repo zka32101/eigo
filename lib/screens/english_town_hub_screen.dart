@@ -4,6 +4,8 @@ import '../models/english_town_model.dart';
 import '../providers/english_town_provider.dart';
 import '../design_system/design_system.dart';
 import 'english_town_conversation_screen.dart';
+import 'english_town_analytics_screen.dart';
+import 'english_town_settings_screen.dart';
 
 /// English-Only Town Hub Screen
 ///
@@ -48,6 +50,34 @@ class _EnglishTownHubScreenState extends ConsumerState<EnglishTownHubScreen>
       appBar: AppBar(
         title: const Text('🕹️ English-Only Town'),
         elevation: 0,
+        actions: [
+          // Analytics button
+          IconButton(
+            icon: const Icon(Icons.bar_chart),
+            tooltip: 'Analytics',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const EnglishTownAnalyticsScreen(),
+                ),
+              );
+            },
+          ),
+          // Settings button
+          IconButton(
+            icon: const Icon(Icons.settings),
+            tooltip: 'Settings',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const EnglishTownSettingsScreen(),
+                ),
+              );
+            },
+          ),
+        ],
         bottom: TabBar(
           controller: _tabController,
           tabs: const [
