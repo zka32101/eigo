@@ -579,9 +579,11 @@ class _SubjectsTab extends ConsumerWidget {
       ('sansu-kore', '🧮 算数コレ！', Colors.green),
     ];
 
-    return ListView(
+    return ListView.builder(
       padding: AppSpacing.allPaddingMd,
-      children: apps.map((app) {
+      itemCount: apps.length,
+      itemBuilder: (context, index) {
+        final app = apps[index];
         final (appId, displayName, color) = app;
         final isConnected = profile.connectedApps[appId] ?? false;
         final statsAsync = ref.watch(appStatisticsProvider(appId));
@@ -668,7 +670,7 @@ class _SubjectsTab extends ConsumerWidget {
             error: (err, stack) => const SizedBox(),
           ),
         );
-      }).toList(),
+      },
     );
   }
 }
@@ -813,14 +815,16 @@ class _ChallengesTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final challengesAsync = ref.watch(crossAppChallengesProvider);
 
-    return ListView(
+    return ListView.builder(
       padding: AppSpacing.allPaddingMd,
-      children: challengesAsync.map((challenge) {
+      itemCount: challengesAsync.length,
+      itemBuilder: (context, index) {
+        final challenge = challengesAsync[index];
         return Padding(
           padding: EdgeInsets.only(bottom: AppSpacing.md),
           child: _ChallengeCard(challenge: challenge),
         );
-      }).toList(),
+      },
     );
   }
 }
