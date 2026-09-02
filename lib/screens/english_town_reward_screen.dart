@@ -5,6 +5,7 @@ import '../models/english_town_advanced.dart';
 import '../providers/english_town_provider.dart';
 import '../providers/english_town_rewards_provider.dart';
 import '../providers/english_town_polish_provider.dart';
+import '../providers/english_town_notification_provider.dart';
 import '../design_system/design_system.dart';
 import '../widgets/animated_reward_card.dart';
 
@@ -40,6 +41,20 @@ class EnglishTownRewardScreen extends ConsumerWidget {
     final particlesEnabled = ref.watch(particleEffectsEnabledProvider);
     final animationConfig = ref.watch(rewardAnimationConfigProvider);
     final animationMultiplier = ref.watch(animationDurationMultiplierProvider);
+
+    // Create notifications for achievements unlocked
+    if (achievementsUnlocked.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        for (final achievement in achievementsUnlocked) {
+          final notification = EnglishTownNotificationService()
+              .createAchievementNotification(
+            achievementTitle: achievement,
+            rewardXp: 100, // TODO: Get actual reward XP
+          );
+          ref.read(notificationServiceProvider).addNotification(notification);
+        }
+      });
+    }
 
     return Scaffold(
       backgroundColor: AppColors.bgLight,

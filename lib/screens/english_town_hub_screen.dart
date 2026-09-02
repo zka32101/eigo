@@ -9,6 +9,7 @@ import 'english_town_settings_screen.dart';
 import 'english_town_leaderboard_screen.dart';
 import 'english_town_leaderboard_realtime_screen.dart';
 import 'english_town_notifications_screen.dart';
+import 'english_town_activity_feed_screen.dart';
 import '../widgets/notification_bell_widget.dart';
 
 /// English-Only Town Hub Screen
@@ -90,6 +91,20 @@ class _EnglishTownHubScreenState extends ConsumerState<EnglishTownHubScreen>
                 context,
                 MaterialPageRoute(
                   builder: (context) => const EnglishTownAnalyticsScreen(),
+                ),
+              );
+            },
+          ),
+          // Activity feed button
+          IconButton(
+            icon: const Icon(Icons.feed),
+            tooltip: 'Activity Feed',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      const EnglishTownActivityFeedScreen(),
                 ),
               );
             },
