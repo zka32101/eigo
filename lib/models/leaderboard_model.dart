@@ -1,197 +1,360 @@
-/// ランキングエントリー
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+// ===== Enums =====
+
+/// Leaderboard grouping types
+enum LeaderboardGroupType {
+  overall,      // All users globally
+  byGrade,      // Separate by grade level
+  byStartMonth, // Separate by cohort month
+  combined,     // Grade × Start month combinations
+}
+
+// ===== Leaderboard Entry =====
+
+/// Single entry in a leaderboard ranking
 class LeaderboardEntry {
-  final int rank;
   final String userId;
-  final String name;
-  final String avatar;
-  final int score;
+  final String userName;
+  final int rank;
+  final int totalXp;
+  final int achievementScore;
   final int level;
-  final int totalStudyMinutes;
-  final int longestStreak;
-  final DateTime lastActiveAt;
-  final bool isCurrentUser;
+  final int grade;
+  final DateTime startDate;
+  final int streak;
+  final DateTime lastActivityAt;
 
   const LeaderboardEntry({
-    required this.rank,
     required this.userId,
-    required this.name,
-    required this.avatar,
-    required this.score,
+    required this.userName,
+    required this.rank,
+    required this.totalXp,
+    required this.achievementScore,
     required this.level,
-    required this.totalStudyMinutes,
-    required this.longestStreak,
-    required this.lastActiveAt,
-    this.isCurrentUser = false,
+    required this.grade,
+    required this.startDate,
+    required this.streak,
+    required this.lastActivityAt,
   });
 
-  LeaderboardEntry copyWith({
-    int? rank,
-    String? userId,
-    String? name,
-    String? avatar,
-    int? score,
-    int? level,
-    int? totalStudyMinutes,
-    int? longestStreak,
-    DateTime? lastActiveAt,
-    bool? isCurrentUser,
-  }) {
+  /// Calculate combined score (70% XP + 30% Achievements)
+  double getScore() {
+    return (totalXp * 0.7) + (achievementScore * 0.3);
+  }
+
+  /// Convert to Firestore document
+  Map<String, dynamic> toFirestore() {
+    return {
+      'userId': userId,
+      'userName': userName,
+      'rank': rank,
+      'totalXp': totalXp,
+      'achievementScore': achievementScore,
+      'level': level,
+      'grade': grade,
+      'startDate': Timestamp.fromDate(startDate),
+      'streak': streak,
+      'score': getScore(),
+      'lastActivityAt': Timestamp.fromDate(lastActivityAt),
+    };
+  }
+
+  /// Create from Firestore document
+  factory LeaderboardEntry.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
     return LeaderboardEntry(
-      rank: rank ?? this.rank,
-      userId: userId ?? this.userId,
-      name: name ?? this.name,
-      avatar: avatar ?? this.avatar,
-      score: score ?? this.score,
-      level: level ?? this.level,
-      totalStudyMinutes: totalStudyMinutes ?? this.totalStudyMinutes,
-      longestStreak: longestStreak ?? this.longestStreak,
-      lastActiveAt: lastActiveAt ?? this.lastActiveAt,
-      isCurrentUser: isCurrentUser ?? this.isCurrentUser,
+      userId: data['userId'] as String,
+      userName: data['userName'] as String,
+      rank: data['rank'] as int,
+      totalXp: data['totalXp'] as int,
+      achievementScore: data['achievementScore'] as int,
+      level: data['level'] as int,
+      grade: data['grade'] as int,
+      startDate: (data['startDate'] as Timestamp).toDate(),
+      streak: data['streak'] as int,
+      lastActivityAt: (data['lastActivityAt'] as Timestamp).toDate(),
     );
   }
 
-  Map<String, dynamic> toJson() => {
-        'rank': rank,
-        'userId': userId,
-        'name': name,
-        'avatar': avatar,
-        'score': score,
-        'level': level,
-        'totalStudyMinutes': totalStudyMinutes,
-        'longestStreak': longestStreak,
-        'lastActiveAt': lastActiveAt.toIso8601String(),
-        'isCurrentUser': isCurrentUser,
-      };
-
-  factory LeaderboardEntry.fromJson(Map<String, dynamic> json) =>
-      LeaderboardEntry(
-        rank: json['rank'] as int,
-        userId: json['userId'] as String,
-        name: json['name'] as String,
-        avatar: json['avatar'] as String,
-        score: json['score'] as int,
-        level: json['level'] as int,
-        totalStudyMinutes: json['totalStudyMinutes'] as int,
-        longestStreak: json['longestStreak'] as int,
-        lastActiveAt: DateTime.parse(json['lastActiveAt'] as String),
-        isCurrentUser: json['isCurrentUser'] as bool? ?? false,
-      );
+  LeaderboardEntry copyWith({
+    String? userId,
+    String? userName,
+    int? rank,
+    int? totalXp,
+    int? achievementScore,
+    int? level,
+    int? grade,
+    DateTime? startDate,
+    int? streak,
+    DateTime? lastActivityAt,
+  }) {
+    return LeaderboardEntry(
+      userId: userId ?? this.userId,
+      userName: userName ?? this.userName,
+      rank: rank ?? this.rank,
+      totalXp: totalXp ?? this.totalXp,
+      achievementScore: achievementScore ?? this.achievementScore,
+      level: level ?? this.level,
+      grade: grade ?? this.grade,
+      startDate: startDate ?? this.startDate,
+      streak: streak ?? this.streak,
+      lastActivityAt: lastActivityAt ?? this.lastActivityAt,
+    );
+  }
 }
 
-/// ランキングタイプ
-enum LeaderboardType {
-  global, // グローバルランキング
-  friends, // フレンドランキング
-  weekly, // 週間ランキング
-  stage, // ステージ別ランキング
-}
+// ===== Grouped Leaderboard =====
 
-/// ランキングデータ
-class LeaderboardData {
-  final LeaderboardType type;
+/// Leaderboard for a specific grouping
+class GroupedLeaderboard {
+  final LeaderboardGroupType groupType;
+  final String groupName;
   final List<LeaderboardEntry> entries;
   final LeaderboardEntry? currentUserEntry;
   final DateTime updatedAt;
 
-  const LeaderboardData({
-    required this.type,
+  const GroupedLeaderboard({
+    required this.groupType,
+    required this.groupName,
     required this.entries,
     this.currentUserEntry,
     required this.updatedAt,
   });
 
-  Map<String, dynamic> toJson() => {
-        'type': type.toString(),
-        'entries': entries.map((e) => e.toJson()).toList(),
-        'currentUserEntry': currentUserEntry?.toJson(),
-        'updatedAt': updatedAt.toIso8601String(),
-      };
+  /// Get top score in this leaderboard
+  double get topScore => entries.isNotEmpty ? entries.first.getScore() : 0;
 
-  factory LeaderboardData.fromJson(Map<String, dynamic> json) =>
-      LeaderboardData(
-        type: LeaderboardType.values.firstWhere(
-          (e) => e.toString() == json['type'],
-          orElse: () => LeaderboardType.global,
-        ),
-        entries: (json['entries'] as List<dynamic>)
-            .map((e) => LeaderboardEntry.fromJson(e as Map<String, dynamic>))
-            .toList(),
-        currentUserEntry: json['currentUserEntry'] != null
-            ? LeaderboardEntry.fromJson(
-                json['currentUserEntry'] as Map<String, dynamic>)
-            : null,
-        updatedAt: DateTime.parse(json['updatedAt'] as String),
-      );
+  /// Get user's rank position (1-based)
+  int? getUserRank(String userId) {
+    for (int i = 0; i < entries.length; i++) {
+      if (entries[i].userId == userId) {
+        return i + 1;
+      }
+    }
+    return null;
+  }
+
+  /// Get number of entries
+  int get entryCount => entries.length;
+
+  /// Check if user is in top 10
+  bool isUserInTop10(String userId) {
+    final rank = getUserRank(userId);
+    return rank != null && rank <= 10;
+  }
+
+  GroupedLeaderboard copyWith({
+    LeaderboardGroupType? groupType,
+    String? groupName,
+    List<LeaderboardEntry>? entries,
+    LeaderboardEntry? currentUserEntry,
+    DateTime? updatedAt,
+  }) {
+    return GroupedLeaderboard(
+      groupType: groupType ?? this.groupType,
+      groupName: groupName ?? this.groupName,
+      entries: entries ?? this.entries,
+      currentUserEntry: currentUserEntry ?? this.currentUserEntry,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
 }
 
-/// ユーザー比較データ
-class UserComparison {
-  final String userId1;
-  final String name1;
-  final String avatar1;
-  final int level1;
-  final int score1;
-  final int studyMinutes1;
+// ===== Grade Information =====
 
-  final String userId2;
-  final String name2;
-  final String avatar2;
-  final int level2;
-  final int score2;
-  final int studyMinutes2;
+/// Grade promotion record
+class GradePromotion {
+  final DateTime promotionDate;
+  final int previousGrade;
+  final int newGrade;
+  final String reason;
+  final String? performedBy;
 
-  const UserComparison({
-    required this.userId1,
-    required this.name1,
-    required this.avatar1,
-    required this.level1,
-    required this.score1,
-    required this.studyMinutes1,
-    required this.userId2,
-    required this.name2,
-    required this.avatar2,
-    required this.level2,
-    required this.score2,
-    required this.studyMinutes2,
+  const GradePromotion({
+    required this.promotionDate,
+    required this.previousGrade,
+    required this.newGrade,
+    required this.reason,
+    this.performedBy,
   });
 
-  // スコア差分（userId1 - userId2）
-  int get scoreDifference => score1 - score2;
+  Map<String, dynamic> toMap() {
+    return {
+      'promotionDate': Timestamp.fromDate(promotionDate),
+      'previousGrade': previousGrade,
+      'newGrade': newGrade,
+      'reason': reason,
+      'performedBy': performedBy,
+    };
+  }
 
-  // レベル差分
-  int get levelDifference => level1 - level2;
+  factory GradePromotion.fromMap(Map<String, dynamic> map) {
+    return GradePromotion(
+      promotionDate: (map['promotionDate'] as Timestamp).toDate(),
+      previousGrade: map['previousGrade'] as int,
+      newGrade: map['newGrade'] as int,
+      reason: map['reason'] as String,
+      performedBy: map['performedBy'] as String?,
+    );
+  }
+}
 
-  // 勉強時間差分（分）
-  int get studyMinutesDifference => studyMinutes1 - studyMinutes2;
+/// User grade information and history
+class UserGradeInfo {
+  final String userId;
+  final int currentGrade;
+  final DateTime startDate;
+  final List<GradePromotion> promotionHistory;
+  final DateTime? nextPromotionDate;
 
-  Map<String, dynamic> toJson() => {
-        'userId1': userId1,
-        'name1': name1,
-        'avatar1': avatar1,
-        'level1': level1,
-        'score1': score1,
-        'studyMinutes1': studyMinutes1,
-        'userId2': userId2,
-        'name2': name2,
-        'avatar2': avatar2,
-        'level2': level2,
-        'score2': score2,
-        'studyMinutes2': studyMinutes2,
-      };
+  const UserGradeInfo({
+    required this.userId,
+    required this.currentGrade,
+    required this.startDate,
+    required this.promotionHistory,
+    this.nextPromotionDate,
+  });
 
-  factory UserComparison.fromJson(Map<String, dynamic> json) =>
-      UserComparison(
-        userId1: json['userId1'] as String,
-        name1: json['name1'] as String,
-        avatar1: json['avatar1'] as String,
-        level1: json['level1'] as int,
-        score1: json['score1'] as int,
-        studyMinutes1: json['studyMinutes1'] as int,
-        userId2: json['userId2'] as String,
-        name2: json['name2'] as String,
-        avatar2: json['avatar2'] as String,
-        level2: json['level2'] as int,
-        score2: json['score2'] as int,
-        studyMinutes2: json['studyMinutes2'] as int,
-      );
+  bool canPromote(int maxGrade) => currentGrade < maxGrade;
+
+  bool shouldPromoteToday(DateTime today) {
+    if (nextPromotionDate == null) return false;
+    return today.year > nextPromotionDate!.year ||
+        (today.year == nextPromotionDate!.year &&
+            today.month == nextPromotionDate!.month &&
+            today.day >= nextPromotionDate!.day);
+  }
+
+  GradePromotion? get lastPromotion =>
+      promotionHistory.isNotEmpty ? promotionHistory.first : null;
+
+  int? getDaysUntilPromotion(DateTime now) {
+    if (nextPromotionDate == null) return null;
+    return nextPromotionDate!.difference(now).inDays;
+  }
+
+  Map<String, dynamic> toFirestore() {
+    return {
+      'userId': userId,
+      'currentGrade': currentGrade,
+      'startDate': Timestamp.fromDate(startDate),
+      'promotionHistory': promotionHistory.map((p) => p.toMap()).toList(),
+      'nextPromotionDate': nextPromotionDate != null
+          ? Timestamp.fromDate(nextPromotionDate!)
+          : null,
+    };
+  }
+
+  factory UserGradeInfo.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    return UserGradeInfo(
+      userId: doc.id,
+      currentGrade: data['currentGrade'] as int,
+      startDate: (data['startDate'] as Timestamp).toDate(),
+      promotionHistory: (data['promotionHistory'] as List<dynamic>?)
+              ?.map((p) => GradePromotion.fromMap(p as Map<String, dynamic>))
+              .toList() ??
+          [],
+      nextPromotionDate: data['nextPromotionDate'] != null
+          ? (data['nextPromotionDate'] as Timestamp).toDate()
+          : null,
+    );
+  }
+
+  UserGradeInfo copyWith({
+    String? userId,
+    int? currentGrade,
+    DateTime? startDate,
+    List<GradePromotion>? promotionHistory,
+    DateTime? nextPromotionDate,
+  }) {
+    return UserGradeInfo(
+      userId: userId ?? this.userId,
+      currentGrade: currentGrade ?? this.currentGrade,
+      startDate: startDate ?? this.startDate,
+      promotionHistory: promotionHistory ?? this.promotionHistory,
+      nextPromotionDate: nextPromotionDate ?? this.nextPromotionDate,
+    );
+  }
+}
+
+/// Global grade promotion configuration
+class GradePromotionConfig {
+  final String promotionDateStr;
+  final bool isEnabled;
+  final int maxGrade;
+  final DateTime? lastCheckDate;
+
+  const GradePromotionConfig({
+    required this.promotionDateStr,
+    required this.isEnabled,
+    required this.maxGrade,
+    this.lastCheckDate,
+  });
+
+  DateTime nextPromotionDate(DateTime currentDate) {
+    final parts = promotionDateStr.split('-');
+    final promotionMonth = int.parse(parts[0]);
+    final promotionDay = int.parse(parts[1]);
+
+    final current = DateTime(currentDate.year, promotionMonth, promotionDay);
+    if (currentDate.isBefore(current)) {
+      return current;
+    } else {
+      return DateTime(currentDate.year + 1, promotionMonth, promotionDay);
+    }
+  }
+
+  bool shouldPromoteToday(DateTime today) {
+    if (!isEnabled) return false;
+    final parts = promotionDateStr.split('-');
+    final promotionMonth = int.parse(parts[0]);
+    final promotionDay = int.parse(parts[1]);
+
+    return today.month == promotionMonth && today.day == promotionDay;
+  }
+
+  bool isPromotionDay(DateTime date) {
+    final parts = promotionDateStr.split('-');
+    final promotionMonth = int.parse(parts[0]);
+    final promotionDay = int.parse(parts[1]);
+
+    return date.month == promotionMonth && date.day == promotionDay;
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'promotionDateStr': promotionDateStr,
+      'isEnabled': isEnabled,
+      'maxGrade': maxGrade,
+      'lastCheckDate':
+          lastCheckDate != null ? Timestamp.fromDate(lastCheckDate!) : null,
+    };
+  }
+
+  factory GradePromotionConfig.fromMap(Map<String, dynamic> map) {
+    return GradePromotionConfig(
+      promotionDateStr: map['promotionDateStr'] as String,
+      isEnabled: map['isEnabled'] as bool? ?? true,
+      maxGrade: map['maxGrade'] as int? ?? 6,
+      lastCheckDate: map['lastCheckDate'] != null
+          ? (map['lastCheckDate'] as Timestamp).toDate()
+          : null,
+    );
+  }
+
+  GradePromotionConfig copyWith({
+    String? promotionDateStr,
+    bool? isEnabled,
+    int? maxGrade,
+    DateTime? lastCheckDate,
+  }) {
+    return GradePromotionConfig(
+      promotionDateStr: promotionDateStr ?? this.promotionDateStr,
+      isEnabled: isEnabled ?? this.isEnabled,
+      maxGrade: maxGrade ?? this.maxGrade,
+      lastCheckDate: lastCheckDate ?? this.lastCheckDate,
+    );
+  }
 }
