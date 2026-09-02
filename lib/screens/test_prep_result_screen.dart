@@ -47,12 +47,12 @@ class _TestPrepResultScreenState extends State<TestPrepResultScreen> {
         : isPassed
             ? '弱点を改善しています！'
             : 'もう一度挑戦しよう！';
-    final color = isPassed ? kAccentGreen : kAccentOrange;
+    final color = isPassed ? AppColors.accentGreen : AppColors.accentOrange;
 
     return Scaffold(
       backgroundColor: kBgLight,
       appBar: AppBar(
-        backgroundColor: kAccentRed,
+        backgroundColor: AppColors.error,
         automaticallyImplyLeading: false,
         title: const Text('🎯 テスト対策 - 結果'),
       ),
@@ -80,7 +80,7 @@ class _TestPrepResultScreenState extends State<TestPrepResultScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            _Stat('スコア', '$score点', kAccentRed),
+                            _Stat('スコア', '$score点', AppColors.error),
                             _Stat('正解', '$correct / $total', color),
                             _Stat('正解率', '${(accuracy * 100).round()}%', color),
                           ],
@@ -99,22 +99,22 @@ class _TestPrepResultScreenState extends State<TestPrepResultScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('📈 弱点対策の効果',
-                            style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold, color: kAccentGreen)),
+                            style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold, color: AppColors.accentGreen)),
                         AppSpacing.verticalSpacerSm,
                         if (isExcellent)
                           Text(
                             '素晴らしい！弱点問題を90%以上正解しました。\nこれらの問題はもはや弱点ではありません！',
-                            style: AppTypography.bodySmall.copyWith(color: kTextDark, height: 1.5),
+                            style: AppTypography.bodySmall.copyWith(color: AppColors.textPrimary, height: 1.5),
                           )
                         else if (isPassed)
                           Text(
                             '弱点問題への対策ができています。\n繰り返し練習することで、さらに定着します。',
-                            style: AppTypography.bodySmall.copyWith(color: kTextDark, height: 1.5),
+                            style: AppTypography.bodySmall.copyWith(color: AppColors.textPrimary, height: 1.5),
                           )
                         else
                           Text(
                             'まだ弱点が残っています。\n聞いてから真似する練習を繰り返しましょう。',
-                            style: AppTypography.bodySmall.copyWith(color: kTextDark, height: 1.5),
+                            style: AppTypography.bodySmall.copyWith(color: AppColors.textPrimary, height: 1.5),
                           ),
                       ],
                     ),
@@ -132,7 +132,7 @@ class _TestPrepResultScreenState extends State<TestPrepResultScreen> {
                       Navigator.of(context).pushNamed('/test-prep');
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: kAccentRed,
+                      backgroundColor: AppColors.error,
                       padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
                     ),
                   ),
@@ -146,7 +146,7 @@ class _TestPrepResultScreenState extends State<TestPrepResultScreen> {
                     onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/home', (_) => false),
                     style: OutlinedButton.styleFrom(
                       padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
-                      foregroundColor: kPrimaryColor,
+                      foregroundColor: AppColors.primary,
                     ),
                   ),
                 ),
@@ -160,7 +160,7 @@ class _TestPrepResultScreenState extends State<TestPrepResultScreen> {
               confettiController: _confetti,
               blastDirectionality: BlastDirectionality.explosive,
               shouldLoop: false,
-              colors: const [kAccentGreen, kPrimaryColor, kAccentOrange],
+              colors: const [AppColors.accentGreen, AppColors.primary, AppColors.accentOrange],
             ),
           ),
         ],
@@ -180,7 +180,7 @@ class _Stat extends StatelessWidget {
     return Column(
       children: [
         Text(value, style: AppTypography.headlineSmall.copyWith(fontWeight: FontWeight.bold, color: color)),
-        Text(label, style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+        Text(label, style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
       ],
     );
   }

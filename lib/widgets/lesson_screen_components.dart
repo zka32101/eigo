@@ -223,7 +223,7 @@ class ImprovedChoiceArea extends StatelessWidget {
                   borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                   border: Border.all(
                     color: isWrong
-                        ? kErrorColor
+                        ? AppColors.error
                         : isCorrect && (answered && isSelected)
                             ? AppColors.accentGreen
                             : isSelected
@@ -234,7 +234,7 @@ class ImprovedChoiceArea extends StatelessWidget {
                   boxShadow: [
                     BoxShadow(
                       color: isSelected
-                          ? (isWrong ? kErrorColor : AppColors.primary).withAlpha(51)
+                          ? (isWrong ? AppColors.error : AppColors.primary).withAlpha(51)
                           : Colors.transparent,
                       blurRadius: 4,
                       offset: const Offset(0, 2),
@@ -251,8 +251,8 @@ class ImprovedChoiceArea extends StatelessWidget {
                         height: 36,
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? (isWrong ? kErrorColor : AppColors.primary)
-                              : kBgLight,
+                              ? (isWrong ? AppColors.error : AppColors.primary)
+                              : AppColors.bgLight,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Center(
@@ -283,7 +283,7 @@ class ImprovedChoiceArea extends StatelessWidget {
                       if (answered && isSelected)
                         Icon(
                           isCorrect ? Icons.check_circle : Icons.cancel,
-                          color: isCorrect ? AppColors.accentGreen : kErrorColor,
+                          color: isCorrect ? AppColors.accentGreen : AppColors.error,
                           size: 24,
                         ),
                     ],
@@ -318,9 +318,9 @@ class ImprovedAnswerExplanation extends StatelessWidget {
       decoration: BoxDecoration(
         color: isCorrect
             ? AppColors.accentGreen.withAlpha(25)
-            : kErrorColor.withAlpha(25),
+            : AppColors.error.withAlpha(25),
         border: Border.all(
-          color: isCorrect ? AppColors.accentGreen : kErrorColor,
+          color: isCorrect ? AppColors.accentGreen : AppColors.error,
           width: 2,
         ),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
@@ -336,7 +336,7 @@ class ImprovedAnswerExplanation extends StatelessWidget {
                 Text(
                   isCorrect ? '✅ 正解！' : '❌ 不正解',
                   style: AppTypography.labelLarge.copyWith(
-                    color: isCorrect ? AppColors.accentGreen : kErrorColor,
+                    color: isCorrect ? AppColors.accentGreen : AppColors.error,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -384,9 +384,9 @@ class ImprovedAnswerExplanation extends StatelessWidget {
                     label: const Text('正解を聞く'),
                     onPressed: onPlayCorrect,
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: isCorrect ? AppColors.accentGreen : kErrorColor,
+                      foregroundColor: isCorrect ? AppColors.accentGreen : AppColors.error,
                       side: BorderSide(
-                        color: isCorrect ? AppColors.accentGreen : kErrorColor,
+                        color: isCorrect ? AppColors.accentGreen : AppColors.error,
                       ),
                     ),
                   ),
@@ -576,7 +576,7 @@ class ImprovedProgressBar extends StatelessWidget {
       child: LinearProgressIndicator(
         value: progress,
         minHeight: AppSizes.progressBarHeightBold,
-        backgroundColor: kBgLight,
+        backgroundColor: AppColors.bgLight,
         valueColor: AlwaysStoppedAnimation<Color>(
           _getColor(questionType),
         ),

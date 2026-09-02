@@ -222,7 +222,7 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                           child: Text(
                             '名前を表示しない場合でも、ランキングであなたの順位や成績は常に表示されます。プライバシーを保ちながらランキング参加ができます。',
                             style: AppTypography.bodySmall.copyWith(
-                              color: kTextDark,
+                              color: AppColors.textPrimary,
                               height: 1.5,
                             ),
                           ),

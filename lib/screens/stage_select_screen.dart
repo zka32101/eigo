@@ -264,13 +264,13 @@ class _ImprovedStageCardState extends State<ImprovedStageCard> {
                     _CompactSkillPill(
                       icon: '👂',
                       count: widget.stage.listeningCount,
-                      color: kListeningColor,
+                      color: AppColors.listeningColor,
                     ),
                     AppSpacing.horizontalSpacerSm,
                     _CompactSkillPill(
                       icon: '🎤',
                       count: widget.stage.speakingCount,
-                      color: kSpeakingColor,
+                      color: AppColors.speakingColor,
                     ),
                   ],
                 ),

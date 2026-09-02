@@ -178,7 +178,7 @@ class _DayCell extends StatelessWidget {
     if (score >= 85) return AppColors.accentGreen.withAlpha(200);
     if (score >= 70) return AppColors.primary.withAlpha(160);
     if (score >= 55) return AppColors.accentOrange.withAlpha(140);
-    return kSpeakingColor.withAlpha(120);
+    return AppColors.speakingColor.withAlpha(120);
   }
 
   @override
@@ -222,7 +222,7 @@ class _HeatmapLegend extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Text('スコア低 ', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, fontSize: 11)),
-          ...[kSpeakingColor, AppColors.accentOrange, AppColors.primary, AppColors.accentGreen].map((c) =>
+          ...[AppColors.speakingColor, AppColors.accentOrange, AppColors.primary, AppColors.accentGreen].map((c) =>
             Container(
               width: 14,
               height: 14,
@@ -262,7 +262,7 @@ class _WeeklyStats extends StatelessWidget {
             Row(
               children: [
                 Expanded(child: _WeekStat('📅', '学習日数', '$studyDays日', AppColors.primary)),
-                Expanded(child: _WeekStat('🎤', '練習回数', '$totalPractice回', kSpeakingColor)),
+                Expanded(child: _WeekStat('🎤', '練習回数', '$totalPractice回', AppColors.speakingColor)),
                 Expanded(child: _WeekStat('📈', '平均スコア', '${avgScore.round()}点', AppColors.accentGreen)),
               ],
             ),

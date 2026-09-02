@@ -76,7 +76,7 @@ class _OverviewCard extends StatelessWidget {
               children: [
                 Expanded(child: _OverviewStat('📚', 'レッスン', '${progress.totalLessons}回', AppColors.primary)),
                 Expanded(child: _OverviewStat('🔥', '連続日数', '${progress.streakDays}日', AppColors.accentOrange)),
-                Expanded(child: _OverviewStat('🎤', '週平均', '${weekAvg.round()}点', kSpeakingColor)),
+                Expanded(child: _OverviewStat('🎤', '週平均', '${weekAvg.round()}点', AppColors.speakingColor)),
               ],
             ),
             if (improvement != 0) ...[
@@ -187,7 +187,7 @@ class _SpeakingRingsRow extends StatelessWidget {
                 children: [
                   Text(
                     '$weekTotal',
-                    style: AppTypography.headlineLarge.copyWith(fontWeight: FontWeight.bold, color: kSpeakingColor),
+                    style: AppTypography.headlineLarge.copyWith(fontWeight: FontWeight.bold, color: AppColors.speakingColor),
                   ),
                   Text('回', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
                   AppSpacing.verticalSpacerXs,
@@ -224,7 +224,7 @@ class _SpeakingDetailCard extends StatelessWidget {
               icon: '🗣️',
               label: '単語発音',
               value: history.weeklyWordCount / 30,
-              color: kSpeakingColor,
+              color: AppColors.speakingColor,
               trailing: '${history.weeklyWordCount}/30個',
             ),
             AppSpacing.verticalSpacerXs,
@@ -232,7 +232,7 @@ class _SpeakingDetailCard extends StatelessWidget {
               icon: '💬',
               label: 'フレーズ',
               value: history.weeklyPhraseCount / 40,
-              color: kListeningColor,
+              color: AppColors.listeningColor,
               trailing: '${history.weeklyPhraseCount}/40個',
             ),
             AppSpacing.verticalSpacerXs,
@@ -252,7 +252,7 @@ class _SpeakingDetailCard extends StatelessWidget {
                   children: [
                     Text(
                       '${progress.totalSpeakingPractice}',
-                      style: AppTypography.headlineLarge.copyWith(fontWeight: FontWeight.bold, color: kSpeakingColor),
+                      style: AppTypography.headlineLarge.copyWith(fontWeight: FontWeight.bold, color: AppColors.speakingColor),
                     ),
                     Text(' 個', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
                   ],
@@ -359,19 +359,19 @@ class _WeeklyProgressCard extends StatelessWidget {
                     LineChartBarData(
                       spots: spots,
                       isCurved: true,
-                      color: kSpeakingColor,
+                      color: AppColors.speakingColor,
                       barWidth: 3,
                       dotData: FlDotData(
                         getDotPainter: (spot, x, bar, idx) => FlDotCirclePainter(
                           radius: 4,
-                          color: spot.y >= 80 ? AppColors.accentGreen : kSpeakingColor,
+                          color: spot.y >= 80 ? AppColors.accentGreen : AppColors.speakingColor,
                           strokeColor: AppColors.textWhite,
                           strokeWidth: 2,
                         ),
                       ),
                       belowBarData: BarAreaData(
                         show: true,
-                        color: kSpeakingColor.withAlpha(26),
+                        color: AppColors.speakingColor.withAlpha(26),
                       ),
                     ),
                   ],

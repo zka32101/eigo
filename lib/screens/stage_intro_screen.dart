@@ -374,28 +374,28 @@ class _ContentBreakdownCard extends StatelessWidget {
                     emoji: '👂',
                     title: 'リスニング',
                     description: '聞いて理解する',
-                    color: kListeningColor,
+                    color: AppColors.listeningColor,
                   ),
                 if (stage.speakingCount > 0)
                   LearningMethodCard(
                     emoji: '🎤',
                     title: 'スピーキング',
                     description: '発音して話す',
-                    color: kSpeakingColor,
+                    color: AppColors.speakingColor,
                   ),
                 if (stage.readingCount > 0)
                   LearningMethodCard(
                     emoji: '📖',
                     title: 'リーディング',
                     description: '読んで理解する',
-                    color: kReadingColor,
+                    color: AppColors.readingColor,
                   ),
                 if (stage.writingCount > 0)
                   LearningMethodCard(
                     emoji: '✏️',
                     title: 'ライティング',
                     description: '書いて学ぶ',
-                    color: kWritingColor,
+                    color: AppColors.writingColor,
                   ),
               ],
             ),

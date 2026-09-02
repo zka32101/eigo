@@ -342,12 +342,12 @@ class ImprovedWeaknessCard extends StatelessWidget {
             color:AppColors.textWhite,
             borderRadius: BorderRadius.circular(AppSizes.borderRadius),
             border: Border.all(
-              color: kErrorColor,
+              color: AppColors.error,
               width: 2,
             ),
             boxShadow: [
               BoxShadow(
-                color: kErrorColor.withAlpha(25),
+                color: AppColors.error.withAlpha(25),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -375,7 +375,7 @@ class ImprovedWeaknessCard extends StatelessWidget {
                       Text(
                         title,
                         style: AppTypography.labelLarge.copyWith(
-                          color: kErrorColor,
+                          color: AppColors.error,
                         ),
                       ),
                     ],
@@ -383,7 +383,7 @@ class ImprovedWeaknessCard extends StatelessWidget {
                 ),
                 Container(
                   decoration: BoxDecoration(
-                    color: kErrorColor.withAlpha(25),
+                    color: AppColors.error.withAlpha(25),
                     borderRadius: BorderRadius.circular(AppSizes.badgeBorderRadius),
                   ),
                   padding: const EdgeInsets.symmetric(
@@ -393,7 +393,7 @@ class ImprovedWeaknessCard extends StatelessWidget {
                   child: Text(
                     '$count個',
                     style: AppTypography.labelMedium.copyWith(
-                      color: kErrorColor,
+                      color: AppColors.error,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
