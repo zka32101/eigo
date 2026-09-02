@@ -3,10 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/item_model.dart';
 import '../providers/inventory_provider.dart';
 import '../providers/coin_provider.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
+import '../design_system/design_system.dart';
 
 class ShopScreen extends ConsumerWidget {
   const ShopScreen({super.key});
@@ -21,11 +18,11 @@ class ShopScreen extends ConsumerWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('🛍️ ショップ'),
-          backgroundColor: kPrimaryColor,
+          backgroundColor: AppColors.primary,
           bottom: TabBar(
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.white70,
-            indicatorColor: kAccentOrange,
+            labelColor: AppColors.textWhite,
+            unselectedLabelColor: AppColors.textWhite.withOpacity(0.7),
+            indicatorColor: AppColors.accentOrange,
             tabs: const [
               Tab(text: 'ポーション'),
               Tab(text: 'ブースト'),
@@ -95,7 +92,7 @@ class _ShopCategoryView extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.shopping_bag_outlined, size: 64, color: kTextMuted),
+            const Icon(Icons.shopping_bag_outlined, size: 64, color: AppColors.textMuted),
             AppSpacing.verticalSpacerMd,
             const Text('このカテゴリにはアイテムがありません'),
           ],
@@ -113,7 +110,7 @@ class _ShopCategoryView extends ConsumerWidget {
             padding: AppSpacing.allPaddingMd,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [kAccentOrange.withAlpha(20), kAccentOrange.withAlpha(5)],
+                colors: [AppColors.accentOrange.withAlpha(20), AppColors.accentOrange.withAlpha(5)],
               ),
               borderRadius: BorderRadius.circular(AppSizes.borderRadius),
             ),
@@ -124,7 +121,7 @@ class _ShopCategoryView extends ConsumerWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('保有コイン', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+                    Text('保有コイン', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
                     Text('$coins 🪙', style: AppTypography.labelLarge),
                   ],
                 ),
@@ -187,7 +184,7 @@ class _ShopCategoryView extends ConsumerWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('${item.name}を購入しました！'),
-          backgroundColor: kAccentGreen,
+          backgroundColor: AppColors.accentGreen,
         ),
       );
     }
@@ -265,7 +262,7 @@ class _ShopItemCardState extends State<_ShopItemCard>
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: kPrimaryColor.withAlpha(10),
+                color: AppColors.primary.withAlpha(10),
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(AppSizes.borderRadiusLarge),
                   topRight: Radius.circular(AppSizes.borderRadiusLarge),
@@ -287,13 +284,13 @@ class _ShopItemCardState extends State<_ShopItemCard>
                           vertical: AppSpacing.xs,
                         ),
                         decoration: BoxDecoration(
-                          color: kAccentGreen.withAlpha(30),
+                          color: AppColors.accentGreen.withAlpha(30),
                           borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
                         ),
                         child: Text(
                           '所有: ${widget.owned}',
                           style: AppTypography.bodySmall.copyWith(
-                            color: kAccentGreen,
+                            color: AppColors.accentGreen,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -326,7 +323,7 @@ class _ShopItemCardState extends State<_ShopItemCard>
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: AppTypography.bodySmall.copyWith(
-                    color: kTextMuted,
+                    color: AppColors.textMuted,
                     fontSize: 11,
                   ),
                 ),
@@ -340,7 +337,7 @@ class _ShopItemCardState extends State<_ShopItemCard>
                       '🪙 ${widget.item.price}',
                       style: AppTypography.labelSmall.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: canAfford ? kAccentOrange : kTextMuted,
+                        color: canAfford ? AppColors.accentOrange : AppColors.textMuted,
                       ),
                     ),
                     SizedBox(
@@ -349,7 +346,7 @@ class _ShopItemCardState extends State<_ShopItemCard>
                       child: ElevatedButton(
                         onPressed: canAfford ? widget.onPurchase : null,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: canAfford ? kAccentOrange : Colors.grey[300],
+                          backgroundColor: canAfford ? AppColors.accentOrange : Colors.grey[300],
                           padding: EdgeInsets.zero,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
@@ -360,7 +357,7 @@ class _ShopItemCardState extends State<_ShopItemCard>
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            color: canAfford ? Colors.white : Colors.grey[600],
+                            color: canAfford ? AppColors.textWhite : AppColors.textMuted,
                           ),
                         ),
                       ),
