@@ -7,6 +7,9 @@ import 'english_town_conversation_screen.dart';
 import 'english_town_analytics_screen.dart';
 import 'english_town_settings_screen.dart';
 import 'english_town_leaderboard_screen.dart';
+import 'english_town_leaderboard_realtime_screen.dart';
+import 'english_town_notifications_screen.dart';
+import '../widgets/notification_bell_widget.dart';
 
 /// English-Only Town Hub Screen
 ///
@@ -52,15 +55,28 @@ class _EnglishTownHubScreenState extends ConsumerState<EnglishTownHubScreen>
         title: const Text('🕹️ English-Only Town'),
         elevation: 0,
         actions: [
-          // Leaderboard button
-          IconButton(
-            icon: const Icon(Icons.leaderboard),
-            tooltip: 'Leaderboard',
+          // Notifications button
+          NotificationBell(
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const EnglishTownLeaderboardScreen(),
+                  builder: (context) =>
+                      const EnglishTownNotificationsScreen(),
+                ),
+              );
+            },
+          ),
+          // Live leaderboard button
+          IconButton(
+            icon: const Icon(Icons.leaderboard),
+            tooltip: 'Live Leaderboard',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      const EnglishTownLeaderboardRealtimeScreen(),
                 ),
               );
             },
