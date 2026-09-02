@@ -1,9 +1,9 @@
+import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../models/song_generator_model.dart';
 import '../providers/song_generator_provider.dart';
-import '../theme/app_theme.dart';
 
 class SongGeneratorScreen extends ConsumerStatefulWidget {
   const SongGeneratorScreen({super.key});
@@ -140,7 +140,7 @@ class _SongGeneratorScreenState extends ConsumerState<SongGeneratorScreen>
           const SizedBox(height: 8),
           Container(
             decoration: BoxDecoration(
-              border: Border.all(color: kPrimaryColor),
+              border: Border.all(color: AppColors.primary),
               borderRadius: BorderRadius.circular(12),
             ),
             child: DropdownButton<String>(
@@ -171,7 +171,7 @@ class _SongGeneratorScreenState extends ConsumerState<SongGeneratorScreen>
           const SizedBox(height: 8),
           Container(
             decoration: BoxDecoration(
-              border: Border.all(color: kPrimaryColor),
+              border: Border.all(color: AppColors.primary),
               borderRadius: BorderRadius.circular(12),
             ),
             child: DropdownButton<String>(
@@ -216,7 +216,7 @@ class _SongGeneratorScreenState extends ConsumerState<SongGeneratorScreen>
           const SizedBox(height: 8),
           Container(
             decoration: BoxDecoration(
-              border: Border.all(color: kPrimaryColor),
+              border: Border.all(color: AppColors.primary),
               borderRadius: BorderRadius.circular(12),
             ),
             child: DropdownButton<String>(
@@ -252,7 +252,7 @@ class _SongGeneratorScreenState extends ConsumerState<SongGeneratorScreen>
             child: ElevatedButton(
               onPressed: _generateSong,
               style: ElevatedButton.styleFrom(
-                backgroundColor: kPrimaryColor,
+                backgroundColor: AppColors.primary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -280,7 +280,7 @@ class _SongGeneratorScreenState extends ConsumerState<SongGeneratorScreen>
             Icon(
               Icons.music_note,
               size: 64,
-              color: Colors.grey[300],
+              color: AppColors.bgLight,
             ),
             const SizedBox(height: 16),
             Text(
@@ -328,7 +328,7 @@ class _SongGeneratorScreenState extends ConsumerState<SongGeneratorScreen>
                 ),
                 Chip(
                   label: Text('${song.ageGroup}才向け'),
-                  backgroundColor: kPrimaryColor.withAlpha(51),
+                  backgroundColor: AppColors.primary.withAlpha(51),
                 ),
               ],
             ),
@@ -463,7 +463,7 @@ class _SongGeneratorScreenState extends ConsumerState<SongGeneratorScreen>
             Icon(
               Icons.folder_open,
               size: 64,
-              color: Colors.grey[300],
+              color: AppColors.bgLight,
             ),
             const SizedBox(height: 16),
             Text(
@@ -522,7 +522,7 @@ class _SongGeneratorScreenState extends ConsumerState<SongGeneratorScreen>
                 child: _buildStatCard(
                   '🎵 生成曲数',
                   '${stats.totalSongsGenerated}',
-                  Colors.blue,
+                  AppColors.readingColor,
                 ),
               ),
               const SizedBox(width: 12),
@@ -530,7 +530,7 @@ class _SongGeneratorScreenState extends ConsumerState<SongGeneratorScreen>
                 child: _buildStatCard(
                   '⭐ 平均品質',
                   '${(stats.averageQualityScore * 100).toStringAsFixed(0)}%',
-                  Colors.orange,
+                  AppColors.accentOrange,
                 ),
               ),
             ],
@@ -542,7 +542,7 @@ class _SongGeneratorScreenState extends ConsumerState<SongGeneratorScreen>
                 child: _buildStatCard(
                   '📚 習得語数',
                   '${stats.totalVocabularyLearned}',
-                  Colors.green,
+                  AppColors.accentGreen,
                 ),
               ),
               const SizedBox(width: 12),
@@ -550,7 +550,7 @@ class _SongGeneratorScreenState extends ConsumerState<SongGeneratorScreen>
                 child: _buildStatCard(
                   '🎤 練習時間',
                   '${(stats.totalSingPracticeTime ~/ 60)}分',
-                  Colors.purple,
+                  AppColors.accentPurple,
                 ),
               ),
             ],
@@ -561,7 +561,7 @@ class _SongGeneratorScreenState extends ConsumerState<SongGeneratorScreen>
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey[300]!),
+              border: Border.all(color: AppColors.bgLight!),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
@@ -585,7 +585,7 @@ class _SongGeneratorScreenState extends ConsumerState<SongGeneratorScreen>
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey[300]!),
+              border: Border.all(color: AppColors.bgLight!),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(

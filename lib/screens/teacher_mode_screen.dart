@@ -1,11 +1,8 @@
+import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/teacher_mode_model.dart';
 import '../providers/teacher_mode_provider.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
 import 'teacher_mode_interactive_screen.dart';
 
 class TeacherModeScreen extends ConsumerStatefulWidget {
@@ -57,7 +54,7 @@ class _TeacherModeScreenState extends ConsumerState<TeacherModeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('🧑‍🏫 先生ごっこ'),
-        backgroundColor: kPrimaryColor,
+        backgroundColor: AppColors.primary,
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -93,7 +90,7 @@ class _TeacherModeScreenState extends ConsumerState<TeacherModeScreen> {
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: kAccentGreen,
+                  backgroundColor: AppColors.accentGreen,
                 ),
               ),
             ),
@@ -108,9 +105,9 @@ class _TeacherModeScreenState extends ConsumerState<TeacherModeScreen> {
     return Container(
       padding: AppSpacing.allPaddingMd,
       decoration: BoxDecoration(
-        color: kPrimaryColor.withAlpha(10),
+        color: AppColors.primary.withAlpha(10),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-        border: Border.all(color: kPrimaryColor.withAlpha(30)),
+        border: Border.all(color: AppColors.primary.withAlpha(30)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,19 +116,19 @@ class _TeacherModeScreenState extends ConsumerState<TeacherModeScreen> {
           AppSpacing.verticalSpacerSm,
           Text(
             'あなたが先生役になって、AIの先生が間違えた言い方を直してあげます。教えることで、より深く学べます！',
-            style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+            style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
             maxLines: 4,
           ),
           AppSpacing.verticalSpacerMd,
           Container(
             padding: AppSpacing.allPaddingSm,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color:AppColors.textWhite,
               borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
             ),
             child: Row(
               children: [
-                const Icon(Icons.lightbulb_outline, color: kAccentOrange, size: 20),
+                const Icon(Icons.lightbulb_outline, color: AppColors.accentOrange, size: 20),
                 AppSpacing.horizontalSpacerSm,
                 Expanded(
                   child: Text(
@@ -151,17 +148,17 @@ class _TeacherModeScreenState extends ConsumerState<TeacherModeScreen> {
     return Container(
       padding: AppSpacing.allPaddingMd,
       decoration: BoxDecoration(
-        color: kAccentGreen.withAlpha(10),
+        color: AppColors.accentGreen.withAlpha(10),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-        border: Border.all(color: kAccentGreen.withAlpha(50)),
+        border: Border.all(color: AppColors.accentGreen.withAlpha(50)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _buildStatCard('セッション数', '${stats.totalSessions}'),
-          Container(width: 1, height: 40, color: kAccentGreen.withAlpha(30)),
+          Container(width: 1, height: 40, color: AppColors.accentGreen.withAlpha(30)),
           _buildStatCard('正解数', '${stats.totalCorrections}'),
-          Container(width: 1, height: 40, color: kAccentGreen.withAlpha(30)),
+          Container(width: 1, height: 40, color: AppColors.accentGreen.withAlpha(30)),
           _buildStatCard('平均精度', '${stats.averageAccuracy.toStringAsFixed(0)}%'),
         ],
       ),
@@ -171,9 +168,9 @@ class _TeacherModeScreenState extends ConsumerState<TeacherModeScreen> {
   Widget _buildStatCard(String label, String value) {
     return Column(
       children: [
-        Text(value, style: AppTypography.headlineSmall.copyWith(color: kAccentGreen)),
+        Text(value, style: AppTypography.headlineSmall.copyWith(color: AppColors.accentGreen)),
         AppSpacing.verticalSpacerXs,
-        Text(label, style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 11)),
+        Text(label, style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, fontSize: 11)),
       ],
     );
   }
@@ -222,9 +219,9 @@ class _TeacherModeScreenState extends ConsumerState<TeacherModeScreen> {
         child: Container(
           padding: AppSpacing.allPaddingMd,
           decoration: BoxDecoration(
-            color: isSelected ? kPrimaryColor.withAlpha(20) : Colors.grey[100],
+            color: isSelected ? AppColors.primary.withAlpha(20) : Colors.grey[100],
             border: Border.all(
-              color: isSelected ? kPrimaryColor : Colors.grey[300]!,
+              color: isSelected ? AppColors.primary : Colors.grey[300]!,
               width: isSelected ? 2 : 1,
             ),
             borderRadius: BorderRadius.circular(AppSizes.borderRadius),
@@ -234,7 +231,7 @@ class _TeacherModeScreenState extends ConsumerState<TeacherModeScreen> {
               Text(
                 label,
                 style: AppTypography.labelLarge.copyWith(
-                  color: isSelected ? kPrimaryColor : kTextMuted,
+                  color: isSelected ? AppColors.primary : AppColors.textMuted,
                 ),
               ),
               AppSpacing.verticalSpacerXs,
@@ -242,7 +239,7 @@ class _TeacherModeScreenState extends ConsumerState<TeacherModeScreen> {
                 description,
                 style: AppTypography.bodySmall.copyWith(
                   fontSize: 10,
-                  color: kTextMuted,
+                  color: AppColors.textMuted,
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 2,
@@ -279,9 +276,9 @@ class _TeacherModeScreenState extends ConsumerState<TeacherModeScreen> {
               onTap: () => setState(() => _selectedPhrase = phrase.english),
               child: Container(
                 decoration: BoxDecoration(
-                  color: isSelected ? kPrimaryColor.withAlpha(20) : Colors.white,
+                  color: isSelected ? AppColors.primary.withAlpha(20) :AppColors.textWhite,
                   border: Border.all(
-                    color: isSelected ? kPrimaryColor : Colors.grey[300]!,
+                    color: isSelected ? AppColors.primary : Colors.grey[300]!,
                     width: isSelected ? 2 : 1,
                   ),
                   borderRadius: BorderRadius.circular(AppSizes.borderRadius),
@@ -292,7 +289,7 @@ class _TeacherModeScreenState extends ConsumerState<TeacherModeScreen> {
                     Text(
                       phrase.english,
                       style: AppTypography.labelLarge.copyWith(
-                        color: isSelected ? kPrimaryColor : Colors.black,
+                        color: isSelected ? AppColors.primary : Colors.black,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -300,7 +297,7 @@ class _TeacherModeScreenState extends ConsumerState<TeacherModeScreen> {
                     Text(
                       phrase.japanese,
                       style: AppTypography.bodySmall.copyWith(
-                        color: kTextMuted,
+                        color: AppColors.textMuted,
                         fontSize: 10,
                       ),
                       textAlign: TextAlign.center,

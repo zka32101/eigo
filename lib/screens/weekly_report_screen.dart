@@ -1,3 +1,4 @@
+import '../design_system/design_system.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,10 +7,6 @@ import '../providers/level_provider.dart';
 import '../providers/progress_provider.dart';
 import '../providers/speaking_history_provider.dart';
 import '../providers/weakness_provider.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
 import '../widgets/xp_bar.dart';
 
 class WeeklyReportScreen extends ConsumerWidget {
@@ -26,7 +23,7 @@ class WeeklyReportScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('📊 週次レポート'),
-        backgroundColor: kPrimaryColor,
+        backgroundColor: AppColors.primary,
         actions: [
           IconButton(
             icon: const Icon(Icons.calendar_today),
@@ -93,19 +90,19 @@ class _WeekSummaryCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text('📈 今週のサマリー',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: kTextDark)),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
                 if (improvement != 0)
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: AppSpacing.xs, vertical: 4),
                     decoration: BoxDecoration(
-                      color: improvement > 0 ? kAccentGreen.withAlpha(26) : kAccentRed.withAlpha(26),
+                      color: improvement > 0 ? AppColors.accentGreen.withAlpha(26) : AppColors.error.withAlpha(26),
                       borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                     ),
                     child: Text(
                       '先週比 ${improvement > 0 ? '+' : ''}${improvement.round()}点',
                       style: AppTypography.bodySmall.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: improvement > 0 ? kAccentGreen : kAccentRed,
+                        color: improvement > 0 ? AppColors.accentGreen : AppColors.error,
                         fontSize: 12,
                       ),
                     ),
@@ -115,9 +112,9 @@ class _WeekSummaryCard extends StatelessWidget {
             AppSpacing.verticalSpacerXs,
             Row(
               children: [
-                _SummaryCell('📅', '学習日数', '$studyDays / 7日', kPrimaryColor, studyDays / 7),
-                _SummaryCell('🎤', 'スピーキング', '$totalPractice回', kSpeakingColor, totalPractice / 50),
-                _SummaryCell('📊', '平均スコア', '${avgScore.round()}点', kAccentGreen, avgScore / 100),
+                _SummaryCell('📅', '学習日数', '$studyDays / 7日', AppColors.primary, studyDays / 7),
+                _SummaryCell('🎤', 'スピーキング', '$totalPractice回', AppColors.speakingColor, totalPractice / 50),
+                _SummaryCell('📊', '平均スコア', '${avgScore.round()}点', AppColors.accentGreen, avgScore / 100),
               ],
             ),
           ],
@@ -145,13 +142,13 @@ class _SummaryCell extends StatelessWidget {
             Text(icon, style: const TextStyle(fontSize: 22)),
             AppSpacing.verticalSpacerXs,
             Text(value, style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold, color: color)),
-            Text(label, style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 11)),
+            Text(label, style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, fontSize: 11)),
             AppSpacing.verticalSpacerXs,
             ClipRRect(
               borderRadius: BorderRadius.circular(3),
               child: LinearProgressIndicator(
                 value: progress.clamp(0.0, 1.0),
-                backgroundColor: Colors.grey.shade200,
+                backgroundColor:AppColors.textMuted,
                 color: color,
                 minHeight: 5,
               ),
@@ -178,15 +175,15 @@ class _SkillBreakdownCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text('🎯 スキル別パフォーマンス',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: kTextDark)),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
             AppSpacing.verticalSpacerXs,
-            _SkillRow('👂 リスニング', weakness.listeningAccuracy, kListeningColor),
+            _SkillRow('👂 リスニング', weakness.listeningAccuracy, AppColors.listeningColor),
             AppSpacing.verticalSpacerXs,
-            _SkillRow('🎤 スピーキング', weakness.speakingAvgScore / 100, kSpeakingColor),
+            _SkillRow('🎤 スピーキング', weakness.speakingAvgScore / 100, AppColors.speakingColor),
             AppSpacing.verticalSpacerXs,
-            _SkillRow('📖 リーディング', 1 - weakness.skillWeaknessRate(QuestionType.reading), kReadingColor),
+            _SkillRow('📖 リーディング', 1 - weakness.skillWeaknessRate(QuestionType.reading), AppColors.readingColor),
             AppSpacing.verticalSpacerXs,
-            _SkillRow('✏️ ライティング', 1 - weakness.skillWeaknessRate(QuestionType.writing), kWritingColor),
+            _SkillRow('✏️ ライティング', 1 - weakness.skillWeaknessRate(QuestionType.writing), AppColors.writingColor),
           ],
         ),
       ),
@@ -207,14 +204,14 @@ class _SkillRow extends StatelessWidget {
       children: [
         SizedBox(
           width: 120,
-          child: Text(label, style: AppTypography.bodySmall.copyWith(color: kTextDark, fontSize: 13)),
+          child: Text(label, style: AppTypography.bodySmall.copyWith(color: AppColors.textPrimary, fontSize: 13)),
         ),
         Expanded(
           child: ClipRRect(
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: value.clamp(0.0, 1.0),
-              backgroundColor: Colors.grey.shade200,
+              backgroundColor:AppColors.textMuted,
               color: color,
               minHeight: 10,
             ),
@@ -259,7 +256,7 @@ class _DailyScoreChart extends StatelessWidget {
         barRods: [
           BarChartRodData(
             toY: score,
-            color: score >= 80 ? kAccentGreen : score >= 60 ? kPrimaryColor : kSpeakingColor,
+            color: score >= 80 ? AppColors.accentGreen : score >= 60 ? AppColors.primary : AppColors.speakingColor,
             width: 18,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
           ),
@@ -274,7 +271,7 @@ class _DailyScoreChart extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text('📅 日別スピーキングスコア',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: kTextDark)),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
             AppSpacing.verticalSpacerMd,
             SizedBox(
               height: 160,
@@ -284,7 +281,7 @@ class _DailyScoreChart extends StatelessWidget {
                   gridData: FlGridData(
                     show: true,
                     drawVerticalLine: false,
-                    getDrawingHorizontalLine: (v) => FlLine(color: Colors.grey.shade200, strokeWidth: 1),
+                    getDrawingHorizontalLine: (v) => FlLine(color: AppColors.textMuted, strokeWidth: 1),
                   ),
                   titlesData: FlTitlesData(
                     leftTitles: AxisTitles(
@@ -293,7 +290,7 @@ class _DailyScoreChart extends StatelessWidget {
                         reservedSize: 28,
                         getTitlesWidget: (v, _) => Text(
                           '${v.round()}',
-                          style: AppTypography.bodySmall.copyWith(fontSize: 10, color: kTextMuted),
+                          style: AppTypography.bodySmall.copyWith(fontSize: 10, color: AppColors.textMuted),
                         ),
                         interval: 25,
                       ),
@@ -307,7 +304,7 @@ class _DailyScoreChart extends StatelessWidget {
                           return Padding(
                             padding: EdgeInsets.only(top: 4),
                             child: Text(days[(date.weekday - 1) % 7],
-                                style: AppTypography.bodySmall.copyWith(fontSize: 11, color: kTextMuted)),
+                                style: AppTypography.bodySmall.copyWith(fontSize: 11, color: AppColors.textMuted)),
                           );
                         },
                       ),
@@ -323,7 +320,7 @@ class _DailyScoreChart extends StatelessWidget {
                       getTooltipItem: (group, groupIndex, rod, rodIndex) =>
                           BarTooltipItem(
                             '${rod.toY.round()}点',
-                            const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                            const TextStyle(color:AppColors.textWhite, fontSize: 12, fontWeight: FontWeight.bold),
                           ),
                     ),
                   ),
@@ -354,23 +351,23 @@ class _ImprovementCard extends StatelessWidget {
 
     if (avg == 0) {
       message = 'まだデータがありません。レッスンを開始しよう！';
-      color = kTextMuted;
+      color = AppColors.textMuted;
       icon = '💡';
     } else if (improvement > 10) {
       message = '大幅改善！先週より${improvement.round()}点上がりました。この調子で頑張ろう！';
-      color = kAccentGreen;
+      color = AppColors.accentGreen;
       icon = '🚀';
     } else if (improvement > 0) {
       message = '着実に成長しています。先週より${improvement.round()}点アップ！';
-      color = kAccentGreen;
+      color = AppColors.accentGreen;
       icon = '📈';
     } else if (improvement < -5) {
       message = '先週より${(-improvement).round()}点下がりました。毎日少しずつ練習しよう。';
-      color = kAccentOrange;
+      color = AppColors.accentOrange;
       icon = '💪';
     } else {
       message = '安定したスコアを維持しています。次のステージに挑戦してみよう！';
-      color = kPrimaryColor;
+      color = AppColors.primary;
       icon = '⭐';
     }
 
@@ -386,7 +383,7 @@ class _ImprovementCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text('今週の振り返り',
-                      style: TextStyle(fontSize: 13, color: kTextMuted, fontWeight: FontWeight.bold)),
+                      style: TextStyle(fontSize: 13, color: AppColors.textMuted, fontWeight: FontWeight.bold)),
                   AppSpacing.verticalSpacerXs,
                   Text(message, style: AppTypography.bodySmall.copyWith(color: color, height: 1.5)),
                 ],
@@ -424,7 +421,7 @@ class _GoalCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text('🎯 今週の目標',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: kTextDark)),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
             AppSpacing.verticalSpacerXs,
             ...goals.map((g) => Padding(
               padding: EdgeInsets.only(bottom: AppSpacing.xs),
@@ -434,11 +431,11 @@ class _GoalCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(g.label, style: AppTypography.bodySmall.copyWith(color: kTextDark, fontSize: 13)),
+                      Text(g.label, style: AppTypography.bodySmall.copyWith(color: AppColors.textPrimary, fontSize: 13)),
                       Text(g.progress >= 1 ? '✅ 達成！' : g.valueLabel,
                           style: AppTypography.bodySmall.copyWith(
                             fontSize: 12,
-                            color: g.progress >= 1 ? kAccentGreen : kTextMuted,
+                            color: g.progress >= 1 ? AppColors.accentGreen : AppColors.textMuted,
                             fontWeight: g.progress >= 1 ? FontWeight.bold : FontWeight.normal,
                           )),
                     ],
@@ -448,8 +445,8 @@ class _GoalCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(4),
                     child: LinearProgressIndicator(
                       value: g.progress.clamp(0.0, 1.0),
-                      backgroundColor: Colors.grey.shade200,
-                      color: g.progress >= 1 ? kAccentGreen : kPrimaryColor,
+                      backgroundColor:AppColors.textMuted,
+                      color: g.progress >= 1 ? AppColors.accentGreen : AppColors.primary,
                       minHeight: 8,
                     ),
                   ),

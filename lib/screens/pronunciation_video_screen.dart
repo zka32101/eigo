@@ -1,11 +1,8 @@
+import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/pronunciation_video_model.dart';
 import '../providers/pronunciation_video_provider.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
 
 class PronunciationVideoScreen extends ConsumerStatefulWidget {
   const PronunciationVideoScreen({super.key});
@@ -48,11 +45,11 @@ class _PronunciationVideoScreenState extends ConsumerState<PronunciationVideoScr
       child: Scaffold(
         appBar: AppBar(
           title: const Text('🎬 発音成長動画'),
-          backgroundColor: kPrimaryColor,
+          backgroundColor: AppColors.primary,
           bottom: TabBar(
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.white70,
-            indicatorColor: kAccentOrange,
+            labelColor: AppColors.textWhite,
+            unselectedLabelColor: AppColors.textWhite.withOpacity(0.7),
+            indicatorColor: AppColors.accentOrange,
             tabs: const [
               Tab(text: '進行中'),
               Tab(text: '完了'),
@@ -93,7 +90,7 @@ class _ActiveRecordingsTab extends ConsumerWidget {
             AppSpacing.verticalSpacerMd,
             Text(
               '発音問題に正解して、成長を記録しましょう！',
-              style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+              style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
             ),
             AppSpacing.verticalSpacerLg,
             ElevatedButton(
@@ -120,10 +117,10 @@ class _ActiveRecordingsTab extends ConsumerWidget {
             padding: AppSpacing.allPaddingLg,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [Colors.blue.shade50, Colors.blue.shade100],
+                colors: [AppColors.readingColor.withAlpha(25), AppColors.readingColor.withAlpha(50)],
               ),
               borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-              border: Border.all(color: Colors.blue.shade200),
+              border: Border.all(color: AppColors.readingColor.withAlpha(80)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,14 +128,14 @@ class _ActiveRecordingsTab extends ConsumerWidget {
                 Text(
                   '📅 30日間の成長トラッキング',
                   style: AppTypography.headlineSmall.copyWith(
-                    color: Colors.blue.shade900,
+                    color: AppColors.readingColor,
                   ),
                 ),
                 AppSpacing.verticalSpacerMd,
                 Text(
                   '記録された日から30日後に、成長を比較する動画が自動生成されます。',
                   style: AppTypography.bodySmall.copyWith(
-                    color: Colors.blue.shade700,
+                    color: AppColors.readingColor.withAlpha(180),
                   ),
                 ),
               ],
@@ -185,8 +182,8 @@ class _ActiveRecordCard extends StatelessWidget {
       margin: EdgeInsets.only(bottom: AppSpacing.md),
       padding: AppSpacing.allPaddingMd,
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: Colors.blue.shade300),
+        color:AppColors.textWhite,
+        border: Border.all(color: AppColors.readingColor.withAlpha(100)),
         borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
       ),
       child: Column(
@@ -209,7 +206,7 @@ class _ActiveRecordCard extends StatelessWidget {
                     AppSpacing.verticalSpacerXs,
                     Text(
                       record.meaning,
-                      style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                      style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                     ),
                   ],
                 ),
@@ -220,13 +217,13 @@ class _ActiveRecordCard extends StatelessWidget {
                   vertical: AppSpacing.sm,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.blue.shade100,
+                  color: AppColors.readingColor.withAlpha(50),
                   borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
                 ),
                 child: Text(
                   '${record.initialScore}点',
                   style: AppTypography.labelLarge.copyWith(
-                    color: Colors.blue.shade900,
+                    color: AppColors.readingColor,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -245,12 +242,12 @@ class _ActiveRecordCard extends StatelessWidget {
                 children: [
                   Text(
                     '記録から$daysPassed日経過',
-                    style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                    style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                   ),
                   Text(
                     'あと$daysRemaining日',
                     style: AppTypography.labelSmall.copyWith(
-                      color: Colors.blue,
+                      color: AppColors.readingColor,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -262,8 +259,8 @@ class _ActiveRecordCard extends StatelessWidget {
                 child: LinearProgressIndicator(
                   value: progressPercent.clamp(0.0, 1.0),
                   minHeight: 8,
-                  backgroundColor: Colors.grey[200],
-                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
+                  backgroundColor: AppColors.bgLight,
+                  valueColor: const AlwaysStoppedAnimation<Color>(AppColors.readingColor),
                 ),
               ),
             ],
@@ -276,18 +273,18 @@ class _ActiveRecordCard extends StatelessWidget {
             Container(
               padding: AppSpacing.allPaddingSm,
               decoration: BoxDecoration(
-                color: Colors.blue.shade50,
+                color: AppColors.readingColor.withAlpha(25),
                 borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.info, size: 16, color: Colors.blue),
+                  const Icon(Icons.info, size: 16, color: AppColors.readingColor),
                   AppSpacing.horizontalSpacerSm,
                   Expanded(
                     child: Text(
                       '30日後に自動的に成長動画が生成されます。',
                       style: AppTypography.bodySmall.copyWith(
-                        color: Colors.blue.shade900,
+                        color: AppColors.readingColor,
                       ),
                     ),
                   ),
@@ -298,18 +295,18 @@ class _ActiveRecordCard extends StatelessWidget {
             Container(
               padding: AppSpacing.allPaddingSm,
               decoration: BoxDecoration(
-                color: kAccentGreen.withAlpha(30),
+                color: AppColors.accentGreen.withAlpha(30),
                 borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.check_circle, size: 16, color: kAccentGreen),
+                  const Icon(Icons.check_circle, size: 16, color: AppColors.accentGreen),
                   AppSpacing.horizontalSpacerSm,
                   Expanded(
                     child: Text(
                       '動画生成準備完了！',
                       style: AppTypography.bodySmall.copyWith(
-                        color: kAccentGreen,
+                        color: AppColors.accentGreen,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -341,7 +338,7 @@ class _CompletedVideosTab extends ConsumerWidget {
             AppSpacing.verticalSpacerMd,
             Text(
               '30日後に最初の動画が生成されます',
-              style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+              style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
             ),
           ],
         ),
@@ -359,7 +356,7 @@ class _CompletedVideosTab extends ConsumerWidget {
             padding: AppSpacing.allPaddingLg,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [kAccentGreen, kAccentGreen.withAlpha(150)],
+                colors: [AppColors.accentGreen, AppColors.accentGreen.withAlpha(150)],
               ),
               borderRadius: BorderRadius.circular(AppSizes.borderRadius),
             ),
@@ -369,14 +366,14 @@ class _CompletedVideosTab extends ConsumerWidget {
                 Text(
                   '✨ 成長動画',
                   style: AppTypography.headlineSmall.copyWith(
-                    color: Colors.white,
+                    color:AppColors.textWhite,
                   ),
                 ),
                 AppSpacing.verticalSpacerMd,
                 Text(
                   '${comparisons.length}本の成長動画が生成されました。',
                   style: AppTypography.bodySmall.copyWith(
-                    color: Colors.white70,
+                    color: AppColors.textWhite.withOpacity(0.7),
                   ),
                 ),
               ],
@@ -453,8 +450,8 @@ class _ComparisonVideoCardState extends ConsumerState<_ComparisonVideoCard> {
     return Container(
       margin: EdgeInsets.only(bottom: AppSpacing.md),
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: kPrimaryColor.withAlpha(50)),
+        color:AppColors.textWhite,
+        border: Border.all(color: AppColors.primary.withAlpha(50)),
         borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
       ),
       child: Column(
@@ -463,7 +460,7 @@ class _ComparisonVideoCardState extends ConsumerState<_ComparisonVideoCard> {
           Container(
             padding: AppSpacing.allPaddingMd,
             decoration: BoxDecoration(
-              color: kPrimaryColor.withAlpha(10),
+              color: AppColors.primary.withAlpha(10),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -480,7 +477,7 @@ class _ComparisonVideoCardState extends ConsumerState<_ComparisonVideoCard> {
                       Text(
                         levelText,
                         style: AppTypography.labelLarge.copyWith(
-                          color: kPrimaryColor,
+                          color: AppColors.primary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -493,7 +490,7 @@ class _ComparisonVideoCardState extends ConsumerState<_ComparisonVideoCard> {
                     Text(
                       '${comparison.scoreImprovement}点アップ',
                       style: AppTypography.headlineSmall.copyWith(
-                        color: kAccentGreen,
+                        color: AppColors.accentGreen,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -501,7 +498,7 @@ class _ComparisonVideoCardState extends ConsumerState<_ComparisonVideoCard> {
                     Text(
                       '(${comparison.improvementPercentage.toStringAsFixed(0)}%)',
                       style: AppTypography.bodySmall.copyWith(
-                        color: kTextMuted,
+                        color: AppColors.textMuted,
                       ),
                     ),
                   ],
@@ -526,13 +523,13 @@ class _ComparisonVideoCardState extends ConsumerState<_ComparisonVideoCard> {
                         vertical: AppSpacing.sm,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
+                        color: AppColors.bgLight,
                         borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
                       ),
                       child: Text(
                         '${comparison.finalScore - comparison.scoreImprovement}点',
                         style: AppTypography.headlineSmall.copyWith(
-                          color: Colors.grey.shade700,
+                          color: AppColors.textMuted,
                         ),
                       ),
                     ),
@@ -540,7 +537,7 @@ class _ComparisonVideoCardState extends ConsumerState<_ComparisonVideoCard> {
                 ),
                 Column(
                   children: [
-                    const Icon(Icons.arrow_forward, color: kAccentGreen),
+                    const Icon(Icons.arrow_forward, color: AppColors.accentGreen),
                     AppSpacing.verticalSpacerSm,
                     const SizedBox(width: 30),
                   ],
@@ -555,13 +552,13 @@ class _ComparisonVideoCardState extends ConsumerState<_ComparisonVideoCard> {
                         vertical: AppSpacing.sm,
                       ),
                       decoration: BoxDecoration(
-                        color: kAccentGreen.withAlpha(30),
+                        color: AppColors.accentGreen.withAlpha(30),
                         borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
                       ),
                       child: Text(
                         '${comparison.finalScore}点',
                         style: AppTypography.headlineSmall.copyWith(
-                          color: kAccentGreen,
+                          color: AppColors.accentGreen,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -574,7 +571,7 @@ class _ComparisonVideoCardState extends ConsumerState<_ComparisonVideoCard> {
 
           // Improvement details (expandable)
           if (_expanded) ...[
-            Divider(color: Colors.grey.shade200),
+            Divider(color: AppColors.bgLight),
             Container(
               padding: AppSpacing.allPaddingMd,
               child: Column(
@@ -619,7 +616,7 @@ class _ComparisonVideoCardState extends ConsumerState<_ComparisonVideoCard> {
           Container(
             padding: AppSpacing.allPaddingMd,
             decoration: BoxDecoration(
-              color: Colors.amber.shade50,
+              color: AppColors.accentOrange.withAlpha(25),
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(AppSizes.borderRadiusSmall),
                 bottomRight: Radius.circular(AppSizes.borderRadiusSmall),
@@ -635,7 +632,7 @@ class _ComparisonVideoCardState extends ConsumerState<_ComparisonVideoCard> {
                     Text(
                       '${comparison.rewardCoins}コイン獲得',
                       style: AppTypography.labelLarge.copyWith(
-                        color: Colors.amber.shade900,
+                        color: AppColors.accentOrange,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -650,7 +647,7 @@ class _ComparisonVideoCardState extends ConsumerState<_ComparisonVideoCard> {
                       icon: Icon(_expanded ? Icons.expand_less : Icons.expand_more),
                       label: Text(_expanded ? '折りたたむ' : '詳細'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: kPrimaryColor,
+                        backgroundColor: AppColors.primary,
                         padding: EdgeInsets.symmetric(
                           horizontal: AppSpacing.md,
                           vertical: AppSpacing.xs,
@@ -665,7 +662,7 @@ class _ComparisonVideoCardState extends ConsumerState<_ComparisonVideoCard> {
                         );
                       },
                       icon: const Icon(Icons.share),
-                      color: kPrimaryColor,
+                      color: AppColors.primary,
                     ),
                   ],
                 ),
@@ -699,7 +696,7 @@ class _ImprovementMetric extends StatelessWidget {
             Text(
               '${(value * 100).toStringAsFixed(0)}%',
               style: AppTypography.labelSmall.copyWith(
-                color: kAccentGreen,
+                color: AppColors.accentGreen,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -711,8 +708,8 @@ class _ImprovementMetric extends StatelessWidget {
           child: LinearProgressIndicator(
             value: value.clamp(0.0, 1.0),
             minHeight: 6,
-            backgroundColor: Colors.grey.shade200,
-            valueColor: const AlwaysStoppedAnimation<Color>(kAccentGreen),
+            backgroundColor: AppColors.bgLight,
+            valueColor: const AlwaysStoppedAnimation<Color>(AppColors.accentGreen),
           ),
         ),
       ],
@@ -767,7 +764,7 @@ class _StatsHeader extends StatelessWidget {
       padding: AppSpacing.allPaddingLg,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [kPrimaryColor, kPrimaryColor.withAlpha(150)],
+          colors: [AppColors.primary, AppColors.primary.withAlpha(150)],
         ),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
       ),
@@ -776,7 +773,7 @@ class _StatsHeader extends StatelessWidget {
         children: [
           Text(
             '📊 成長統計',
-            style: AppTypography.headlineSmall.copyWith(color: Colors.white),
+            style: AppTypography.headlineSmall.copyWith(color: AppColors.textWhite),
           ),
           AppSpacing.verticalSpacerLg,
 
@@ -789,12 +786,12 @@ class _StatsHeader extends StatelessWidget {
                   AppSpacing.verticalSpacerSm,
                   Text(
                     '総改善',
-                    style: AppTypography.bodySmall.copyWith(color: Colors.white70),
+                    style: AppTypography.bodySmall.copyWith(color: AppColors.textWhite.withOpacity(0.7)),
                   ),
                   AppSpacing.verticalSpacerXs,
                   Text(
                     '${stats.totalImprovement}点',
-                    style: AppTypography.headlineSmall.copyWith(color: Colors.white),
+                    style: AppTypography.headlineSmall.copyWith(color: AppColors.textWhite),
                   ),
                 ],
               ),
@@ -804,12 +801,12 @@ class _StatsHeader extends StatelessWidget {
                   AppSpacing.verticalSpacerSm,
                   Text(
                     '成長動画',
-                    style: AppTypography.bodySmall.copyWith(color: Colors.white70),
+                    style: AppTypography.bodySmall.copyWith(color: AppColors.textWhite.withOpacity(0.7)),
                   ),
                   AppSpacing.verticalSpacerXs,
                   Text(
                     '${stats.specialBadgesEarned}本',
-                    style: AppTypography.headlineSmall.copyWith(color: Colors.white),
+                    style: AppTypography.headlineSmall.copyWith(color: AppColors.textWhite),
                   ),
                 ],
               ),
@@ -819,12 +816,12 @@ class _StatsHeader extends StatelessWidget {
                   AppSpacing.verticalSpacerSm,
                   Text(
                     '報酬',
-                    style: AppTypography.bodySmall.copyWith(color: Colors.white70),
+                    style: AppTypography.bodySmall.copyWith(color: AppColors.textWhite.withOpacity(0.7)),
                   ),
                   AppSpacing.verticalSpacerXs,
                   Text(
                     '${stats.totalRewardCoins}コイン',
-                    style: AppTypography.headlineSmall.copyWith(color: Colors.white),
+                    style: AppTypography.headlineSmall.copyWith(color: AppColors.textWhite),
                   ),
                 ],
               ),
@@ -847,8 +844,8 @@ class _ProgressOverview extends StatelessWidget {
       margin: AppSpacing.allPaddingLg,
       padding: AppSpacing.allPaddingLg,
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: kPrimaryColor.withAlpha(50)),
+        color:AppColors.textWhite,
+        border: Border.all(color: AppColors.primary.withAlpha(50)),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
       ),
       child: Column(
@@ -867,7 +864,7 @@ class _ProgressOverview extends StatelessWidget {
               Text(
                 '${progress.averageImprovement.toStringAsFixed(1)}点',
                 style: AppTypography.labelLarge.copyWith(
-                  color: kAccentGreen,
+                  color: AppColors.accentGreen,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -882,7 +879,7 @@ class _ProgressOverview extends StatelessWidget {
               Text(
                 '${progress.maxImprovement}点',
                 style: AppTypography.labelLarge.copyWith(
-                  color: kAccentOrange,
+                  color: AppColors.accentOrange,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -909,7 +906,7 @@ class _ProgressOverview extends StatelessWidget {
               Text(
                 '${progress.averageFinalScore.toStringAsFixed(0)}点',
                 style: AppTypography.labelLarge.copyWith(
-                  color: kAccentGreen,
+                  color: AppColors.accentGreen,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -950,9 +947,9 @@ class _MilestonesSection extends StatelessWidget {
               margin: EdgeInsets.only(bottom: AppSpacing.md),
               padding: AppSpacing.allPaddingMd,
               decoration: BoxDecoration(
-                color: isUnlocked ? Colors.amber.shade50 : Colors.grey.shade50,
+                color: isUnlocked ? AppColors.accentOrange.withAlpha(25) : AppColors.bgLight,
                 border: Border.all(
-                  color: isUnlocked ? Colors.amber : Colors.grey.shade300!,
+                  color: isUnlocked ? AppColors.accentOrange : AppColors.bgLight,
                 ),
                 borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
               ),
@@ -970,14 +967,14 @@ class _MilestonesSection extends StatelessWidget {
                         Text(
                           milestone.name,
                           style: AppTypography.labelLarge.copyWith(
-                            color: isUnlocked ? Colors.black : Colors.grey,
+                            color: isUnlocked ? AppColors.textPrimary : AppColors.textMuted,
                           ),
                         ),
                         AppSpacing.verticalSpacerXs,
                         Text(
                           milestone.description,
                           style: AppTypography.bodySmall.copyWith(
-                            color: isUnlocked ? kTextMuted : Colors.grey,
+                            color: AppColors.textMuted,
                           ),
                         ),
                       ],
@@ -990,7 +987,7 @@ class _MilestonesSection extends StatelessWidget {
                         vertical: AppSpacing.sm,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.amber.shade200,
+                        color: AppColors.accentOrange.withAlpha(80),
                         borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
                       ),
                       child: Text(
