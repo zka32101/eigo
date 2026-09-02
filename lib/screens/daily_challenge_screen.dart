@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/daily_challenge_model.dart';
 import '../providers/daily_challenge_provider.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
+import '../design_system/design_system.dart';
 
 class DailyChallengeScreen extends ConsumerWidget {
   const DailyChallengeScreen({super.key});
@@ -19,7 +16,7 @@ class DailyChallengeScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('📅 1日1フレーズチャレンジ'),
-        backgroundColor: kPrimaryColor,
+        backgroundColor: AppColors.primary,
         elevation: 0,
       ),
       body: todaysChallengeAsync.when(
@@ -71,7 +68,7 @@ class _ChallengeHeader extends StatelessWidget {
       padding: AppSpacing.allPaddingLg,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [kPrimaryColor, kPrimaryColor.withAlpha(150)],
+          colors: [AppColors.primary, AppColors.primary.withAlpha(150)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -85,7 +82,7 @@ class _ChallengeHeader extends StatelessWidget {
               Text(
                 '${challenge.releaseTime.month}月${challenge.releaseTime.day}日のチャレンジ',
                 style: AppTypography.labelLarge.copyWith(
-                  color: Colors.white70,
+                  color: AppColors.textWhite.withOpacity(0.7),
                 ),
               ),
               Container(
@@ -94,13 +91,13 @@ class _ChallengeHeader extends StatelessWidget {
                   vertical: AppSpacing.sm,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.white.withAlpha(30),
+                  color: AppColors.textWhite.withAlpha(30),
                   borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
                 ),
                 child: Text(
                   '${userStats.consecutiveDays}日連続 🔥',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.textWhite,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -117,14 +114,14 @@ class _ChallengeHeader extends StatelessWidget {
                   Text(
                     '統計',
                     style: AppTypography.labelSmall.copyWith(
-                      color: Colors.white70,
+                      color: AppColors.textWhite.withOpacity(0.7),
                     ),
                   ),
                   AppSpacing.verticalSpacerXs,
                   Text(
                     '${userStats.totalAttempts}回参加',
                     style: AppTypography.headlineSmall.copyWith(
-                      color: Colors.white,
+                      color: AppColors.textWhite,
                     ),
                   ),
                 ],
@@ -135,14 +132,14 @@ class _ChallengeHeader extends StatelessWidget {
                   Text(
                     'ベストスコア',
                     style: AppTypography.labelSmall.copyWith(
-                      color: Colors.white70,
+                      color: AppColors.textWhite.withOpacity(0.7),
                     ),
                   ),
                   AppSpacing.verticalSpacerXs,
                   Text(
                     '${userStats.bestScore}点',
                     style: AppTypography.headlineSmall.copyWith(
-                      color: Colors.white,
+                      color: AppColors.textWhite,
                     ),
                   ),
                 ],
@@ -166,12 +163,12 @@ class _TodaysPhraseCard extends StatelessWidget {
       margin: AppSpacing.allPaddingLg,
       padding: AppSpacing.allPaddingLg,
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: kPrimaryColor.withAlpha(50)),
+        color: AppColors.textWhite,
+        border: Border.all(color: AppColors.primary.withAlpha(50)),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(10),
+            color: AppColors.textPrimary.withAlpha(10),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -182,7 +179,7 @@ class _TodaysPhraseCard extends StatelessWidget {
         children: [
           Text(
             'フレーズ',
-            style: AppTypography.labelSmall.copyWith(color: kTextMuted),
+            style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted),
           ),
           AppSpacing.verticalSpacerMd,
           
@@ -191,14 +188,14 @@ class _TodaysPhraseCard extends StatelessWidget {
             width: double.infinity,
             padding: AppSpacing.allPaddingMd,
             decoration: BoxDecoration(
-              color: kPrimaryColor.withAlpha(10),
+              color: AppColors.primary.withAlpha(10),
               borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
             ),
             child: Text(
               challenge.phrase,
               textAlign: TextAlign.center,
               style: AppTypography.headlineMedium.copyWith(
-                color: kPrimaryColor,
+                color: AppColors.primary,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -208,13 +205,13 @@ class _TodaysPhraseCard extends StatelessWidget {
           // Pronunciation guide
           Row(
             children: [
-              const Icon(Icons.volume_up, size: 20, color: kAccentOrange),
+              const Icon(Icons.volume_up, size: 20, color: AppColors.accentOrange),
               AppSpacing.horizontalSpacerMd,
               Expanded(
                 child: Text(
                   challenge.phrasePronunciation,
                   style: AppTypography.bodySmall.copyWith(
-                    color: kTextMuted,
+                    color: AppColors.textMuted,
                     fontStyle: FontStyle.italic,
                   ),
                 ),
@@ -226,13 +223,13 @@ class _TodaysPhraseCard extends StatelessWidget {
           // Japanese meaning
           Row(
             children: [
-              const Icon(Icons.translate, size: 20, color: kAccentGreen),
+              const Icon(Icons.translate, size: 20, color: AppColors.accentGreen),
               AppSpacing.horizontalSpacerMd,
               Expanded(
                 child: Text(
                   challenge.phraseMeaning,
                   style: AppTypography.bodySmall.copyWith(
-                    color: Colors.black,
+                    color: AppColors.textPrimary,
                   ),
                 ),
               ),
@@ -307,8 +304,8 @@ class _AttemptSectionState extends ConsumerState<_AttemptSection> {
       margin: AppSpacing.allPaddingLg,
       padding: AppSpacing.allPaddingLg,
       decoration: BoxDecoration(
-        color: kAccentGreen.withAlpha(10),
-        border: Border.all(color: kAccentGreen.withAlpha(50)),
+        color: AppColors.accentGreen.withAlpha(10),
+        border: Border.all(color: AppColors.accentGreen.withAlpha(50)),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
       ),
       child: Column(
@@ -317,7 +314,7 @@ class _AttemptSectionState extends ConsumerState<_AttemptSection> {
           Text(
             'あなたの発音を入力',
             style: AppTypography.labelLarge.copyWith(
-              color: kTextMuted,
+              color: AppColors.textMuted,
             ),
           ),
           AppSpacing.verticalSpacerMd,
@@ -330,8 +327,8 @@ class _AttemptSectionState extends ConsumerState<_AttemptSection> {
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
               ),
-              prefixIcon: const Icon(Icons.mic, color: kAccentOrange),
-              fillColor: Colors.white,
+              prefixIcon: const Icon(Icons.mic, color: AppColors.accentOrange),
+              fillColor: AppColors.textWhite,
               filled: true,
             ),
           ),
@@ -345,8 +342,8 @@ class _AttemptSectionState extends ConsumerState<_AttemptSection> {
               icon: const Icon(Icons.check_circle),
               label: const Text('提出する'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: kAccentGreen,
-                foregroundColor: Colors.white,
+                backgroundColor: AppColors.accentGreen,
+                foregroundColor: AppColors.textWhite,
                 padding: EdgeInsets.symmetric(
                   vertical: AppSpacing.md,
                 ),
@@ -374,8 +371,8 @@ class _CompletedSection extends StatelessWidget {
       margin: AppSpacing.allPaddingLg,
       padding: AppSpacing.allPaddingLg,
       decoration: BoxDecoration(
-        color: kAccentGreen.withAlpha(10),
-        border: Border.all(color: kAccentGreen),
+        color: AppColors.accentGreen.withAlpha(10),
+        border: Border.all(color: AppColors.accentGreen),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
       ),
       child: Column(
@@ -384,7 +381,7 @@ class _CompletedSection extends StatelessWidget {
           Text(
             '✅ 本日のチャレンジ完了！',
             style: AppTypography.headlineSmall.copyWith(
-              color: kAccentGreen,
+              color: AppColors.accentGreen,
             ),
           ),
           AppSpacing.verticalSpacerLg,
@@ -394,7 +391,7 @@ class _CompletedSection extends StatelessWidget {
             padding: AppSpacing.allPaddingMd,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [kAccentGreen, kAccentGreen.withAlpha(150)],
+                colors: [AppColors.accentGreen, AppColors.accentGreen.withAlpha(150)],
               ),
               borderRadius: BorderRadius.circular(AppSizes.borderRadius),
             ),
@@ -405,14 +402,14 @@ class _CompletedSection extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 48,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: AppColors.textWhite,
                   ),
                 ),
                 AppSpacing.verticalSpacerXs,
                 Text(
                   '点',
                   style: AppTypography.bodySmall.copyWith(
-                    color: Colors.white,
+                    color: AppColors.textWhite,
                   ),
                 ),
               ],
@@ -432,7 +429,7 @@ class _CompletedSection extends StatelessWidget {
                     '${attempt.scorePoints ~/ 10}',
                     style: AppTypography.labelLarge,
                   ),
-                  Text('コイン', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+                  Text('コイン', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
                 ],
               ),
               Column(
@@ -443,7 +440,7 @@ class _CompletedSection extends StatelessWidget {
                     '${attempt.scorePoints ~/ 20}',
                     style: AppTypography.labelLarge,
                   ),
-                  Text('XP', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+                  Text('XP', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
                 ],
               ),
               Column(
@@ -454,7 +451,7 @@ class _CompletedSection extends StatelessWidget {
                     '+1',
                     style: AppTypography.labelLarge,
                   ),
-                  Text('ストリーク', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+                  Text('ストリーク', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
                 ],
               ),
             ],
@@ -526,9 +523,9 @@ class _LeaderboardCard extends StatelessWidget {
       margin: EdgeInsets.only(bottom: AppSpacing.md),
       padding: AppSpacing.allPaddingMd,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.textWhite,
         border: Border.all(
-          color: entry.rank <= 3 ? kAccentOrange.withAlpha(50) : Colors.grey[300]!,
+          color: entry.rank <= 3 ? AppColors.accentOrange.withAlpha(50) : Colors.grey[300]!,
         ),
         borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
       ),
@@ -539,7 +536,7 @@ class _LeaderboardCard extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: entry.rank <= 3 ? kAccentOrange.withAlpha(30) : Colors.grey[100],
+              color: entry.rank <= 3 ? AppColors.accentOrange.withAlpha(30) : Colors.grey[100],
               shape: BoxShape.circle,
             ),
             child: Center(
@@ -567,7 +564,7 @@ class _LeaderboardCard extends StatelessWidget {
                 Text(
                   '${entry.userRegion} • ${entry.userLevel}',
                   style: AppTypography.bodySmall.copyWith(
-                    color: kTextMuted,
+                    color: AppColors.textMuted,
                     fontSize: 11,
                   ),
                 ),
@@ -582,13 +579,13 @@ class _LeaderboardCard extends StatelessWidget {
               vertical: AppSpacing.sm,
             ),
             decoration: BoxDecoration(
-              color: kPrimaryColor.withAlpha(20),
+              color: AppColors.primary.withAlpha(20),
               borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
             ),
             child: Text(
               '${entry.score}点',
               style: AppTypography.labelLarge.copyWith(
-                color: kPrimaryColor,
+                color: AppColors.primary,
                 fontWeight: FontWeight.bold,
               ),
             ),
