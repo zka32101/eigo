@@ -60,17 +60,31 @@ class _SelectionScreen extends StatelessWidget {
         foregroundColor: Colors.white,
         elevation: 0,
       ),
-      body: ListView(
+      body: ListView.builder(
         padding: AppSpacing.allPaddingMd,
-        children: [
-          Text('シナリオを選ぼう！',
-            style: AppTypography.headlineSmall.copyWith(color: kTextDark)),
-          AppSpacing.verticalSpacerXs,
-          Text('AIキャラクターと英語で会話練習しよう',
-            style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
-          AppSpacing.verticalSpacerSm,
-          ...allConversations.map((s) => _ScriptCard(script: s, onTap: () => onSelect(s))),
-        ],
+        itemCount: 4 + allConversations.length,
+        itemBuilder: (context, index) {
+          // Static items (header, spacers, description)
+          if (index == 0) {
+            return Text('シナリオを選ぼう！',
+              style: AppTypography.headlineSmall.copyWith(color: kTextDark));
+          }
+          if (index == 1) {
+            return AppSpacing.verticalSpacerXs;
+          }
+          if (index == 2) {
+            return Text('AIキャラクターと英語で会話練習しよう',
+              style: AppTypography.bodySmall.copyWith(color: kTextMuted));
+          }
+          if (index == 3) {
+            return AppSpacing.verticalSpacerSm;
+          }
+
+          // Dynamic conversation cards (index 4+)
+          final conversationIndex = index - 4;
+          final script = allConversations[conversationIndex];
+          return _ScriptCard(script: script, onTap: () => onSelect(script));
+        },
       ),
     );
   }
