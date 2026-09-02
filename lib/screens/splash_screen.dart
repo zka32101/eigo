@@ -1,13 +1,10 @@
+import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../providers/coin_provider.dart';
 import '../services/firebase_service.dart';
 import '../services/notification_service.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -74,7 +71,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [kPrimaryColor, kPrimaryLight],
+            colors: [AppColors.primary, AppColors.primary.withAlpha(25)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -95,7 +92,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
                     Text(
                       '英語コレ！',
                       style: AppTypography.headlineSmall.copyWith(
-                        color: Colors.white,
+                        color:AppColors.textWhite,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 2,
                       ),
@@ -103,7 +100,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
                     AppSpacing.verticalSpacerXs,
                     Text(
                       'Listening & Speaking',
-                      style: AppTypography.labelLarge.copyWith(color: Colors.white70),
+                      style: AppTypography.labelLarge.copyWith(color: AppColors.textWhite.withOpacity(0.7)),
                     ),
                   ],
                 ),

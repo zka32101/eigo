@@ -122,7 +122,7 @@ class HomeScreen extends ConsumerWidget {
                               );
                             },
                             child: Text('${currentUser?.avatar ?? '👧'} ${currentUser?.name ?? 'プロフィール'}',
-                              style: AppTypography.labelLarge.copyWith(color: Colors.white, fontWeight: FontWeight.bold)),
+                              style: AppTypography.labelLarge.copyWith(color:AppColors.textWhite, fontWeight: FontWeight.bold)),
                           ),
                           AppSpacing.horizontalSpacerXs,
                           Expanded(
@@ -132,7 +132,7 @@ class HomeScreen extends ConsumerWidget {
                               children: [
                                 Text(
                                   '英語コレ！',
-                                  style: AppTypography.labelLarge.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+                                  style: AppTypography.labelLarge.copyWith(color:AppColors.textWhite, fontWeight: FontWeight.bold),
                                 ),
                                 Row(
                                   children: [
@@ -140,7 +140,7 @@ class HomeScreen extends ConsumerWidget {
                                     AppSpacing.horizontalSpacerXs,
                                     Text(
                                       'コイン: ${coins.totalCoins}🪙',
-                                      style: AppTypography.bodySmall.copyWith(color: Colors.white70),
+                                      style: AppTypography.bodySmall.copyWith(color: AppColors.textWhite.withOpacity(0.7)),
                                     ),
                                   ],
                                 ),

@@ -112,7 +112,7 @@ class _VocabularyScreenState extends ConsumerState<VocabularyScreen> {
             ),
             LinearProgressIndicator(
               value: (_currentIndex + 1) / _filteredWords.length,
-              backgroundColor: Colors.grey[200],
+              backgroundColor: AppColors.bgLight,
               valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
             ),
             Expanded(
@@ -425,7 +425,7 @@ class _BackCard extends StatelessWidget {
     switch (d) {
       case DifficultyLevel.beginner:     return AppColors.accentGreen;
       case DifficultyLevel.intermediate: return AppColors.accentOrange;
-      case DifficultyLevel.advanced:     return Colors.red;
+      case DifficultyLevel.advanced:     return AppColors.error;
     }
   }
 

@@ -37,7 +37,7 @@ class _PassportScreenState extends ConsumerState<PassportScreen> {
             children: [
               // タブバー
               Container(
-                color: Colors.white,
+                color:AppColors.textWhite,
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
@@ -223,11 +223,11 @@ class _ProfileCard extends StatelessWidget {
             width: 100,
             height: 100,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color:AppColors.textWhite,
               borderRadius: BorderRadius.circular(AppSizes.borderRadius),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: AppColors.textPrimary.withAlpha(25),
                   blurRadius: 8,
                 )
               ],
@@ -936,7 +936,7 @@ class _SettingsTab extends ConsumerWidget {
             padding: EdgeInsets.only(bottom: AppSpacing.md),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color:AppColors.textWhite,
                 borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                 border: Border.all(color: AppColors.bgLight),
               ),
@@ -973,7 +973,7 @@ class _SettingsTab extends ConsumerWidget {
         AppSpacing.verticalSpacerMd,
         Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color:AppColors.textWhite,
             borderRadius: BorderRadius.circular(AppSizes.borderRadius),
             border: Border.all(color: AppColors.bgLight),
           ),

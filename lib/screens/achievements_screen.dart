@@ -325,7 +325,7 @@ class _BadgeCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color:AppColors.textWhite,
           border: Border.all(color: AppColors.bgLight),
           borderRadius: BorderRadius.circular(AppSizes.borderRadius),
         ),
@@ -362,7 +362,7 @@ class _BadgeProgressCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: badge.isUnlocked ? AppColors.accentGreen.withAlpha(10) : AppColors.bgLight.withOpacity(0.5),
         border: Border.all(
-          color: badge.isUnlocked ? AppColors.accentGreen.withAlpha(50) : Colors.grey[300]!,
+          color: badge.isUnlocked ? AppColors.accentGreen.withAlpha(50) :AppColors.bgLight,
         ),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
       ),
@@ -443,7 +443,7 @@ class _AllBadgeCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: isEarned ? AppColors.textWhite : AppColors.bgLight,
         border: Border.all(
-          color: isEarned ? Colors.grey[300]! : Colors.grey[300]!,
+          color: isEarned ? Colors.grey[300]! :AppColors.bgLight,
         ),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
       ),

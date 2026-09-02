@@ -494,7 +494,7 @@ class _FriendCard extends StatelessWidget {
     return Container(
       padding: AppSpacing.allPaddingMd,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color:AppColors.textWhite,
         border: Border.all(color: AppColors.bgLight),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
       ),
@@ -626,7 +626,7 @@ class _SearchResultCard extends StatelessWidget {
     return Container(
       padding: AppSpacing.allPaddingMd,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color:AppColors.textWhite,
         border: Border.all(color: AppColors.bgLight),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
       ),
