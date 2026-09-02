@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/english_town_model.dart';
+import '../models/english_town_advanced.dart';
 import '../providers/english_town_provider.dart';
+import '../providers/english_town_rewards_provider.dart';
+import '../providers/english_town_polish_provider.dart';
 import '../design_system/design_system.dart';
 
 /// English-Only Town Conversation Screen
@@ -426,36 +429,169 @@ class _EnglishTownConversationScreenState
 
     ref.read(currentConversationProvider.notifier).addTurn(playerTurn);
 
-    // TODO: In Phase 3, integrate actual Claude API service here
-    // For now, using placeholder logic
+    // Get mood and weather for dialogue variation
+    final npcMood = ref.read(npcMoodProvider);
+    final weather = ref.read(weatherEffectProvider);
+    final timeModifier = ref.read(timeOfDayXpModifierProvider(timeOfDay));
+    final weatherModifier = ref.read(weatherXpModifierProvider(weather));
+    final conversationXpBase = ref.read(conversationXpCalculatorProvider((
+      difficulty: difficulty,
+      correctnessScore: 75, // Placeholder
+    )));
 
-    // Simulate API call
+    // TODO: Integrate actual Claude API service here for full implementation
+    // For now, using enhanced placeholder logic with variations
+
+    // Simulate API call with mood variation
     await Future.delayed(const Duration(seconds: 1));
+
+    // Generate contextual NPC response with mood/weather/time variations
+    final moodResponseMultiplier =
+        _getMoodResponseLength(npcMood); // Controls response verbosity
+    final npcMessage = _generateContextualNPCResponse(
+      npc,
+      npcMood,
+      weather,
+      timeOfDay,
+      moodResponseMultiplier,
+    );
 
     // Add NPC response
     final npcTurn = ConversationTurn(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       speaker: 'NPC',
-      message: "That's wonderful! Tell me more about that.",
+      message: npcMessage,
     );
 
     ref.read(currentConversationProvider.notifier).addTurn(npcTurn);
 
-    // Simulate evaluation
+    // Simulate evaluation with mood/weather/time multipliers
     await Future.delayed(const Duration(milliseconds: 500));
+
+    final baseScore = 75;
+    final adjustedXp = (conversationXpBase * timeModifier * weatherModifier).toInt();
 
     setState(() {
       _isLoading = false;
-      _currentScore = 75;
-      _currentFeedback = "Great response! You used good grammar and vocabulary.";
+      _currentScore = baseScore;
+      _currentFeedback = _generateContextualFeedback(
+        npcMood,
+        timeOfDay,
+        baseScore,
+      );
     });
 
-    // Record progress
+    // Record progress with adjusted rewards
     ref.read(townProgressProvider.notifier).recordNPCConversation(
       npc.id,
-      100, // xpReward
-      50, // coinReward
+      adjustedXp,
+      (25 * weatherModifier).toInt(), // Coin reward with weather modifier
     );
+  }
+
+  /// Generate mood-based response length multiplier
+  double _getMoodResponseLength(NPCMoodState mood) {
+    switch (mood) {
+      case NPCMoodState.happy:
+        return 1.2;
+      case NPCMoodState.excited:
+        return 1.3;
+      case NPCMoodState.neutral:
+        return 1.0;
+      case NPCMoodState.tired:
+        return 0.7;
+      case NPCMoodState.sad:
+        return 0.8;
+    }
+  }
+
+  /// Generate contextual NPC response based on mood, weather, and time
+  String _generateContextualNPCResponse(
+    NPC npc,
+    NPCMoodState mood,
+    WeatherEffect weather,
+    TimeOfDay timeOfDay,
+    double lengthMultiplier,
+  ) {
+    // Base response options by mood
+    final baseResponses = {
+      NPCMoodState.happy: [
+        "That's wonderful! I love your enthusiasm!",
+        "You're doing great! Tell me more!",
+        "I'm so happy to hear that! How wonderful!",
+      ],
+      NPCMoodState.excited: [
+        "Oh wow! That's amazing! I'm so excited!",
+        "This is fantastic! I absolutely love this!",
+        "Yes! Yes! Tell me everything!",
+      ],
+      NPCMoodState.neutral: [
+        "That's interesting. Tell me more about it.",
+        "I see. What else would you like to discuss?",
+        "That's a good point. Continue, please.",
+      ],
+      NPCMoodState.tired: [
+        "That's... nice. Tell me more...",
+        "Oh, okay. Go on...",
+        "Mmm, yes. That's fine.",
+      ],
+      NPCMoodState.sad: [
+        "That sounds okay, I suppose.",
+        "I see what you mean.",
+        "Yes, I understand.",
+      ],
+    };
+
+    final responses = baseResponses[mood] ?? baseResponses[NPCMoodState.neutral]!;
+    final selectedResponse = responses[npc.name.length % responses.length];
+
+    // Add weather/time context
+    String contextualResponse = selectedResponse;
+    if (weather == WeatherEffect.snowy) {
+      contextualResponse += " Isn't this snowy weather beautiful?";
+    } else if (weather == WeatherEffect.rainy) {
+      contextualResponse += " I love this cozy rainy atmosphere.";
+    } else if (timeOfDay == TimeOfDay.night) {
+      contextualResponse += " You're still studying so late - impressive!";
+    } else if (timeOfDay == TimeOfDay.morning) {
+      contextualResponse += " Great energy this morning!";
+    }
+
+    return contextualResponse;
+  }
+
+  /// Generate contextual feedback based on mood and time
+  String _generateContextualFeedback(
+    NPCMoodState mood,
+    TimeOfDay timeOfDay,
+    int score,
+  ) {
+    final baseMessage = score >= 70
+        ? "Excellent! You're making great progress!"
+        : "Good effort! Keep practicing!";
+
+    String feedback = baseMessage;
+
+    // Add mood-specific encouragement
+    switch (mood) {
+      case NPCMoodState.happy:
+        feedback += " Your positivity is inspiring!";
+      case NPCMoodState.excited:
+        feedback += " Your energy is contagious!";
+      case NPCMoodState.tired:
+        feedback += " Nice try despite the late hour!";
+      case NPCMoodState.sad:
+        feedback += " Talking helps us both feel better!";
+      case NPCMoodState.neutral:
+        break;
+    }
+
+    // Add time-specific context
+    if (timeOfDay == TimeOfDay.night && score >= 70) {
+      feedback += " What dedication!";
+    }
+
+    return feedback;
   }
 }
 
