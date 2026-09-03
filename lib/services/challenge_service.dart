@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/challenge_model.dart';
 import 'logger_service.dart';
 
-/// Service for managing social challenges and rewards
 class ChallengeService {
   static final ChallengeService _instance = ChallengeService._internal();
 
@@ -12,550 +11,413 @@ class ChallengeService {
 
   ChallengeService._internal();
 
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final _firestore = FirebaseFirestore.instance;
+  final _logger = LoggerService();
 
-  // ===== Challenge Management =====
-
-  /// Get all active challenges
-  Future<List<SocialChallenge>> getActiveChallenges() async {
-    try {
-      final now = DateTime.now();
-      final snapshot = await _firestore
-          .collection('challenges')
-          .where('isActive', isEqualTo: true)
-          .where('endDate', isGreaterThan: Timestamp.fromDate(now))
-          .get();
-
-      return snapshot.docs
-          .map((doc) => SocialChallenge.fromJson(doc.data() as Map<String, dynamic>))
-          .toList();
-    } catch (e) {
-      LoggerService.error(
-        'Error fetching active challenges',
-        tag: 'ChallengeService',
-        exception: e,
-      );
-      return [];
-    }
-  }
-
-  /// Get challenges by type
-  Future<List<SocialChallenge>> getChallengesByType(ChallengeType type) async {
-    try {
-      final now = DateTime.now();
-      final snapshot = await _firestore
-          .collection('challenges')
-          .where('type', isEqualTo: type.name)
-          .where('endDate', isGreaterThan: Timestamp.fromDate(now))
-          .get();
-
-      return snapshot.docs
-          .map((doc) => SocialChallenge.fromJson(doc.data() as Map<String, dynamic>))
-          .toList();
-    } catch (e) {
-      LoggerService.error(
-        'Error fetching challenges by type',
-        tag: 'ChallengeService',
-        exception: e,
-      );
-      return [];
-    }
-  }
-
-  /// Get specific challenge
-  Future<SocialChallenge?> getChallenge(String challengeId) async {
-    try {
-      final doc = await _firestore
-          .collection('challenges')
-          .doc(challengeId)
-          .get();
-
-      if (!doc.exists) return null;
-
-      return SocialChallenge.fromJson(doc.data() as Map<String, dynamic>);
-    } catch (e) {
-      LoggerService.error(
-        'Error fetching challenge',
-        tag: 'ChallengeService',
-        exception: e,
-      );
-      return null;
-    }
-  }
-
-  /// Join challenge
-  Future<bool> joinChallenge(String userId, String challengeId) async {
-    try {
-      final challenge = await getChallenge(challengeId);
-      if (challenge == null) return false;
-
-      // Create user challenge progress
-      await _firestore
-          .collection('userChallengeProgress')
-          .doc(userId)
-          .collection('challenges')
-          .doc(challengeId)
-          .set({
-            'userId': userId,
-            'challengeId': challengeId,
-            'progress': 0,
-            'isCompleted': false,
-            'joinedAt': Timestamp.now(),
-            'completedAt': null,
-            'earnedRewardIds': [],
-            'isAchieved': false,
-          });
-
-      // Add user to challenge participants
-      await _firestore
-          .collection('challenges')
-          .doc(challengeId)
-          .update({
-            'participantIds': FieldValue.arrayUnion([userId]),
-            'participantCount': FieldValue.increment(1),
-          });
-
-      LoggerService.info(
-        'User $userId joined challenge $challengeId',
-        tag: 'ChallengeService',
-      );
-
-      return true;
-    } catch (e) {
-      LoggerService.error(
-        'Error joining challenge',
-        tag: 'ChallengeService',
-        exception: e,
-      );
-      return false;
-    }
-  }
-
-  // ===== Progress Tracking =====
-
-  /// Update user challenge progress
-  Future<void> updateChallengeProgress(
-    String userId,
-    String challengeId,
-    int newProgress,
+  // Create a new challenge
+  Future<SocialChallenge> createChallenge(
+    SocialChallenge challenge,
   ) async {
     try {
-      final challenge = await getChallenge(challengeId);
-      if (challenge == null) return;
-
-      final isCompleted = newProgress >= challenge.targetValue;
-      final completedAt = isCompleted ? DateTime.now() : null;
-
-      await _firestore
-          .collection('userChallengeProgress')
-          .doc(userId)
-          .collection('challenges')
-          .doc(challengeId)
-          .update({
-            'progress': newProgress,
-            'isCompleted': isCompleted,
-            if (completedAt != null) 'completedAt': Timestamp.fromDate(completedAt),
-          });
-
-      // Update challenge leaderboard
-      await _firestore
-          .collection('challenges')
-          .doc(challengeId)
-          .update({
-            'leaderboard.$userId': newProgress,
-          });
-
-      LoggerService.info(
-        'Challenge progress updated: $challengeId, progress: $newProgress',
-        tag: 'ChallengeService',
-      );
+      final docRef = _firestore.collection('challenges').doc();
+      final newChallenge = challenge.copyWith(id: docRef.id);
+      
+      await docRef.set(newChallenge.toJson());
+      return newChallenge;
     } catch (e) {
-      LoggerService.error(
-        'Error updating challenge progress',
-        tag: 'ChallengeService',
-        exception: e,
-      );
+      _logger.error('Error creating challenge', e);
+      throw Exception('チャレンジの作成に失敗しました');
     }
   }
 
-  /// Get user challenge progress
-  Future<UserChallengeProgress?> getUserChallengeProgress(
-    String userId,
-    String challengeId,
-  ) async {
-    try {
-      final doc = await _firestore
-          .collection('userChallengeProgress')
-          .doc(userId)
-          .collection('challenges')
-          .doc(challengeId)
-          .get();
-
-      if (!doc.exists) return null;
-
-      return UserChallengeProgress.fromJson(doc.data() as Map<String, dynamic>);
-    } catch (e) {
-      LoggerService.error(
-        'Error fetching user challenge progress',
-        tag: 'ChallengeService',
-        exception: e,
-      );
-      return null;
-    }
-  }
-
-  /// Get user's active challenges
-  Future<List<UserChallengeProgress>> getUserActiveChallenges(String userId) async {
+  // Get challenge by ID
+  Future<SocialChallenge> getChallengeById(String challengeId) async {
     try {
       final snapshot = await _firestore
-          .collection('userChallengeProgress')
-          .doc(userId)
           .collection('challenges')
-          .where('isCompleted', isEqualTo: false)
+          .doc(challengeId)
           .get();
 
-      return snapshot.docs
-          .map((doc) => UserChallengeProgress.fromJson(doc.data() as Map<String, dynamic>))
-          .toList();
-    } catch (e) {
-      LoggerService.error(
-        'Error fetching user active challenges',
-        tag: 'ChallengeService',
-        exception: e,
-      );
-      return [];
-    }
-  }
-
-  /// Get user's completed challenges
-  Future<List<UserChallengeProgress>> getUserCompletedChallenges(String userId) async {
-    try {
-      final snapshot = await _firestore
-          .collection('userChallengeProgress')
-          .doc(userId)
-          .collection('challenges')
-          .where('isCompleted', isEqualTo: true)
-          .orderBy('completedAt', descending: true)
-          .get();
-
-      return snapshot.docs
-          .map((doc) => UserChallengeProgress.fromJson(doc.data() as Map<String, dynamic>))
-          .toList();
-    } catch (e) {
-      LoggerService.error(
-        'Error fetching user completed challenges',
-        tag: 'ChallengeService',
-        exception: e,
-      );
-      return [];
-    }
-  }
-
-  // ===== Rewards =====
-
-  /// Claim rewards for challenge
-  Future<List<ChallengeReward>> claimChallengeRewards(
-    String userId,
-    String challengeId,
-  ) async {
-    try {
-      final challenge = await getChallenge(challengeId);
-      final progress = await getUserChallengeProgress(userId, challengeId);
-
-      if (challenge == null || progress == null) return [];
-
-      // Calculate earned rewards based on progress percentage
-      final progressPercent = (progress.progress / challenge.targetValue * 100).toInt();
-      final earnedRewards = <ChallengeReward>[];
-      final earnedRewardIds = <String>[];
-
-      for (final reward in challenge.rewards) {
-        if (progressPercent >= reward.minProgress && !progress.earnedRewardIds.contains(reward.id)) {
-          earnedRewards.add(reward);
-          earnedRewardIds.add(reward.id);
-        }
+      if (!snapshot.exists) {
+        throw Exception('チャレンジが見つかりません');
       }
 
-      if (earnedRewardIds.isNotEmpty) {
-        // Update earned rewards
-        await _firestore
-            .collection('userChallengeProgress')
-            .doc(userId)
-            .collection('challenges')
-            .doc(challengeId)
-            .update({
-              'earnedRewardIds': FieldValue.arrayUnion(earnedRewardIds),
-              'isAchieved': true,
-            });
-
-        // Award coins and XP
-        int totalCoins = 0;
-        int totalXp = 0;
-
-        for (final reward in earnedRewards) {
-          totalCoins += reward.coinReward;
-          totalXp += reward.xpReward;
-        }
-
-        // Update user stats (would integrate with user service)
-        LoggerService.info(
-          'Rewards claimed: $challengeId, coins: $totalCoins, xp: $totalXp',
-          tag: 'ChallengeService',
-        );
-      }
-
-      return earnedRewards;
+      return SocialChallenge.fromJson(snapshot.data() as Map<String, dynamic>);
     } catch (e) {
-      LoggerService.error(
-        'Error claiming rewards',
-        tag: 'ChallengeService',
-        exception: e,
-      );
+      _logger.error('Error fetching challenge', e);
+      rethrow;
+    }
+  }
+
+  // Get active challenges (public)
+  Future<List<SocialChallenge>> getActiveChallenges({int limit = 20}) async {
+    try {
+      final snapshot = await _firestore
+          .collection('challenges')
+          .where('status', isEqualTo: 'active')
+          .where('isPublic', isEqualTo: true)
+          .orderBy('createdAt', descending: true)
+          .limit(limit)
+          .get();
+
+      return snapshot.docs
+          .map((doc) => SocialChallenge.fromJson(doc.data()))
+          .toList();
+    } catch (e) {
+      _logger.error('Error fetching active challenges', e);
       return [];
     }
   }
 
-  // ===== Leaderboard =====
+  // Get challenges created by user
+  Future<List<SocialChallenge>> getUserCreatedChallenges(String userId) async {
+    try {
+      final snapshot = await _firestore
+          .collection('challenges')
+          .where('creatorId', isEqualTo: userId)
+          .orderBy('createdAt', descending: true)
+          .get();
 
-  /// Get challenge leaderboard (top participants)
-  Future<List<Map<String, dynamic>>> getChallengeLeaderboard(
-    String challengeId, {
-    int limit = 100,
+      return snapshot.docs
+          .map((doc) => SocialChallenge.fromJson(doc.data()))
+          .toList();
+    } catch (e) {
+      _logger.error('Error fetching user challenges', e);
+      return [];
+    }
+  }
+
+  // Get challenges joined by user
+  Future<List<SocialChallenge>> getUserJoinedChallenges(String userId) async {
+    try {
+      final snapshot = await _firestore
+          .collection('challenges')
+          .where('participants', arrayContains: userId)
+          .orderBy('createdAt', descending: true)
+          .get();
+
+      return snapshot.docs
+          .map((doc) => SocialChallenge.fromJson(doc.data()))
+          .toList();
+    } catch (e) {
+      _logger.error('Error fetching joined challenges', e);
+      return [];
+    }
+  }
+
+  // Get challenges by type
+  Future<List<SocialChallenge>> getChallengesByType(
+    ChallengeType type, {
+    int limit = 20,
   }) async {
     try {
-      final challenge = await getChallenge(challengeId);
-      if (challenge == null) return [];
+      final snapshot = await _firestore
+          .collection('challenges')
+          .where('type', isEqualTo: type.toString())
+          .where('status', isEqualTo: 'active')
+          .orderBy('createdAt', descending: true)
+          .limit(limit)
+          .get();
 
-      // Sort leaderboard by progress
-      final leaderboardEntries = challenge.leaderboard.entries.toList()
-        ..sort((a, b) => b.value.compareTo(a.value));
-
-      return leaderboardEntries.take(limit).map((entry) {
-        return {
-          'userId': entry.key,
-          'progress': entry.value,
-        };
-      }).toList();
+      return snapshot.docs
+          .map((doc) => SocialChallenge.fromJson(doc.data()))
+          .toList();
     } catch (e) {
-      LoggerService.error(
-        'Error fetching challenge leaderboard',
-        tag: 'ChallengeService',
-        exception: e,
-      );
+      _logger.error('Error fetching challenges by type', e);
       return [];
     }
   }
 
-  /// Get user's rank in challenge
-  Future<int?> getUserChallengeRank(String userId, String challengeId) async {
+  // Join a challenge
+  Future<ChallengeParticipation> joinChallenge(
+    String challengeId,
+    String userId,
+    String userName,
+    String userAvatar,
+  ) async {
     try {
-      final leaderboard = await getChallengeLeaderboard(challengeId, limit: 1000);
+      // Check if already joined
+      final existing = await _firestore
+          .collection('challenges')
+          .doc(challengeId)
+          .collection('participants')
+          .where('userId', isEqualTo: userId)
+          .get();
 
-      int rank = 0;
-      for (final entry in leaderboard) {
-        rank++;
-        if (entry['userId'] == userId) {
-          return rank;
+      if (existing.docs.isNotEmpty) {
+        throw Exception('既にこのチャレンジに参加しています');
+      }
+
+      final participation = ChallengeParticipation(
+        id: _firestore.collection('temp').doc().id,
+        challengeId: challengeId,
+        userId: userId,
+        userName: userName,
+        userAvatar: userAvatar,
+        joinedAt: DateTime.now(),
+        currentScore: 0,
+        currentRank: 0,
+        hasCompleted: false,
+        activityLog: [],
+      );
+
+      // Add to participants subcollection
+      await _firestore
+          .collection('challenges')
+          .doc(challengeId)
+          .collection('participants')
+          .doc(participation.id)
+          .set(participation.toJson());
+
+      // Update challenge participant count
+      await _firestore
+          .collection('challenges')
+          .doc(challengeId)
+          .update({
+        'currentParticipants': FieldValue.increment(1),
+        'participants.$userId': 0,
+      });
+
+      return participation;
+    } catch (e) {
+      _logger.error('Error joining challenge', e);
+      rethrow;
+    }
+  }
+
+  // Update participant score
+  Future<void> updateParticipantScore(
+    String challengeId,
+    String userId,
+    int newScore,
+  ) async {
+    try {
+      await _firestore
+          .collection('challenges')
+          .doc(challengeId)
+          .update({
+        'participants.$userId': newScore,
+      });
+    } catch (e) {
+      _logger.error('Error updating participant score', e);
+      rethrow;
+    }
+  }
+
+  // Complete challenge
+  Future<ChallengeResult> completeChallenge(
+    String challengeId,
+    String userId,
+    int finalScore,
+    int xpEarned,
+    int coinsEarned,
+  ) async {
+    try {
+      final challenge = await getChallengeById(challengeId);
+      final topParticipants = challenge.getTopParticipants(limit: 3);
+      
+      int rank = 999;
+      for (int i = 0; i < topParticipants.length; i++) {
+        if (topParticipants[i].key == userId) {
+          rank = i + 1;
+          break;
         }
       }
 
-      return null;
-    } catch (e) {
-      LoggerService.error(
-        'Error fetching user challenge rank',
-        tag: 'ChallengeService',
-        exception: e,
-      );
-      return null;
-    }
-  }
+      bool isWinner = rank == 1;
+      bool isPrizeWon = rank <= 3;
+      String? prizeType;
+      int? prizeAmount;
 
-  // ===== Friend Challenges =====
+      if (rank == 1) prizeType = 'first';
+      if (rank == 2) prizeType = 'second';
+      if (rank == 3) prizeType = 'third';
 
-  /// Create friend challenge (invite)
-  Future<FriendChallenge?> createFriendChallenge(
-    String userId,
-    String friendId,
-    String description,
-    int targetValue,
-  ) async {
-    try {
-      final challengeId = DateTime.now().millisecondsSinceEpoch.toString();
-      final now = DateTime.now();
-      final endDate = now.add(const Duration(days: 7));
+      if (prizeType != null) {
+        if (prizeType == 'first') prizeAmount = challenge.firstPlacePrize;
+        if (prizeType == 'second') prizeAmount = challenge.secondPlacePrize;
+        if (prizeType == 'third') prizeAmount = challenge.thirdPlacePrize;
+      }
 
-      final friendChallenge = FriendChallenge(
-        id: challengeId,
-        initiatorId: userId,
-        opponentId: friendId,
-        description: description,
-        startDate: now,
-        endDate: endDate,
-        targetValue: targetValue,
+      final result = ChallengeResult(
+        id: _firestore.collection('temp').doc().id,
+        challengeId: challengeId,
+        userId: userId,
+        userName: challenge.participants.entries
+            .firstWhere((e) => e.key == userId)
+            .key,
+        userAvatar: '', // TODO: Get from user profile
+        finalScore: finalScore,
+        finalRank: rank,
+        completedAt: DateTime.now(),
+        xpEarned: xpEarned,
+        coinsEarned: coinsEarned,
+        isWinner: isWinner,
+        isPrizeWon: isPrizeWon,
+        prizeType: prizeType,
+        prizeAmount: prizeAmount,
+        badgesEarned: [],
       );
 
       await _firestore
-          .collection('friendChallenges')
+          .collection('challenges')
           .doc(challengeId)
-          .set(friendChallenge.toJson());
+          .collection('results')
+          .doc(result.id)
+          .set(result.toJson());
 
-      LoggerService.info(
-        'Friend challenge created: $userId vs $friendId',
-        tag: 'ChallengeService',
-      );
-
-      return friendChallenge;
+      return result;
     } catch (e) {
-      LoggerService.error(
-        'Error creating friend challenge',
-        tag: 'ChallengeService',
-        exception: e,
-      );
-      return null;
+      _logger.error('Error completing challenge', e);
+      rethrow;
     }
   }
 
-  /// Get friend challenges for user
-  Future<List<FriendChallenge>> getUserFriendChallenges(String userId) async {
+  // Invite users to challenge
+  Future<void> inviteUsersToChallenge(
+    String challengeId,
+    List<String> userIds,
+    String inviterName,
+  ) async {
     try {
-      final now = DateTime.now();
+      final challenge = await getChallengeById(challengeId);
+
+      for (final userId in userIds) {
+        final invitation = ChallengeInvitation(
+          id: _firestore.collection('temp').doc().id,
+          challengeId: challengeId,
+          invitedUserId: userId,
+          invitedUserName: '', // TODO: Get from user profile
+          inviterUserId: challenge.creatorId,
+          inviterName: inviterName,
+          invitedAt: DateTime.now(),
+          accepted: false,
+          challengeTitle: challenge.title,
+          challengeDescription: challenge.description,
+        );
+
+        await _firestore
+            .collection('users')
+            .doc(userId)
+            .collection('invitations')
+            .doc(invitation.id)
+            .set(invitation.toJson());
+      }
+
+      // Update challenge invitations
+      await _firestore
+          .collection('challenges')
+          .doc(challengeId)
+          .update({
+        'invitedUserIds': FieldValue.arrayUnion(userIds),
+      });
+    } catch (e) {
+      _logger.error('Error inviting users', e);
+      rethrow;
+    }
+  }
+
+  // Get challenge invitations
+  Future<List<ChallengeInvitation>> getChallengeInvitations(String userId) async {
+    try {
       final snapshot = await _firestore
-          .collection('friendChallenges')
-          .where('endDate', isGreaterThan: Timestamp.fromDate(now))
+          .collection('users')
+          .doc(userId)
+          .collection('invitations')
+          .where('accepted', isEqualTo: false)
+          .orderBy('invitedAt', descending: true)
           .get();
 
-      final challenges = snapshot.docs
-          .map((doc) => FriendChallenge.fromJson(doc.data() as Map<String, dynamic>))
-          .toList();
-
-      // Filter for user (as initiator or opponent)
-      return challenges
-          .where((c) => c.initiatorId == userId || c.opponentId == userId)
+      return snapshot.docs
+          .map((doc) => ChallengeInvitation.fromJson(doc.data()))
           .toList();
     } catch (e) {
-      LoggerService.error(
-        'Error fetching user friend challenges',
-        tag: 'ChallengeService',
-        exception: e,
-      );
+      _logger.error('Error fetching invitations', e);
       return [];
     }
   }
 
-  /// Update friend challenge progress
-  Future<void> updateFriendChallengeProgress(
+  // Accept invitation
+  Future<void> acceptChallengeInvitation(
+    String invitationId,
     String challengeId,
     String userId,
-    int progress,
   ) async {
     try {
-      final doc = await _firestore
-          .collection('friendChallenges')
-          .doc(challengeId)
-          .get();
+      // Join the challenge
+      final challenge = await getChallengeById(challengeId);
+      await joinChallenge(challengeId, userId, '', '');
 
-      if (!doc.exists) return;
-
-      final challenge = FriendChallenge.fromJson(doc.data() as Map<String, dynamic>);
-
-      late FriendChallenge updatedChallenge;
-
-      if (challenge.initiatorId == userId) {
-        updatedChallenge = challenge.copyWith(initiatorProgress: progress);
-      } else {
-        updatedChallenge = challenge.copyWith(opponentProgress: progress);
-      }
-
-      // Check if completed
-      if (updatedChallenge.initiatorProgress >= challenge.targetValue ||
-          updatedChallenge.opponentProgress >= challenge.targetValue) {
-        updatedChallenge = updatedChallenge.copyWith(
-          isCompleted: true,
-          winnerId: updatedChallenge.initiatorProgress > updatedChallenge.opponentProgress
-              ? challenge.initiatorId
-              : challenge.opponentId,
-        );
-      }
-
+      // Mark invitation as accepted
       await _firestore
-          .collection('friendChallenges')
-          .doc(challengeId)
-          .update(updatedChallenge.toJson());
-
-      LoggerService.info(
-        'Friend challenge progress updated: $challengeId',
-        tag: 'ChallengeService',
-      );
+          .collection('users')
+          .doc(userId)
+          .collection('invitations')
+          .doc(invitationId)
+          .update({'accepted': true, 'respondedAt': DateTime.now()});
     } catch (e) {
-      LoggerService.error(
-        'Error updating friend challenge progress',
-        tag: 'ChallengeService',
-        exception: e,
-      );
+      _logger.error('Error accepting invitation', e);
+      rethrow;
     }
   }
 
-  // ===== Statistics =====
-
-  /// Get challenge statistics
-  Future<ChallengeStats?> getChallengeStats(String challengeId) async {
+  // Get challenge statistics
+  Future<ChallengeStats> getUserChallengeStats(String userId) async {
     try {
-      final doc = await _firestore
-          .collection('challengeStats')
-          .doc(challengeId)
+      final snapshot = await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('challenge_stats')
+          .doc('stats')
           .get();
 
-      if (!doc.exists) return null;
+      if (!snapshot.exists) {
+        return _createDefaultStats(userId);
+      }
 
-      return ChallengeStats.fromJson(doc.data() as Map<String, dynamic>);
+      return ChallengeStats.fromJson(snapshot.data() as Map<String, dynamic>);
     } catch (e) {
-      LoggerService.error(
-        'Error fetching challenge stats',
-        tag: 'ChallengeService',
-        exception: e,
-      );
-      return null;
+      _logger.error('Error fetching challenge stats', e);
+      return _createDefaultStats(userId);
     }
   }
 
-  /// Get user's challenge statistics
-  Future<Map<String, dynamic>> getUserChallengeStats(String userId) async {
+  // Search challenges
+  Future<List<SocialChallenge>> searchChallenges(
+    String query, {
+    int limit = 20,
+  }) async {
     try {
-      final activeChallenges = await getUserActiveChallenges(userId);
-      final completedChallenges = await getUserCompletedChallenges(userId);
+      final snapshot = await _firestore
+          .collection('challenges')
+          .where('title', isGreaterThanOrEqualTo: query)
+          .where('title', isLessThan: '${query}z')
+          .where('status', isEqualTo: 'active')
+          .limit(limit)
+          .get();
 
-      return {
-        'activeChallenges': activeChallenges.length,
-        'completedChallenges': completedChallenges.length,
-        'totalCoinsEarned': _calculateTotalCoinsEarned(completedChallenges),
-        'totalXpEarned': _calculateTotalXpEarned(completedChallenges),
-        'successRate': completedChallenges.isEmpty
-            ? 0.0
-            : (completedChallenges.where((c) => c.isAchieved).length /
-                    (activeChallenges.length + completedChallenges.length)) *
-                100,
-      };
+      return snapshot.docs
+          .map((doc) => SocialChallenge.fromJson(doc.data()))
+          .toList();
     } catch (e) {
-      LoggerService.error(
-        'Error fetching user challenge stats',
-        tag: 'ChallengeService',
-        exception: e,
-      );
-      return {};
+      _logger.error('Error searching challenges', e);
+      return [];
     }
   }
 
-  // ===== Private Helpers =====
-
-  int _calculateTotalCoinsEarned(List<UserChallengeProgress> challenges) {
-    int total = 0;
-    // This would need to access rewards data, simplified here
-    return total;
-  }
-
-  int _calculateTotalXpEarned(List<UserChallengeProgress> challenges) {
-    int total = 0;
-    // This would need to access rewards data, simplified here
-    return total;
+  // Helper methods
+  ChallengeStats _createDefaultStats(String userId) {
+    return ChallengeStats(
+      userId: userId,
+      totalChallengesCreated: 0,
+      totalChallengesJoined: 0,
+      totalChallengesWon: 0,
+      totalXpFromChallenges: 0,
+      totalCoinsFromChallenges: 0,
+      winRate: 0,
+      averageRank: 0,
+      favoriteTypes: [],
+      lastChallengeDate: DateTime.now(),
+    );
   }
 }

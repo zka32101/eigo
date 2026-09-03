@@ -1,304 +1,278 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/challenge_model.dart';
 import '../services/challenge_service.dart';
-import '../services/logger_service.dart';
 
-/// Challenge Service instance provider
+// Service provider
 final challengeServiceProvider = Provider((ref) {
   return ChallengeService();
 });
 
-/// All active challenges provider
+// Active challenges provider
 final activeChallengesProvider = FutureProvider<List<SocialChallenge>>((ref) async {
-  final challengeService = ref.watch(challengeServiceProvider);
-  return await challengeService.getActiveChallenges();
+  final service = ref.watch(challengeServiceProvider);
+  return service.getActiveChallenges();
 });
 
-/// Challenges by type provider
-final challengesByTypeProvider = FutureProvider.family<List<SocialChallenge>, ChallengeType>(
+// User created challenges provider
+final userCreatedChallengesProvider =
+    FutureProvider.family<List<SocialChallenge>, String>((ref, userId) async {
+  final service = ref.watch(challengeServiceProvider);
+  return service.getUserCreatedChallenges(userId);
+});
+
+// User joined challenges provider
+final userJoinedChallengesProvider =
+    FutureProvider.family<List<SocialChallenge>, String>((ref, userId) async {
+  final service = ref.watch(challengeServiceProvider);
+  return service.getUserJoinedChallenges(userId);
+});
+
+// Challenge by type provider
+final challengesByTypeProvider =
+    FutureProvider.family<List<SocialChallenge>, ChallengeType>(
   (ref, type) async {
-    final challengeService = ref.watch(challengeServiceProvider);
-    return await challengeService.getChallengesByType(type);
+    final service = ref.watch(challengeServiceProvider);
+    return service.getChallengesByType(type);
   },
 );
 
-/// Specific challenge provider
-final challengeProvider = FutureProvider.family<SocialChallenge?, String>(
-  (ref, challengeId) async {
-    final challengeService = ref.watch(challengeServiceProvider);
-    return await challengeService.getChallenge(challengeId);
+// Single challenge provider
+final challengeProvider =
+    FutureProvider.family<SocialChallenge, String>((ref, challengeId) async {
+  final service = ref.watch(challengeServiceProvider);
+  return service.getChallengeById(challengeId);
+});
+
+// Challenge invitations provider
+final challengeInvitationsProvider =
+    FutureProvider.family<List<ChallengeInvitation>, String>((ref, userId) async {
+  final service = ref.watch(challengeServiceProvider);
+  return service.getChallengeInvitations(userId);
+});
+
+// Challenge statistics provider
+final challengeStatsProvider =
+    FutureProvider.family<ChallengeStats, String>((ref, userId) async {
+  final service = ref.watch(challengeServiceProvider);
+  return service.getUserChallengeStats(userId);
+});
+
+// Search challenges provider
+final searchChallengesProvider =
+    FutureProvider.family<List<SocialChallenge>, String>(
+  (ref, query) async {
+    if (query.isEmpty) return [];
+    final service = ref.watch(challengeServiceProvider);
+    return service.searchChallenges(query);
   },
 );
 
-/// User's active challenges provider
-final userActiveChallengesProvider = FutureProvider.family<List<UserChallengeProgress>, String>(
-  (ref, userId) async {
-    final challengeService = ref.watch(challengeServiceProvider);
-    return await challengeService.getUserActiveChallenges(userId);
-  },
-);
+// Create challenge action
+class CreateChallengeParams {
+  final String title;
+  final String description;
+  final ChallengeType type;
+  final ChallengeGoalMetric goalMetric;
+  final int goalValue;
+  final DateTime startDate;
+  final DateTime endDate;
+  final int maxParticipants;
+  final bool isPublic;
+  final int? firstPlacePrize;
+  final int? secondPlacePrize;
+  final int? thirdPlacePrize;
+  final List<String>? tags;
 
-/// User's completed challenges provider
-final userCompletedChallengesProvider = FutureProvider.family<List<UserChallengeProgress>, String>(
-  (ref, userId) async {
-    final challengeService = ref.watch(challengeServiceProvider);
-    return await challengeService.getUserCompletedChallenges(userId);
-  },
-);
+  CreateChallengeParams({
+    required this.title,
+    required this.description,
+    required this.type,
+    required this.goalMetric,
+    required this.goalValue,
+    required this.startDate,
+    required this.endDate,
+    required this.maxParticipants,
+    required this.isPublic,
+    this.firstPlacePrize,
+    this.secondPlacePrize,
+    this.thirdPlacePrize,
+    this.tags,
+  });
+}
 
-/// User's challenge progress provider
-final userChallengeProgressProvider = FutureProvider.family<UserChallengeProgress?, String>(
+final createChallengeActionProvider =
+    FutureProvider.family<SocialChallenge, CreateChallengeParams>(
   (ref, params) async {
-    final parts = params.split(':');
-    if (parts.length != 2) return null;
+    final service = ref.watch(challengeServiceProvider);
+    final challenge = SocialChallenge(
+      id: '', // Will be set by service
+      creatorId: '', // TODO: Get from auth
+      creatorName: '', // TODO: Get from user profile
+      creatorAvatar: '', // TODO: Get from user profile
+      title: params.title,
+      description: params.description,
+      type: params.type,
+      status: ChallengeStatus.active,
+      goalMetric: params.goalMetric,
+      goalValue: params.goalValue,
+      startDate: params.startDate,
+      endDate: params.endDate,
+      createdAt: DateTime.now(),
+      maxParticipants: params.maxParticipants,
+      currentParticipants: 1, // Creator is participant
+      isPublic: params.isPublic,
+      invitedUserIds: [],
+      participants: {},
+      firstPlacePrize: params.firstPlacePrize,
+      secondPlacePrize: params.secondPlacePrize,
+      thirdPlacePrize: params.thirdPlacePrize,
+      tags: params.tags,
+    );
 
-    final userId = parts[0];
-    final challengeId = parts[1];
-
-    final challengeService = ref.watch(challengeServiceProvider);
-    return await challengeService.getUserChallengeProgress(userId, challengeId);
+    final created = await service.createChallenge(challenge);
+    ref.refresh(activeChallengesProvider);
+    return created;
   },
 );
 
-/// Challenge leaderboard provider
-final challengeLeaderboardProvider = FutureProvider.family<List<Map<String, dynamic>>, String>(
-  (ref, challengeId) async {
-    final challengeService = ref.watch(challengeServiceProvider);
-    return await challengeService.getChallengeLeaderboard(challengeId);
-  },
-);
+// Join challenge action
+class JoinChallengeParams {
+  final String challengeId;
+  final String userId;
+  final String userName;
+  final String userAvatar;
 
-/// User's challenge rank provider
-final userChallengeRankProvider = FutureProvider.family<int?, String>(
+  JoinChallengeParams({
+    required this.challengeId,
+    required this.userId,
+    required this.userName,
+    required this.userAvatar,
+  });
+}
+
+final joinChallengeActionProvider =
+    FutureProvider.family<ChallengeParticipation, JoinChallengeParams>(
   (ref, params) async {
-    final parts = params.split(':');
-    if (parts.length != 2) return null;
-
-    final userId = parts[0];
-    final challengeId = parts[1];
-
-    final challengeService = ref.watch(challengeServiceProvider);
-    return await challengeService.getUserChallengeRank(userId, challengeId);
+    final service = ref.watch(challengeServiceProvider);
+    final participation = await service.joinChallenge(
+      params.challengeId,
+      params.userId,
+      params.userName,
+      params.userAvatar,
+    );
+    
+    ref.refresh(activeChallengesProvider);
+    ref.refresh(challengeProvider(params.challengeId));
+    ref.refresh(userJoinedChallengesProvider(params.userId));
+    
+    return participation;
   },
 );
 
-/// Challenge statistics provider
-final challengeStatsProvider = FutureProvider.family<ChallengeStats?, String>(
-  (ref, challengeId) async {
-    final challengeService = ref.watch(challengeServiceProvider);
-    return await challengeService.getChallengeStats(challengeId);
-  },
-);
+// Complete challenge action
+class CompleteChallengeParams {
+  final String challengeId;
+  final String userId;
+  final int finalScore;
+  final int xpEarned;
+  final int coinsEarned;
 
-/// User's challenge statistics provider
-final userChallengeStatsProvider = FutureProvider.family<Map<String, dynamic>, String>(
-  (ref, userId) async {
-    final challengeService = ref.watch(challengeServiceProvider);
-    return await challengeService.getUserChallengeStats(userId);
-  },
-);
+  CompleteChallengeParams({
+    required this.challengeId,
+    required this.userId,
+    required this.finalScore,
+    required this.xpEarned,
+    required this.coinsEarned,
+  });
+}
 
-/// User's friend challenges provider
-final userFriendChallengesProvider = FutureProvider.family<List<FriendChallenge>, String>(
-  (ref, userId) async {
-    final challengeService = ref.watch(challengeServiceProvider);
-    return await challengeService.getUserFriendChallenges(userId);
-  },
-);
-
-// ===== Action Providers =====
-
-/// Join challenge action
-final joinChallengeActionProvider = FutureProvider.family<bool, JoinChallengeParams>(
+final completeChallengeActionProvider =
+    FutureProvider.family<ChallengeResult, CompleteChallengeParams>(
   (ref, params) async {
-    final challengeService = ref.watch(challengeServiceProvider);
-    final result = await challengeService.joinChallenge(params.userId, params.challengeId);
-
-    if (result) {
-      // Invalidate related providers
-      ref.invalidate(userActiveChallengesProvider(params.userId));
-      ref.invalidate(activeChallengesProvider);
-      ref.invalidate(challengeLeaderboardProvider(params.challengeId));
-    }
-
+    final service = ref.watch(challengeServiceProvider);
+    final result = await service.completeChallenge(
+      params.challengeId,
+      params.userId,
+      params.finalScore,
+      params.xpEarned,
+      params.coinsEarned,
+    );
+    
+    ref.refresh(challengeProvider(params.challengeId));
+    ref.refresh(challengeStatsProvider(params.userId));
+    
     return result;
   },
 );
 
-/// Update challenge progress action
-final updateChallengeProgressActionProvider =
-    FutureProvider.family<void, UpdateChallengeProgressParams>(
+// Invite to challenge action
+class InviteToChallengeParams {
+  final String challengeId;
+  final List<String> userIds;
+  final String inviterName;
+
+  InviteToChallengeParams({
+    required this.challengeId,
+    required this.userIds,
+    required this.inviterName,
+  });
+}
+
+final inviteToChallengeActionProvider =
+    FutureProvider.family<void, InviteToChallengeParams>(
   (ref, params) async {
-    final challengeService = ref.watch(challengeServiceProvider);
-    await challengeService.updateChallengeProgress(
-      params.userId,
+    final service = ref.watch(challengeServiceProvider);
+    await service.inviteUsersToChallenge(
       params.challengeId,
-      params.progress,
+      params.userIds,
+      params.inviterName,
     );
-
-    // Invalidate related providers
-    ref.invalidate(
-      userChallengeProgressProvider('${params.userId}:${params.challengeId}'),
-    );
-    ref.invalidate(challengeLeaderboardProvider(params.challengeId));
-    ref.invalidate(userChallengeRankProvider('${params.userId}:${params.challengeId}'));
+    
+    ref.refresh(challengeProvider(params.challengeId));
   },
 );
 
-/// Claim rewards action
-final claimRewardsActionProvider = FutureProvider.family<List<ChallengeReward>, String>(
+// Accept invitation action
+class AcceptInvitationParams {
+  final String invitationId;
+  final String challengeId;
+  final String userId;
+
+  AcceptInvitationParams({
+    required this.invitationId,
+    required this.challengeId,
+    required this.userId,
+  });
+}
+
+final acceptChallengeInvitationActionProvider =
+    FutureProvider.family<void, AcceptInvitationParams>(
   (ref, params) async {
-    final parts = params.split(':');
-    if (parts.length != 2) return [];
-
-    final userId = parts[0];
-    final challengeId = parts[1];
-
-    final challengeService = ref.watch(challengeServiceProvider);
-    final rewards = await challengeService.claimChallengeRewards(userId, challengeId);
-
-    if (rewards.isNotEmpty) {
-      // Invalidate related providers
-      ref.invalidate(userChallengeProgressProvider('$userId:$challengeId'));
-      ref.invalidate(userChallengeStatsProvider(userId));
-    }
-
-    return rewards;
-  },
-);
-
-/// Create friend challenge action
-final createFriendChallengeActionProvider = FutureProvider.family<FriendChallenge?, CreateFriendChallengeParams>(
-  (ref, params) async {
-    final challengeService = ref.watch(challengeServiceProvider);
-    final challenge = await challengeService.createFriendChallenge(
-      params.userId,
-      params.friendId,
-      params.description,
-      params.targetValue,
-    );
-
-    if (challenge != null) {
-      // Invalidate related providers
-      ref.invalidate(userFriendChallengesProvider(params.userId));
-      ref.invalidate(userFriendChallengesProvider(params.friendId));
-    }
-
-    return challenge;
-  },
-);
-
-/// Update friend challenge progress action
-final updateFriendChallengeProgressActionProvider =
-    FutureProvider.family<void, UpdateFriendChallengeProgressParams>(
-  (ref, params) async {
-    final challengeService = ref.watch(challengeServiceProvider);
-    await challengeService.updateFriendChallengeProgress(
+    final service = ref.watch(challengeServiceProvider);
+    await service.acceptChallengeInvitation(
+      params.invitationId,
       params.challengeId,
       params.userId,
-      params.progress,
     );
-
-    // Invalidate related providers
-    ref.invalidate(userFriendChallengesProvider(params.userId));
+    
+    ref.refresh(challengeInvitationsProvider(params.userId));
+    ref.refresh(userJoinedChallengesProvider(params.userId));
   },
 );
 
-// ===== Parameter Classes =====
+// Challenge search query state
+final challengeSearchQueryProvider = StateProvider<String>((ref) {
+  return '';
+});
 
-class JoinChallengeParams {
-  final String userId;
-  final String challengeId;
+// Challenge filter state
+final challengeTypeFilterProvider = StateProvider<ChallengeType?>((ref) {
+  return null;
+});
 
-  JoinChallengeParams({
-    required this.userId,
-    required this.challengeId,
-  });
+// Challenge sort state
+enum ChallengeSortBy { newest, mostPopular, endingSoon }
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is JoinChallengeParams &&
-          runtimeType == other.runtimeType &&
-          userId == other.userId &&
-          challengeId == other.challengeId;
-
-  @override
-  int get hashCode => userId.hashCode ^ challengeId.hashCode;
-}
-
-class UpdateChallengeProgressParams {
-  final String userId;
-  final String challengeId;
-  final int progress;
-
-  UpdateChallengeProgressParams({
-    required this.userId,
-    required this.challengeId,
-    required this.progress,
-  });
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is UpdateChallengeProgressParams &&
-          runtimeType == other.runtimeType &&
-          userId == other.userId &&
-          challengeId == other.challengeId &&
-          progress == other.progress;
-
-  @override
-  int get hashCode => userId.hashCode ^ challengeId.hashCode ^ progress.hashCode;
-}
-
-class CreateFriendChallengeParams {
-  final String userId;
-  final String friendId;
-  final String description;
-  final int targetValue;
-
-  CreateFriendChallengeParams({
-    required this.userId,
-    required this.friendId,
-    required this.description,
-    required this.targetValue,
-  });
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is CreateFriendChallengeParams &&
-          runtimeType == other.runtimeType &&
-          userId == other.userId &&
-          friendId == other.friendId &&
-          description == other.description &&
-          targetValue == other.targetValue;
-
-  @override
-  int get hashCode =>
-      userId.hashCode ^ friendId.hashCode ^ description.hashCode ^ targetValue.hashCode;
-}
-
-class UpdateFriendChallengeProgressParams {
-  final String challengeId;
-  final String userId;
-  final int progress;
-
-  UpdateFriendChallengeProgressParams({
-    required this.challengeId,
-    required this.userId,
-    required this.progress,
-  });
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is UpdateFriendChallengeProgressParams &&
-          runtimeType == other.runtimeType &&
-          challengeId == other.challengeId &&
-          userId == other.userId &&
-          progress == other.progress;
-
-  @override
-  int get hashCode => challengeId.hashCode ^ userId.hashCode ^ progress.hashCode;
-}
+final challengeSortProvider = StateProvider<ChallengeSortBy>((ref) {
+  return ChallengeSortBy.newest;
+});

@@ -2,399 +2,371 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'challenge_model.g.dart';
 
-/// Challenge type enumeration
 enum ChallengeType {
-  daily,
-  weekly,
-  community,
-  friend,
+  individual, // Solo challenges
+  team, // Team-based challenges
+  tournament, // Multi-team tournament
+  timed, // Time-limited challenges
+  streakBased, // Based on streak continuation
+  skillFocused, // Focus on specific skill
 }
 
-/// Challenge difficulty level
-enum ChallengeDifficulty {
-  easy,
-  normal,
-  hard,
-  expert,
+enum ChallengeStatus {
+  draft,
+  active,
+  paused,
+  completed,
+  cancelled,
 }
 
-/// Challenge objective type
-enum ObjectiveType {
-  completeLessons,
-  achieveScore,
-  earnXP,
-  improveScore,
-  playStreak,
-  watchVideos,
-  completeQuiz,
-  custom,
+enum ChallengeGoalMetric {
+  totalScore,
+  lessonsCompleted,
+  xpEarned,
+  streakDays,
+  challengesWon,
+  accuracyPercent,
+  speedScore,
 }
 
-/// Social challenge model
 @JsonSerializable()
 class SocialChallenge {
   final String id;
+  final String creatorId;
+  final String creatorName;
+  final String creatorAvatar;
   final String title;
   final String description;
   final ChallengeType type;
-  final ChallengeDifficulty difficulty;
-  final ObjectiveType objectiveType;
-  final int targetValue; // lessons count, score, XP, etc.
-  final int currentValue; // for user progress
+  final ChallengeStatus status;
+  final ChallengeGoalMetric goalMetric;
+  final int goalValue;
   final DateTime startDate;
   final DateTime endDate;
-  final int participantCount;
-  final List<String> participantIds;
-  final bool isActive;
-  final String? theme; // "Week of Phonetics", etc.
-  final List<ChallengeReward> rewards;
-  final Map<String, int> leaderboard; // userId -> score
-  final String? bannerUrl;
+  final DateTime createdAt;
+  final int maxParticipants;
+  final int currentParticipants;
+  final bool isPublic;
+  final List<String> invitedUserIds;
+  final Map<String, int> participants; // userId -> score
+  final String? winnerUserId;
+  final List<String>? teamIds; // For team challenges
+  final int? firstPlacePrize; // XP or coins
+  final int? secondPlacePrize;
+  final int? thirdPlacePrize;
+  final List<String>? tags; // difficulty, language, skill type
+  final String? imageUrl;
   final int viewCount;
+  final int joinCount;
 
   SocialChallenge({
     required this.id,
+    required this.creatorId,
+    required this.creatorName,
+    required this.creatorAvatar,
     required this.title,
     required this.description,
     required this.type,
-    required this.difficulty,
-    required this.objectiveType,
-    required this.targetValue,
-    this.currentValue = 0,
+    required this.status,
+    required this.goalMetric,
+    required this.goalValue,
     required this.startDate,
     required this.endDate,
-    this.participantCount = 0,
-    this.participantIds = const [],
-    this.isActive = true,
-    this.theme,
-    this.rewards = const [],
-    this.leaderboard = const {},
-    this.bannerUrl,
+    required this.createdAt,
+    required this.maxParticipants,
+    required this.currentParticipants,
+    required this.isPublic,
+    required this.invitedUserIds,
+    required this.participants,
+    this.winnerUserId,
+    this.teamIds,
+    this.firstPlacePrize,
+    this.secondPlacePrize,
+    this.thirdPlacePrize,
+    this.tags,
+    this.imageUrl,
     this.viewCount = 0,
+    this.joinCount = 0,
   });
 
-  factory SocialChallenge.fromJson(Map<String, dynamic> json) =>
-      _$SocialChallengeFromJson(json);
+  bool get isActive => status == ChallengeStatus.active;
+  bool get isCompleted => status == ChallengeStatus.completed;
+  bool get isFull => currentParticipants >= maxParticipants;
 
-  Map<String, dynamic> toJson() => _$SocialChallengeToDynamicJson(this);
-
-  /// Get progress percentage (0-100)
-  int get progressPercentage {
-    if (targetValue == 0) return 0;
-    return ((currentValue / targetValue) * 100).toInt().clamp(0, 100);
-  }
-
-  /// Check if challenge is completed
-  bool get isCompleted => currentValue >= targetValue;
-
-  /// Get time remaining
-  Duration get timeRemaining => endDate.difference(DateTime.now());
-
-  /// Get formatted time remaining
-  String get formattedTimeRemaining {
-    final remaining = timeRemaining;
-    if (remaining.inDays > 0) {
-      return '${remaining.inDays}日残り';
-    } else if (remaining.inHours > 0) {
-      return '${remaining.inHours}時間残り';
-    } else if (remaining.inMinutes > 0) {
-      return '${remaining.inMinutes}分残り';
-    }
-    return '終了間近';
-  }
-
-  /// Get difficulty emoji
-  String get difficultyEmoji {
-    switch (difficulty) {
-      case ChallengeDifficulty.easy:
-        return '🟢';
-      case ChallengeDifficulty.normal:
-        return '🟡';
-      case ChallengeDifficulty.hard:
-        return '🟠';
-      case ChallengeDifficulty.expert:
-        return '🔴';
-    }
-  }
-
-  /// Get type label
   String get typeLabel {
     switch (type) {
-      case ChallengeType.daily:
-        return '日間チャレンジ';
-      case ChallengeType.weekly:
-        return '週間チャレンジ';
-      case ChallengeType.community:
-        return 'コミュニティチャレンジ';
-      case ChallengeType.friend:
-        return 'フレンドチャレンジ';
+      case ChallengeType.individual:
+        return '個人チャレンジ';
+      case ChallengeType.team:
+        return 'チームチャレンジ';
+      case ChallengeType.tournament:
+        return 'トーナメント';
+      case ChallengeType.timed:
+        return 'タイムチャレンジ';
+      case ChallengeType.streakBased:
+        return 'ストリークチャレンジ';
+      case ChallengeType.skillFocused:
+        return 'スキルチャレンジ';
     }
   }
 
-  /// Copy with
+  String get statusLabel {
+    switch (status) {
+      case ChallengeStatus.draft:
+        return '下書き';
+      case ChallengeStatus.active:
+        return 'アクティブ';
+      case ChallengeStatus.paused:
+        return '一時停止';
+      case ChallengeStatus.completed:
+        return '完了';
+      case ChallengeStatus.cancelled:
+        return 'キャンセル';
+    }
+  }
+
+  String get daysRemaining {
+    final diff = endDate.difference(DateTime.now()).inDays;
+    if (diff < 0) return '終了';
+    if (diff == 0) return '今日終了';
+    return '残り$diff日';
+  }
+
+  int? getUserRank(String userId) {
+    if (!participants.containsKey(userId)) return null;
+    final sortedEntries = participants.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+    return sortedEntries.indexWhere((e) => e.key == userId) + 1;
+  }
+
+  int? getUserScore(String userId) {
+    return participants[userId];
+  }
+
+  List<MapEntry<String, int>> getTopParticipants({int limit = 10}) {
+    final sortedEntries = participants.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+    return sortedEntries.take(limit).toList();
+  }
+
   SocialChallenge copyWith({
     String? id,
+    String? creatorId,
+    String? creatorName,
+    String? creatorAvatar,
     String? title,
     String? description,
     ChallengeType? type,
-    ChallengeDifficulty? difficulty,
-    ObjectiveType? objectiveType,
-    int? targetValue,
-    int? currentValue,
+    ChallengeStatus? status,
+    ChallengeGoalMetric? goalMetric,
+    int? goalValue,
     DateTime? startDate,
     DateTime? endDate,
-    int? participantCount,
-    List<String>? participantIds,
-    bool? isActive,
-    String? theme,
-    List<ChallengeReward>? rewards,
-    Map<String, int>? leaderboard,
-    String? bannerUrl,
+    DateTime? createdAt,
+    int? maxParticipants,
+    int? currentParticipants,
+    bool? isPublic,
+    List<String>? invitedUserIds,
+    Map<String, int>? participants,
+    String? winnerUserId,
+    List<String>? teamIds,
+    int? firstPlacePrize,
+    int? secondPlacePrize,
+    int? thirdPlacePrize,
+    List<String>? tags,
+    String? imageUrl,
     int? viewCount,
+    int? joinCount,
   }) {
     return SocialChallenge(
       id: id ?? this.id,
+      creatorId: creatorId ?? this.creatorId,
+      creatorName: creatorName ?? this.creatorName,
+      creatorAvatar: creatorAvatar ?? this.creatorAvatar,
       title: title ?? this.title,
       description: description ?? this.description,
       type: type ?? this.type,
-      difficulty: difficulty ?? this.difficulty,
-      objectiveType: objectiveType ?? this.objectiveType,
-      targetValue: targetValue ?? this.targetValue,
-      currentValue: currentValue ?? this.currentValue,
+      status: status ?? this.status,
+      goalMetric: goalMetric ?? this.goalMetric,
+      goalValue: goalValue ?? this.goalValue,
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
-      participantCount: participantCount ?? this.participantCount,
-      participantIds: participantIds ?? this.participantIds,
-      isActive: isActive ?? this.isActive,
-      theme: theme ?? this.theme,
-      rewards: rewards ?? this.rewards,
-      leaderboard: leaderboard ?? this.leaderboard,
-      bannerUrl: bannerUrl ?? this.bannerUrl,
+      createdAt: createdAt ?? this.createdAt,
+      maxParticipants: maxParticipants ?? this.maxParticipants,
+      currentParticipants: currentParticipants ?? this.currentParticipants,
+      isPublic: isPublic ?? this.isPublic,
+      invitedUserIds: invitedUserIds ?? this.invitedUserIds,
+      participants: participants ?? this.participants,
+      winnerUserId: winnerUserId ?? this.winnerUserId,
+      teamIds: teamIds ?? this.teamIds,
+      firstPlacePrize: firstPlacePrize ?? this.firstPlacePrize,
+      secondPlacePrize: secondPlacePrize ?? this.secondPlacePrize,
+      thirdPlacePrize: thirdPlacePrize ?? this.thirdPlacePrize,
+      tags: tags ?? this.tags,
+      imageUrl: imageUrl ?? this.imageUrl,
       viewCount: viewCount ?? this.viewCount,
+      joinCount: joinCount ?? this.joinCount,
     );
   }
+
+  factory SocialChallenge.fromJson(Map<String, dynamic> json) =>
+      _$SocialChallengeFromJson(json);
+  Map<String, dynamic> toJson() => _$SocialChallengeToJson(this);
 }
 
-/// Challenge reward tier
 @JsonSerializable()
-class ChallengeReward {
+class ChallengeParticipation {
   final String id;
-  final int tier; // 1-5 (bronze to legendary)
-  final String tierLabel; // ブロンズ, シルバー, ゴールド, etc.
-  final int minProgress; // % to achieve (0-100)
-  final int coinReward;
-  final int xpReward;
-  final String? badgeId;
-  final String? specialItem;
-  final String? icon;
-
-  ChallengeReward({
-    required this.id,
-    required this.tier,
-    required this.tierLabel,
-    required this.minProgress,
-    required this.coinReward,
-    required this.xpReward,
-    this.badgeId,
-    this.specialItem,
-    this.icon,
-  });
-
-  factory ChallengeReward.fromJson(Map<String, dynamic> json) =>
-      _$ChallengeRewardFromJson(json);
-
-  Map<String, dynamic> toJson() => _$ChallengeRewardToJson(this);
-}
-
-/// User's challenge participation
-@JsonSerializable()
-class UserChallengeProgress {
-  final String userId;
   final String challengeId;
-  final int progress; // current value
-  final bool isCompleted;
+  final String userId;
+  final String userName;
+  final String userAvatar;
   final DateTime joinedAt;
+  final DateTime? startedAt;
   final DateTime? completedAt;
-  final List<String> earnedRewardIds; // reward IDs earned
-  final bool isAchieved; // at least one reward earned
+  final int currentScore;
+  final int currentRank;
+  final bool hasCompleted;
+  final List<String> activityLog; // Track user's progress
+  final Map<String, dynamic>? metadata;
 
-  UserChallengeProgress({
-    required this.userId,
-    required this.challengeId,
-    required this.progress,
-    this.isCompleted = false,
-    required this.joinedAt,
-    this.completedAt,
-    this.earnedRewardIds = const [],
-    this.isAchieved = false,
-  });
-
-  factory UserChallengeProgress.fromJson(Map<String, dynamic> json) =>
-      _$UserChallengeProgressFromJson(json);
-
-  Map<String, dynamic> toJson() => _$UserChallengeProgressToJson(this);
-
-  /// Copy with
-  UserChallengeProgress copyWith({
-    String? userId,
-    String? challengeId,
-    int? progress,
-    bool? isCompleted,
-    DateTime? joinedAt,
-    DateTime? completedAt,
-    List<String>? earnedRewardIds,
-    bool? isAchieved,
-  }) {
-    return UserChallengeProgress(
-      userId: userId ?? this.userId,
-      challengeId: challengeId ?? this.challengeId,
-      progress: progress ?? this.progress,
-      isCompleted: isCompleted ?? this.isCompleted,
-      joinedAt: joinedAt ?? this.joinedAt,
-      completedAt: completedAt ?? this.completedAt,
-      earnedRewardIds: earnedRewardIds ?? this.earnedRewardIds,
-      isAchieved: isAchieved ?? this.isAchieved,
-    );
-  }
-}
-
-/// Friend challenge (head-to-head)
-@JsonSerializable()
-class FriendChallenge {
-  final String id;
-  final String initiatorId;
-  final String opponentId;
-  final String description;
-  final DateTime startDate;
-  final DateTime endDate;
-  final int initiatorProgress;
-  final int opponentProgress;
-  final int targetValue;
-  final bool isCompleted;
-  final String? winnerId; // user ID of winner
-
-  FriendChallenge({
+  ChallengeParticipation({
     required this.id,
-    required this.initiatorId,
-    required this.opponentId,
-    required this.description,
-    required this.startDate,
-    required this.endDate,
-    this.initiatorProgress = 0,
-    this.opponentProgress = 0,
-    required this.targetValue,
-    this.isCompleted = false,
-    this.winnerId,
+    required this.challengeId,
+    required this.userId,
+    required this.userName,
+    required this.userAvatar,
+    required this.joinedAt,
+    this.startedAt,
+    this.completedAt,
+    required this.currentScore,
+    required this.currentRank,
+    required this.hasCompleted,
+    required this.activityLog,
+    this.metadata,
   });
 
-  factory FriendChallenge.fromJson(Map<String, dynamic> json) =>
-      _$FriendChallengeFromJson(json);
-
-  Map<String, dynamic> toJson() => _$FriendChallengeToJson(this);
-
-  /// Get current leader
-  String? get currentLeader {
-    if (initiatorProgress > opponentProgress) return initiatorId;
-    if (opponentProgress > initiatorProgress) return opponentId;
-    return null;
-  }
-
-  /// Get lead amount
-  int get leadAmount => (initiatorProgress - opponentProgress).abs();
-
-  /// Copy with
-  FriendChallenge copyWith({
-    String? id,
-    String? initiatorId,
-    String? opponentId,
-    String? description,
-    DateTime? startDate,
-    DateTime? endDate,
-    int? initiatorProgress,
-    int? opponentProgress,
-    int? targetValue,
-    bool? isCompleted,
-    String? winnerId,
-  }) {
-    return FriendChallenge(
-      id: id ?? this.id,
-      initiatorId: initiatorId ?? this.initiatorId,
-      opponentId: opponentId ?? this.opponentId,
-      description: description ?? this.description,
-      startDate: startDate ?? this.startDate,
-      endDate: endDate ?? this.endDate,
-      initiatorProgress: initiatorProgress ?? this.initiatorProgress,
-      opponentProgress: opponentProgress ?? this.opponentProgress,
-      targetValue: targetValue ?? this.targetValue,
-      isCompleted: isCompleted ?? this.isCompleted,
-      winnerId: winnerId ?? this.winnerId,
-    );
-  }
+  factory ChallengeParticipation.fromJson(Map<String, dynamic> json) =>
+      _$ChallengeParticipationFromJson(json);
+  Map<String, dynamic> toJson() => _$ChallengeParticipationToJson(this);
 }
 
-/// Challenge statistics
+@JsonSerializable()
+class ChallengeResult {
+  final String id;
+  final String challengeId;
+  final String userId;
+  final String userName;
+  final String userAvatar;
+  final int finalScore;
+  final int finalRank;
+  final DateTime completedAt;
+  final int xpEarned;
+  final int coinsEarned;
+  final bool isWinner;
+  final bool isPrizeWon;
+  final String? prizeType; // 'first', 'second', 'third'
+  final int? prizeAmount;
+  final List<String> badgesEarned;
+
+  ChallengeResult({
+    required this.id,
+    required this.challengeId,
+    required this.userId,
+    required this.userName,
+    required this.userAvatar,
+    required this.finalScore,
+    required this.finalRank,
+    required this.completedAt,
+    required this.xpEarned,
+    required this.coinsEarned,
+    required this.isWinner,
+    required this.isPrizeWon,
+    this.prizeType,
+    this.prizeAmount,
+    required this.badgesEarned,
+  });
+
+  String get rankEmoji {
+    switch (finalRank) {
+      case 1:
+        return '🥇';
+      case 2:
+        return '🥈';
+      case 3:
+        return '🥉';
+      default:
+        return '🎖️';
+    }
+  }
+
+  factory ChallengeResult.fromJson(Map<String, dynamic> json) =>
+      _$ChallengeResultFromJson(json);
+  Map<String, dynamic> toJson() => _$ChallengeResultToJson(this);
+}
+
+@JsonSerializable()
+class ChallengeInvitation {
+  final String id;
+  final String challengeId;
+  final String invitedUserId;
+  final String invitedUserName;
+  final String inviterUserId;
+  final String inviterName;
+  final DateTime invitedAt;
+  final DateTime? respondedAt;
+  final bool accepted;
+  final String challengeTitle;
+  final String challengeDescription;
+
+  ChallengeInvitation({
+    required this.id,
+    required this.challengeId,
+    required this.invitedUserId,
+    required this.invitedUserName,
+    required this.inviterUserId,
+    required this.inviterName,
+    required this.invitedAt,
+    this.respondedAt,
+    required this.accepted,
+    required this.challengeTitle,
+    required this.challengeDescription,
+  });
+
+  bool get isPending => respondedAt == null;
+
+  factory ChallengeInvitation.fromJson(Map<String, dynamic> json) =>
+      _$ChallengeInvitationFromJson(json);
+  Map<String, dynamic> toJson() => _$ChallengeInvitationToJson(this);
+}
+
 @JsonSerializable()
 class ChallengeStats {
-  final String challengeId;
-  final int totalParticipants;
-  final int completionCount;
-  final double avgProgress;
-  final int totalCoinsAwarded;
-  final int totalXpAwarded;
-  final List<String> topParticipants; // user IDs
+  final String userId;
+  final int totalChallengesCreated;
+  final int totalChallengesJoined;
+  final int totalChallengesWon;
+  final int totalXpFromChallenges;
+  final int totalCoinsFromChallenges;
+  final int winRate; // percentage
+  final int averageRank;
+  final List<String> favoriteTypes; // Challenge types user likes
+  final DateTime lastChallengeDate;
 
   ChallengeStats({
-    required this.challengeId,
-    required this.totalParticipants,
-    required this.completionCount,
-    required this.avgProgress,
-    required this.totalCoinsAwarded,
-    required this.totalXpAwarded,
-    this.topParticipants = const [],
+    required this.userId,
+    required this.totalChallengesCreated,
+    required this.totalChallengesJoined,
+    required this.totalChallengesWon,
+    required this.totalXpFromChallenges,
+    required this.totalCoinsFromChallenges,
+    required this.winRate,
+    required this.averageRank,
+    required this.favoriteTypes,
+    required this.lastChallengeDate,
   });
 
   factory ChallengeStats.fromJson(Map<String, dynamic> json) =>
       _$ChallengeStatsFromJson(json);
-
   Map<String, dynamic> toJson() => _$ChallengeStatsToJson(this);
-
-  /// Get completion rate percentage
-  double get completionRate {
-    if (totalParticipants == 0) return 0.0;
-    return (completionCount / totalParticipants) * 100;
-  }
-}
-
-/// Daily challenge template
-class DailyChallengeTemplate {
-  static const List<String> descriptions = [
-    '5つのレッスンを完了する',
-    '3つのレッスンで90%以上のスコアを獲得する',
-    '500 XPを獲得する',
-    '10個の単語を学ぶ',
-    '発音動画を3つ視聴する',
-  ];
-
-  static const List<int> targetValues = [5, 3, 500, 10, 3];
-
-  static const List<int> coinRewards = [100, 150, 200, 80, 120];
-
-  static const List<int> xpRewards = [50, 75, 100, 40, 60];
-}
-
-/// Weekly challenge template
-class WeeklyChallengeTemplate {
-  static const List<String> descriptions = [
-    '30個のレッスンを完了する',
-    '5日連続でアクティブになる',
-    '発音スコアを50ポイント改善する',
-    'マルチプレイヤーマッチに参加する',
-    '合計3,000 XPを獲得する',
-  ];
-
-  static const List<int> targetValues = [30, 5, 50, 1, 3000];
-
-  static const List<int> coinRewards = [500, 600, 700, 400, 800];
-
-  static const List<int> xpRewards = [300, 400, 500, 200, 600];
 }

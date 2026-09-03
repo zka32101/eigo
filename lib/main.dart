@@ -71,6 +71,7 @@ import 'screens/pet_evolution_screen.dart';
 import 'screens/user_profile_screen.dart';
 import 'screens/activity_feed_screen.dart';
 import 'screens/leaderboard_screen.dart';
+import 'screens/challenge_hub_screen.dart';
 import 'services/notification_service.dart';
 import 'services/ad_service.dart';
 import 'services/firebase_service.dart';
@@ -170,7 +171,8 @@ class EigoKoreApp extends ConsumerWidget {
         '/passport': (context) => const PassportScreen(),
         '/song-generator': (context) => const SongGeneratorScreen(),
         '/english-town': (context) => const EnglishTownHubScreen(),
-        '/challenges': (context) => const ChallengeHubScreen(),
+        '/challenges': (context) => const ChallengeHubScreen(), // Social challenges
+        '/challenge-hub': (context) => const ChallengeHubScreen(),
         '/friend-challenges': (context) => const FriendChallengeScreen(),
         '/video-gallery': (context) => const VideoGalleryScreen(),
         '/pet-adoption': (context) => const PetAdoptionScreen(),
