@@ -407,6 +407,11 @@ class AchievementService {
 
   Future<void> _updateAchievementStats(String userId) async {
     try {
+      // Get all available achievements
+      final allAchievementsSnapshot = await _firestore
+          .collection('achievements')
+          .get();
+
       final userAchievementsSnapshot = await _firestore
           .collection('users')
           .doc(userId)
@@ -444,7 +449,7 @@ class AchievementService {
           .doc('achievements')
           .set({
         'userId': userId,
-        'totalAchievements': 0, // TODO: Fetch from achievements collection
+        'totalAchievements': allAchievementsSnapshot.docs.length,
         'unlockedCount': achievements.length,
         'claimedCount': achievements.where((a) => a.isRewarded).length,
         'totalXpEarned': totalXp,

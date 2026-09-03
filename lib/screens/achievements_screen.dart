@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/achievement_model.dart';
 import '../providers/achievement_provider.dart';
+import '../providers/user_profile_provider.dart';
 import '../design_system/design_system.dart';
 import '../widgets/achievement_card.dart';
 
@@ -29,7 +30,7 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final userId = 'current_user_id'; // TODO: Get from currentUserIdProvider
+    final userId = ref.watch(currentUserIdProvider) ?? '';
     final achievementsAsync = ref.watch(achievementsProvider);
     final userAchievementsAsync = ref.watch(userAchievementsProvider(userId));
     final statsAsync = ref.watch(achievementStatsProvider(userId));

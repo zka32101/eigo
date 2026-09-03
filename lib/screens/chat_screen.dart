@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/message_model.dart';
 import '../providers/message_provider.dart';
+import '../providers/user_profile_provider.dart';
 import '../design_system/design_system.dart';
 import '../widgets/message_card.dart';
 
@@ -52,7 +53,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     final conversationAsync = ref.watch(conversationProvider(widget.conversationId));
     final messagesAsync = ref.watch(conversationMessagesProvider(widget.conversationId));
     final chatInput = ref.watch(chatInputProvider);
-    final currentUserId = 'current_user_id'; // TODO: Get from currentUserIdProvider
+    final currentUserId = ref.watch(currentUserIdProvider) ?? '';
 
     return Scaffold(
       appBar: AppBar(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/message_model.dart';
 import '../providers/message_provider.dart';
+import '../providers/user_profile_provider.dart';
 import '../design_system/design_system.dart';
 import 'chat_screen.dart';
 
@@ -29,8 +30,7 @@ class _ConversationListScreenState extends ConsumerState<ConversationListScreen>
 
   @override
   Widget build(BuildContext context) {
-    // Get current user ID from provider (you'll need to import currentUserIdProvider)
-    final userId = 'current_user_id'; // TODO: Get from currentUserIdProvider
+    final userId = ref.watch(currentUserIdProvider) ?? '';
     final conversationsAsync = ref.watch(userConversationsProvider(userId));
     final searchQuery = ref.watch(conversationSearchQueryProvider);
 
