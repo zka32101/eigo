@@ -1,222 +1,119 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:eigo/models/npc_extended_model.dart';
-import 'package:eigo/providers/npc_firebase_provider.dart';
-import 'package:eigo/providers/user_profile_provider.dart';
+import 'package:eigo/models/npc_relationship_model.dart';
+import 'package:eigo/services/npc_relationship_service.dart';
 
-/// ==================== NPC RELATIONSHIP STATE ====================
+/// NPC関係管理サービスプロバイダー
+final npcRelationshipServiceProvider =
+    Provider<NPCRelationshipService>((ref) {
+  return NPCRelationshipService.getInstance();
+});
 
-/// NPC関係を管理するStateNotifier
-class NPCRelationshipsNotifier extends StateNotifier<List<NPCRelationship>> {
-  NPCRelationshipsNotifier(
-    this._firebaseService,
-    this._userId,
-  ) : super([]) {
-    if (_userId != null) {
-      _initializeRelationships();
-    }
+/// NPC関係データプロバイダー（NPC単位）
+final npcRelationshipProvider =
+    StateNotifierProvider.family<NPCRelationshipNotifier, NPCRelationship?, String>(
+        (ref, npcId) {
+  final service = ref.watch(npcRelationshipServiceProvider);
+  return NPCRelationshipNotifier(
+    service: service,
+    npcId: npcId,
+    userId: 'current-user',
+  );
+});
+
+/// NPC関係Notifier
+class NPCRelationshipNotifier extends StateNotifier<NPCRelationship?> {
+  final NPCRelationshipService _service;
+  final String _npcId;
+  final String _userId;
+
+  NPCRelationshipNotifier({
+    required NPCRelationshipService service,
+    required String npcId,
+    required String userId,
+  })  : _service = service,
+        _npcId = npcId,
+        _userId = userId,
+        super(null) {
+    _initialize();
   }
 
-  final NPCFirebaseService _firebaseService;
-  final String? _userId;
-
-  /// 関係データを初期化
-  Future<void> _initializeRelationships() async {
-    if (_userId == null) return;
-    try {
-      final relationships =
-          await _firebaseService.getUserNPCRelationships(_userId!);
-      state = relationships;
-    } catch (e) {
-      print('Error initializing NPC relationships: $e');
-      state = [];
-    }
+  void _initialize() {
+    state = _service.initializeRelationship(_npcId, _userId);
   }
 
-  /// NPC関係を保存/更新
-  Future<void> saveRelationship(NPCRelationship relationship) async {
-    if (_userId == null) return;
-    try {
-      await _firebaseService.saveNPCRelationship(_userId!, relationship);
-      state = [
-        ...state.where((r) => r.npcId != relationship.npcId),
-        relationship,
-      ];
-    } catch (e) {
-      print('Error saving NPC relationship: $e');
-      rethrow;
-    }
+  void updateAfterDialogue(int score, String? feedback) {
+    if (state == null) return;
+    state = _service.updateAffectionAfterDialogue(state!, score, feedback);
   }
 
-  /// 親密度レベルを増加
-  Future<void> increaseAffection(String npcId, int amount) async {
-    if (_userId == null) return;
-    try {
-      final existing = state.firstWhere(
-        (r) => r.npcId == npcId,
-        orElse: () => NPCRelationship(
-          userId: _userId!,
-          npcId: npcId,
-          affectionLevel: 0,
-          conversationCount: 0,
-          discoveredTopics: [],
-          conversationHistory: {},
-          currentStreak: 0,
-          maxStreak: 0,
-          relationshipEpisodes: [],
-          earnedBadgesWithNPC: [],
-        ),
-      );
-
-      final newAffection = (existing.affectionLevel + amount).clamp(0, 100);
-      final updated = existing.copyWith(
-        affectionLevel: newAffection,
-        lastInteractionAt: DateTime.now(),
-      );
-
-      await saveRelationship(updated);
-    } catch (e) {
-      print('Error increasing affection: $e');
-      rethrow;
-    }
+  void unlockDialogue(String dialogueId) {
+    if (state == null) return;
+    state = state!.copyWith(
+      unlockedDialogues: [...state!.unlockedDialogues, dialogueId],
+      updatedAt: DateTime.now(),
+    );
   }
 
-  /// 会話数を増加
-  Future<void> incrementConversationCount(String npcId) async {
-    if (_userId == null) return;
-    try {
-      final existing = state.firstWhere(
-        (r) => r.npcId == npcId,
-        orElse: () => NPCRelationship(
-          userId: _userId!,
-          npcId: npcId,
-          affectionLevel: 0,
-          conversationCount: 0,
-          discoveredTopics: [],
-          conversationHistory: {},
-          currentStreak: 0,
-          maxStreak: 0,
-          relationshipEpisodes: [],
-          earnedBadgesWithNPC: [],
-        ),
-      );
-
-      final updated = existing.copyWith(
-        conversationCount: existing.conversationCount + 1,
-        lastInteractionAt: DateTime.now(),
-      );
-
-      await saveRelationship(updated);
-    } catch (e) {
-      print('Error incrementing conversation count: $e');
-      rethrow;
-    }
+  void recordChoice(String dialogueId, String choicePath) {
+    if (state == null) return;
+    state = _service.recordDialogueChoice(state!, dialogueId, choicePath);
   }
 
-  /// トピックを発見
-  Future<void> discoverTopic(String npcId, String topic) async {
-    if (_userId == null) return;
-    try {
-      final existing = state.firstWhere(
-        (r) => r.npcId == npcId,
-        orElse: () => NPCRelationship(
-          userId: _userId!,
-          npcId: npcId,
-          affectionLevel: 0,
-          conversationCount: 0,
-          discoveredTopics: [],
-          conversationHistory: {},
-          currentStreak: 0,
-          maxStreak: 0,
-          relationshipEpisodes: [],
-          earnedBadgesWithNPC: [],
-        ),
-      );
-
-      if (!existing.discoveredTopics.contains(topic)) {
-        final updated = existing.copyWith(
-          discoveredTopics: [...existing.discoveredTopics, topic],
-        );
-        await saveRelationship(updated);
-      }
-    } catch (e) {
-      print('Error discovering topic: $e');
-      rethrow;
-    }
+  void updateNPCAffection(int changeAmount, String reason) {
+    if (state == null) return;
+    state = _service.updateNPCAffection(state!, changeAmount, reason);
   }
 
-  /// リロード
-  Future<void> reload() async {
-    await _initializeRelationships();
+  void updatePlayerAffection(int changeAmount, String reason) {
+    if (state == null) return;
+    state = _service.updatePlayerAffection(state!, changeAmount, reason);
+  }
+
+  void unlockSpecialDialogue(String dialogueId) {
+    if (state == null) return;
+    state = _service.unlockSpecialDialogue(state!, dialogueId);
+  }
+
+  void achieveSpecialEvent(String eventId) {
+    if (state == null) return;
+    state!.achieveSpecialEvent(eventId);
+    state = state!.copyWith(
+      updatedAt: DateTime.now(),
+    );
+  }
+
+  void reset() {
+    _initialize();
   }
 }
 
-/// NPC関係プロバイダー（ユーザーIDに基づく）
-final npcRelationshipsProvider = StateNotifierProvider<
-    NPCRelationshipsNotifier,
-    List<NPCRelationship>>((ref) {
-  final firebaseService = ref.watch(npcFirebaseServiceProvider);
-  final userProfile = ref.watch(userProfileProvider);
-
-  final userId = userProfile.when(
-    data: (profile) => profile?['uid'] as String?,
-    loading: () => null,
-    error: (_, __) => null,
-  );
-
-  return NPCRelationshipsNotifier(firebaseService, userId);
+/// 関係ステータスプロバイダー
+final relationshipStatusProvider =
+    Provider.family<RelationshipStatus?, String>((ref, npcId) {
+  final relationship = ref.watch(npcRelationshipProvider(npcId));
+  return relationship?.getStatus();
 });
 
-/// 特定NPCの関係を取得
-final npcRelationshipProvider =
-    Provider.family<NPCRelationship?, String>((ref, npcId) {
-  final relationships = ref.watch(npcRelationshipsProvider);
-  try {
-    return relationships.firstWhere((r) => r.npcId == npcId);
-  } catch (e) {
-    return null;
-  }
+/// 親密度スコアプロバイダー
+final affectionScoreProvider =
+    Provider.family<int, String>((ref, npcId) {
+  final relationship = ref.watch(npcRelationshipProvider(npcId));
+  return relationship?.affectionScore ?? 0;
 });
 
-/// 親密度レベル別に関係をフィルタリング
-final relationshipsByAffectionProvider =
-    Provider.family<List<NPCRelationship>, int>((ref, minAffection) {
-  final relationships = ref.watch(npcRelationshipsProvider);
-  return relationships
-      .where((r) => r.affectionLevel >= minAffection)
-      .toList();
+/// アンロック済みダイアログプロバイダー
+final unlockedDialoguesProvider =
+    Provider.family<List<String>, String>((ref, npcId) {
+  final relationship = ref.watch(npcRelationshipProvider(npcId));
+  return relationship?.unlockedDialogues ?? [];
 });
 
-/// 最も親密なNPC
-final closestNPCProvider = Provider<NPCRelationship?>((ref) {
-  final relationships = ref.watch(npcRelationshipsProvider);
-  if (relationships.isEmpty) return null;
-  return relationships.reduce((a, b) =>
-      a.affectionLevel > b.affectionLevel ? a : b);
-});
+/// 関係サマリープロバイダー
+final relationshipSummaryProvider =
+    Provider.family<RelationshipSummary?, String>((ref, npcId) {
+  final relationship = ref.watch(npcRelationshipProvider(npcId));
+  if (relationship == null) return null;
 
-/// 最も会話したNPC
-final mostConversedNPCProvider = Provider<NPCRelationship?>((ref) {
-  final relationships = ref.watch(npcRelationshipsProvider);
-  if (relationships.isEmpty) return null;
-  return relationships.reduce((a, b) =>
-      a.conversationCount > b.conversationCount ? a : b);
-});
-
-/// 最長ストリーク
-final longestStreakProvider = Provider<int>((ref) {
-  final relationships = ref.watch(npcRelationshipsProvider);
-  if (relationships.isEmpty) return 0;
-  return relationships.fold<int>(
-    0,
-    (max, r) => r.maxStreak > max ? r.maxStreak : max,
-  );
-});
-
-/// 総関係エピソード数
-final totalRelationshipEpisodesProvider = Provider<int>((ref) {
-  final relationships = ref.watch(npcRelationshipsProvider);
-  return relationships.fold<int>(
-    0,
-    (sum, r) => sum + r.relationshipEpisodes.length,
-  );
+  final service = ref.watch(npcRelationshipServiceProvider);
+  return service.generateRelationshipSummary(relationship);
 });
