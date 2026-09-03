@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../models/achievement_model.dart';
+import '../models/achievement.dart';
 import 'logger_service.dart';
 
+/// Service for managing achievements and badges
+/// Phase 15 Part 3: Achievements & Badges System
 class AchievementService {
   static final AchievementService _instance = AchievementService._internal();
 
@@ -14,13 +16,220 @@ class AchievementService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final LoggerService _logger = LoggerService();
 
-  // Get all available achievements
-  Future<List<Achievement>> getAchievements() async {
+  /// Create a new achievement (admin only)
+  Future<String?> createAchievement(
+    String name,
+    String description,
+    String icon,
+    AchievementCategory category,
+    int requiredValue,
+    int rewardPoints,
+  ) async {
+    try {
+      final achievementId = _firestore.collection('achievements').doc().id;
+      final now = DateTime.now();
+
+      await _firestore.collection('achievements').doc(achievementId).set({
+        'id': achievementId,
+        'name': name,
+        'description': description,
+        'icon': icon,
+        'category': category.toString().split('.').last,
+        'requiredValue': requiredValue,
+        'rewardPoints': rewardPoints,
+        'createdAt': now.toIso8601String(),
+      });
+
+      return achievementId;
+    } catch (e) {
+      _logger.error('Failed to create achievement', e);
+      return null;
+    }
+  }
+
+  /// Create a new badge (admin only)
+  Future<String?> createBadge(
+    String name,
+    String description,
+    String icon,
+    BadgeRarity rarity,
+    String? achievementId,
+  ) async {
+    try {
+      final badgeId = _firestore.collection('badges').doc().id;
+      final now = DateTime.now();
+
+      await _firestore.collection('badges').doc(badgeId).set({
+        'id': badgeId,
+        'name': name,
+        'description': description,
+        'icon': icon,
+        'rarity': rarity.toString().split('.').last,
+        'achievementId': achievementId,
+        'createdAt': now.toIso8601String(),
+      });
+
+      return badgeId;
+    } catch (e) {
+      _logger.error('Failed to create badge', e);
+      return null;
+    }
+  }
+
+  /// Unlock an achievement for a user
+  Future<bool> unlockAchievement(
+    String userId,
+    String achievementId,
+  ) async {
+    try {
+      final userRef = _firestore.collection('users').doc(userId);
+      final userDoc = await userRef.get();
+      final userData = userDoc.data() as Map<String, dynamic>;
+
+      // Check if already unlocked
+      final achievements = List<String>.from(userData['achievements'] as List? ?? []);
+      if (achievements.contains(achievementId)) {
+        return false;
+      }
+
+      // Get achievement details
+      final achievementDoc = await _firestore.collection('achievements').doc(achievementId).get();
+      final achievementData = achievementDoc.data() as Map<String, dynamic>;
+      final rewardPoints = achievementData['rewardPoints'] as int? ?? 0;
+
+      // Add to user achievements
+      achievements.add(achievementId);
+
+      // Add reward points
+      final currentScore = userData['score'] as int? ?? 0;
+
+      await userRef.update({
+        'achievements': achievements,
+        'score': currentScore + rewardPoints,
+      });
+
+      // Record achievement unlock
+      await userRef
+          .collection('achievements')
+          .doc(achievementId)
+          .set({
+        'achievementId': achievementId,
+        'unlockedAt': DateTime.now().toIso8601String(),
+        'progress': 100,
+      });
+
+      return true;
+    } catch (e) {
+      _logger.error('Failed to unlock achievement', e);
+      return false;
+    }
+  }
+
+  /// Update achievement progress
+  Future<bool> updateAchievementProgress(
+    String userId,
+    String achievementId,
+    int progress,
+  ) async {
+    try {
+      final userRef = _firestore.collection('users').doc(userId);
+
+      await userRef
+          .collection('achievements')
+          .doc(achievementId)
+          .set({
+        'achievementId': achievementId,
+        'progress': progress,
+      }, SetOptions(merge: true));
+
+      return true;
+    } catch (e) {
+      _logger.error('Failed to update achievement progress', e);
+      return false;
+    }
+  }
+
+  /// Award a badge to a user
+  Future<bool> awardBadge(
+    String userId,
+    String badgeId,
+  ) async {
+    try {
+      final userRef = _firestore.collection('users').doc(userId);
+      final userDoc = await userRef.get();
+      final userData = userDoc.data() as Map<String, dynamic>;
+
+      // Check if already earned
+      final badges = List<String>.from(userData['badges'] as List? ?? []);
+      if (badges.contains(badgeId)) {
+        return false;
+      }
+
+      badges.add(badgeId);
+
+      await userRef.update({
+        'badges': badges,
+      });
+
+      // Record badge earn
+      await userRef
+          .collection('badges')
+          .doc(badgeId)
+          .set({
+        'badgeId': badgeId,
+        'earnedAt': DateTime.now().toIso8601String(),
+        'isEquipped': false,
+      });
+
+      return true;
+    } catch (e) {
+      _logger.error('Failed to award badge', e);
+      return false;
+    }
+  }
+
+  /// Equip a badge
+  Future<bool> equipBadge(
+    String userId,
+    String badgeId,
+  ) async {
+    try {
+      final userRef = _firestore.collection('users').doc(userId);
+
+      // Unequip previous badge
+      final previousBadge = await userRef
+          .collection('badges')
+          .where('isEquipped', isEqualTo: true)
+          .limit(1)
+          .get();
+
+      if (previousBadge.docs.isNotEmpty) {
+        await previousBadge.docs.first.reference.update({
+          'isEquipped': false,
+        });
+      }
+
+      // Equip new badge
+      await userRef
+          .collection('badges')
+          .doc(badgeId)
+          .update({
+        'isEquipped': true,
+      });
+
+      return true;
+    } catch (e) {
+      _logger.error('Failed to equip badge', e);
+      return false;
+    }
+  }
+
+  /// Get all achievements
+  Future<List<Achievement>> getAllAchievements() async {
     try {
       final snapshot = await _firestore
           .collection('achievements')
-          .orderBy('tier')
-          .orderBy('createdAt', descending: true)
+          .orderBy('createdAt', descending: false)
           .get();
 
       return snapshot.docs
@@ -32,436 +241,174 @@ class AchievementService {
     }
   }
 
-  // Get achievements by type
-  Future<List<Achievement>> getAchievementsByType(AchievementType type) async {
-    try {
-      final snapshot = await _firestore
-          .collection('achievements')
-          .where('type', isEqualTo: type.toString().split('.').last)
-          .orderBy('tier')
-          .get();
-
-      return snapshot.docs
-          .map((doc) => Achievement.fromJson(doc.data() as Map<String, dynamic>))
-          .toList();
-    } catch (e) {
-      _logger.error('Failed to fetch achievements by type', e);
-      return [];
-    }
-  }
-
-  // Get user's unlocked achievements
+  /// Get user's achievements
   Future<List<UserAchievement>> getUserAchievements(String userId) async {
     try {
-      final snapshot = await _firestore
+      final userAchievements = await _firestore
           .collection('users')
           .doc(userId)
           .collection('achievements')
           .orderBy('unlockedAt', descending: true)
           .get();
 
-      return snapshot.docs
-          .map((doc) => UserAchievement.fromJson(doc.data() as Map<String, dynamic>))
-          .toList();
+      final results = <UserAchievement>[];
+
+      for (final doc in userAchievements.docs) {
+        final achievementId = doc.data()['achievementId'] as String;
+        final achievementDoc = await _firestore
+            .collection('achievements')
+            .doc(achievementId)
+            .get();
+
+        if (achievementDoc.exists) {
+          results.add(UserAchievement(
+            userId: userId,
+            achievementId: achievementId,
+            achievement: Achievement.fromJson(
+              achievementDoc.data() as Map<String, dynamic>,
+            ),
+            unlockedAt: DateTime.parse(doc.data()['unlockedAt'] as String),
+            progress: doc.data()['progress'] as int? ?? 100,
+          ));
+        }
+      }
+
+      return results;
     } catch (e) {
       _logger.error('Failed to fetch user achievements', e);
       return [];
     }
   }
 
-  // Get unclaimed achievements
-  Future<List<UserAchievement>> getUnclaimedAchievements(String userId) async {
+  /// Get all badges
+  Future<List<Badge>> getAllBadges() async {
     try {
       final snapshot = await _firestore
-          .collection('users')
-          .doc(userId)
-          .collection('achievements')
-          .where('isRewarded', isEqualTo: false)
-          .orderBy('unlockedAt', descending: true)
+          .collection('badges')
+          .orderBy('createdAt', descending: false)
           .get();
 
       return snapshot.docs
-          .map((doc) => UserAchievement.fromJson(doc.data() as Map<String, dynamic>))
+          .map((doc) => Badge.fromJson(doc.data() as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      _logger.error('Failed to fetch unclaimed achievements', e);
+      _logger.error('Failed to fetch badges', e);
       return [];
     }
   }
 
-  // Unlock achievement for user
-  Future<bool> unlockAchievement(String userId, String achievementId) async {
+  /// Get user's badges
+  Future<List<UserBadge>> getUserBadges(String userId) async {
     try {
-      // Get achievement details
-      final achievementDoc = await _firestore
-          .collection('achievements')
-          .doc(achievementId)
-          .get();
-
-      if (!achievementDoc.exists) {
-        _logger.error('Achievement not found', null);
-        return false;
-      }
-
-      final achievement = Achievement.fromJson(achievementDoc.data() as Map<String, dynamic>);
-
-      // Check if already unlocked
-      final existingDoc = await _firestore
+      final userBadges = await _firestore
           .collection('users')
           .doc(userId)
-          .collection('achievements')
-          .doc(achievementId)
+          .collection('badges')
+          .orderBy('earnedAt', descending: true)
           .get();
 
-      if (existingDoc.exists && achievement.maxCount == null) {
-        // Non-repeatable achievement already unlocked
-        return false;
-      }
+      final results = <UserBadge>[];
 
-      // Create or update user achievement
-      final userAchievementId = '${userId}_$achievementId';
-      final userAchievement = UserAchievement(
-        id: userAchievementId,
-        userId: userId,
-        achievementId: achievementId,
-        unlockedAt: DateTime.now(),
-        unlockedCount: (existingDoc.exists
-                ? (existingDoc.data()!['unlockedCount'] as int? ?? 0) + 1
-                : 1),
-        isNewlySeen: true,
-        isRewarded: false,
-      );
-
-      await _firestore
-          .collection('users')
-          .doc(userId)
-          .collection('achievements')
-          .doc(achievementId)
-          .set(userAchievement.toJson(), SetOptions(merge: true));
-
-      // Create achievement notification
-      await _createAchievementNotification(userId, achievement);
-
-      // Update stats
-      await _updateAchievementStats(userId);
-
-      return true;
-    } catch (e) {
-      _logger.error('Failed to unlock achievement', e);
-      return false;
-    }
-  }
-
-  // Claim achievement rewards
-  Future<Map<String, dynamic>> claimAchievementRewards(
-    String userId,
-    String achievementId,
-  ) async {
-    try {
-      // Get achievement
-      final achievementDoc = await _firestore
-          .collection('achievements')
-          .doc(achievementId)
-          .get();
-
-      if (!achievementDoc.exists) {
-        return {'success': false, 'message': 'Achievement not found'};
-      }
-
-      final achievement = Achievement.fromJson(achievementDoc.data() as Map<String, dynamic>);
-
-      // Get user achievement
-      final userAchievementDoc = await _firestore
-          .collection('users')
-          .doc(userId)
-          .collection('achievements')
-          .doc(achievementId)
-          .get();
-
-      if (!userAchievementDoc.exists) {
-        return {'success': false, 'message': 'Achievement not unlocked'};
-      }
-
-      final userAchievement =
-          UserAchievement.fromJson(userAchievementDoc.data() as Map<String, dynamic>);
-
-      if (userAchievement.isRewarded) {
-        return {'success': false, 'message': 'Rewards already claimed'};
-      }
-
-      // Update user achievement
-      await _firestore
-          .collection('users')
-          .doc(userId)
-          .collection('achievements')
-          .doc(achievementId)
-          .update({
-        'isRewarded': true,
-        'claimedAt': DateTime.now().toIso8601String(),
-        'isNewlySeen': false,
-      });
-
-      return {
-        'success': true,
-        'xp': achievement.rewardXp,
-        'coins': achievement.rewardCoins,
-        'badges': achievement.rewardBadges,
-      };
-    } catch (e) {
-      _logger.error('Failed to claim achievement rewards', e);
-      return {'success': false, 'message': 'Error claiming rewards'};
-    }
-  }
-
-  // Get achievement progress
-  Future<AchievementProgress?> getAchievementProgress(
-    String userId,
-    String achievementId,
-  ) async {
-    try {
-      final doc = await _firestore
-          .collection('users')
-          .doc(userId)
-          .collection('achievementProgress')
-          .doc(achievementId)
-          .get();
-
-      if (!doc.exists) return null;
-
-      return AchievementProgress.fromJson(doc.data() as Map<String, dynamic>);
-    } catch (e) {
-      _logger.error('Failed to fetch achievement progress', e);
-      return null;
-    }
-  }
-
-  // Record user activity and check achievements
-  Future<void> recordActivityAndCheckAchievements(
-    String userId,
-    String activityType,
-    int value,
-  ) async {
-    try {
-      // Update relevant achievement progress based on activity type
-      // This is called from other services when activities occur
-
-      // Get all achievement requirements that match this activity
-      final achievementsSnapshot = await _firestore
-          .collection('achievements')
-          .where('tags', arrayContains: activityType)
-          .get();
-
-      for (final doc in achievementsSnapshot.docs) {
-        final achievement = Achievement.fromJson(doc.data() as Map<String, dynamic>);
-
-        // Get current progress
-        var progressDoc = await _firestore
-            .collection('users')
-            .doc(userId)
-            .collection('achievementProgress')
-            .doc(achievement.id)
+      for (final doc in userBadges.docs) {
+        final badgeId = doc.data()['badgeId'] as String;
+        final badgeDoc = await _firestore
+            .collection('badges')
+            .doc(badgeId)
             .get();
 
-        int currentProgress = 0;
-        if (progressDoc.exists) {
-          currentProgress = (progressDoc.data()!['currentProgress'] as int? ?? 0);
-        }
-
-        int newProgress = currentProgress + value;
-
-        // Save progress
-        await _firestore
-            .collection('users')
-            .doc(userId)
-            .collection('achievementProgress')
-            .doc(achievement.id)
-            .set({
-          'id': '${userId}_${achievement.id}',
-          'userId': userId,
-          'achievementId': achievement.id,
-          'currentProgress': newProgress,
-          'targetProgress': achievement.requiredValue,
-          'lastUpdatedAt': DateTime.now().toIso8601String(),
-          'isUnlocked': newProgress >= achievement.requiredValue,
-        });
-
-        // Unlock if target reached
-        if (newProgress >= achievement.requiredValue) {
-          await unlockAchievement(userId, achievement.id);
+        if (badgeDoc.exists) {
+          results.add(UserBadge(
+            userId: userId,
+            badgeId: badgeId,
+            badge: Badge.fromJson(badgeDoc.data() as Map<String, dynamic>),
+            earnedAt: DateTime.parse(doc.data()['earnedAt'] as String),
+            isEquipped: doc.data()['isEquipped'] as bool? ?? false,
+          ));
         }
       }
+
+      return results;
     } catch (e) {
-      _logger.error('Failed to record activity and check achievements', e);
+      _logger.error('Failed to fetch user badges', e);
+      return [];
     }
   }
 
-  // Get achievement statistics for user
-  Future<AchievementStats?> getAchievementStats(String userId) async {
-    try {
-      final doc = await _firestore
-          .collection('users')
-          .doc(userId)
-          .collection('stats')
-          .doc('achievements')
-          .get();
-
-      if (!doc.exists) return null;
-
-      return AchievementStats.fromJson(doc.data() as Map<String, dynamic>);
-    } catch (e) {
-      _logger.error('Failed to fetch achievement stats', e);
-      return null;
-    }
-  }
-
-  // Get recently unlocked achievements
-  Future<List<UserAchievement>> getRecentUnlockedAchievements(
-    String userId,
-    int limit,
+  /// Get achievements by category
+  Future<List<Achievement>> getAchievementsByCategory(
+    AchievementCategory category,
   ) async {
     try {
       final snapshot = await _firestore
+          .collection('achievements')
+          .where('category', isEqualTo: category.toString().split('.').last)
+          .orderBy('requiredValue')
+          .get();
+
+      return snapshot.docs
+          .map((doc) => Achievement.fromJson(doc.data() as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      _logger.error('Failed to fetch achievements by category', e);
+      return [];
+    }
+  }
+
+  /// Get badges by rarity
+  Future<List<Badge>> getBadgesByRarity(BadgeRarity rarity) async {
+    try {
+      final snapshot = await _firestore
+          .collection('badges')
+          .where('rarity', isEqualTo: rarity.toString().split('.').last)
+          .orderBy('createdAt', descending: false)
+          .get();
+
+      return snapshot.docs
+          .map((doc) => Badge.fromJson(doc.data() as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      _logger.error('Failed to fetch badges by rarity', e);
+      return [];
+    }
+  }
+
+  /// Stream user achievements for real-time updates
+  Stream<List<UserAchievement>> streamUserAchievements(String userId) {
+    try {
+      return _firestore
           .collection('users')
           .doc(userId)
           .collection('achievements')
-          .where('isRewarded', isEqualTo: true)
           .orderBy('unlockedAt', descending: true)
-          .limit(limit)
-          .get();
+          .snapshots()
+          .asyncMap((snapshot) async {
+        final results = <UserAchievement>[];
 
-      return snapshot.docs
-          .map((doc) => UserAchievement.fromJson(doc.data() as Map<String, dynamic>))
-          .toList();
-    } catch (e) {
-      _logger.error('Failed to fetch recent achievements', e);
-      return [];
-    }
-  }
-
-  // Get achievement notifications
-  Future<List<AchievementNotification>> getAchievementNotifications(
-    String userId,
-  ) async {
-    try {
-      final snapshot = await _firestore
-          .collection('users')
-          .doc(userId)
-          .collection('achievementNotifications')
-          .orderBy('createdAt', descending: true)
-          .limit(20)
-          .get();
-
-      return snapshot.docs
-          .map((doc) => AchievementNotification.fromJson(doc.data() as Map<String, dynamic>))
-          .toList();
-    } catch (e) {
-      _logger.error('Failed to fetch achievement notifications', e);
-      return [];
-    }
-  }
-
-  // Mark notification as read
-  Future<void> markNotificationAsRead(String userId, String notificationId) async {
-    try {
-      await _firestore
-          .collection('users')
-          .doc(userId)
-          .collection('achievementNotifications')
-          .doc(notificationId)
-          .update({'isRead': true});
-    } catch (e) {
-      _logger.error('Failed to mark notification as read', e);
-    }
-  }
-
-  // Private helper methods
-
-  Future<void> _createAchievementNotification(
-    String userId,
-    Achievement achievement,
-  ) async {
-    try {
-      final notification = AchievementNotification(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        userId: userId,
-        achievementId: achievement.id,
-        achievementName: achievement.name,
-        icon: achievement.icon,
-        rewardXp: achievement.rewardXp,
-        rewardCoins: achievement.rewardCoins,
-        createdAt: DateTime.now(),
-        isRead: false,
-        isRewarded: false,
-      );
-
-      await _firestore
-          .collection('users')
-          .doc(userId)
-          .collection('achievementNotifications')
-          .doc(notification.id)
-          .set(notification.toJson());
-    } catch (e) {
-      _logger.error('Failed to create achievement notification', e);
-    }
-  }
-
-  Future<void> _updateAchievementStats(String userId) async {
-    try {
-      // Get all available achievements
-      final allAchievementsSnapshot = await _firestore
-          .collection('achievements')
-          .get();
-
-      final userAchievementsSnapshot = await _firestore
-          .collection('users')
-          .doc(userId)
-          .collection('achievements')
-          .get();
-
-      final achievements = userAchievementsSnapshot.docs
-          .map((doc) => UserAchievement.fromJson(doc.data() as Map<String, dynamic>))
-          .toList();
-
-      int totalXp = 0;
-      int totalCoins = 0;
-      List<String> badges = [];
-
-      for (final userAch in achievements) {
-        if (userAch.isRewarded) {
-          final achDoc = await _firestore
+        for (final doc in snapshot.docs) {
+          final achievementId = doc.data()['achievementId'] as String;
+          final achievementDoc = await _firestore
               .collection('achievements')
-              .doc(userAch.achievementId)
+              .doc(achievementId)
               .get();
 
-          if (achDoc.exists) {
-            final ach = Achievement.fromJson(achDoc.data() as Map<String, dynamic>);
-            totalXp += ach.rewardXp;
-            totalCoins += ach.rewardCoins;
-            badges.addAll(ach.rewardBadges);
+          if (achievementDoc.exists) {
+            results.add(UserAchievement(
+              userId: userId,
+              achievementId: achievementId,
+              achievement: Achievement.fromJson(
+                achievementDoc.data() as Map<String, dynamic>,
+              ),
+              unlockedAt: DateTime.parse(doc.data()['unlockedAt'] as String),
+              progress: doc.data()['progress'] as int? ?? 100,
+            ));
           }
         }
-      }
 
-      await _firestore
-          .collection('users')
-          .doc(userId)
-          .collection('stats')
-          .doc('achievements')
-          .set({
-        'userId': userId,
-        'totalAchievements': allAchievementsSnapshot.docs.length,
-        'unlockedCount': achievements.length,
-        'claimedCount': achievements.where((a) => a.isRewarded).length,
-        'totalXpEarned': totalXp,
-        'totalCoinsEarned': totalCoins,
-        'unlockedBadges': badges,
-        'typeBreakdown': {},
-        'tierBreakdown': {},
-        'lastAchievementAt': DateTime.now().toIso8601String(),
-        'currentStreak': 0,
+        return results;
       });
     } catch (e) {
-      _logger.error('Failed to update achievement stats', e);
+      _logger.error('Failed to stream user achievements', e);
+      return Stream.value([]);
     }
   }
 }
