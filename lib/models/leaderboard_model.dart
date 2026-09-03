@@ -1,360 +1,325 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:json_annotation/json_annotation.dart';
 
-// ===== Enums =====
+part 'leaderboard_model.g.dart';
 
-/// Leaderboard grouping types
-enum LeaderboardGroupType {
-  overall,      // All users globally
-  byGrade,      // Separate by grade level
-  byStartMonth, // Separate by cohort month
-  combined,     // Grade × Start month combinations
+enum LeaderboardType {
+  global,
+  weekly,
+  monthly,
+  skillBased, // Leaderboards for specific skills (listening, speaking, etc.)
+  friends,
+  grade, // School grade based
 }
 
-// ===== Leaderboard Entry =====
+enum RankingMetric {
+  totalScore,
+  level,
+  streakDays,
+  lessonsCompleted,
+  challengesWon,
+  xpEarned,
+  badgesEarned,
+}
 
-/// Single entry in a leaderboard ranking
+@JsonSerializable()
 class LeaderboardEntry {
   final String userId;
   final String userName;
+  final String userAvatar;
   final int rank;
-  final int totalXp;
-  final int achievementScore;
+  final int score;
   final int level;
-  final int grade;
-  final DateTime startDate;
-  final int streak;
-  final DateTime lastActivityAt;
+  final int xpTotal;
+  final int streakDays;
+  final int lessonsCompleted;
+  final int challengesWon;
+  final int badgesEarned;
+  final DateTime updatedAt;
+  final bool isFriend;
+  final bool isCurrentUser;
+  final String? skillFocus; // For skill-based leaderboards
+  final Map<String, int>? skillScores; // skill -> score mapping
 
-  const LeaderboardEntry({
+  LeaderboardEntry({
     required this.userId,
     required this.userName,
+    required this.userAvatar,
     required this.rank,
-    required this.totalXp,
-    required this.achievementScore,
+    required this.score,
     required this.level,
-    required this.grade,
-    required this.startDate,
-    required this.streak,
-    required this.lastActivityAt,
+    required this.xpTotal,
+    required this.streakDays,
+    required this.lessonsCompleted,
+    required this.challengesWon,
+    required this.badgesEarned,
+    required this.updatedAt,
+    required this.isFriend,
+    required this.isCurrentUser,
+    this.skillFocus,
+    this.skillScores,
   });
 
-  /// Calculate combined score (70% XP + 30% Achievements)
-  double getScore() {
-    return (totalXp * 0.7) + (achievementScore * 0.3);
+  String get rankDisplay {
+    if (rank == 1) return '🥇';
+    if (rank == 2) return '🥈';
+    if (rank == 3) return '🥉';
+    return '#$rank';
   }
 
-  /// Convert to Firestore document
-  Map<String, dynamic> toFirestore() {
-    return {
-      'userId': userId,
-      'userName': userName,
-      'rank': rank,
-      'totalXp': totalXp,
-      'achievementScore': achievementScore,
-      'level': level,
-      'grade': grade,
-      'startDate': Timestamp.fromDate(startDate),
-      'streak': streak,
-      'score': getScore(),
-      'lastActivityAt': Timestamp.fromDate(lastActivityAt),
-    };
-  }
-
-  /// Create from Firestore document
-  factory LeaderboardEntry.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
-    return LeaderboardEntry(
-      userId: data['userId'] as String,
-      userName: data['userName'] as String,
-      rank: data['rank'] as int,
-      totalXp: data['totalXp'] as int,
-      achievementScore: data['achievementScore'] as int,
-      level: data['level'] as int,
-      grade: data['grade'] as int,
-      startDate: (data['startDate'] as Timestamp).toDate(),
-      streak: data['streak'] as int,
-      lastActivityAt: (data['lastActivityAt'] as Timestamp).toDate(),
-    );
+  String get scoreLabel {
+    if (score >= 100000) return '${(score / 1000).toStringAsFixed(0)}K';
+    return score.toString();
   }
 
   LeaderboardEntry copyWith({
     String? userId,
     String? userName,
+    String? userAvatar,
     int? rank,
-    int? totalXp,
-    int? achievementScore,
+    int? score,
     int? level,
-    int? grade,
-    DateTime? startDate,
-    int? streak,
-    DateTime? lastActivityAt,
+    int? xpTotal,
+    int? streakDays,
+    int? lessonsCompleted,
+    int? challengesWon,
+    int? badgesEarned,
+    DateTime? updatedAt,
+    bool? isFriend,
+    bool? isCurrentUser,
+    String? skillFocus,
+    Map<String, int>? skillScores,
   }) {
     return LeaderboardEntry(
       userId: userId ?? this.userId,
       userName: userName ?? this.userName,
+      userAvatar: userAvatar ?? this.userAvatar,
       rank: rank ?? this.rank,
-      totalXp: totalXp ?? this.totalXp,
-      achievementScore: achievementScore ?? this.achievementScore,
+      score: score ?? this.score,
       level: level ?? this.level,
-      grade: grade ?? this.grade,
-      startDate: startDate ?? this.startDate,
-      streak: streak ?? this.streak,
-      lastActivityAt: lastActivityAt ?? this.lastActivityAt,
-    );
-  }
-}
-
-// ===== Grouped Leaderboard =====
-
-/// Leaderboard for a specific grouping
-class GroupedLeaderboard {
-  final LeaderboardGroupType groupType;
-  final String groupName;
-  final List<LeaderboardEntry> entries;
-  final LeaderboardEntry? currentUserEntry;
-  final DateTime updatedAt;
-
-  const GroupedLeaderboard({
-    required this.groupType,
-    required this.groupName,
-    required this.entries,
-    this.currentUserEntry,
-    required this.updatedAt,
-  });
-
-  /// Get top score in this leaderboard
-  double get topScore => entries.isNotEmpty ? entries.first.getScore() : 0;
-
-  /// Get user's rank position (1-based)
-  int? getUserRank(String userId) {
-    for (int i = 0; i < entries.length; i++) {
-      if (entries[i].userId == userId) {
-        return i + 1;
-      }
-    }
-    return null;
-  }
-
-  /// Get number of entries
-  int get entryCount => entries.length;
-
-  /// Check if user is in top 10
-  bool isUserInTop10(String userId) {
-    final rank = getUserRank(userId);
-    return rank != null && rank <= 10;
-  }
-
-  GroupedLeaderboard copyWith({
-    LeaderboardGroupType? groupType,
-    String? groupName,
-    List<LeaderboardEntry>? entries,
-    LeaderboardEntry? currentUserEntry,
-    DateTime? updatedAt,
-  }) {
-    return GroupedLeaderboard(
-      groupType: groupType ?? this.groupType,
-      groupName: groupName ?? this.groupName,
-      entries: entries ?? this.entries,
-      currentUserEntry: currentUserEntry ?? this.currentUserEntry,
+      xpTotal: xpTotal ?? this.xpTotal,
+      streakDays: streakDays ?? this.streakDays,
+      lessonsCompleted: lessonsCompleted ?? this.lessonsCompleted,
+      challengesWon: challengesWon ?? this.challengesWon,
+      badgesEarned: badgesEarned ?? this.badgesEarned,
       updatedAt: updatedAt ?? this.updatedAt,
+      isFriend: isFriend ?? this.isFriend,
+      isCurrentUser: isCurrentUser ?? this.isCurrentUser,
+      skillFocus: skillFocus ?? this.skillFocus,
+      skillScores: skillScores ?? this.skillScores,
     );
   }
+
+  factory LeaderboardEntry.fromJson(Map<String, dynamic> json) =>
+      _$LeaderboardEntryFromJson(json);
+  Map<String, dynamic> toJson() => _$LeaderboardEntryToJson(this);
 }
 
-// ===== Grade Information =====
+@JsonSerializable()
+class Leaderboard {
+  final String id;
+  final LeaderboardType type;
+  final RankingMetric metric;
+  final List<LeaderboardEntry> entries;
+  final DateTime generatedAt;
+  final DateTime validUntil;
+  final int totalPlayers;
 
-/// Grade promotion record
-class GradePromotion {
-  final DateTime promotionDate;
-  final int previousGrade;
-  final int newGrade;
-  final String reason;
-  final String? performedBy;
-
-  const GradePromotion({
-    required this.promotionDate,
-    required this.previousGrade,
-    required this.newGrade,
-    required this.reason,
-    this.performedBy,
+  Leaderboard({
+    required this.id,
+    required this.type,
+    required this.metric,
+    required this.entries,
+    required this.generatedAt,
+    required this.validUntil,
+    required this.totalPlayers,
   });
 
-  Map<String, dynamic> toMap() {
-    return {
-      'promotionDate': Timestamp.fromDate(promotionDate),
-      'previousGrade': previousGrade,
-      'newGrade': newGrade,
-      'reason': reason,
-      'performedBy': performedBy,
-    };
-  }
-
-  factory GradePromotion.fromMap(Map<String, dynamic> map) {
-    return GradePromotion(
-      promotionDate: (map['promotionDate'] as Timestamp).toDate(),
-      previousGrade: map['previousGrade'] as int,
-      newGrade: map['newGrade'] as int,
-      reason: map['reason'] as String,
-      performedBy: map['performedBy'] as String?,
-    );
-  }
-}
-
-/// User grade information and history
-class UserGradeInfo {
-  final String userId;
-  final int currentGrade;
-  final DateTime startDate;
-  final List<GradePromotion> promotionHistory;
-  final DateTime? nextPromotionDate;
-
-  const UserGradeInfo({
-    required this.userId,
-    required this.currentGrade,
-    required this.startDate,
-    required this.promotionHistory,
-    this.nextPromotionDate,
-  });
-
-  bool canPromote(int maxGrade) => currentGrade < maxGrade;
-
-  bool shouldPromoteToday(DateTime today) {
-    if (nextPromotionDate == null) return false;
-    return today.year > nextPromotionDate!.year ||
-        (today.year == nextPromotionDate!.year &&
-            today.month == nextPromotionDate!.month &&
-            today.day >= nextPromotionDate!.day);
-  }
-
-  GradePromotion? get lastPromotion =>
-      promotionHistory.isNotEmpty ? promotionHistory.first : null;
-
-  int? getDaysUntilPromotion(DateTime now) {
-    if (nextPromotionDate == null) return null;
-    return nextPromotionDate!.difference(now).inDays;
-  }
-
-  Map<String, dynamic> toFirestore() {
-    return {
-      'userId': userId,
-      'currentGrade': currentGrade,
-      'startDate': Timestamp.fromDate(startDate),
-      'promotionHistory': promotionHistory.map((p) => p.toMap()).toList(),
-      'nextPromotionDate': nextPromotionDate != null
-          ? Timestamp.fromDate(nextPromotionDate!)
-          : null,
-    };
-  }
-
-  factory UserGradeInfo.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
-    return UserGradeInfo(
-      userId: doc.id,
-      currentGrade: data['currentGrade'] as int,
-      startDate: (data['startDate'] as Timestamp).toDate(),
-      promotionHistory: (data['promotionHistory'] as List<dynamic>?)
-              ?.map((p) => GradePromotion.fromMap(p as Map<String, dynamic>))
-              .toList() ??
-          [],
-      nextPromotionDate: data['nextPromotionDate'] != null
-          ? (data['nextPromotionDate'] as Timestamp).toDate()
-          : null,
-    );
-  }
-
-  UserGradeInfo copyWith({
-    String? userId,
-    int? currentGrade,
-    DateTime? startDate,
-    List<GradePromotion>? promotionHistory,
-    DateTime? nextPromotionDate,
-  }) {
-    return UserGradeInfo(
-      userId: userId ?? this.userId,
-      currentGrade: currentGrade ?? this.currentGrade,
-      startDate: startDate ?? this.startDate,
-      promotionHistory: promotionHistory ?? this.promotionHistory,
-      nextPromotionDate: nextPromotionDate ?? this.nextPromotionDate,
-    );
-  }
-}
-
-/// Global grade promotion configuration
-class GradePromotionConfig {
-  final String promotionDateStr;
-  final bool isEnabled;
-  final int maxGrade;
-  final DateTime? lastCheckDate;
-
-  const GradePromotionConfig({
-    required this.promotionDateStr,
-    required this.isEnabled,
-    required this.maxGrade,
-    this.lastCheckDate,
-  });
-
-  DateTime nextPromotionDate(DateTime currentDate) {
-    final parts = promotionDateStr.split('-');
-    final promotionMonth = int.parse(parts[0]);
-    final promotionDay = int.parse(parts[1]);
-
-    final current = DateTime(currentDate.year, promotionMonth, promotionDay);
-    if (currentDate.isBefore(current)) {
-      return current;
-    } else {
-      return DateTime(currentDate.year + 1, promotionMonth, promotionDay);
+  String get typeLabel {
+    switch (type) {
+      case LeaderboardType.global:
+        return 'グローバル';
+      case LeaderboardType.weekly:
+        return 'ウィークリー';
+      case LeaderboardType.monthly:
+        return 'マンスリー';
+      case LeaderboardType.skillBased:
+        return 'スキル別';
+      case LeaderboardType.friends:
+        return 'フレンド';
+      case LeaderboardType.grade:
+        return '学年別';
     }
   }
 
-  bool shouldPromoteToday(DateTime today) {
-    if (!isEnabled) return false;
-    final parts = promotionDateStr.split('-');
-    final promotionMonth = int.parse(parts[0]);
-    final promotionDay = int.parse(parts[1]);
-
-    return today.month == promotionMonth && today.day == promotionDay;
+  String get metricLabel {
+    switch (metric) {
+      case RankingMetric.totalScore:
+        return 'トータルスコア';
+      case RankingMetric.level:
+        return 'レベル';
+      case RankingMetric.streakDays:
+        return 'ストリーク';
+      case RankingMetric.lessonsCompleted:
+        return 'ステージ完了';
+      case RankingMetric.challengesWon:
+        return 'チャレンジ勝利';
+      case RankingMetric.xpEarned:
+        return 'XP獲得';
+      case RankingMetric.badgesEarned:
+        return 'バッジ獲得';
+    }
   }
 
-  bool isPromotionDay(DateTime date) {
-    final parts = promotionDateStr.split('-');
-    final promotionMonth = int.parse(parts[0]);
-    final promotionDay = int.parse(parts[1]);
-
-    return date.month == promotionMonth && date.day == promotionDay;
+  LeaderboardEntry? findCurrentUserEntry(String userId) {
+    try {
+      return entries.firstWhere((e) => e.userId == userId);
+    } catch (e) {
+      return null;
+    }
   }
 
-  Map<String, dynamic> toMap() {
-    return {
-      'promotionDateStr': promotionDateStr,
-      'isEnabled': isEnabled,
-      'maxGrade': maxGrade,
-      'lastCheckDate':
-          lastCheckDate != null ? Timestamp.fromDate(lastCheckDate!) : null,
-    };
-  }
-
-  factory GradePromotionConfig.fromMap(Map<String, dynamic> map) {
-    return GradePromotionConfig(
-      promotionDateStr: map['promotionDateStr'] as String,
-      isEnabled: map['isEnabled'] as bool? ?? true,
-      maxGrade: map['maxGrade'] as int? ?? 6,
-      lastCheckDate: map['lastCheckDate'] != null
-          ? (map['lastCheckDate'] as Timestamp).toDate()
-          : null,
-    );
-  }
-
-  GradePromotionConfig copyWith({
-    String? promotionDateStr,
-    bool? isEnabled,
-    int? maxGrade,
-    DateTime? lastCheckDate,
+  Leaderboard copyWith({
+    String? id,
+    LeaderboardType? type,
+    RankingMetric? metric,
+    List<LeaderboardEntry>? entries,
+    DateTime? generatedAt,
+    DateTime? validUntil,
+    int? totalPlayers,
   }) {
-    return GradePromotionConfig(
-      promotionDateStr: promotionDateStr ?? this.promotionDateStr,
-      isEnabled: isEnabled ?? this.isEnabled,
-      maxGrade: maxGrade ?? this.maxGrade,
-      lastCheckDate: lastCheckDate ?? this.lastCheckDate,
+    return Leaderboard(
+      id: id ?? this.id,
+      type: type ?? this.type,
+      metric: metric ?? this.metric,
+      entries: entries ?? this.entries,
+      generatedAt: generatedAt ?? this.generatedAt,
+      validUntil: validUntil ?? this.validUntil,
+      totalPlayers: totalPlayers ?? this.totalPlayers,
     );
   }
+
+  factory Leaderboard.fromJson(Map<String, dynamic> json) =>
+      _$LeaderboardFromJson(json);
+  Map<String, dynamic> toJson() => _$LeaderboardToJson(this);
+}
+
+@JsonSerializable()
+class PlayerRankStats {
+  final String userId;
+  final String userName;
+  final String userAvatar;
+  final int globalRank;
+  final int weeklyRank;
+  final int monthlyRank;
+  final int globalPercentile; // 0-100 (100 = top 1%)
+  final int weeklyPercentile;
+  final Map<String, int> skillRanks; // skill -> rank
+  final int totalScore;
+  final int previousWeekRank;
+  final int previousMonthRank;
+  final bool isRankingUp; // Improved rank from last week
+  final bool isRankingDown; // Declined rank from last week
+
+  PlayerRankStats({
+    required this.userId,
+    required this.userName,
+    required this.userAvatar,
+    required this.globalRank,
+    required this.weeklyRank,
+    required this.monthlyRank,
+    required this.globalPercentile,
+    required this.weeklyPercentile,
+    required this.skillRanks,
+    required this.totalScore,
+    required this.previousWeekRank,
+    required this.previousMonthRank,
+    required this.isRankingUp,
+    required this.isRankingDown,
+  });
+
+  String get globalRankDisplay {
+    if (globalRank == 1) return '🥇 1位';
+    if (globalRank == 2) return '🥈 2位';
+    if (globalRank == 3) return '🥉 3位';
+    return '#$globalRank';
+  }
+
+  String get rankingTrend {
+    if (isRankingUp) return '📈 上昇中';
+    if (isRankingDown) return '📉 下降中';
+    return '➡️ 変わらず';
+  }
+
+  factory PlayerRankStats.fromJson(Map<String, dynamic> json) =>
+      _$PlayerRankStatsFromJson(json);
+  Map<String, dynamic> toJson() => _$PlayerRankStatsToJson(this);
+}
+
+@JsonSerializable()
+class RankingComparison {
+  final String userId1;
+  final String userId2;
+  final String userName1;
+  final String userName2;
+  final String userAvatar1;
+  final String userAvatar2;
+  final int rank1;
+  final int rank2;
+  final int score1;
+  final int score2;
+  final int scoreDifference; // score1 - score2
+  final bool user1IsAhead;
+  final Map<String, int> skillComparison; // skill -> score difference
+
+  RankingComparison({
+    required this.userId1,
+    required this.userId2,
+    required this.userName1,
+    required this.userName2,
+    required this.userAvatar1,
+    required this.userAvatar2,
+    required this.rank1,
+    required this.rank2,
+    required this.score1,
+    required this.score2,
+    required this.scoreDifference,
+    required this.user1IsAhead,
+    required this.skillComparison,
+  });
+
+  String get scoreDifferenceLabel {
+    if (scoreDifference == 0) return 'タイ';
+    final abs = scoreDifference.abs();
+    final leader = scoreDifference > 0 ? userName1 : userName2;
+    return '$leader が $abs ポイント先行';
+  }
+
+  factory RankingComparison.fromJson(Map<String, dynamic> json) =>
+      _$RankingComparisonFromJson(json);
+  Map<String, dynamic> toJson() => _$RankingComparisonToJson(this);
+}
+
+@JsonSerializable()
+class LeaderboardStats {
+  final String id;
+  final int totalLeaderboards;
+  final int totalPlayers;
+  final int newPlayersThisWeek;
+  final int avgPlayersPerLeaderboard;
+  final Map<String, int> topSkillsRanked; // skill -> number of leaderboards
+  final DateTime lastUpdated;
+
+  LeaderboardStats({
+    required this.id,
+    required this.totalLeaderboards,
+    required this.totalPlayers,
+    required this.newPlayersThisWeek,
+    required this.avgPlayersPerLeaderboard,
+    required this.topSkillsRanked,
+    required this.lastUpdated,
+  });
+
+  factory LeaderboardStats.fromJson(Map<String, dynamic> json) =>
+      _$LeaderboardStatsFromJson(json);
+  Map<String, dynamic> toJson() => _$LeaderboardStatsToJson(this);
 }

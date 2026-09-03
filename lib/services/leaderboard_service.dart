@@ -1,10 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/leaderboard_model.dart';
+import 'logger_service.dart';
 
-/// Service for leaderboard operations and grade management
 class LeaderboardService {
   static final LeaderboardService _instance = LeaderboardService._internal();
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   factory LeaderboardService() {
     return _instance;
@@ -12,384 +11,303 @@ class LeaderboardService {
 
   LeaderboardService._internal();
 
-  // ===== Leaderboard Query Methods =====
+  final _firestore = FirebaseFirestore.instance;
+  final _logger = LoggerService();
 
-  /// Get overall global leaderboard (all users)
-  Future<GroupedLeaderboard> getOverallLeaderboard({int limit = 100}) async {
+  // Get global leaderboard
+  Future<Leaderboard> getGlobalLeaderboard({int limit = 100}) async {
     try {
       final snapshot = await _firestore
-          .collection('leaderboard')
-          .doc('overall')
-          .collection('entries')
-          .orderBy('score', descending: true)
-          .limit(limit)
+          .collection('leaderboards')
+          .doc('global')
           .get();
 
-      final entries = snapshot.docs
-          .asMap()
-          .entries
-          .map((entry) {
-            final data = entry.value.data();
-            final index = entry.key;
-            data['rank'] = index + 1;
-            return LeaderboardEntry.fromMap(data);
-          })
-          .toList();
-
-      return GroupedLeaderboard(
-        groupType: LeaderboardGroupType.overall,
-        groupName: 'Overall',
-        entries: entries,
-        updatedAt: DateTime.now(),
-      );
-    } catch (e) {
-      print('[LeaderboardService] Error getting overall leaderboard: $e');
-      return GroupedLeaderboard(
-        groupType: LeaderboardGroupType.overall,
-        groupName: 'Overall',
-        entries: [],
-        updatedAt: DateTime.now(),
-      );
-    }
-  }
-
-  /// Get leaderboard for specific grade
-  Future<GroupedLeaderboard> getGradeLeaderboard(
-    int grade, {
-    int limit = 100,
-  }) async {
-    try {
-      final snapshot = await _firestore
-          .collection('leaderboard')
-          .doc('byGrade')
-          .collection('grade_$grade')
-          .orderBy('score', descending: true)
-          .limit(limit)
-          .get();
-
-      final entries = snapshot.docs
-          .asMap()
-          .entries
-          .map((entry) {
-            final data = entry.value.data();
-            final index = entry.key;
-            data['rank'] = index + 1;
-            return LeaderboardEntry.fromMap(data);
-          })
-          .toList();
-
-      return GroupedLeaderboard(
-        groupType: LeaderboardGroupType.byGrade,
-        groupName: 'Grade $grade',
-        entries: entries,
-        updatedAt: DateTime.now(),
-      );
-    } catch (e) {
-      print('[LeaderboardService] Error getting grade leaderboard: $e');
-      return GroupedLeaderboard(
-        groupType: LeaderboardGroupType.byGrade,
-        groupName: 'Grade $grade',
-        entries: [],
-        updatedAt: DateTime.now(),
-      );
-    }
-  }
-
-  /// Get leaderboard for specific start month
-  Future<GroupedLeaderboard> getStartMonthLeaderboard(
-    int year,
-    int month, {
-    int limit = 100,
-  }) async {
-    try {
-      final monthStr = '${year}-${month.toString().padLeft(2, '0')}';
-      final snapshot = await _firestore
-          .collection('leaderboard')
-          .doc('byMonth')
-          .collection('month_$monthStr')
-          .orderBy('score', descending: true)
-          .limit(limit)
-          .get();
-
-      final entries = snapshot.docs
-          .asMap()
-          .entries
-          .map((entry) {
-            final data = entry.value.data();
-            final index = entry.key;
-            data['rank'] = index + 1;
-            return LeaderboardEntry.fromMap(data);
-          })
-          .toList();
-
-      return GroupedLeaderboard(
-        groupType: LeaderboardGroupType.byStartMonth,
-        groupName: 'Started $monthStr',
-        entries: entries,
-        updatedAt: DateTime.now(),
-      );
-    } catch (e) {
-      print('[LeaderboardService] Error getting month leaderboard: $e');
-      return GroupedLeaderboard(
-        groupType: LeaderboardGroupType.byStartMonth,
-        groupName: 'Started $year-${month.toString().padLeft(2, '0')}',
-        entries: [],
-        updatedAt: DateTime.now(),
-      );
-    }
-  }
-
-  /// Get combined leaderboard (grade × month)
-  Future<GroupedLeaderboard> getCombinedLeaderboard(
-    int grade,
-    int year,
-    int month, {
-    int limit = 100,
-  }) async {
-    try {
-      final monthStr = '${year}-${month.toString().padLeft(2, '0')}';
-      final groupId = 'grade${grade}_month_${monthStr}';
-      final snapshot = await _firestore
-          .collection('leaderboard')
-          .doc('combined')
-          .collection(groupId)
-          .orderBy('score', descending: true)
-          .limit(limit)
-          .get();
-
-      final entries = snapshot.docs
-          .asMap()
-          .entries
-          .map((entry) {
-            final data = entry.value.data();
-            final index = entry.key;
-            data['rank'] = index + 1;
-            return LeaderboardEntry.fromMap(data);
-          })
-          .toList();
-
-      return GroupedLeaderboard(
-        groupType: LeaderboardGroupType.combined,
-        groupName: 'Grade $grade - $monthStr',
-        entries: entries,
-        updatedAt: DateTime.now(),
-      );
-    } catch (e) {
-      print('[LeaderboardService] Error getting combined leaderboard: $e');
-      return GroupedLeaderboard(
-        groupType: LeaderboardGroupType.combined,
-        groupName: 'Grade $grade - Combined',
-        entries: [],
-        updatedAt: DateTime.now(),
-      );
-    }
-  }
-
-  /// Get user's rank in a leaderboard group
-  Future<int?> getUserRankPosition(
-    String userId,
-    LeaderboardGroupType groupType, {
-    int? grade,
-    int? year,
-    int? month,
-  }) async {
-    try {
-      switch (groupType) {
-        case LeaderboardGroupType.overall:
-          return _getUserRankInLeaderboard(
-            'leaderboard/overall/entries',
-            userId,
-          );
-        case LeaderboardGroupType.byGrade:
-          if (grade == null) return null;
-          return _getUserRankInLeaderboard(
-            'leaderboard/byGrade/grade_$grade/entries',
-            userId,
-          );
-        case LeaderboardGroupType.byStartMonth:
-          if (year == null || month == null) return null;
-          final monthStr = '${year}-${month.toString().padLeft(2, '0')}';
-          return _getUserRankInLeaderboard(
-            'leaderboard/byMonth/month_$monthStr/entries',
-            userId,
-          );
-        case LeaderboardGroupType.combined:
-          if (grade == null || year == null || month == null) return null;
-          final monthStr = '${year}-${month.toString().padLeft(2, '0')}';
-          final groupId = 'grade${grade}_month_${monthStr}';
-          return _getUserRankInLeaderboard(
-            'leaderboard/combined/$groupId/entries',
-            userId,
-          );
+      if (!snapshot.exists) {
+        return _createEmptyLeaderboard('global', LeaderboardType.global);
       }
+
+      final data = snapshot.data() as Map<String, dynamic>;
+      return Leaderboard.fromJson(data);
     } catch (e) {
-      print('[LeaderboardService] Error getting user rank: $e');
-      return null;
+      _logger.error('Error fetching global leaderboard', e);
+      return _createEmptyLeaderboard('global', LeaderboardType.global);
     }
   }
 
-  /// Helper: Get user rank in specific leaderboard path
-  Future<int?> _getUserRankInLeaderboard(
-    String leaderboardPath,
-    String userId,
+  // Get weekly leaderboard
+  Future<Leaderboard> getWeeklyLeaderboard({int limit = 100}) async {
+    try {
+      final snapshot = await _firestore
+          .collection('leaderboards')
+          .doc('weekly')
+          .get();
+
+      if (!snapshot.exists) {
+        return _createEmptyLeaderboard('weekly', LeaderboardType.weekly);
+      }
+
+      final data = snapshot.data() as Map<String, dynamic>;
+      return Leaderboard.fromJson(data);
+    } catch (e) {
+      _logger.error('Error fetching weekly leaderboard', e);
+      return _createEmptyLeaderboard('weekly', LeaderboardType.weekly);
+    }
+  }
+
+  // Get monthly leaderboard
+  Future<Leaderboard> getMonthlyLeaderboard({int limit = 100}) async {
+    try {
+      final snapshot = await _firestore
+          .collection('leaderboards')
+          .doc('monthly')
+          .get();
+
+      if (!snapshot.exists) {
+        return _createEmptyLeaderboard('monthly', LeaderboardType.monthly);
+      }
+
+      final data = snapshot.data() as Map<String, dynamic>;
+      return Leaderboard.fromJson(data);
+    } catch (e) {
+      _logger.error('Error fetching monthly leaderboard', e);
+      return _createEmptyLeaderboard('monthly', LeaderboardType.monthly);
+    }
+  }
+
+  // Get friend leaderboard
+  Future<Leaderboard> getFriendsLeaderboard(String userId, {int limit = 100}) async {
+    try {
+      final snapshot = await _firestore
+          .collection('leaderboards')
+          .doc('friends_$userId')
+          .get();
+
+      if (!snapshot.exists) {
+        return _createEmptyLeaderboard('friends_$userId', LeaderboardType.friends);
+      }
+
+      final data = snapshot.data() as Map<String, dynamic>;
+      return Leaderboard.fromJson(data);
+    } catch (e) {
+      _logger.error('Error fetching friend leaderboard', e);
+      return _createEmptyLeaderboard('friends_$userId', LeaderboardType.friends);
+    }
+  }
+
+  // Get skill-based leaderboard (listening, speaking, reading, writing)
+  Future<Leaderboard> getSkillLeaderboard(String skill, {int limit = 100}) async {
+    try {
+      final snapshot = await _firestore
+          .collection('leaderboards')
+          .doc('skill_$skill')
+          .get();
+
+      if (!snapshot.exists) {
+        return _createEmptyLeaderboard('skill_$skill', LeaderboardType.skillBased);
+      }
+
+      final data = snapshot.data() as Map<String, dynamic>;
+      return Leaderboard.fromJson(data);
+    } catch (e) {
+      _logger.error('Error fetching skill leaderboard for $skill', e);
+      return _createEmptyLeaderboard('skill_$skill', LeaderboardType.skillBased);
+    }
+  }
+
+  // Get player's ranking statistics
+  Future<PlayerRankStats> getPlayerRankStats(String userId) async {
+    try {
+      final snapshot = await _firestore
+          .collection('player_ranks')
+          .doc(userId)
+          .get();
+
+      if (!snapshot.exists) {
+        return _createDefaultPlayerStats(userId);
+      }
+
+      final data = snapshot.data() as Map<String, dynamic>;
+      return PlayerRankStats.fromJson(data);
+    } catch (e) {
+      _logger.error('Error fetching player rank stats', e);
+      return _createDefaultPlayerStats(userId);
+    }
+  }
+
+  // Compare two players' rankings
+  Future<RankingComparison> comparePlayerRankings(
+    String userId1,
+    String userId2,
   ) async {
-    final snapshot = await _firestore
-        .collectionGroup('entries')
-        .where('userId', isEqualTo: userId)
-        .limit(1)
-        .get();
+    try {
+      final stats1 = await getPlayerRankStats(userId1);
+      final stats2 = await getPlayerRankStats(userId2);
 
-    if (snapshot.docs.isEmpty) return null;
+      final scoreDiff = stats1.totalScore - stats2.totalScore;
 
-    final allEntries = await _firestore
-        .collection(leaderboardPath)
-        .orderBy('score', descending: true)
-        .get();
-
-    for (int i = 0; i < allEntries.docs.length; i++) {
-      if (allEntries.docs[i]['userId'] == userId) {
-        return i + 1;
-      }
+      return RankingComparison(
+        userId1: userId1,
+        userId2: userId2,
+        userName1: stats1.userName,
+        userName2: stats2.userName,
+        userAvatar1: stats1.userAvatar,
+        userAvatar2: stats2.userAvatar,
+        rank1: stats1.globalRank,
+        rank2: stats2.globalRank,
+        score1: stats1.totalScore,
+        score2: stats2.totalScore,
+        scoreDifference: scoreDiff,
+        user1IsAhead: scoreDiff > 0,
+        skillComparison: _compareSkills(stats1.skillRanks, stats2.skillRanks),
+      );
+    } catch (e) {
+      _logger.error('Error comparing player rankings', e);
+      throw Exception('ランキング比較に失敗しました');
     }
-
-    return null;
   }
 
-  // ===== Grade Management =====
-
-  /// Get user's grade information
-  Future<UserGradeInfo?> getUserGradeInfo(String userId) async {
+  // Get leaderboard statistics
+  Future<LeaderboardStats> getLeaderboardStats() async {
     try {
-      final doc = await _firestore
-          .collection('userGrades')
-          .doc(userId)
+      final snapshot = await _firestore
+          .collection('leaderboards')
+          .doc('stats')
           .get();
 
-      if (!doc.exists) return null;
-      return UserGradeInfo.fromFirestore(doc);
+      if (!snapshot.exists) {
+        return _createDefaultStats();
+      }
+
+      final data = snapshot.data() as Map<String, dynamic>;
+      return LeaderboardStats.fromJson(data);
     } catch (e) {
-      print('[LeaderboardService] Error getting user grade info: $e');
-      return null;
+      _logger.error('Error fetching leaderboard stats', e);
+      return _createDefaultStats();
     }
   }
 
-  /// Promote user to next grade
-  Future<bool> promoteUser(
-    String userId,
-    int newGrade, {
-    String reason = 'automatic',
-    String? performedBy,
+  // Search leaderboard entries by username
+  Future<List<LeaderboardEntry>> searchLeaderboard(
+    String query, {
+    LeaderboardType type = LeaderboardType.global,
+    int limit = 20,
   }) async {
     try {
-      final gradeInfo = await getUserGradeInfo(userId);
-      if (gradeInfo == null) return false;
-
-      final promotion = GradePromotion(
-        promotionDate: DateTime.now(),
-        previousGrade: gradeInfo.currentGrade,
-        newGrade: newGrade,
-        reason: reason,
-        performedBy: performedBy,
-      );
-
-      final updatedInfo = gradeInfo.copyWith(
-        currentGrade: newGrade,
-        promotionHistory: [promotion, ...gradeInfo.promotionHistory],
-        nextPromotionDate: _calculateNextPromotionDate(newGrade),
-      );
-
-      await _firestore
-          .collection('userGrades')
-          .doc(userId)
-          .set(updatedInfo.toFirestore());
-
-      print('[LeaderboardService] User promoted: $userId ($newGrade)');
-      return true;
-    } catch (e) {
-      print('[LeaderboardService] Error promoting user: $e');
-      return false;
-    }
-  }
-
-  /// Get promotion configuration
-  Future<GradePromotionConfig> getPromotionConfig() async {
-    try {
-      final doc = await _firestore
-          .collection('gradePromotion')
-          .doc('config')
+      final snapshot = await _firestore
+          .collection('leaderboards')
+          .doc(type.toString())
+          .collection('entries')
+          .where('userName', isGreaterThanOrEqualTo: query)
+          .where('userName', isLessThan: '${query}z')
+          .limit(limit)
           .get();
 
-      if (!doc.exists) {
-        return GradePromotionConfig(
-          promotionDateStr: '04-01',
-          isEnabled: true,
-          maxGrade: 6,
-        );
-      }
-
-      return GradePromotionConfig.fromMap(doc.data() as Map<String, dynamic>);
+      return snapshot.docs
+          .map((doc) => LeaderboardEntry.fromJson(doc.data()))
+          .toList();
     } catch (e) {
-      print('[LeaderboardService] Error getting promotion config: $e');
-      return GradePromotionConfig(
-        promotionDateStr: '04-01',
-        isEnabled: true,
-        maxGrade: 6,
-      );
-    }
-  }
-
-  /// Check and process automatic promotions
-  Future<int> checkAndPromoteUsers() async {
-    try {
-      final config = await getPromotionConfig();
-      if (!config.shouldPromoteToday(DateTime.now())) {
-        return 0;
-      }
-
-      final usersSnapshot = await _firestore
-          .collection('userGrades')
-          .where('currentGrade', isLessThan: config.maxGrade)
-          .get();
-
-      int promotedCount = 0;
-      for (final doc in usersSnapshot.docs) {
-        final gradeInfo = UserGradeInfo.fromFirestore(doc);
-        if (gradeInfo.currentGrade < config.maxGrade) {
-          final promoted = await promoteUser(
-            gradeInfo.userId,
-            gradeInfo.currentGrade + 1,
-            reason: 'automatic',
-          );
-          if (promoted) promotedCount++;
-        }
-      }
-
-      print('[LeaderboardService] Promoted $promotedCount users');
-      return promotedCount;
-    } catch (e) {
-      print('[LeaderboardService] Error in auto-promotion: $e');
-      return 0;
-    }
-  }
-
-  /// Calculate next promotion date (April 1st of next year)
-  DateTime _calculateNextPromotionDate(int newGrade) {
-    final now = DateTime.now();
-    if (now.month < 4 || (now.month == 4 && now.day < 1)) {
-      return DateTime(now.year, 4, 1);
-    } else {
-      return DateTime(now.year + 1, 4, 1);
-    }
-  }
-
-  /// Get promotion history for user
-  Future<List<GradePromotion>> getUserPromotionHistory(String userId) async {
-    try {
-      final gradeInfo = await getUserGradeInfo(userId);
-      return gradeInfo?.promotionHistory ?? [];
-    } catch (e) {
-      print('[LeaderboardService] Error getting promotion history: $e');
+      _logger.error('Error searching leaderboard', e);
       return [];
     }
+  }
+
+  // Get entries around player's rank (top 10, player's rank ±5)
+  Future<List<LeaderboardEntry>> getEntriesAroundRank(
+    String userId,
+    LeaderboardType type,
+  ) async {
+    try {
+      final leaderboard = await _getLeaderboardByType(type);
+      final playerEntry = leaderboard.findCurrentUserEntry(userId);
+
+      if (playerEntry == null) {
+        return leaderboard.entries.take(20).toList();
+      }
+
+      final startRank = (playerEntry.rank - 5).clamp(1, leaderboard.entries.length);
+      final endRank = (playerEntry.rank + 5).clamp(1, leaderboard.entries.length);
+
+      return leaderboard.entries
+          .where((e) => e.rank >= startRank && e.rank <= endRank)
+          .toList();
+    } catch (e) {
+      _logger.error('Error getting entries around rank', e);
+      return [];
+    }
+  }
+
+  // Helper methods
+
+  Future<Leaderboard> _getLeaderboardByType(LeaderboardType type) async {
+    switch (type) {
+      case LeaderboardType.global:
+        return getGlobalLeaderboard();
+      case LeaderboardType.weekly:
+        return getWeeklyLeaderboard();
+      case LeaderboardType.monthly:
+        return getMonthlyLeaderboard();
+      default:
+        return getGlobalLeaderboard();
+    }
+  }
+
+  Map<String, int> _compareSkills(
+    Map<String, int> skills1,
+    Map<String, int> skills2,
+  ) {
+    final comparison = <String, int>{};
+    final allSkills = {...skills1.keys, ...skills2.keys};
+
+    for (final skill in allSkills) {
+      final rank1 = skills1[skill] ?? 999;
+      final rank2 = skills2[skill] ?? 999;
+      comparison[skill] = rank2 - rank1; // Positive = player 1 ahead
+    }
+
+    return comparison;
+  }
+
+  Leaderboard _createEmptyLeaderboard(String id, LeaderboardType type) {
+    final now = DateTime.now();
+    return Leaderboard(
+      id: id,
+      type: type,
+      metric: RankingMetric.totalScore,
+      entries: [],
+      generatedAt: now,
+      validUntil: now.add(const Duration(days: 7)),
+      totalPlayers: 0,
+    );
+  }
+
+  PlayerRankStats _createDefaultPlayerStats(String userId) {
+    return PlayerRankStats(
+      userId: userId,
+      userName: 'Unknown',
+      userAvatar: '👤',
+      globalRank: 999999,
+      weeklyRank: 999999,
+      monthlyRank: 999999,
+      globalPercentile: 0,
+      weeklyPercentile: 0,
+      skillRanks: {},
+      totalScore: 0,
+      previousWeekRank: 999999,
+      previousMonthRank: 999999,
+      isRankingUp: false,
+      isRankingDown: false,
+    );
+  }
+
+  LeaderboardStats _createDefaultStats() {
+    return LeaderboardStats(
+      id: 'stats',
+      totalLeaderboards: 0,
+      totalPlayers: 0,
+      newPlayersThisWeek: 0,
+      avgPlayersPerLeaderboard: 0,
+      topSkillsRanked: {},
+      lastUpdated: DateTime.now(),
+    );
   }
 }

@@ -2,142 +2,131 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/leaderboard_model.dart';
 import '../services/leaderboard_service.dart';
 
-// ===== Service Provider =====
-
-/// Leaderboard service provider
-final leaderboardServiceProvider = Provider<LeaderboardService>((ref) {
+// Service provider
+final leaderboardServiceProvider = Provider((ref) {
   return LeaderboardService();
 });
 
-// ===== Leaderboard Providers =====
-
-/// Overall global leaderboard
-final overallLeaderboardProvider = FutureProvider<GroupedLeaderboard>((ref) async {
+// Global leaderboard provider
+final globalLeaderboardProvider = FutureProvider<Leaderboard>((ref) async {
   final service = ref.watch(leaderboardServiceProvider);
-  return service.getOverallLeaderboard(limit: 100);
+  return service.getGlobalLeaderboard();
 });
 
-/// Grade-specific leaderboard
-final gradeLeaderboardProvider = FutureProvider.family<GroupedLeaderboard, int>(
-  (ref, grade) async {
-    final service = ref.watch(leaderboardServiceProvider);
-    return service.getGradeLeaderboard(grade, limit: 100);
-  },
-);
-
-/// Start month leaderboard
-final startMonthLeaderboardProvider = FutureProvider.family<GroupedLeaderboard, (int, int)>(
-  (ref, params) async {
-    final (year, month) = params;
-    final service = ref.watch(leaderboardServiceProvider);
-    return service.getStartMonthLeaderboard(year, month, limit: 100);
-  },
-);
-
-/// Combined leaderboard (grade × month)
-final combinedLeaderboardProvider = FutureProvider.family<GroupedLeaderboard, (int, int, int)>(
-  (ref, params) async {
-    final (grade, year, month) = params;
-    final service = ref.watch(leaderboardServiceProvider);
-    return service.getCombinedLeaderboard(grade, year, month, limit: 100);
-  },
-);
-
-// ===== User-Specific Providers =====
-
-/// User's grade information
-final userGradeInfoProvider = FutureProvider.family<UserGradeInfo?, String>(
-  (ref, userId) async {
-    final service = ref.watch(leaderboardServiceProvider);
-    return service.getUserGradeInfo(userId);
-  },
-);
-
-/// User's rank in a specific leaderboard
-final userRankPositionProvider = FutureProvider.family<int?, (String, LeaderboardGroupType)>(
-  (ref, params) async {
-    final (userId, groupType) = params;
-    final service = ref.watch(leaderboardServiceProvider);
-    return service.getUserRankPosition(userId, groupType);
-  },
-);
-
-/// User's promotion history
-final userPromotionHistoryProvider = FutureProvider.family<List<GradePromotion>, String>(
-  (ref, userId) async {
-    final service = ref.watch(leaderboardServiceProvider);
-    return service.getUserPromotionHistory(userId);
-  },
-);
-
-// ===== Configuration Providers =====
-
-/// Grade promotion configuration
-final gradePromotionConfigProvider = FutureProvider<GradePromotionConfig>((ref) async {
+// Weekly leaderboard provider
+final weeklyLeaderboardProvider = FutureProvider<Leaderboard>((ref) async {
   final service = ref.watch(leaderboardServiceProvider);
-  return service.getPromotionConfig();
+  return service.getWeeklyLeaderboard();
 });
 
-// ===== Action Functions =====
+// Monthly leaderboard provider
+final monthlyLeaderboardProvider = FutureProvider<Leaderboard>((ref) async {
+  final service = ref.watch(leaderboardServiceProvider);
+  return service.getMonthlyLeaderboard();
+});
 
-/// Promote user to next grade
-Future<bool> promoteUserAction(
-  WidgetRef ref, {
-  required String userId,
-  required int newGrade,
-  String reason = 'automatic',
-  String? performedBy,
-}) async {
-  final service = ref.read(leaderboardServiceProvider);
-  final success = await service.promoteUser(
-    userId,
-    newGrade,
-    reason: reason,
-    performedBy: performedBy,
-  );
+// Friend leaderboard provider
+final friendsLeaderboardProvider =
+    FutureProvider.family<Leaderboard, String>((ref, userId) async {
+  final service = ref.watch(leaderboardServiceProvider);
+  return service.getFriendsLeaderboard(userId);
+});
 
-  if (success) {
-    // Refresh grade info and promotion history
-    ref.refresh(userGradeInfoProvider(userId));
-    ref.refresh(userPromotionHistoryProvider(userId));
-    
-    // Refresh all leaderboards that might be affected
-    ref.refresh(overallLeaderboardProvider);
-    ref.refresh(gradeLeaderboardProvider(newGrade));
-  }
+// Skill leaderboard provider
+final skillLeaderboardProvider =
+    FutureProvider.family<Leaderboard, String>((ref, skill) async {
+  final service = ref.watch(leaderboardServiceProvider);
+  return service.getSkillLeaderboard(skill);
+});
 
-  return success;
+// Player rank statistics provider
+final playerRankStatsProvider =
+    FutureProvider.family<PlayerRankStats, String>((ref, userId) async {
+  final service = ref.watch(leaderboardServiceProvider);
+  return service.getPlayerRankStats(userId);
+});
+
+// Leaderboard statistics provider
+final leaderboardStatsProvider = FutureProvider<LeaderboardStats>((ref) async {
+  final service = ref.watch(leaderboardServiceProvider);
+  return service.getLeaderboardStats();
+});
+
+// Search leaderboard provider
+final searchLeaderboardProvider = FutureProvider.family<List<LeaderboardEntry>, String>(
+  (ref, query) async {
+    if (query.isEmpty) return [];
+    final service = ref.watch(leaderboardServiceProvider);
+    return service.searchLeaderboard(query);
+  },
+);
+
+// Compare rankings provider
+class CompareRankingsParams {
+  final String userId1;
+  final String userId2;
+
+  CompareRankingsParams({
+    required this.userId1,
+    required this.userId2,
+  });
 }
 
-/// Check and process automatic promotions
-Future<int> checkPromotionsAction(WidgetRef ref) async {
-  final service = ref.read(leaderboardServiceProvider);
-  final promotedCount = await service.checkAndPromoteUsers();
+final compareRankingsProvider = FutureProvider.family<RankingComparison, CompareRankingsParams>(
+  (ref, params) async {
+    final service = ref.watch(leaderboardServiceProvider);
+    return service.comparePlayerRankings(params.userId1, params.userId2);
+  },
+);
 
-  if (promotedCount > 0) {
-    // Refresh all leaderboards
-    ref.refresh(overallLeaderboardProvider);
-    ref.refresh(gradePromotionConfigProvider);
-  }
+// Entries around rank provider
+class EntriesAroundRankParams {
+  final String userId;
+  final LeaderboardType type;
 
-  return promotedCount;
+  EntriesAroundRankParams({
+    required this.userId,
+    required this.type,
+  });
 }
 
-/// Get user's rank in leaderboard
-Future<int?> getUserRankAction(
-  WidgetRef ref, {
-  required String userId,
-  required LeaderboardGroupType groupType,
-  int? grade,
-  int? year,
-  int? month,
-}) async {
-  final service = ref.read(leaderboardServiceProvider);
-  return service.getUserRankPosition(
-    userId,
-    groupType,
-    grade: grade,
-    year: year,
-    month: month,
-  );
-}
+final entriesAroundRankProvider =
+    FutureProvider.family<List<LeaderboardEntry>, EntriesAroundRankParams>(
+  (ref, params) async {
+    final service = ref.watch(leaderboardServiceProvider);
+    return service.getEntriesAroundRank(params.userId, params.type);
+  },
+);
+
+// Refresh action for global leaderboard
+final refreshGlobalLeaderboardProvider = FutureProvider<Leaderboard>((ref) async {
+  ref.refresh(globalLeaderboardProvider);
+  return ref.watch(globalLeaderboardProvider.future);
+});
+
+// Refresh action for weekly leaderboard
+final refreshWeeklyLeaderboardProvider = FutureProvider<Leaderboard>((ref) async {
+  ref.refresh(weeklyLeaderboardProvider);
+  return ref.watch(weeklyLeaderboardProvider.future);
+});
+
+// Refresh action for monthly leaderboard
+final refreshMonthlyLeaderboardProvider = FutureProvider<Leaderboard>((ref) async {
+  ref.refresh(monthlyLeaderboardProvider);
+  return ref.watch(monthlyLeaderboardProvider.future);
+});
+
+// Leaderboard type state for UI
+final leaderboardTypeProvider = StateProvider<LeaderboardType>((ref) {
+  return LeaderboardType.global;
+});
+
+// Search query state for leaderboard search
+final leaderboardSearchQueryProvider = StateProvider<String>((ref) {
+  return '';
+});
+
+// Metric selection state
+final rankingMetricProvider = StateProvider<RankingMetric>((ref) {
+  return RankingMetric.totalScore;
+});

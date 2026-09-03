@@ -70,6 +70,7 @@ import 'screens/pet_interaction_screen.dart';
 import 'screens/pet_evolution_screen.dart';
 import 'screens/user_profile_screen.dart';
 import 'screens/activity_feed_screen.dart';
+import 'screens/leaderboard_screen.dart';
 import 'services/notification_service.dart';
 import 'services/ad_service.dart';
 import 'services/firebase_service.dart';
@@ -176,6 +177,7 @@ class EigoKoreApp extends ConsumerWidget {
         '/pet-status': (context) => const PetStatusScreen(),
         '/pet-interaction': (context) => const PetInteractionScreen(),
         '/activity-feed': (context) => const ActivityFeedScreen(),
+        '/leaderboard': (context) => const LeaderboardScreen(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/test-prep-result') {

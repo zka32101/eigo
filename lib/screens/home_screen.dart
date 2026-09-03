@@ -298,6 +298,16 @@ class _QuickActions extends StatelessWidget {
               _SocialQuickBtn('📊 アクティビティ', AppColors.accentPurple),
             ],
           ),
+          AppSpacing.verticalSpacerXs,
+          Row(
+            children: [
+              _QuickBtn('🏆 ランキング', AppColors.accentOrange, '/leaderboard'),
+              AppSpacing.horizontalSpacerXs,
+              const Expanded(child: SizedBox.shrink()),
+              AppSpacing.horizontalSpacerXs,
+              const Expanded(child: SizedBox.shrink()),
+            ],
+          ),
         ],
       ),
     );
