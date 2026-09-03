@@ -295,7 +295,17 @@ class _QuickActions extends StatelessWidget {
               AppSpacing.horizontalSpacerXs,
               _SocialQuickBtn('👥 フレンド', AppColors.accentGreen),
               AppSpacing.horizontalSpacerXs,
+              _SocialQuickBtn('💬 メッセージ', AppColors.accentBlue),
+            ],
+          ),
+          AppSpacing.verticalSpacerXs,
+          Row(
+            children: [
               _SocialQuickBtn('📊 アクティビティ', AppColors.accentPurple),
+              AppSpacing.horizontalSpacerXs,
+              const Expanded(child: SizedBox.shrink()),
+              AppSpacing.horizontalSpacerXs,
+              const Expanded(child: SizedBox.shrink()),
             ],
           ),
           AppSpacing.verticalSpacerXs,
@@ -371,6 +381,8 @@ class _SocialQuickBtn extends ConsumerWidget {
               Navigator.of(context).pushNamed('/user-profile', arguments: currentUser.id);
             } else if (label.contains('フレンド')) {
               Navigator.of(context).pushNamed('/friends');
+            } else if (label.contains('メッセージ')) {
+              Navigator.of(context).pushNamed('/conversations');
             } else if (label.contains('アクティビティ')) {
               Navigator.of(context).pushNamed('/activity-feed');
             }

@@ -72,6 +72,8 @@ import 'screens/user_profile_screen.dart';
 import 'screens/activity_feed_screen.dart';
 import 'screens/leaderboard_screen.dart';
 import 'screens/challenge_hub_screen.dart';
+import 'screens/conversation_list_screen.dart';
+import 'screens/chat_screen.dart';
 import 'services/notification_service.dart';
 import 'services/ad_service.dart';
 import 'services/firebase_service.dart';
@@ -180,6 +182,7 @@ class EigoKoreApp extends ConsumerWidget {
         '/pet-interaction': (context) => const PetInteractionScreen(),
         '/activity-feed': (context) => const ActivityFeedScreen(),
         '/leaderboard': (context) => const LeaderboardScreen(),
+        '/conversations': (context) => const ConversationListScreen(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/test-prep-result') {
@@ -263,6 +266,13 @@ class EigoKoreApp extends ConsumerWidget {
           final userId = settings.arguments as String;
           return MaterialPageRoute(
             builder: (_) => UserProfileScreen(userId: userId),
+            settings: settings,
+          );
+        }
+        if (settings.name == '/chat') {
+          final conversationId = settings.arguments as String;
+          return MaterialPageRoute(
+            builder: (_) => ChatScreen(conversationId: conversationId),
             settings: settings,
           );
         }
