@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'models/stage.dart';
+import 'models/challenge_model.dart';
+import 'models/video_model.dart';
+import 'models/pet_model.dart';
 import 'providers/purchase_provider.dart';
 import 'providers/settings_provider.dart';
 import 'screens/badge_screen.dart';
@@ -29,6 +32,7 @@ import 'screens/conversation_screen.dart';
 import 'screens/parent_child_challenge_screen.dart';
 import 'screens/invite_screen.dart';
 import 'screens/notification_settings_screen.dart';
+import 'screens/notification_center_screen.dart';
 import 'screens/profile_select_screen.dart';
 import 'screens/ai_freetalk_screen.dart';
 import 'screens/pronunciation_check_screen.dart';
@@ -55,6 +59,22 @@ import 'screens/plush_toy_screen.dart';
 import 'screens/passport_screen.dart';
 import 'screens/english_town_screen.dart';
 import 'screens/song_generator_screen.dart';
+import 'screens/english_town_hub_screen.dart';
+import 'screens/challenge_hub_screen.dart';
+import 'screens/challenge_detail_screen.dart';
+import 'screens/challenge_completion_screen.dart';
+import 'screens/friend_challenge_screen.dart';
+import 'screens/video_gallery_screen.dart';
+import 'screens/video_player_screen.dart';
+import 'screens/pet_adoption_screen.dart';
+import 'screens/pet_status_screen.dart';
+import 'screens/pet_interaction_screen.dart';
+import 'screens/pet_evolution_screen.dart';
+import 'screens/user_profile_screen.dart';
+import 'screens/activity_feed_screen.dart';
+import 'screens/leaderboard_screen.dart';
+import 'screens/conversation_list_screen.dart';
+import 'screens/chat_screen.dart';
 import 'services/notification_service.dart';
 import 'services/ad_service.dart';
 import 'services/firebase_service.dart';
@@ -130,6 +150,7 @@ class EigoKoreApp extends ConsumerWidget {
         '/parent-child': (context) => const ParentChildChallengeScreen(),
         '/invite': (context) => const InviteScreen(),
         '/notification-settings': (context) => const NotificationSettingsScreen(),
+        '/notifications-center': (context) => const NotificationCenterScreen(),
         '/profile-select': (context) => const ProfileSelectScreen(),
         '/ai-freetalk': (context) => const AiFreetalkScreen(),
         '/vocabulary': (context) => const VocabularyScreen(),
@@ -154,6 +175,17 @@ class EigoKoreApp extends ConsumerWidget {
         '/passport': (context) => const PassportScreen(),
         '/english-town': (context) => const EnglishTownScreen(),
         '/song-generator': (context) => const SongGeneratorScreen(),
+        '/english-town': (context) => const EnglishTownHubScreen(),
+        '/challenges': (context) => const ChallengeHubScreen(), // Social challenges
+        '/challenge-hub': (context) => const ChallengeHubScreen(),
+        '/friend-challenges': (context) => const FriendChallengeScreen(),
+        '/video-gallery': (context) => const VideoGalleryScreen(),
+        '/pet-adoption': (context) => const PetAdoptionScreen(),
+        '/pet-status': (context) => const PetStatusScreen(),
+        '/pet-interaction': (context) => const PetInteractionScreen(),
+        '/activity-feed': (context) => const ActivityFeedScreen(),
+        '/leaderboard': (context) => const LeaderboardScreen(),
+        '/conversations': (context) => const ConversationListScreen(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/test-prep-result') {
@@ -195,6 +227,58 @@ class EigoKoreApp extends ConsumerWidget {
           final stage = settings.arguments as Stage;
           return MaterialPageRoute(
             builder: (_) => PronunciationCheckScreen(stage: stage),
+            settings: settings,
+          );
+        }
+        if (settings.name == '/challenge-detail') {
+          final args = settings.arguments as Map<String, dynamic>;
+          return MaterialPageRoute(
+            builder: (_) => ChallengeDetailScreen(
+              challenge: args['challenge'] as SocialChallenge,
+              userId: args['userId'] as String,
+            ),
+            settings: settings,
+          );
+        }
+        if (settings.name == '/challenge-completion') {
+          final args = settings.arguments as Map<String, dynamic>;
+          return MaterialPageRoute(
+            builder: (_) => ChallengeCompletionScreen(
+              challengeId: args['challengeId'] as String,
+              userId: args['userId'] as String,
+              challenge: args['challenge'] as SocialChallenge,
+            ),
+            settings: settings,
+          );
+        }
+        if (settings.name == '/video-player') {
+          final video = settings.arguments as PronunciationVideo;
+          return MaterialPageRoute(
+            builder: (_) => VideoPlayerScreen(video: video),
+            settings: settings,
+          );
+        }
+        if (settings.name == '/pet-evolution') {
+          final args = settings.arguments as Map<String, dynamic>;
+          return MaterialPageRoute(
+            builder: (_) => PetEvolutionScreen(
+              currentPet: args['currentPet'] as Pet,
+              evolvedPet: args['evolvedPet'] as Pet,
+            ),
+            settings: settings,
+          );
+        }
+        if (settings.name == '/user-profile') {
+          final userId = settings.arguments as String;
+          return MaterialPageRoute(
+            builder: (_) => UserProfileScreen(userId: userId),
+            settings: settings,
+          );
+        }
+        if (settings.name == '/chat') {
+          final conversationId = settings.arguments as String;
+          return MaterialPageRoute(
+            builder: (_) => ChatScreen(conversationId: conversationId),
             settings: settings,
           );
         }

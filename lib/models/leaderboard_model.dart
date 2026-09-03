@@ -1,197 +1,325 @@
-/// ランキングエントリー
+import 'package:json_annotation/json_annotation.dart';
+
+part 'leaderboard_model.g.dart';
+
+enum LeaderboardType {
+  global,
+  weekly,
+  monthly,
+  skillBased, // Leaderboards for specific skills (listening, speaking, etc.)
+  friends,
+  grade, // School grade based
+}
+
+enum RankingMetric {
+  totalScore,
+  level,
+  streakDays,
+  lessonsCompleted,
+  challengesWon,
+  xpEarned,
+  badgesEarned,
+}
+
+@JsonSerializable()
 class LeaderboardEntry {
-  final int rank;
   final String userId;
-  final String name;
-  final String avatar;
+  final String userName;
+  final String userAvatar;
+  final int rank;
   final int score;
   final int level;
-  final int totalStudyMinutes;
-  final int longestStreak;
-  final DateTime lastActiveAt;
+  final int xpTotal;
+  final int streakDays;
+  final int lessonsCompleted;
+  final int challengesWon;
+  final int badgesEarned;
+  final DateTime updatedAt;
+  final bool isFriend;
   final bool isCurrentUser;
+  final String? skillFocus; // For skill-based leaderboards
+  final Map<String, int>? skillScores; // skill -> score mapping
 
-  const LeaderboardEntry({
-    required this.rank,
+  LeaderboardEntry({
     required this.userId,
-    required this.name,
-    required this.avatar,
+    required this.userName,
+    required this.userAvatar,
+    required this.rank,
     required this.score,
     required this.level,
-    required this.totalStudyMinutes,
-    required this.longestStreak,
-    required this.lastActiveAt,
-    this.isCurrentUser = false,
+    required this.xpTotal,
+    required this.streakDays,
+    required this.lessonsCompleted,
+    required this.challengesWon,
+    required this.badgesEarned,
+    required this.updatedAt,
+    required this.isFriend,
+    required this.isCurrentUser,
+    this.skillFocus,
+    this.skillScores,
   });
 
+  String get rankDisplay {
+    if (rank == 1) return '🥇';
+    if (rank == 2) return '🥈';
+    if (rank == 3) return '🥉';
+    return '#$rank';
+  }
+
+  String get scoreLabel {
+    if (score >= 100000) return '${(score / 1000).toStringAsFixed(0)}K';
+    return score.toString();
+  }
+
   LeaderboardEntry copyWith({
-    int? rank,
     String? userId,
-    String? name,
-    String? avatar,
+    String? userName,
+    String? userAvatar,
+    int? rank,
     int? score,
     int? level,
-    int? totalStudyMinutes,
-    int? longestStreak,
-    DateTime? lastActiveAt,
+    int? xpTotal,
+    int? streakDays,
+    int? lessonsCompleted,
+    int? challengesWon,
+    int? badgesEarned,
+    DateTime? updatedAt,
+    bool? isFriend,
     bool? isCurrentUser,
+    String? skillFocus,
+    Map<String, int>? skillScores,
   }) {
     return LeaderboardEntry(
-      rank: rank ?? this.rank,
       userId: userId ?? this.userId,
-      name: name ?? this.name,
-      avatar: avatar ?? this.avatar,
+      userName: userName ?? this.userName,
+      userAvatar: userAvatar ?? this.userAvatar,
+      rank: rank ?? this.rank,
       score: score ?? this.score,
       level: level ?? this.level,
-      totalStudyMinutes: totalStudyMinutes ?? this.totalStudyMinutes,
-      longestStreak: longestStreak ?? this.longestStreak,
-      lastActiveAt: lastActiveAt ?? this.lastActiveAt,
+      xpTotal: xpTotal ?? this.xpTotal,
+      streakDays: streakDays ?? this.streakDays,
+      lessonsCompleted: lessonsCompleted ?? this.lessonsCompleted,
+      challengesWon: challengesWon ?? this.challengesWon,
+      badgesEarned: badgesEarned ?? this.badgesEarned,
+      updatedAt: updatedAt ?? this.updatedAt,
+      isFriend: isFriend ?? this.isFriend,
       isCurrentUser: isCurrentUser ?? this.isCurrentUser,
+      skillFocus: skillFocus ?? this.skillFocus,
+      skillScores: skillScores ?? this.skillScores,
     );
   }
 
-  Map<String, dynamic> toJson() => {
-        'rank': rank,
-        'userId': userId,
-        'name': name,
-        'avatar': avatar,
-        'score': score,
-        'level': level,
-        'totalStudyMinutes': totalStudyMinutes,
-        'longestStreak': longestStreak,
-        'lastActiveAt': lastActiveAt.toIso8601String(),
-        'isCurrentUser': isCurrentUser,
-      };
-
   factory LeaderboardEntry.fromJson(Map<String, dynamic> json) =>
-      LeaderboardEntry(
-        rank: json['rank'] as int,
-        userId: json['userId'] as String,
-        name: json['name'] as String,
-        avatar: json['avatar'] as String,
-        score: json['score'] as int,
-        level: json['level'] as int,
-        totalStudyMinutes: json['totalStudyMinutes'] as int,
-        longestStreak: json['longestStreak'] as int,
-        lastActiveAt: DateTime.parse(json['lastActiveAt'] as String),
-        isCurrentUser: json['isCurrentUser'] as bool? ?? false,
-      );
+      _$LeaderboardEntryFromJson(json);
+  Map<String, dynamic> toJson() => _$LeaderboardEntryToJson(this);
 }
 
-/// ランキングタイプ
-enum LeaderboardType {
-  global, // グローバルランキング
-  friends, // フレンドランキング
-  weekly, // 週間ランキング
-  stage, // ステージ別ランキング
-}
-
-/// ランキングデータ
-class LeaderboardData {
+@JsonSerializable()
+class Leaderboard {
+  final String id;
   final LeaderboardType type;
+  final RankingMetric metric;
   final List<LeaderboardEntry> entries;
-  final LeaderboardEntry? currentUserEntry;
-  final DateTime updatedAt;
+  final DateTime generatedAt;
+  final DateTime validUntil;
+  final int totalPlayers;
 
-  const LeaderboardData({
+  Leaderboard({
+    required this.id,
     required this.type,
+    required this.metric,
     required this.entries,
-    this.currentUserEntry,
-    required this.updatedAt,
+    required this.generatedAt,
+    required this.validUntil,
+    required this.totalPlayers,
   });
 
-  Map<String, dynamic> toJson() => {
-        'type': type.toString(),
-        'entries': entries.map((e) => e.toJson()).toList(),
-        'currentUserEntry': currentUserEntry?.toJson(),
-        'updatedAt': updatedAt.toIso8601String(),
-      };
+  String get typeLabel {
+    switch (type) {
+      case LeaderboardType.global:
+        return 'グローバル';
+      case LeaderboardType.weekly:
+        return 'ウィークリー';
+      case LeaderboardType.monthly:
+        return 'マンスリー';
+      case LeaderboardType.skillBased:
+        return 'スキル別';
+      case LeaderboardType.friends:
+        return 'フレンド';
+      case LeaderboardType.grade:
+        return '学年別';
+    }
+  }
 
-  factory LeaderboardData.fromJson(Map<String, dynamic> json) =>
-      LeaderboardData(
-        type: LeaderboardType.values.firstWhere(
-          (e) => e.toString() == json['type'],
-          orElse: () => LeaderboardType.global,
-        ),
-        entries: (json['entries'] as List<dynamic>)
-            .map((e) => LeaderboardEntry.fromJson(e as Map<String, dynamic>))
-            .toList(),
-        currentUserEntry: json['currentUserEntry'] != null
-            ? LeaderboardEntry.fromJson(
-                json['currentUserEntry'] as Map<String, dynamic>)
-            : null,
-        updatedAt: DateTime.parse(json['updatedAt'] as String),
-      );
+  String get metricLabel {
+    switch (metric) {
+      case RankingMetric.totalScore:
+        return 'トータルスコア';
+      case RankingMetric.level:
+        return 'レベル';
+      case RankingMetric.streakDays:
+        return 'ストリーク';
+      case RankingMetric.lessonsCompleted:
+        return 'ステージ完了';
+      case RankingMetric.challengesWon:
+        return 'チャレンジ勝利';
+      case RankingMetric.xpEarned:
+        return 'XP獲得';
+      case RankingMetric.badgesEarned:
+        return 'バッジ獲得';
+    }
+  }
+
+  LeaderboardEntry? findCurrentUserEntry(String userId) {
+    try {
+      return entries.firstWhere((e) => e.userId == userId);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Leaderboard copyWith({
+    String? id,
+    LeaderboardType? type,
+    RankingMetric? metric,
+    List<LeaderboardEntry>? entries,
+    DateTime? generatedAt,
+    DateTime? validUntil,
+    int? totalPlayers,
+  }) {
+    return Leaderboard(
+      id: id ?? this.id,
+      type: type ?? this.type,
+      metric: metric ?? this.metric,
+      entries: entries ?? this.entries,
+      generatedAt: generatedAt ?? this.generatedAt,
+      validUntil: validUntil ?? this.validUntil,
+      totalPlayers: totalPlayers ?? this.totalPlayers,
+    );
+  }
+
+  factory Leaderboard.fromJson(Map<String, dynamic> json) =>
+      _$LeaderboardFromJson(json);
+  Map<String, dynamic> toJson() => _$LeaderboardToJson(this);
 }
 
-/// ユーザー比較データ
-class UserComparison {
-  final String userId1;
-  final String name1;
-  final String avatar1;
-  final int level1;
-  final int score1;
-  final int studyMinutes1;
+@JsonSerializable()
+class PlayerRankStats {
+  final String userId;
+  final String userName;
+  final String userAvatar;
+  final int globalRank;
+  final int weeklyRank;
+  final int monthlyRank;
+  final int globalPercentile; // 0-100 (100 = top 1%)
+  final int weeklyPercentile;
+  final Map<String, int> skillRanks; // skill -> rank
+  final int totalScore;
+  final int previousWeekRank;
+  final int previousMonthRank;
+  final bool isRankingUp; // Improved rank from last week
+  final bool isRankingDown; // Declined rank from last week
 
-  final String userId2;
-  final String name2;
-  final String avatar2;
-  final int level2;
-  final int score2;
-  final int studyMinutes2;
-
-  const UserComparison({
-    required this.userId1,
-    required this.name1,
-    required this.avatar1,
-    required this.level1,
-    required this.score1,
-    required this.studyMinutes1,
-    required this.userId2,
-    required this.name2,
-    required this.avatar2,
-    required this.level2,
-    required this.score2,
-    required this.studyMinutes2,
+  PlayerRankStats({
+    required this.userId,
+    required this.userName,
+    required this.userAvatar,
+    required this.globalRank,
+    required this.weeklyRank,
+    required this.monthlyRank,
+    required this.globalPercentile,
+    required this.weeklyPercentile,
+    required this.skillRanks,
+    required this.totalScore,
+    required this.previousWeekRank,
+    required this.previousMonthRank,
+    required this.isRankingUp,
+    required this.isRankingDown,
   });
 
-  // スコア差分（userId1 - userId2）
-  int get scoreDifference => score1 - score2;
+  String get globalRankDisplay {
+    if (globalRank == 1) return '🥇 1位';
+    if (globalRank == 2) return '🥈 2位';
+    if (globalRank == 3) return '🥉 3位';
+    return '#$globalRank';
+  }
 
-  // レベル差分
-  int get levelDifference => level1 - level2;
+  String get rankingTrend {
+    if (isRankingUp) return '📈 上昇中';
+    if (isRankingDown) return '📉 下降中';
+    return '➡️ 変わらず';
+  }
 
-  // 勉強時間差分（分）
-  int get studyMinutesDifference => studyMinutes1 - studyMinutes2;
+  factory PlayerRankStats.fromJson(Map<String, dynamic> json) =>
+      _$PlayerRankStatsFromJson(json);
+  Map<String, dynamic> toJson() => _$PlayerRankStatsToJson(this);
+}
 
-  Map<String, dynamic> toJson() => {
-        'userId1': userId1,
-        'name1': name1,
-        'avatar1': avatar1,
-        'level1': level1,
-        'score1': score1,
-        'studyMinutes1': studyMinutes1,
-        'userId2': userId2,
-        'name2': name2,
-        'avatar2': avatar2,
-        'level2': level2,
-        'score2': score2,
-        'studyMinutes2': studyMinutes2,
-      };
+@JsonSerializable()
+class RankingComparison {
+  final String userId1;
+  final String userId2;
+  final String userName1;
+  final String userName2;
+  final String userAvatar1;
+  final String userAvatar2;
+  final int rank1;
+  final int rank2;
+  final int score1;
+  final int score2;
+  final int scoreDifference; // score1 - score2
+  final bool user1IsAhead;
+  final Map<String, int> skillComparison; // skill -> score difference
 
-  factory UserComparison.fromJson(Map<String, dynamic> json) =>
-      UserComparison(
-        userId1: json['userId1'] as String,
-        name1: json['name1'] as String,
-        avatar1: json['avatar1'] as String,
-        level1: json['level1'] as int,
-        score1: json['score1'] as int,
-        studyMinutes1: json['studyMinutes1'] as int,
-        userId2: json['userId2'] as String,
-        name2: json['name2'] as String,
-        avatar2: json['avatar2'] as String,
-        level2: json['level2'] as int,
-        score2: json['score2'] as int,
-        studyMinutes2: json['studyMinutes2'] as int,
-      );
+  RankingComparison({
+    required this.userId1,
+    required this.userId2,
+    required this.userName1,
+    required this.userName2,
+    required this.userAvatar1,
+    required this.userAvatar2,
+    required this.rank1,
+    required this.rank2,
+    required this.score1,
+    required this.score2,
+    required this.scoreDifference,
+    required this.user1IsAhead,
+    required this.skillComparison,
+  });
+
+  String get scoreDifferenceLabel {
+    if (scoreDifference == 0) return 'タイ';
+    final abs = scoreDifference.abs();
+    final leader = scoreDifference > 0 ? userName1 : userName2;
+    return '$leader が $abs ポイント先行';
+  }
+
+  factory RankingComparison.fromJson(Map<String, dynamic> json) =>
+      _$RankingComparisonFromJson(json);
+  Map<String, dynamic> toJson() => _$RankingComparisonToJson(this);
+}
+
+@JsonSerializable()
+class LeaderboardStats {
+  final String id;
+  final int totalLeaderboards;
+  final int totalPlayers;
+  final int newPlayersThisWeek;
+  final int avgPlayersPerLeaderboard;
+  final Map<String, int> topSkillsRanked; // skill -> number of leaderboards
+  final DateTime lastUpdated;
+
+  LeaderboardStats({
+    required this.id,
+    required this.totalLeaderboards,
+    required this.totalPlayers,
+    required this.newPlayersThisWeek,
+    required this.avgPlayersPerLeaderboard,
+    required this.topSkillsRanked,
+    required this.lastUpdated,
+  });
+
+  factory LeaderboardStats.fromJson(Map<String, dynamic> json) =>
+      _$LeaderboardStatsFromJson(json);
+  Map<String, dynamic> toJson() => _$LeaderboardStatsToJson(this);
 }

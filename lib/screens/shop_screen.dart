@@ -1,373 +1,623 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/item_model.dart';
-import '../providers/inventory_provider.dart';
-import '../providers/coin_provider.dart';
+import '../models/purchase_model.dart';
+import '../providers/purchase_provider.dart';
+import '../providers/user_profile_provider.dart';
+import '../widgets/product_card.dart';
 import '../design_system/design_system.dart';
 
-class ShopScreen extends ConsumerWidget {
-  const ShopScreen({super.key});
+class ShopScreen extends ConsumerStatefulWidget {
+  const ShopScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final inventory = ref.watch(inventoryProvider);
-    final coins = ref.watch(coinProvider);
-
-    return DefaultTabController(
-      length: 4,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('🛍️ ショップ'),
-          backgroundColor: AppColors.primary,
-          bottom: TabBar(
-            labelColor: AppColors.textWhite,
-            unselectedLabelColor: AppColors.textWhite.withOpacity(0.7),
-            indicatorColor: AppColors.accentOrange,
-            tabs: const [
-              Tab(text: 'ポーション'),
-              Tab(text: 'ブースト'),
-              Tab(text: 'アクセサリ'),
-              Tab(text: 'コレクション'),
-            ],
-          ),
-        ),
-        body: TabBarView(
-          children: [
-            _ShopCategoryView(
-              items: catalogItems
-                  .where((i) => i.category == 'ポーション')
-                  .toList(),
-              coins: coins.totalCoins,
-              inventory: inventory,
-              ref: ref,
-            ),
-            _ShopCategoryView(
-              items: catalogItems
-                  .where((i) => i.category == 'ブースト')
-                  .toList(),
-              coins: coins.totalCoins,
-              inventory: inventory,
-              ref: ref,
-            ),
-            _ShopCategoryView(
-              items: catalogItems
-                  .where((i) => i.category == 'アクセサリ')
-                  .toList(),
-              coins: coins.totalCoins,
-              inventory: inventory,
-              ref: ref,
-            ),
-            _ShopCategoryView(
-              items: catalogItems
-                  .where((i) => i.category == 'コレクション')
-                  .toList(),
-              coins: coins.totalCoins,
-              inventory: inventory,
-              ref: ref,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  ConsumerState<ShopScreen> createState() => _ShopScreenState();
 }
 
-class _ShopCategoryView extends ConsumerWidget {
-  final List<Item> items;
-  final int coins;
-  final List<InventoryItem> inventory;
-  final WidgetRef ref;
-
-  const _ShopCategoryView({
-    required this.items,
-    required this.coins,
-    required this.inventory,
-    required this.ref,
-  });
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    if (items.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.shopping_bag_outlined, size: 64, color: AppColors.textMuted),
-            AppSpacing.verticalSpacerMd,
-            const Text('このカテゴリにはアイテムがありません'),
-          ],
-        ),
-      );
-    }
-
-    return SingleChildScrollView(
-      padding: AppSpacing.allPaddingLg,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // コイン残高表示
-          Container(
-            padding: AppSpacing.allPaddingMd,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [AppColors.accentOrange.withAlpha(20), AppColors.accentOrange.withAlpha(5)],
-              ),
-              borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-            ),
-            child: Row(
-              children: [
-                const Text('🪙', style: TextStyle(fontSize: 32)),
-                AppSpacing.horizontalSpacerMd,
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('保有コイン', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
-                    Text('$coins 🪙', style: AppTypography.labelLarge),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          AppSpacing.verticalSpacerLg,
-
-          // アイテムグリッド
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 0.85,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-            ),
-            itemCount: items.length,
-            itemBuilder: (context, index) {
-              final item = items[index];
-              final inventoryItem = inventory.firstWhere(
-                (inv) => inv.item.id == item.id,
-                orElse: () => InventoryItem(
-                  item: item,
-                  quantity: 0,
-                  acquiredAt: DateTime.now(),
-                ),
-              );
-
-              return _ShopItemCard(
-                item: item,
-                owned: inventoryItem.quantity,
-                coins: coins,
-                onPurchase: () => _purchaseItem(context, item, ref),
-              );
-            },
-          ),
-          AppSpacing.verticalSpacerXxl,
-        ],
-      ),
-    );
-  }
-
-  Future<void> _purchaseItem(BuildContext context, Item item, WidgetRef ref) async {
-    if (coins < item.price) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('コインが不足しています')),
-      );
-      return;
-    }
-
-    // コイン消費
-    await ref.read(coinProvider.notifier).spend(item.price);
-
-    // インベントリに追加
-    await ref.read(inventoryProvider.notifier).addItem(item);
-
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('${item.name}を購入しました！'),
-          backgroundColor: AppColors.accentGreen,
-        ),
-      );
-    }
-  }
-}
-
-class _ShopItemCard extends StatefulWidget {
-  final Item item;
-  final int owned;
-  final int coins;
-  final VoidCallback onPurchase;
-
-  const _ShopItemCard({
-    required this.item,
-    required this.owned,
-    required this.coins,
-    required this.onPurchase,
-  });
-
-  @override
-  State<_ShopItemCard> createState() => _ShopItemCardState();
-}
-
-class _ShopItemCardState extends State<_ShopItemCard>
+class _ShopScreenState extends ConsumerState<ShopScreen>
     with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
-  bool _isHovered = false;
+  late TabController _tabController;
+  final List<String> _tabs = ['コイン', 'ブースター', 'サブスク', 'パッケージ'];
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 200),
-      vsync: this,
-    );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.05).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _tabController = TabController(length: _tabs.length, vsync: this);
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _tabController.dispose();
     super.dispose();
-  }
-
-  void _onHoverChange(bool isHovered) {
-    setState(() => _isHovered = isHovered);
-    if (isHovered) {
-      _controller.forward();
-    } else {
-      _controller.reverse();
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final canAfford = widget.coins >= widget.item.price;
+    final currentUser = ref.watch(currentUserProvider);
+    final userId = currentUser?.id ?? '';
 
-    return MouseRegion(
-      onEnter: (_) => _onHoverChange(true),
-      onExit: (_) => _onHoverChange(false),
-      child: ScaleTransition(
-        scale: _scaleAnimation,
-        child: Card(
-          elevation: _isHovered ? 8 : 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
-          ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('🛍️ ショップ'),
+        elevation: 0,
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: _tabs.map((tab) => Tab(text: tab)).toList(),
+          labelColor: AppColors.primary,
+          unselectedLabelColor: AppColors.textMuted,
+          indicatorColor: AppColors.primary,
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
         children: [
-          // アイテム表示
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.primary.withAlpha(10),
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(AppSizes.borderRadiusLarge),
-                  topRight: Radius.circular(AppSizes.borderRadiusLarge),
-                ),
-              ),
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      widget.item.emoji,
-                      style: const TextStyle(fontSize: 48),
-                    ),
-                    if (widget.owned > 0) ...[
-                      AppSpacing.verticalSpacerXs,
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: AppSpacing.sm,
-                          vertical: AppSpacing.xs,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.accentGreen.withAlpha(30),
-                          borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
-                        ),
-                        child: Text(
-                          '所有: ${widget.owned}',
-                          style: AppTypography.bodySmall.copyWith(
-                            color: AppColors.accentGreen,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ),
-          ),
+          // Coins tab
+          _CoinsTab(userId: userId),
+          // Boosters tab
+          _BoostersTab(userId: userId),
+          // Subscriptions tab
+          _SubscriptionsTab(userId: userId),
+          // Packages tab
+          _PackagesTab(userId: userId),
+        ],
+      ),
+    );
+  }
+}
 
-          // アイテム情報
-          Padding(
-            padding: EdgeInsets.all(AppSpacing.sm),
+// Coins Tab
+class _CoinsTab extends ConsumerWidget {
+  final String userId;
+
+  const _CoinsTab({required this.userId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final productsAsync =
+        ref.watch(productsByTypeProvider(ProductType.consumable));
+
+    return productsAsync.when(
+      data: (products) {
+        final coins = products.where((p) => p.tags.contains('coins')).toList();
+        if (coins.isEmpty) {
+          return Center(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  widget.item.name,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTypography.labelMedium.copyWith(
+                  '🪙',
+                  style: TextStyle(fontSize: 64),
+                ),
+                AppSpacing.verticalSpacerMd,
+                const Text('コイン商品がありません'),
+              ],
+            ),
+          );
+        }
+
+        return ListView.builder(
+          padding: AppSpacing.allPaddingMd,
+          itemCount: coins.length,
+          itemBuilder: (context, index) {
+            final product = coins[index];
+            return ProductCard(
+              product: product,
+              onTap: () => _handlePurchase(context, ref, product, userId),
+            );
+          },
+        );
+      },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, _) => Center(child: Text('エラー: $error')),
+    );
+  }
+
+  void _handlePurchase(
+    BuildContext context,
+    WidgetRef ref,
+    Product product,
+    String userId,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(product.title),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(product.description),
+            AppSpacing.verticalSpacerMd,
+            if (product.rewardCoins != null)
+              Text('獲得コイン: ${product.rewardCoins}🪙'),
+            if (product.rewardXp != null)
+              Text('獲得XP: ${product.rewardXp}⭐'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('キャンセル'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('${product.title}を購入しました！'),
+                ),
+              );
+            },
+            child: Text('${product.displayPrice}で購入'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Boosters Tab
+class _BoostersTab extends ConsumerWidget {
+  final String userId;
+
+  const _BoostersTab({required this.userId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final productsAsync =
+        ref.watch(productsByTypeProvider(ProductType.nonConsumable));
+
+    return productsAsync.when(
+      data: (products) {
+        final boosters =
+            products.where((p) => p.tags.contains('booster')).toList();
+        if (boosters.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '⚡',
+                  style: TextStyle(fontSize: 64),
+                ),
+                AppSpacing.verticalSpacerMd,
+                const Text('ブースター商品がありません'),
+              ],
+            ),
+          );
+        }
+
+        return ListView.builder(
+          padding: AppSpacing.allPaddingMd,
+          itemCount: boosters.length,
+          itemBuilder: (context, index) {
+            final product = boosters[index];
+            return ProductCard(
+              product: product,
+              onTap: () => _handlePurchase(context, ref, product, userId),
+            );
+          },
+        );
+      },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, _) => Center(child: Text('エラー: $error')),
+    );
+  }
+
+  void _handlePurchase(
+    BuildContext context,
+    WidgetRef ref,
+    Product product,
+    String userId,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(product.title),
+        content: Text(product.description),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('キャンセル'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('${product.title}を購入しました！'),
+                ),
+              );
+            },
+            child: Text('${product.displayPrice}で購入'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Subscriptions Tab
+class _SubscriptionsTab extends ConsumerWidget {
+  final String userId;
+
+  const _SubscriptionsTab({required this.userId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final plansAsync = ref.watch(subscriptionPlansProvider);
+
+    return plansAsync.when(
+      data: (plans) {
+        if (plans.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '🎯',
+                  style: TextStyle(fontSize: 64),
+                ),
+                AppSpacing.verticalSpacerMd,
+                const Text('サブスクリプションプランがありません'),
+              ],
+            ),
+          );
+        }
+
+        return ListView.builder(
+          padding: AppSpacing.allPaddingMd,
+          itemCount: plans.length,
+          itemBuilder: (context, index) {
+            final plan = plans[index];
+            return _SubscriptionCard(
+              plan: plan,
+              onTap: () => _handleSubscription(context, plan),
+            );
+          },
+        );
+      },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, _) => Center(child: Text('エラー: $error')),
+    );
+  }
+
+  void _handleSubscription(BuildContext context, SubscriptionPlan plan) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(plan.title),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(plan.description),
+            AppSpacing.verticalSpacerMd,
+            if (plan.benefits != null) ...[
+              const Text(
+                '特典:',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Text(plan.benefits!),
+              AppSpacing.verticalSpacerMd,
+            ],
+            Text('${plan.periodLabel}: ${plan.displayPrice}'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('キャンセル'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('${plan.title}を開始しました！'),
+                ),
+              );
+            },
+            child: Text('${plan.displayPrice}で開始'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Packages Tab
+class _PackagesTab extends ConsumerWidget {
+  final String userId;
+
+  const _PackagesTab({required this.userId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final packagesAsync = ref.watch(featuredPackagesProvider);
+
+    return packagesAsync.when(
+      data: (packages) {
+        if (packages.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '📦',
+                  style: TextStyle(fontSize: 64),
+                ),
+                AppSpacing.verticalSpacerMd,
+                const Text('パッケージがありません'),
+              ],
+            ),
+          );
+        }
+
+        return ListView.builder(
+          padding: AppSpacing.allPaddingMd,
+          itemCount: packages.length,
+          itemBuilder: (context, index) {
+            final package = packages[index];
+            return _PackageCard(
+              package: package,
+              onTap: () => _handlePackage(context, package),
+            );
+          },
+        );
+      },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, _) => Center(child: Text('エラー: $error')),
+    );
+  }
+
+  void _handlePackage(BuildContext context, PurchasePackage package) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(package.title),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(package.description),
+              AppSpacing.verticalSpacerMd,
+              const Text(
+                '含まれる商品:',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              ...package.products.map((p) => Text('  • ${p.title}')),
+              AppSpacing.verticalSpacerMd,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '通常: ¥${package.totalValue.toStringAsFixed(0)}',
+                    style: const TextStyle(
+                      decoration: TextDecoration.lineThrough,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  Text(
+                    '${package.discountPercentage}% OFF',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('キャンセル'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('${package.title}を購入しました！'),
+                ),
+              );
+            },
+            child: Text('¥${package.discountedPrice.toStringAsFixed(0)}で購入'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SubscriptionCard extends StatelessWidget {
+  final SubscriptionPlan plan;
+  final VoidCallback onTap;
+
+  const _SubscriptionCard({
+    required this.plan,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.only(bottom: AppSpacing.md),
+      color: plan.isMostPopular ? AppColors.primary.withOpacity(0.05) : null,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: AppSpacing.allPaddingMd,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    plan.title,
+                    style: AppTypography.bodyLarge
+                        .copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  if (plan.isMostPopular)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        '人気',
+                        style: AppTypography.labelSmall.copyWith(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              AppSpacing.verticalSpacerSm,
+              Text(
+                plan.description,
+                style: AppTypography.bodySmall
+                    .copyWith(color: AppColors.textMuted),
+              ),
+              AppSpacing.verticalSpacerMd,
+              Text(
+                '${plan.periodLabel}: ${plan.displayPrice}',
+                style: AppTypography.bodyLarge
+                    .copyWith(fontWeight: FontWeight.bold),
+              ),
+              if (plan.discountPercentage != null &&
+                  plan.discountPercentage! > 0)
+                Text(
+                  '${plan.discountPercentage}% 割引！',
+                  style: TextStyle(
+                    color: Colors.red,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                AppSpacing.verticalSpacerXs,
-                Text(
-                  widget.item.description,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTypography.bodySmall.copyWith(
-                    color: AppColors.textMuted,
-                    fontSize: 11,
-                  ),
-                ),
-                AppSpacing.verticalSpacerSm,
-
-                // 価格と購入ボタン
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '🪙 ${widget.item.price}',
-                      style: AppTypography.labelSmall.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: canAfford ? AppColors.accentOrange : AppColors.textMuted,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 28,
-                      width: 60,
-                      child: ElevatedButton(
-                        onPressed: canAfford ? widget.onPurchase : null,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: canAfford ? AppColors.accentOrange : Colors.grey[300],
-                          padding: EdgeInsets.zero,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
-                          ),
-                        ),
-                        child: Text(
-                          '購入',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: canAfford ? AppColors.textWhite : AppColors.textMuted,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+            ],
           ),
-        ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PackageCard extends StatelessWidget {
+  final PurchasePackage package;
+  final VoidCallback onTap;
+
+  const _PackageCard({
+    required this.package,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.only(bottom: AppSpacing.md),
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: AppSpacing.allPaddingMd,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          package.title,
+                          style: AppTypography.bodyLarge
+                              .copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        AppSpacing.verticalSpacerSm,
+                        Text(
+                          package.description,
+                          style: AppTypography.bodySmall
+                              .copyWith(color: AppColors.textMuted),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                  AppSpacing.horizontalSpacerMd,
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.red.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      '${package.discountPercentage}%\nOFF',
+                      style: const TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
+              ),
+              AppSpacing.verticalSpacerMd,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '¥${package.totalValue.toStringAsFixed(0)}',
+                        style: const TextStyle(
+                          decoration: TextDecoration.lineThrough,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      Text(
+                        '¥${package.discountedPrice.toStringAsFixed(0)}',
+                        style: AppTypography.bodyLarge
+                            .copyWith(fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Text(
+                      '詳細',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

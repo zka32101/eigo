@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../models/pet_model.dart';
 import '../services/logger_service.dart';
+import '../services/pet_service.dart';
 
 /// 現在のペットプロバイダー
 final currentPetProvider = StateNotifierProvider<PetNotifier, Pet?>((ref) {
@@ -314,3 +315,45 @@ class PetStatsNotifier extends StateNotifier<PetStats> {
     await _saveStats();
   }
 }
+
+// ===== Firestore-backed Providers for Cloud Sync =====
+
+/// Pet Service instance provider
+final petServiceProvider = Provider((ref) {
+  return PetService();
+});
+
+/// User's pet from Firestore
+final userPetProvider = FutureProvider.family<Pet?, String>((ref, userId) async {
+  final petService = ref.watch(petServiceProvider);
+  return await petService.getUserPet(userId);
+});
+
+/// Pet leaderboard provider
+final petLeaderboardProvider = FutureProvider.family<List<Map<String, dynamic>>, int>((ref, limit) async {
+  final petService = ref.watch(petServiceProvider);
+  return await petService.getPetLeaderboard(limit: limit, orderBy: 'level');
+});
+
+/// User's pet rank provider
+final userPetRankProvider = FutureProvider.family<int?, String>((ref, userId) async {
+  final petService = ref.watch(petServiceProvider);
+  return await petService.getUserPetRank(userId, orderBy: 'level');
+});
+
+/// Pet status provider
+final petStatusProvider = FutureProvider.family<PetStatus?, String>((ref, userId) async {
+  final petService = ref.watch(petServiceProvider);
+  try {
+    return await petService.getPetStatus(userId);
+  } catch (e) {
+    LoggerService.error('Error getting pet status', tag: 'petStatusProvider', exception: e);
+    return null;
+  }
+});
+
+/// Pet statistics provider
+final petStatsCloudProvider = FutureProvider.family<Map<String, dynamic>, String>((ref, userId) async {
+  final petService = ref.watch(petServiceProvider);
+  return await petService.getPetStats(userId);
+});
