@@ -278,6 +278,16 @@ class _QuickActions extends StatelessWidget {
               _QuickBtn('👥 フレンド\nチャレンジ', AppColors.accentGreen, '/friend-challenges'),
             ],
           ),
+          AppSpacing.verticalSpacerXs,
+          Row(
+            children: [
+              _QuickBtn('🔔 通知', AppColors.accentPurple, '/notifications-center'),
+              AppSpacing.horizontalSpacerXs,
+              _QuickBtn('⚙️ 通知設定', AppColors.textMuted, '/notification-settings'),
+              AppSpacing.horizontalSpacerXs,
+              const Expanded(child: SizedBox.shrink()),
+            ],
+          ),
         ],
       ),
     );

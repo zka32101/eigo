@@ -32,6 +32,7 @@ import 'screens/conversation_screen.dart';
 import 'screens/parent_child_challenge_screen.dart';
 import 'screens/invite_screen.dart';
 import 'screens/notification_settings_screen.dart';
+import 'screens/notification_center_screen.dart';
 import 'screens/profile_select_screen.dart';
 import 'screens/ai_freetalk_screen.dart';
 import 'screens/pronunciation_check_screen.dart';
@@ -142,6 +143,7 @@ class EigoKoreApp extends ConsumerWidget {
         '/parent-child': (context) => const ParentChildChallengeScreen(),
         '/invite': (context) => const InviteScreen(),
         '/notification-settings': (context) => const NotificationSettingsScreen(),
+        '/notifications-center': (context) => const NotificationCenterScreen(),
         '/profile-select': (context) => const ProfileSelectScreen(),
         '/ai-freetalk': (context) => const AiFreetalkScreen(),
         '/vocabulary': (context) => const VocabularyScreen(),

@@ -1,156 +1,328 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:timezone/data/latest_all.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
-import 'dart:math';
-import '../data/notification_phrases_data.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../models/notification_model.dart';
+import 'logger_service.dart';
 
 class NotificationService {
-  static final NotificationService _instance = NotificationService._();
-  factory NotificationService() => _instance;
-  NotificationService._();
+  static final NotificationService _instance = NotificationService._internal();
 
-  final FlutterLocalNotificationsPlugin _plugin = FlutterLocalNotificationsPlugin();
-  bool _initialized = false;
-  void Function(String?)? onNotificationTap;
-
-  static const _channelId = 'eigo_kore_daily';
-  static const _channelName = '英語コレ！毎日リマインダー';
-  static const _notifId = 1001;
-  static const _reminderHourKey = 'reminder_hour';
-  static const _reminderMinKey = 'reminder_min';
-  static const _reminderEnabledKey = 'reminder_enabled';
-
-  Future<void> init() async {
-    if (_initialized) return;
-    tz.initializeTimeZones();
-    try {
-      tz.setLocalLocation(tz.getLocation('Asia/Tokyo'));
-    } catch (_) {}
-
-    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
-    const iosSettings = DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
-    );
-    const settings = InitializationSettings(android: androidSettings, iOS: iosSettings);
-    await _plugin.initialize(
-      settings,
-      onDidReceiveNotificationResponse: (NotificationResponse response) {
-        onNotificationTap?.call(response.payload);
-      },
-    );
-    _initialized = true;
+  factory NotificationService() {
+    return _instance;
   }
 
-  Future<bool> requestPermission() async {
-    final android = _plugin.resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>();
-    if (android != null) {
-      final granted = await android.requestNotificationsPermission();
-      return granted ?? false;
-    }
-    return true;
-  }
+  NotificationService._internal();
 
-  Future<void> scheduleDailyReminder({
-    int hour = 19,
-    int minute = 0,
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final LoggerService _logger = LoggerService();
+
+  // Send a notification
+  Future<void> sendNotification({
+    required String userId,
+    required NotificationType type,
+    required String title,
+    required String message,
+    String? icon,
+    String? imageUrl,
+    String? actionRoute,
+    Map<String, dynamic>? actionData,
+    DateTime? expiresAt,
+    required NotificationPriority priority,
   }) async {
-    await init();
-    await _plugin.cancel(_notifId);
+    try {
+      final notificationId =
+          _firestore.collection('notifications').doc().id;
+      final notification = Notification(
+        id: notificationId,
+        userId: userId,
+        type: type,
+        title: title,
+        message: message,
+        icon: icon,
+        imageUrl: imageUrl,
+        createdAt: DateTime.now(),
+        isRead: false,
+        actionRoute: actionRoute,
+        actionData: actionData,
+        expiresAt: expiresAt,
+        priority: priority,
+      );
 
-    final now = tz.TZDateTime.now(tz.local);
-    var scheduled = tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
-    if (scheduled.isBefore(now)) {
-      scheduled = scheduled.add(const Duration(days: 1));
+      await _firestore
+          .collection('notifications')
+          .doc(notificationId)
+          .set(notification.toJson());
+
+      _logger.info(
+        'Notification sent to $userId',
+        'NotificationService',
+      );
+    } catch (e) {
+      _logger.error(
+        'Failed to send notification: $e',
+        'NotificationService',
+      );
+      rethrow;
     }
-
-    final phrase = notificationPhrases[Random().nextInt(notificationPhrases.length)];
-
-    const androidDetails = AndroidNotificationDetails(
-      _channelId,
-      _channelName,
-      importance: Importance.high,
-      priority: Priority.high,
-      icon: '@mipmap/ic_launcher',
-    );
-    const iosDetails = DarwinNotificationDetails(
-      presentAlert: true,
-      presentBadge: true,
-      presentSound: true,
-    );
-    const details = NotificationDetails(android: androidDetails, iOS: iosDetails);
-
-    await _plugin.zonedSchedule(
-      _notifId,
-      '🎤 ${phrase['phrase']}',
-      phrase['hint'],
-      scheduled,
-      details,
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
-      matchDateTimeComponents: DateTimeComponents.time,
-    );
-
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(_reminderHourKey, hour);
-    await prefs.setInt(_reminderMinKey, minute);
-    await prefs.setBool(_reminderEnabledKey, true);
   }
 
-  Future<void> cancelReminder() async {
-    await _plugin.cancel(_notifId);
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_reminderEnabledKey, false);
+  // Get user notifications
+  Future<List<Notification>> getUserNotifications(
+    String userId, {
+    int limit = 50,
+    int offset = 0,
+  }) async {
+    try {
+      final snapshot = await _firestore
+          .collection('notifications')
+          .where('userId', isEqualTo: userId)
+          .orderBy('createdAt', descending: true)
+          .limit(limit)
+          .offset(offset)
+          .get();
+
+      return snapshot.docs
+          .map((doc) => Notification.fromJson(doc.data()))
+          .toList();
+    } catch (e) {
+      _logger.error(
+        'Failed to get user notifications: $e',
+        'NotificationService',
+      );
+      rethrow;
+    }
   }
 
-  Future<({bool enabled, int hour, int minute})> getReminderSettings() async {
-    final prefs = await SharedPreferences.getInstance();
-    return (
-      enabled: prefs.getBool(_reminderEnabledKey) ?? false,
-      hour: prefs.getInt(_reminderHourKey) ?? 19,
-      minute: prefs.getInt(_reminderMinKey) ?? 0,
-    );
+  // Get unread notifications
+  Future<List<Notification>> getUnreadNotifications(String userId) async {
+    try {
+      final snapshot = await _firestore
+          .collection('notifications')
+          .where('userId', isEqualTo: userId)
+          .where('isRead', isEqualTo: false)
+          .orderBy('createdAt', descending: true)
+          .get();
+
+      return snapshot.docs
+          .map((doc) => Notification.fromJson(doc.data()))
+          .toList();
+    } catch (e) {
+      _logger.error(
+        'Failed to get unread notifications: $e',
+        'NotificationService',
+      );
+      rethrow;
+    }
   }
 
-  // ストリーク達成通知（即時）
-  Future<void> showStreakAchievement(int days) async {
-    await init();
-    const androidDetails = AndroidNotificationDetails(
-      'eigo_kore_achievement',
-      '英語コレ！達成通知',
-      importance: Importance.defaultImportance,
-      icon: '@mipmap/ic_launcher',
-    );
-    const details = NotificationDetails(android: androidDetails);
-    await _plugin.show(
-      2000 + days,
-      '🔥 $days日連続達成！',
-      'すごい！毎日続けている証拠です。この調子で頑張ろう！',
-      details,
-    );
+  // Get unread count
+  Future<int> getUnreadCount(String userId) async {
+    try {
+      final snapshot = await _firestore
+          .collection('notifications')
+          .where('userId', isEqualTo: userId)
+          .where('isRead', isEqualTo: false)
+          .count()
+          .get();
+
+      return snapshot.count;
+    } catch (e) {
+      _logger.error(
+        'Failed to get unread count: $e',
+        'NotificationService',
+      );
+      rethrow;
+    }
   }
 
-  // バッジ獲得通知（即時）
-  Future<void> showBadgeEarned(String badgeName, String emoji) async {
-    await init();
-    const androidDetails = AndroidNotificationDetails(
-      'eigo_kore_badge',
-      '英語コレ！バッジ通知',
-      importance: Importance.defaultImportance,
-      icon: '@mipmap/ic_launcher',
-    );
-    const details = NotificationDetails(android: androidDetails);
-    await _plugin.show(
-      3000,
-      '$emoji バッジ獲得！',
-      '「$badgeName」バッジを獲得しました！',
-      details,
-    );
+  // Mark notification as read
+  Future<void> markAsRead(String notificationId) async {
+    try {
+      await _firestore
+          .collection('notifications')
+          .doc(notificationId)
+          .update({'isRead': true});
+
+      _logger.info(
+        'Notification marked as read: $notificationId',
+        'NotificationService',
+      );
+    } catch (e) {
+      _logger.error(
+        'Failed to mark notification as read: $e',
+        'NotificationService',
+      );
+      rethrow;
+    }
   }
 
-  TimeOfDay getDefaultReminderTime() => const TimeOfDay(hour: 19, minute: 0);
+  // Mark all notifications as read
+  Future<void> markAllAsRead(String userId) async {
+    try {
+      final snapshot = await _firestore
+          .collection('notifications')
+          .where('userId', isEqualTo: userId)
+          .where('isRead', isEqualTo: false)
+          .get();
+
+      final batch = _firestore.batch();
+      for (final doc in snapshot.docs) {
+        batch.update(doc.reference, {'isRead': true});
+      }
+      await batch.commit();
+
+      _logger.info(
+        'All notifications marked as read for $userId',
+        'NotificationService',
+      );
+    } catch (e) {
+      _logger.error(
+        'Failed to mark all notifications as read: $e',
+        'NotificationService',
+      );
+      rethrow;
+    }
+  }
+
+  // Delete notification
+  Future<void> deleteNotification(String notificationId) async {
+    try {
+      await _firestore
+          .collection('notifications')
+          .doc(notificationId)
+          .delete();
+
+      _logger.info(
+        'Notification deleted: $notificationId',
+        'NotificationService',
+      );
+    } catch (e) {
+      _logger.error(
+        'Failed to delete notification: $e',
+        'NotificationService',
+      );
+      rethrow;
+    }
+  }
+
+  // Get notification preferences
+  Future<NotificationPreference> getPreferences(String userId) async {
+    try {
+      final doc = await _firestore
+          .collection('notificationPreferences')
+          .doc(userId)
+          .get();
+
+      if (doc.exists) {
+        return NotificationPreference.fromJson(doc.data()!);
+      } else {
+        final defaultPrefs = NotificationPreference.defaultPreference(userId);
+        await setPreferences(userId, defaultPrefs);
+        return defaultPrefs;
+      }
+    } catch (e) {
+      _logger.error(
+        'Failed to get notification preferences: $e',
+        'NotificationService',
+      );
+      rethrow;
+    }
+  }
+
+  // Set notification preferences
+  Future<void> setPreferences(
+    String userId,
+    NotificationPreference preferences,
+  ) async {
+    try {
+      await _firestore
+          .collection('notificationPreferences')
+          .doc(userId)
+          .set(preferences.toJson());
+
+      _logger.info(
+        'Notification preferences updated for $userId',
+        'NotificationService',
+      );
+    } catch (e) {
+      _logger.error(
+        'Failed to set notification preferences: $e',
+        'NotificationService',
+      );
+      rethrow;
+    }
+  }
+
+  // Get notification statistics
+  Future<NotificationStats> getStats(String userId) async {
+    try {
+      final snapshot = await _firestore
+          .collection('notifications')
+          .where('userId', isEqualTo: userId)
+          .get();
+
+      final notifications = snapshot.docs
+          .map((doc) => Notification.fromJson(doc.data()))
+          .toList();
+
+      final unreadCount =
+          notifications.where((n) => !n.isRead).length;
+      final readCount = notifications.where((n) => n.isRead).length;
+
+      final notificationsByType = <String, int>{};
+      for (final notif in notifications) {
+        final typeKey = notif.type.toString().split('.').last;
+        notificationsByType[typeKey] =
+            (notificationsByType[typeKey] ?? 0) + 1;
+      }
+
+      final lastNotification = notifications.isNotEmpty
+          ? notifications.reduce(
+              (a, b) => a.createdAt.isAfter(b.createdAt) ? a : b,
+            )
+          : null;
+
+      return NotificationStats(
+        userId: userId,
+        totalNotifications: notifications.length,
+        unreadNotifications: unreadCount,
+        readNotifications: readCount,
+        deletedNotifications: 0,
+        notificationsByType: notificationsByType,
+        lastNotificationAt: lastNotification?.createdAt,
+      );
+    } catch (e) {
+      _logger.error(
+        'Failed to get notification stats: $e',
+        'NotificationService',
+      );
+      rethrow;
+    }
+  }
+
+  // Clean up expired notifications
+  Future<void> cleanupExpiredNotifications(String userId) async {
+    try {
+      final snapshot = await _firestore
+          .collection('notifications')
+          .where('userId', isEqualTo: userId)
+          .where('expiresAt', isLessThan: DateTime.now())
+          .get();
+
+      final batch = _firestore.batch();
+      for (final doc in snapshot.docs) {
+        batch.delete(doc.reference);
+      }
+      await batch.commit();
+
+      _logger.info(
+        'Expired notifications cleaned up for $userId',
+        'NotificationService',
+      );
+    } catch (e) {
+      _logger.error(
+        'Failed to cleanup expired notifications: $e',
+        'NotificationService',
+      );
+      rethrow;
+    }
+  }
 }
