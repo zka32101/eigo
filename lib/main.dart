@@ -68,6 +68,8 @@ import 'screens/pet_adoption_screen.dart';
 import 'screens/pet_status_screen.dart';
 import 'screens/pet_interaction_screen.dart';
 import 'screens/pet_evolution_screen.dart';
+import 'screens/user_profile_screen.dart';
+import 'screens/activity_feed_screen.dart';
 import 'services/notification_service.dart';
 import 'services/ad_service.dart';
 import 'services/firebase_service.dart';
@@ -173,6 +175,7 @@ class EigoKoreApp extends ConsumerWidget {
         '/pet-adoption': (context) => const PetAdoptionScreen(),
         '/pet-status': (context) => const PetStatusScreen(),
         '/pet-interaction': (context) => const PetInteractionScreen(),
+        '/activity-feed': (context) => const ActivityFeedScreen(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/test-prep-result') {
@@ -249,6 +252,13 @@ class EigoKoreApp extends ConsumerWidget {
           final petState = settings.arguments as PetState;
           return MaterialPageRoute(
             builder: (_) => PetEvolutionScreen(petState: petState),
+            settings: settings,
+          );
+        }
+        if (settings.name == '/user-profile') {
+          final userId = settings.arguments as String;
+          return MaterialPageRoute(
+            builder: (_) => UserProfileScreen(userId: userId),
             settings: settings,
           );
         }

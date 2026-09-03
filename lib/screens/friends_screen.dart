@@ -1,356 +1,311 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../models/social_model.dart';
+import '../providers/social_provider.dart';
 import '../design_system/design_system.dart';
-import '../models/friend_model.dart';
-import '../providers/friend_provider.dart';
+import '../widgets/friend_card.dart';
 
-class FriendsScreen extends ConsumerWidget {
+class FriendsScreen extends ConsumerStatefulWidget {
   const FriendsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final pendingCount = ref.watch(
-      friendRequestsProvider.select((requests) =>
-          requests.where((r) => r.status == FriendRequestStatus.pending).length),
-    );
+  ConsumerState<FriendsScreen> createState() => _FriendsScreenState();
+}
 
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('👥 フレンド'),
-          backgroundColor: AppColors.primary,
-          bottom: TabBar(
-            labelColor: AppColors.textWhite,
-            unselectedLabelColor: AppColors.textWhite.withOpacity(0.7),
-            indicatorColor: AppColors.accentOrange,
-            tabs: [
-              const Tab(text: 'フレンド一覧'),
-              Tab(
-                child: Stack(
-                  children: [
-                    const Text('リクエスト'),
-                    if (pendingCount > 0)
-                      Positioned(
-                        right: 0,
-                        top: 0,
-                        child: Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color: AppColors.accentRed,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Text(
-                            '$pendingCount',
-                            style: AppTypography.labelSmall.copyWith(
-                              color: AppColors.textWhite,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-              const Tab(text: 'さがす'),
-            ],
-          ),
-        ),
-        body: TabBarView(
-          children: [
-            // フレンド一覧
-            _FriendListTab(),
-            // フレンドリクエスト
-            _FriendRequestsTab(),
-            // フレンドを探す
-            _SearchFriendsTab(),
+class _FriendsScreenState extends ConsumerState<FriendsScreen> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  final _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: Get current user ID from provider
+    const currentUserId = 'current-user-id';
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('フレンド'),
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.textWhite,
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: AppColors.textWhite,
+          labelColor: AppColors.textWhite,
+          unselectedLabelColor: AppColors.textWhite.withOpacity(0.6),
+          tabs: const [
+            Tab(text: 'フレンド'),
+            Tab(text: 'リクエスト'),
+            Tab(text: '追加'),
           ],
         ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          // Tab 1: Friends List
+          _FriendsListTab(userId: currentUserId),
+          // Tab 2: Pending Requests
+          _PendingRequestsTab(userId: currentUserId),
+          // Tab 3: Add Friends
+          _AddFriendsTab(userId: currentUserId),
+        ],
       ),
     );
   }
 }
 
-class _FriendListTab extends ConsumerWidget {
+class _FriendsListTab extends ConsumerWidget {
+  final String userId;
+
+  const _FriendsListTab({required this.userId});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final friends = ref.watch(friendListProvider);
+    final friendsAsync = ref.watch(userFriendsProvider(userId));
 
-    if (friends.isEmpty) {
-      return Center(
+    return friendsAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stack) => Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.people_outline, size: 64, color: AppColors.textMuted),
+            Text('エラーが発生しました', style: AppTypography.labelLarge),
             AppSpacing.verticalSpacerMd,
-            const Text('フレンドがいません'),
-            AppSpacing.verticalSpacerLg,
-            ElevatedButton.icon(
-              onPressed: () {
-                // フレンド探す画面へ切り替え
-                DefaultTabController.of(context).animateTo(2);
-              },
-              icon: const Icon(Icons.person_add),
-              label: const Text('フレンドを追加'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-              ),
+            ElevatedButton(
+              onPressed: () => ref.refresh(userFriendsProvider(userId)),
+              child: const Text('再試行'),
             ),
           ],
         ),
-      );
-    }
-
-    // お気に入りフレンドを取得
-    final favoriteFriends =
-        ref.watch(friendListProvider.select((f) => f.where((x) => x.isFavorite).toList()));
-    final nonFavoriteFriends = friends.where((f) => !f.isFavorite).toList();
-
-    // Index mapping:
-    // 0: Header card
-    // 1: Spacer
-    // 2-N: Favorite friends (if any)
-    // N+1: Spacer (if favorites)
-    // N+2: "その他のフレンド" header
-    // N+3: Spacer
-    // N+4 onwards: Non-favorite friends
-
-    int _getItemCount() {
-      int count = 2; // Header + spacer
-      if (favoriteFriends.isNotEmpty) {
-        count += 1 + favoriteFriends.length + 1; // Title + favorites + spacer
-      }
-      count += 2; // "その他のフレンド" title + spacer
-      count += nonFavoriteFriends.length;
-      count += 1; // Bottom spacer
-      return count;
-    }
-
-    Widget _buildItem(int index) {
-      int currentIndex = 0;
-
-      // Header card
-      if (index == currentIndex) {
-        return Container(
-          padding: AppSpacing.allPaddingMd,
-          decoration: BoxDecoration(
-            color: AppColors.primary.withAlpha(10),
-            borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('フレンド数', style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted)),
-                  AppSpacing.verticalSpacerXs,
-                  Text('${friends.length}人', style: AppTypography.headlineMedium),
-                ],
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: AppSpacing.md,
-                  vertical: AppSpacing.sm,
+      ),
+      data: (friends) {
+        if (friends.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('👥', style: TextStyle(fontSize: 64)),
+                AppSpacing.verticalSpacerMd,
+                Text('フレンドがまだいません', style: AppTypography.labelLarge),
+                AppSpacing.verticalSpacerMd,
+                ElevatedButton(
+                  onPressed: () {
+                    // Switch to add friends tab
+                  },
+                  child: const Text('フレンドを追加'),
                 ),
-                decoration: BoxDecoration(
-                  color: AppColors.accentGreen,
-                  borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
-                ),
-                child: Column(
-                  children: [
-                    Text(
-                      '⭐ ${favoriteFriends.length}',
-                      style: AppTypography.bodyLarge.copyWith(
-                        color: AppColors.textWhite,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      'お気に入り',
-                      style: AppTypography.labelSmall.copyWith(color: AppColors.textWhite),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
-      }
-      currentIndex++;
-
-      // Spacer after header
-      if (index == currentIndex) {
-        return AppSpacing.verticalSpacerLg;
-      }
-      currentIndex++;
-
-      // Favorite friends section (if any)
-      if (favoriteFriends.isNotEmpty) {
-        // Favorite title
-        if (index == currentIndex) {
-          return Text('お気に入り', style: AppTypography.headlineSmall);
-        }
-        currentIndex++;
-
-        // Favorite spacer
-        if (index == currentIndex) {
-          return AppSpacing.verticalSpacerMd;
-        }
-        currentIndex++;
-
-        // Favorite friend cards
-        if (index < currentIndex + favoriteFriends.length) {
-          final favoriteIndex = index - currentIndex;
-          final friend = favoriteFriends[favoriteIndex];
-          return Padding(
-            padding: EdgeInsets.only(bottom: AppSpacing.md),
-            child: _FriendCard(
-              friend: friend,
-              onFavoriteToggle: () {
-                ref.read(friendListProvider.notifier).toggleFavorite(friend.userId);
-              },
-              onRemove: () {
-                ref.read(friendListProvider.notifier).removeFriend(friend.userId);
-              },
+              ],
             ),
           );
         }
-        currentIndex += favoriteFriends.length;
 
-        // Spacer after favorites
-        if (index == currentIndex) {
-          return AppSpacing.verticalSpacerLg;
-        }
-        currentIndex++;
-      }
+        return ListView.builder(
+          itemCount: friends.length,
+          itemBuilder: (context, index) {
+            final friend = friends[index];
+            if (friend.friendProfile == null) return const SizedBox.shrink();
 
-      // "その他のフレンド" title
-      if (index == currentIndex) {
-        return Text('その他のフレンド', style: AppTypography.headlineSmall);
-      }
-      currentIndex++;
-
-      // Spacer
-      if (index == currentIndex) {
-        return AppSpacing.verticalSpacerMd;
-      }
-      currentIndex++;
-
-      // Non-favorite friend cards
-      if (index < currentIndex + nonFavoriteFriends.length) {
-        final friendIndex = index - currentIndex;
-        final friend = nonFavoriteFriends[friendIndex];
-        return Padding(
-          padding: EdgeInsets.only(bottom: AppSpacing.md),
-          child: _FriendCard(
-            friend: friend,
-            onFavoriteToggle: () {
-              ref.read(friendListProvider.notifier).toggleFavorite(friend.userId);
-            },
-            onRemove: () {
-              ref.read(friendListProvider.notifier).removeFriend(friend.userId);
-            },
-          ),
+            return FriendCard(
+              friend: friend,
+              friendProfile: friend.friendProfile!,
+              onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  '/user-profile',
+                  arguments: friend.friendId,
+                );
+              },
+              onRemove: () {
+                _showRemoveConfirmation(context, ref, friend, userId);
+              },
+              onMessage: () {
+                // TODO: Navigate to chat screen
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('チャット機能は近日公開予定です')),
+                );
+              },
+            );
+          },
         );
-      }
-      currentIndex += nonFavoriteFriends.length;
+      },
+    );
+  }
 
-      // Bottom spacer
-      return AppSpacing.verticalSpacerXxl;
-    }
-
-    return ListView.builder(
-      padding: AppSpacing.allPaddingLg,
-      itemCount: _getItemCount(),
-      itemBuilder: (context, index) => _buildItem(index),
+  void _showRemoveConfirmation(BuildContext context, WidgetRef ref, Friend friend, String userId) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('フレンドを削除'),
+        content: Text('${friend.friendProfile?.name}をフレンドから削除しますか？'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('キャンセル'),
+          ),
+          TextButton(
+            onPressed: () {
+              ref.read(removeFriendActionProvider(
+                RemoveFriendParams(
+                  userId: userId,
+                  friendId: friend.friendId,
+                ),
+              ));
+              Navigator.pop(ctx);
+            },
+            child: const Text('削除', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
     );
   }
 }
 
-class _FriendRequestsTab extends ConsumerWidget {
+class _PendingRequestsTab extends ConsumerWidget {
+  final String userId;
+
+  const _PendingRequestsTab({required this.userId});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final requests = ref.watch(friendRequestsProvider);
-    final pendingRequests = requests
-        .where((r) => r.status == FriendRequestStatus.pending)
-        .toList();
+    final requestsAsync = ref.watch(pendingFriendRequestsProvider(userId));
 
-    if (pendingRequests.isEmpty) {
-      return Center(
+    return requestsAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stack) => Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.mail_outline, size: 64, color: AppColors.textMuted),
-            AppSpacing.verticalSpacerMd,
-            const Text('新しいリクエストはありません'),
+            Text('エラーが発生しました', style: AppTypography.labelLarge),
           ],
         ),
-      );
-    }
-
-    return ListView.builder(
-      padding: AppSpacing.allPaddingLg,
-      itemCount: 2 + pendingRequests.length + 1, // Title + spacer + requests + bottom spacer
-      itemBuilder: (context, index) {
-        // Title
-        if (index == 0) {
-          return Text(
-            '${pendingRequests.length}個のリクエスト',
-            style: AppTypography.headlineSmall,
-          );
-        }
-
-        // Spacer after title
-        if (index == 1) {
-          return AppSpacing.verticalSpacerMd;
-        }
-
-        // Request cards
-        if (index < 2 + pendingRequests.length) {
-          final requestIndex = index - 2;
-          final request = pendingRequests[requestIndex];
-          return Padding(
-            padding: EdgeInsets.only(bottom: AppSpacing.md),
-            child: _FriendRequestCard(
-              request: request,
-              onAccept: () {
-                ref.read(friendRequestsProvider.notifier).acceptRequest(request.requestId);
-                // フレンドとして追加
-                ref.read(friendListProvider.notifier).addFriend(
-                  Friend(
-                    userId: request.fromUserId,
-                    name: request.fromUserName,
-                    avatar: request.fromUserAvatar,
-                    level: 1,
-                    coinsEarned: 0,
-                    totalStudyMinutes: 0,
-                    addedAt: DateTime.now(),
-                  ),
-                );
-              },
-              onReject: () {
-                ref.read(friendRequestsProvider.notifier).rejectRequest(request.requestId);
-              },
+      ),
+      data: (requests) {
+        if (requests.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('💌', style: TextStyle(fontSize: 64)),
+                AppSpacing.verticalSpacerMd,
+                Text('フレンドリクエストはありません', style: AppTypography.labelLarge),
+              ],
             ),
           );
         }
 
-        // Bottom spacer
-        return AppSpacing.verticalSpacerXxl;
+        return ListView.builder(
+          itemCount: requests.length,
+          itemBuilder: (context, index) {
+            final request = requests[index];
+            if (request.friendProfile == null) return const SizedBox.shrink();
+
+            return Card(
+              margin: EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+              child: Padding(
+                padding: EdgeInsets.all(AppSpacing.md),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          width: 56,
+                          height: 56,
+                          decoration: BoxDecoration(
+                            color: AppColors.bgLight,
+                            borderRadius: BorderRadius.circular(28),
+                          ),
+                          child: Center(
+                            child: Text(
+                              request.friendProfile!.avatar,
+                              style: TextStyle(fontSize: AppTypography.displaySmall.fontSize),
+                            ),
+                          ),
+                        ),
+                        AppSpacing.horizontalSpacerMd,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                request.friendProfile!.name,
+                                style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                'Lv${request.friendProfile!.level}',
+                                style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    AppSpacing.verticalSpacerMd,
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () {
+                              ref.read(declineFriendRequestActionProvider(
+                                AcceptFriendRequestParams(
+                                  userId: userId,
+                                  friendId: request.friendId,
+                                ),
+                              ));
+                            },
+                            child: const Text('辞退'),
+                          ),
+                        ),
+                        AppSpacing.horizontalSpacerMd,
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              ref.read(acceptFriendRequestActionProvider(
+                                AcceptFriendRequestParams(
+                                  userId: userId,
+                                  friendId: request.friendId,
+                                ),
+                              ));
+                            },
+                            child: const Text('承認'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
       },
     );
   }
 }
 
-class _SearchFriendsTab extends StatefulWidget {
+class _AddFriendsTab extends ConsumerStatefulWidget {
+  final String userId;
+
+  const _AddFriendsTab({required this.userId});
+
   @override
-  State<_SearchFriendsTab> createState() => _SearchFriendsTabState();
+  ConsumerState<_AddFriendsTab> createState() => _AddFriendTabState();
 }
 
-class _SearchFriendsTabState extends State<_SearchFriendsTab> {
+class _AddFriendTabState extends ConsumerState<_AddFriendsTab> {
   final _searchController = TextEditingController();
-  late List<Friend> _searchResults = [];
+  String _searchQuery = '';
 
   @override
   void dispose() {
@@ -358,305 +313,134 @@ class _SearchFriendsTabState extends State<_SearchFriendsTab> {
     super.dispose();
   }
 
-  void _performSearch(String query) {
-    // サンプルフレンドデータ
-    final allUsers = [
-      Friend(
-        userId: 'search_001',
-        name: '太郎',
-        avatar: '👨',
-        level: 25,
-        coinsEarned: 15000,
-        totalStudyMinutes: 5400,
-        addedAt: DateTime.now(),
-      ),
-      Friend(
-        userId: 'search_002',
-        name: '花子',
-        avatar: '👩',
-        level: 24,
-        coinsEarned: 14500,
-        totalStudyMinutes: 5200,
-        addedAt: DateTime.now(),
-      ),
-      Friend(
-        userId: 'search_003',
-        name: 'John',
-        avatar: '🧑',
-        level: 23,
-        coinsEarned: 14000,
-        totalStudyMinutes: 5000,
-        addedAt: DateTime.now(),
-      ),
-    ];
-
-    setState(() {
-      if (query.isEmpty) {
-        _searchResults = [];
-      } else {
-        _searchResults = allUsers
-            .where((user) => user.name.toLowerCase().contains(query.toLowerCase()))
-            .toList();
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: AppSpacing.allPaddingLg,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 検索ボックス
-          TextField(
+    final searchResultsAsync = _searchQuery.isEmpty
+        ? AsyncValue.data(<UserProfile>[])
+        : ref.watch(searchUsersProvider(_searchQuery));
+
+    return Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.all(AppSpacing.md),
+          child: TextField(
             controller: _searchController,
-            onChanged: _performSearch,
+            onChanged: (query) {
+              setState(() => _searchQuery = query);
+            },
             decoration: InputDecoration(
-              hintText: 'フレンドを検索...',
+              hintText: 'ユーザー名で検索...',
               prefixIcon: const Icon(Icons.search),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppSizes.borderRadius),
               ),
-              contentPadding: EdgeInsets.all(AppSpacing.md),
+              suffixIcon: _searchQuery.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        _searchController.clear();
+                        setState(() => _searchQuery = '');
+                      },
+                    )
+                  : null,
             ),
           ),
-          AppSpacing.verticalSpacerLg,
+        ),
+        Expanded(
+          child: searchResultsAsync.when(
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, stack) => Center(
+              child: Text('エラー: $error'),
+            ),
+            data: (results) {
+              if (_searchQuery.isEmpty) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('🔍', style: TextStyle(fontSize: 64)),
+                      AppSpacing.verticalSpacerMd,
+                      Text('ユーザーを検索してフレンドを追加', style: AppTypography.labelLarge),
+                    ],
+                  ),
+                );
+              }
 
-          if (_searchController.text.isEmpty)
-            Center(
-              child: Column(
-                children: [
-                  const Icon(Icons.search, size: 64, color: AppColors.textMuted),
-                  AppSpacing.verticalSpacerMd,
-                  const Text('ユーザー名で検索'),
-                ],
-              ),
-            )
-          else if (_searchResults.isEmpty)
-            Center(
-              child: Column(
-                children: [
-                  const Icon(Icons.person_off, size: 64, color: AppColors.textMuted),
-                  AppSpacing.verticalSpacerMd,
-                  const Text('ユーザーが見つかりません'),
-                ],
-              ),
-            )
-          else
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '${_searchResults.length}件の検索結果',
-                  style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted),
-                ),
-                AppSpacing.verticalSpacerMd,
-                ..._searchResults.asMap().entries.map((entry) {
-                  final friend = entry.value;
-                  return Padding(
-                    padding: EdgeInsets.only(bottom: AppSpacing.md),
-                    child: _SearchResultCard(
-                      friend: friend,
-                      onAdd: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('${friend.name}さんにフレンドリクエストを送信しました'),
-                            backgroundColor: AppColors.accentGreen,
+              if (results.isEmpty) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('ユーザーが見つかりません', style: AppTypography.labelLarge),
+                    ],
+                  ),
+                );
+              }
+
+              return ListView.builder(
+                itemCount: results.length,
+                itemBuilder: (context, index) {
+                  final user = results[index];
+                  return Card(
+                    margin: EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+                    child: Padding(
+                      padding: EdgeInsets.all(AppSpacing.md),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 56,
+                            height: 56,
+                            decoration: BoxDecoration(
+                              color: AppColors.bgLight,
+                              borderRadius: BorderRadius.circular(28),
+                            ),
+                            child: Center(
+                              child: Text(
+                                user.avatar,
+                                style: TextStyle(fontSize: AppTypography.displaySmall.fontSize),
+                              ),
+                            ),
                           ),
-                        );
-                      },
+                          AppSpacing.horizontalSpacerMd,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  user.name,
+                                  style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  'Lv${user.level}',
+                                  style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
+                                ),
+                              ],
+                            ),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              ref.read(sendFriendRequestActionProvider(
+                                SendFriendRequestParams(
+                                  userId: widget.userId,
+                                  friendId: user.id,
+                                ),
+                              ));
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('${user.name}にリクエストを送信しました')),
+                              );
+                            },
+                            child: const Text('リクエスト'),
+                          ),
+                        ],
+                      ),
                     ),
                   );
-                }).toList(),
-              ],
-            ),
-          AppSpacing.verticalSpacerXxl,
-        ],
-      ),
-    );
-  }
-}
-
-class _FriendCard extends StatelessWidget {
-  final Friend friend;
-  final VoidCallback onFavoriteToggle;
-  final VoidCallback onRemove;
-
-  const _FriendCard({
-    required this.friend,
-    required this.onFavoriteToggle,
-    required this.onRemove,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: AppSpacing.allPaddingMd,
-      decoration: BoxDecoration(
-        color:AppColors.textWhite,
-        border: Border.all(color: AppColors.bgLight),
-        borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-      ),
-      child: Row(
-        children: [
-          Text(friend.avatar, style: TextStyle(fontSize: AppTypography.displayMedium.fontSize)),
-          AppSpacing.horizontalSpacerMd,
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(friend.name, style: AppTypography.labelLarge),
-                AppSpacing.verticalSpacerXs,
-                Text(
-                  'Lv.1 • ${friend.totalStudyMinutes}分学習',
-                  style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted),
-                ),
-              ],
-            ),
+                },
+              );
+            },
           ),
-          PopupMenuButton(
-            itemBuilder: (context) => [
-              PopupMenuItem(
-                child: Row(
-                  children: [
-                    Icon(friend.isFavorite ? Icons.star : Icons.star_outline, size: 18),
-                    AppSpacing.horizontalSpacerSm,
-                    Text(friend.isFavorite ? 'お気に入り解除' : 'お気に入り'),
-                  ],
-                ),
-                onTap: onFavoriteToggle,
-              ),
-              PopupMenuItem(
-                child: Row(
-                  children: const [
-                    Icon(Icons.delete_outline, size: 18, color: AppColors.accentRed),
-                    AppSpacing.horizontalSpacerSm,
-                    Text('削除'),
-                  ],
-                ),
-                onTap: onRemove,
-              ),
-            ],
-            child: const Icon(Icons.more_vert),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _FriendRequestCard extends StatelessWidget {
-  final FriendRequest request;
-  final VoidCallback onAccept;
-  final VoidCallback onReject;
-
-  const _FriendRequestCard({
-    required this.request,
-    required this.onAccept,
-    required this.onReject,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: AppSpacing.allPaddingMd,
-      decoration: BoxDecoration(
-        color: AppColors.accentGreen.withAlpha(10),
-        border: Border.all(color: AppColors.accentGreen.withAlpha(50)),
-        borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-      ),
-      child: Row(
-        children: [
-          Text(request.fromUserAvatar, style: TextStyle(fontSize: AppTypography.displayMedium.fontSize)),
-          AppSpacing.horizontalSpacerMd,
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(request.fromUserName, style: AppTypography.labelLarge),
-                AppSpacing.verticalSpacerXs,
-                Text(
-                  'リクエスト受信',
-                  style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 32,
-            child: Row(
-              children: [
-                ElevatedButton(
-                  onPressed: onAccept,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.accentGreen,
-                    padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                  ),
-                  child: Text('承認', style: AppTypography.labelSmall),
-                ),
-                AppSpacing.horizontalSpacerSm,
-                OutlinedButton(
-                  onPressed: onReject,
-                  style: OutlinedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                  ),
-                  child: Text('拒否', style: AppTypography.labelSmall),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SearchResultCard extends StatelessWidget {
-  final Friend friend;
-  final VoidCallback onAdd;
-
-  const _SearchResultCard({
-    required this.friend,
-    required this.onAdd,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: AppSpacing.allPaddingMd,
-      decoration: BoxDecoration(
-        color:AppColors.textWhite,
-        border: Border.all(color: AppColors.bgLight),
-        borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-      ),
-      child: Row(
-        children: [
-          Text(friend.avatar, style: TextStyle(fontSize: AppTypography.displayMedium.fontSize)),
-          AppSpacing.horizontalSpacerMd,
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(friend.name, style: AppTypography.labelLarge),
-                AppSpacing.verticalSpacerXs,
-                Text(
-                  'Lv.${friend.level} • ${friend.totalStudyMinutes}分学習',
-                  style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted),
-                ),
-              ],
-            ),
-          ),
-          ElevatedButton.icon(
-            onPressed: onAdd,
-            icon: const Icon(Icons.person_add, size: AppSizes.iconSizeSmall),
-            label: const Text('追加'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

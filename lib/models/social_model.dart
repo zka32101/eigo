@@ -203,6 +203,7 @@ class Activity {
   final bool isShared; // Visible to friends
   final int? xpReward;
   final int? coinReward;
+  final String? userAvatar; // User's avatar emoji
 
   Activity({
     required this.id,
@@ -217,6 +218,7 @@ class Activity {
     required this.isShared,
     this.xpReward,
     this.coinReward,
+    this.userAvatar,
   });
 
   String get typeLabel {
@@ -286,6 +288,8 @@ class Activity {
     }
   }
 
+  String get emoji => typeEmoji;
+
   Activity copyWith({
     String? id,
     String? userId,
@@ -299,6 +303,7 @@ class Activity {
     bool? isShared,
     int? xpReward,
     int? coinReward,
+    String? userAvatar,
   }) {
     return Activity(
       id: id ?? this.id,
@@ -313,6 +318,7 @@ class Activity {
       isShared: isShared ?? this.isShared,
       xpReward: xpReward ?? this.xpReward,
       coinReward: coinReward ?? this.coinReward,
+      userAvatar: userAvatar ?? this.userAvatar,
     );
   }
 
