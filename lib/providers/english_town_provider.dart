@@ -1,544 +1,532 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 import '../models/english_town_model.dart';
-import '../data/english_town_data.dart';
 
-/// ==================== TOWN MAP STATE ====================
+// ========== State Notifiers ==========
 
-/// Provides access to the complete English-Only Town map
-final townMapProvider = StateProvider<TownMap>((ref) {
-  return EnglishTownData.townMap;
-});
+class TownAreasNotifier extends StateNotifier<List<TownArea>> {
+  TownAreasNotifier() : super(_initializeAreas());
 
-/// Get all locations in the town
-final townLocationsProvider = Provider<List<Location>>((ref) {
-  final townMap = ref.watch(townMapProvider);
-  return townMap.locations;
-});
-
-/// Get all NPCs in the town
-final townNPCsProvider = Provider<List<NPC>>((ref) {
-  final townMap = ref.watch(townMapProvider);
-  return townMap.npcs;
-});
-
-/// Get all interaction scenes
-final townScenesProvider = Provider<List<InteractionScene>>((ref) {
-  final townMap = ref.watch(townMapProvider);
-  return townMap.scenes;
-});
-
-/// Get a specific location by ID
-final getLocationProvider = FutureProvider.family<Location?, String>((ref, locationId) async {
-  final townMap = ref.watch(townMapProvider);
-  return townMap.getLocation(locationId);
-});
-
-/// Get a specific NPC by ID
-final getNPCProvider = FutureProvider.family<NPC?, String>((ref, npcId) async {
-  final townMap = ref.watch(townMapProvider);
-  return townMap.getNPC(npcId);
-});
-
-/// ==================== PLAYER PROGRESS ====================
-
-/// Manages player's progress in English-Only Town
-class TownProgressNotifier extends StateNotifier<TownProgress> {
-  TownProgressNotifier() : super(_initialProgress());
-
-  static TownProgress _initialProgress() {
-    return TownProgress(
-      userId: 'current_user', // TODO: Get from auth provider
-      createdAt: DateTime.now(),
-      lastPlayedAt: DateTime.now(),
-      currentTimeOfDay: TimeOfDay.afternoon,
-      currentWeather: WeatherType.sunny,
-    );
+  static List<TownArea> _initializeAreas() {
+    return [
+      TownArea(
+        areaId: 'area_school',
+        areaType: 'school',
+        englishName: 'School',
+        japaneseName: '🏫 学校',
+        description: 'Learn classroom and educational phrases with teachers and students',
+        backgroundTile: '🏫',
+        npcIds: ['npc_teacher_1', 'npc_student_1', 'npc_principal'],
+        learningThemes: ['classroom', 'education', 'subjects'],
+        difficultyLevel: 1,
+        progressPercentage: 0,
+        wordsLearned: 0,
+        coinsEarned: 0,
+        isUnlocked: true,
+      ),
+      TownArea(
+        areaId: 'area_market',
+        areaType: 'market',
+        englishName: 'Market',
+        japaneseName: '🛒 市場',
+        description: 'Practice shopping and transaction phrases with shopkeepers',
+        backgroundTile: '🛒',
+        npcIds: ['npc_shopkeeper_1', 'npc_shopkeeper_2', 'npc_customer'],
+        learningThemes: ['shopping', 'numbers', 'money'],
+        difficultyLevel: 2,
+        progressPercentage: 0,
+        wordsLearned: 0,
+        coinsEarned: 0,
+        isUnlocked: false,
+      ),
+      TownArea(
+        areaId: 'area_park',
+        areaType: 'park',
+        englishName: 'Park',
+        japaneseName: '🌳 公園',
+        description: 'Learn outdoor and activity phrases with friends and families',
+        backgroundTile: '🌳',
+        npcIds: ['npc_friend_1', 'npc_friend_2', 'npc_parent'],
+        learningThemes: ['activities', 'sports', 'nature'],
+        difficultyLevel: 2,
+        progressPercentage: 0,
+        wordsLearned: 0,
+        coinsEarned: 0,
+        isUnlocked: false,
+      ),
+      TownArea(
+        areaId: 'area_restaurant',
+        areaType: 'restaurant',
+        englishName: 'Restaurant',
+        japaneseName: '🍽️ レストラン',
+        description: 'Practice dining and food-related conversations with chefs and servers',
+        backgroundTile: '🍽️',
+        npcIds: ['npc_chef', 'npc_waiter', 'npc_foodcritic'],
+        learningThemes: ['food', 'ordering', 'cooking'],
+        difficultyLevel: 3,
+        progressPercentage: 0,
+        wordsLearned: 0,
+        coinsEarned: 0,
+        isUnlocked: false,
+      ),
+    ];
   }
 
-  /// Mark a location as visited
-  void visitLocation(String locationId) {
-    state = state.copyWith(
-      visitedLocationIds: {...state.visitedLocationIds, locationId},
-      lastPlayedAt: DateTime.now(),
-    );
+  Future<void> visitArea(String areaId) async {
+    state = state.map((area) {
+      if (area.areaId == areaId) {
+        return area.copyWith(
+          lastVisitedAt: DateTime.now(),
+          progressPercentage: (area.progressPercentage + 5).clamp(0, 100),
+        );
+      }
+      return area;
+    }).toList();
+    await _saveTownAreas();
   }
 
-  /// Record a conversation with an NPC
-  void recordNPCConversation(String npcId, int xpReward, int coinReward) {
-    final updatedCounts = Map<String, int>.from(state.npcConversationCounts);
-    updatedCounts[npcId] = (updatedCounts[npcId] ?? 0) + 1;
-
-    state = state.copyWith(
-      npcConversationCounts: updatedCounts,
-      totalConversations: state.totalConversations + 1,
-      totalXpEarned: state.totalXpEarned + xpReward,
-      totalCoinsEarned: state.totalCoinsEarned + coinReward,
-      lastPlayedAt: DateTime.now(),
-    );
+  Future<void> unlockArea(String areaId) async {
+    state = state.map((area) {
+      if (area.areaId == areaId) {
+        return area.copyWith(isUnlocked: true);
+      }
+      return area;
+    }).toList();
+    await _saveTownAreas();
   }
 
-  /// Record scene completion
-  void recordSceneCompletion(String sceneId, int xpReward, int coinReward) {
-    final updatedCounts = Map<String, int>.from(state.sceneCompletionCounts);
-    updatedCounts[sceneId] = (updatedCounts[sceneId] ?? 0) + 1;
-
-    state = state.copyWith(
-      sceneCompletionCounts: updatedCounts,
-      totalXpEarned: state.totalXpEarned + xpReward,
-      totalCoinsEarned: state.totalCoinsEarned + coinReward,
-    );
+  Future<void> addCoinsToArea(String areaId, int coins) async {
+    state = state.map((area) {
+      if (area.areaId == areaId) {
+        return area.copyWith(
+          coinsEarned: area.coinsEarned + coins,
+        );
+      }
+      return area;
+    }).toList();
+    await _saveTownAreas();
   }
 
-  /// Unlock an achievement
-  void unlockAchievement(String achievementId) {
-    state = state.copyWith(
-      unlockedAchievements: {...state.unlockedAchievements, achievementId},
-    );
+  Future<void> _saveTownAreas() async {
+    final prefs = await SharedPreferences.getInstance();
+    final data = state.map((a) => a.toJson()).toList();
+    await prefs.setString('town_areas', jsonEncode(data));
   }
 
-  /// Update time of day (affects NPC availability)
-  void updateTimeOfDay(TimeOfDay newTime) {
-    state = state.copyWith(
-      currentTimeOfDay: newTime,
-    );
-  }
-
-  /// Update weather (affects dialogue context)
-  void updateWeather(WeatherType newWeather) {
-    state = state.copyWith(
-      currentWeather: newWeather,
-    );
+  TownArea? getAreaById(String areaId) {
+    try {
+      return state.firstWhere((area) => area.areaId == areaId);
+    } catch (e) {
+      return null;
+    }
   }
 }
+
+class NPCsNotifier extends StateNotifier<List<NPC>> {
+  NPCsNotifier() : super(_initializeNPCs());
+
+  static List<NPC> _initializeNPCs() {
+    return [
+      NPC(
+        npcId: 'npc_teacher_1',
+        name: 'Mr. Smith',
+        profession: 'teacher',
+        emoji: '👨‍🏫',
+        areaId: 'area_school',
+        position: 'x:100,y:150',
+        conversationPhrases: [
+          'Good morning! How are you today?',
+          'What is your name?',
+          'Can you spell your name?',
+          'Do you understand?',
+        ],
+        learningTheme: 'classroom',
+        difficultyLevel: 1,
+        vocabularyCount: 50,
+        talkCount: 0,
+      ),
+      NPC(
+        npcId: 'npc_student_1',
+        name: 'Emma',
+        profession: 'student',
+        emoji: '👧',
+        areaId: 'area_school',
+        position: 'x:250,y:180',
+        conversationPhrases: [
+          'Hi! What\'s your name?',
+          'Do you like English?',
+          'Want to be friends?',
+        ],
+        learningTheme: 'greeting',
+        difficultyLevel: 1,
+        vocabularyCount: 30,
+        talkCount: 0,
+      ),
+      NPC(
+        npcId: 'npc_shopkeeper_1',
+        name: 'Sarah',
+        profession: 'shopkeeper',
+        emoji: '👩‍💼',
+        areaId: 'area_market',
+        position: 'x:120,y:200',
+        conversationPhrases: [
+          'Welcome to the shop!',
+          'How can I help you?',
+          'How much is this?',
+          'That will be 10 dollars',
+        ],
+        learningTheme: 'shopping',
+        difficultyLevel: 2,
+        vocabularyCount: 60,
+        talkCount: 0,
+      ),
+      NPC(
+        npcId: 'npc_chef',
+        name: 'Marco',
+        profession: 'chef',
+        emoji: '👨‍🍳',
+        areaId: 'area_restaurant',
+        position: 'x:180,y:220',
+        conversationPhrases: [
+          'Welcome to our restaurant!',
+          'What would you like to order?',
+          'Do you have any allergies?',
+          'Enjoy your meal!',
+        ],
+        learningTheme: 'dining',
+        difficultyLevel: 3,
+        vocabularyCount: 80,
+        talkCount: 0,
+      ),
+    ];
+  }
+
+  Future<void> recordTalk(String npcId) async {
+    state = state.map((npc) {
+      if (npc.npcId == npcId) {
+        return NPC(
+          npcId: npc.npcId,
+          name: npc.name,
+          profession: npc.profession,
+          emoji: npc.emoji,
+          areaId: npc.areaId,
+          position: npc.position,
+          conversationPhrases: npc.conversationPhrases,
+          learningTheme: npc.learningTheme,
+          difficultyLevel: npc.difficultyLevel,
+          vocabularyCount: npc.vocabularyCount,
+          talkCount: npc.talkCount + 1,
+          lastTalkedAt: DateTime.now(),
+        );
+      }
+      return npc;
+    }).toList();
+    await _saveNPCs();
+  }
+
+  Future<void> _saveNPCs() async {
+    final prefs = await SharedPreferences.getInstance();
+    final data = state.map((n) => n.toJson()).toList();
+    await prefs.setString('town_npcs', jsonEncode(data));
+  }
+
+  NPC? getNPCById(String npcId) {
+    try {
+      return state.firstWhere((npc) => npc.npcId == npcId);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  List<NPC> getNPCsByArea(String areaId) {
+    return state.where((npc) => npc.areaId == areaId).toList();
+  }
+}
+
+class ConversationsNotifier extends StateNotifier<List<Conversation>> {
+  ConversationsNotifier() : super([]);
+
+  Future<void> addConversation(Conversation conversation) async {
+    state = [...state, conversation];
+    await _saveConversations();
+  }
+
+  Future<void> _saveConversations() async {
+    final prefs = await SharedPreferences.getInstance();
+    final data = state.map((c) => c.toJson()).toList();
+    await prefs.setString('town_conversations', jsonEncode(data));
+  }
+
+  List<Conversation> getConversationsByNPC(String npcId) {
+    return state.where((conv) => conv.npcId == npcId).toList();
+  }
+
+  int getCorrectConversationCount() {
+    return state.where((conv) => conv.isResponseCorrect).length;
+  }
+
+  double getAverageScore() {
+    if (state.isEmpty) return 0;
+    final sum = state.fold<int>(0, (sum, conv) => sum + conv.responseScore);
+    return sum / state.length;
+  }
+}
+
+class TownProgressNotifier extends StateNotifier<TownProgress> {
+  TownProgressNotifier()
+      : super(
+          TownProgress(
+            progressId: 'progress_001',
+            userId: 'user_001',
+            totalAreas: 4,
+            unlockedAreas: 1,
+            visitedAreas: 0,
+            totalConversations: 0,
+            correctConversations: 0,
+            averageScore: 0,
+            totalLearningPoints: 0,
+            totalCoinsEarned: 0,
+            lastUpdatedAt: DateTime.now(),
+          ),
+        );
+
+  Future<void> updateProgress({
+    String? currentAreaId,
+    String? currentNPCId,
+    int? coinsEarned,
+    int? learningPoints,
+    int? responseScore,
+    bool? isCorrect,
+  }) async {
+    final newCorrect =
+        state.correctConversations + (isCorrect == true ? 1 : 0);
+    final newTotal = state.totalConversations + 1;
+
+    state = state.copyWith(
+      currentAreaId: currentAreaId ?? state.currentAreaId,
+      currentNPCId: currentNPCId ?? state.currentNPCId,
+      totalConversations: newTotal,
+      correctConversations: newCorrect,
+      averageScore: (state.averageScore * (newTotal - 1) + (responseScore ?? 0)) / newTotal,
+      totalLearningPoints: state.totalLearningPoints + (learningPoints ?? 0),
+      totalCoinsEarned: state.totalCoinsEarned + (coinsEarned ?? 0),
+      lastUpdatedAt: DateTime.now(),
+    );
+    await _saveProgress();
+  }
+
+  Future<void> visitArea(String areaId) async {
+    state = state.copyWith(
+      currentAreaId: areaId,
+      visitedAreas: state.visitedAreas + 1,
+      lastVisitedAt: DateTime.now(),
+    );
+    await _saveProgress();
+  }
+
+  Future<void> unlockNewArea() async {
+    state = state.copyWith(
+      unlockedAreas: state.unlockedAreas + 1,
+    );
+    await _saveProgress();
+  }
+
+  Future<void> _saveProgress() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('town_progress', jsonEncode(state.toJson()));
+  }
+}
+
+class TownPlayerProfileNotifier extends StateNotifier<TownPlayerProfile> {
+  TownPlayerProfileNotifier()
+      : super(
+          TownPlayerProfile(
+            profileId: 'profile_001',
+            userId: 'user_001',
+            playerCharacter: '🧒',
+            level: 1,
+            experience: 0,
+            totalCoinsEarned: 0,
+            currentCoins: 0,
+            uniqueWordsLearned: 0,
+            milestonesClaimed: [],
+            badgesEarned: [],
+            lastUpdatedAt: DateTime.now(),
+          ),
+        );
+
+  Future<void> earnCoins(int coins) async {
+    state = state.copyWith(
+      currentCoins: state.currentCoins + coins,
+      totalCoinsEarned: state.totalCoinsEarned + coins,
+    );
+    await _saveProfile();
+  }
+
+  Future<void> spendCoins(int coins) async {
+    if (state.currentCoins >= coins) {
+      state = state.copyWith(
+        currentCoins: state.currentCoins - coins,
+      );
+      await _saveProfile();
+    }
+  }
+
+  Future<void> earnExperience(int exp) async {
+    var newExp = state.experience + exp;
+    var newLevel = state.level;
+
+    // Level up every 500 XP
+    while (newExp >= 500) {
+      newExp -= 500;
+      newLevel++;
+    }
+
+    state = state.copyWith(
+      experience: newExp,
+      level: newLevel,
+    );
+    await _saveProfile();
+  }
+
+  Future<void> learnWord(String word) async {
+    state = state.copyWith(
+      uniqueWordsLearned: state.uniqueWordsLearned + 1,
+    );
+    await _saveProfile();
+  }
+
+  Future<void> claimBadge(String badgeId) async {
+    if (!state.badgesEarned.contains(badgeId)) {
+      state = state.copyWith(
+        badgesEarned: [...state.badgesEarned, badgeId],
+      );
+      await _saveProfile();
+    }
+  }
+
+  Future<void> _saveProfile() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('town_player_profile', jsonEncode(state.toJson()));
+  }
+}
+
+class TownStatsNotifier extends StateNotifier<TownStats> {
+  TownStatsNotifier()
+      : super(
+          TownStats(
+            statsId: 'stats_001',
+            userId: 'user_001',
+            totalPlayTime: 0,
+            totalConversations: 0,
+            averageScore: 0,
+            highScore: 0,
+            visitDays: 0,
+            consecutiveVisitDays: 0,
+            totalWordsLearned: 0,
+            totalCoinsEarned: 0,
+            badgesCount: 0,
+            milestonesCount: 0,
+            lastUpdatedAt: DateTime.now(),
+          ),
+        );
+
+  Future<void> recordSession({
+    required int playTime,
+    required int conversations,
+    required double averageScore,
+    required int wordsLearned,
+    required int coinsEarned,
+  }) async {
+    final newHighScore = (averageScore * 100).toInt();
+    final existingHighScore = state.highScore;
+
+    state = state.copyWith(
+      totalPlayTime: state.totalPlayTime + playTime,
+      totalConversations: state.totalConversations + conversations,
+      averageScore:
+          (state.averageScore * state.totalConversations + averageScore) /
+              (state.totalConversations + conversations),
+      highScore: newHighScore > existingHighScore ? newHighScore : existingHighScore,
+      totalWordsLearned: state.totalWordsLearned + wordsLearned,
+      totalCoinsEarned: state.totalCoinsEarned + coinsEarned,
+      lastUpdatedAt: DateTime.now(),
+    );
+    await _saveStats();
+  }
+
+  Future<void> updateVisitStreak(int days) async {
+    state = state.copyWith(
+      visitDays: state.visitDays + 1,
+      consecutiveVisitDays: days,
+    );
+    await _saveStats();
+  }
+
+  Future<void> _saveStats() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('town_stats', jsonEncode(state.toJson()));
+  }
+}
+
+// ========== Providers ==========
+
+final townAreasProvider = StateNotifierProvider<TownAreasNotifier, List<TownArea>>((ref) {
+  return TownAreasNotifier();
+});
+
+final npcsProvider = StateNotifierProvider<NPCsNotifier, List<NPC>>((ref) {
+  return NPCsNotifier();
+});
+
+final conversationsProvider =
+    StateNotifierProvider<ConversationsNotifier, List<Conversation>>((ref) {
+  return ConversationsNotifier();
+});
 
 final townProgressProvider =
     StateNotifierProvider<TownProgressNotifier, TownProgress>((ref) {
   return TownProgressNotifier();
 });
 
-/// ==================== NPC STATE ====================
+final townPlayerProfileProvider =
+    StateNotifierProvider<TownPlayerProfileNotifier, TownPlayerProfile>((ref) {
+  return TownPlayerProfileNotifier();
+});
 
-/// Get conversations count for a specific NPC
-final npcConversationCountProvider =
-    Provider.family<int, String>((ref, npcId) {
+final townStatsProvider =
+    StateNotifierProvider<TownStatsNotifier, TownStats>((ref) {
+  return TownStatsNotifier();
+});
+
+// ========== Computed Providers ==========
+
+final areaProgressProvider = Provider.family<TownArea?, String>((ref, areaId) {
+  final areas = ref.watch(townAreasProvider);
+  return areas.firstWhere((area) => area.areaId == areaId);
+});
+
+final npcsByAreaProvider =
+    Provider.family<List<NPC>, String>((ref, areaId) {
+  final npcs = ref.watch(npcsProvider);
+  return npcs.where((npc) => npc.areaId == areaId).toList();
+});
+
+final conversationHistoryProvider = Provider<List<Conversation>>((ref) {
+  return ref.watch(conversationsProvider);
+});
+
+final playerLevelProvider = Provider<int>((ref) {
+  return ref.watch(townPlayerProfileProvider).level;
+});
+
+final playerCoinsProvider = Provider<int>((ref) {
+  return ref.watch(townPlayerProfileProvider).currentCoins;
+});
+
+final overallProgressPercentage = Provider<double>((ref) {
   final progress = ref.watch(townProgressProvider);
-  return progress.npcConversationCounts[npcId] ?? 0;
+  if (progress.totalAreas == 0) return 0;
+  return (progress.visitedAreas / progress.totalAreas) * 100;
 });
-
-/// Get total locations visited
-final visitedLocationsCountProvider = Provider<int>((ref) {
-  final progress = ref.watch(townProgressProvider);
-  return progress.visitedLocationIds.length;
-});
-
-/// Get total locations available
-final totalLocationsProvider = Provider<int>((ref) {
-  final locations = ref.watch(townLocationsProvider);
-  return locations.length;
-});
-
-/// Get NPCs currently present at a location (based on time and preferences)
-class LocationNPCsNotifier extends StateNotifier<List<NPC>> {
-  LocationNPCsNotifier(this.ref, this.locationId)
-      : super([]) {
-    _updateNPCPresence();
-  }
-
-  final Ref ref;
-  final String locationId;
-
-  void _updateNPCPresence() {
-    final townMap = ref.read(townMapProvider);
-    final progress = ref.read(townProgressProvider);
-    final currentTime = progress.currentTimeOfDay;
-
-    // Get location
-    final location = townMap.getLocation(locationId);
-    if (location == null) return;
-
-    // Get all NPCs and filter by location presence
-    final presentNPCs = townMap.npcs
-        .where((npc) {
-          // NPC must be at this location or visiting it
-          if (npc.nativeLocation == locationId) return true;
-          if (npc.frequentLocations.contains(locationId)) {
-            // Rough probability: 70% chance they're at frequent locations
-            return DateTime.now().millisecondsSinceEpoch % 10 > 3;
-          }
-          return false;
-        })
-        .toList();
-
-    state = presentNPCs;
-  }
-
-  /// Update when time changes
-  void updateForTimeChange(TimeOfDay newTime) {
-    _updateNPCPresence();
-  }
-}
-
-final locationNPCsProvider =
-    StateNotifierProvider.family<LocationNPCsNotifier, List<NPC>, String>(
-        (ref, locationId) {
-  return LocationNPCsNotifier(ref, locationId);
-});
-
-/// ==================== CONVERSATION STATE ====================
-
-class CurrentConversationState {
-  final String? sceneId;
-  final String? npcId;
-  final String? locationId;
-  final List<ConversationTurn> conversationHistory;
-  final bool isActive;
-  final DateTime startedAt;
-
-  CurrentConversationState({
-    this.sceneId,
-    this.npcId,
-    this.locationId,
-    this.conversationHistory = const [],
-    this.isActive = false,
-    required this.startedAt,
-  });
-
-  CurrentConversationState copyWith({
-    String? sceneId,
-    String? npcId,
-    String? locationId,
-    List<ConversationTurn>? conversationHistory,
-    bool? isActive,
-    DateTime? startedAt,
-  }) {
-    return CurrentConversationState(
-      sceneId: sceneId ?? this.sceneId,
-      npcId: npcId ?? this.npcId,
-      locationId: locationId ?? this.locationId,
-      conversationHistory: conversationHistory ?? this.conversationHistory,
-      isActive: isActive ?? this.isActive,
-      startedAt: startedAt ?? this.startedAt,
-    );
-  }
-}
-
-class CurrentConversationNotifier
-    extends StateNotifier<CurrentConversationState> {
-  CurrentConversationNotifier()
-      : super(CurrentConversationState(startedAt: DateTime.now()));
-
-  /// Start a new conversation with an NPC
-  void startConversation({
-    required String sceneId,
-    required String npcId,
-    required String locationId,
-  }) {
-    state = CurrentConversationState(
-      sceneId: sceneId,
-      npcId: npcId,
-      locationId: locationId,
-      isActive: true,
-      startedAt: DateTime.now(),
-    );
-  }
-
-  /// Add a turn to the conversation
-  void addTurn(ConversationTurn turn) {
-    state = state.copyWith(
-      conversationHistory: [...state.conversationHistory, turn],
-    );
-  }
-
-  /// End the current conversation
-  void endConversation() {
-    state = state.copyWith(
-      isActive: false,
-    );
-  }
-
-  /// Clear conversation state
-  void clearConversation() {
-    state = CurrentConversationState(startedAt: DateTime.now());
-  }
-}
-
-final currentConversationProvider =
-    StateNotifierProvider<CurrentConversationNotifier, CurrentConversationState>(
-        (ref) {
-  return CurrentConversationNotifier();
-});
-
-/// ==================== PROGRESS TRACKING ====================
-
-/// Get progress percentage (0-100)
-final townProgressPercentageProvider = Provider<int>((ref) {
-  final progress = ref.watch(townProgressProvider);
-  final totalScenes = ref.watch(townScenesProvider).length;
-  return progress.getProgressPercentage(totalScenes);
-});
-
-/// Get total XP earned in town
-final totalXpEarnedProvider = Provider<int>((ref) {
-  final progress = ref.watch(townProgressProvider);
-  return progress.totalXpEarned;
-});
-
-/// Get total coins earned in town
-final totalCoinsEarnedProvider = Provider<int>((ref) {
-  final progress = ref.watch(townProgressProvider);
-  return progress.totalCoinsEarned;
-});
-
-/// Get achievement count
-final unlockedAchievementsCountProvider = Provider<int>((ref) {
-  final progress = ref.watch(townProgressProvider);
-  return progress.unlockedAchievements.length;
-});
-
-/// ==================== SCENE PROVIDERS ====================
-
-/// Get scenes for a specific location
-final locationScenesProvider =
-    Provider.family<List<InteractionScene>, String>((ref, locationId) {
-  final townMap = ref.watch(townMapProvider);
-  return townMap.getLocationScenes(locationId);
-});
-
-/// Get scenes for a specific NPC
-final npcScenesProvider =
-    Provider.family<List<InteractionScene>, String>((ref, npcId) {
-  final townMap = ref.watch(townMapProvider);
-  return townMap.getNPCScenes(npcId);
-});
-
-/// Get a specific scene by ID
-final getSceneProvider =
-    Provider.family<InteractionScene?, String>((ref, sceneId) {
-  final scenes = ref.watch(townScenesProvider);
-  try {
-    return scenes.firstWhere((scene) => scene.id == sceneId);
-  } catch (e) {
-    return null;
-  }
-});
-
-/// ==================== ANALYTICS ====================
-
-/// Get stats for NPC interactions
-class NPCStatsNotifier extends StateNotifier<Map<String, int>> {
-  NPCStatsNotifier(this.ref) : super({}) {
-    _loadStats();
-  }
-
-  final Ref ref;
-
-  void _loadStats() {
-    final progress = ref.read(townProgressProvider);
-    state = Map<String, int>.from(progress.npcConversationCounts);
-  }
-
-  void refreshStats() {
-    _loadStats();
-  }
-}
-
-final npcStatsProvider =
-    StateNotifierProvider<NPCStatsNotifier, Map<String, int>>((ref) {
-  return NPCStatsNotifier(ref);
-});
-
-/// Get most talked-to NPC
-final mostTalkedToNPCProvider = Provider<NPC?>((ref) {
-  final stats = ref.watch(npcStatsProvider);
-  final npcs = ref.watch(townNPCsProvider);
-
-  if (stats.isEmpty) return null;
-
-  final maxEntry = stats.entries.reduce(
-    (a, b) => a.value > b.value ? a : b,
-  );
-
-  return npcs.firstWhereOrNull((npc) => npc.id == maxEntry.key);
-});
-
-/// Get least talked-to NPC (for recommendations)
-final leastTalkedToNPCProvider = Provider<NPC?>((ref) {
-  final stats = ref.watch(npcStatsProvider);
-  final npcs = ref.watch(townNPCsProvider);
-  final progress = ref.watch(townProgressProvider);
-
-  if (npcs.isEmpty) return null;
-
-  // Find NPC with fewest conversations
-  NPC? leastTalked;
-  int minConversations = int.maxFinite;
-
-  for (final npc in npcs) {
-    final count = progress.npcConversationCounts[npc.id] ?? 0;
-    if (count < minConversations) {
-      minConversations = count;
-      leastTalked = npc;
-    }
-  }
-
-  return leastTalked;
-});
-
-/// ==================== DAILIES & CHALLENGES ====================
-
-class DailyChallenge {
-  final String id;
-  final String title;
-  final String description;
-  final int targetCount;
-  final int currentCount;
-  final int xpReward;
-  final int coinReward;
-  final bool isCompleted;
-
-  DailyChallenge({
-    required this.id,
-    required this.title,
-    required this.description,
-    required this.targetCount,
-    this.currentCount = 0,
-    required this.xpReward,
-    required this.coinReward,
-    this.isCompleted = false,
-  });
-
-  DailyChallenge copyWith({
-    String? id,
-    String? title,
-    String? description,
-    int? targetCount,
-    int? currentCount,
-    int? xpReward,
-    int? coinReward,
-    bool? isCompleted,
-  }) {
-    return DailyChallenge(
-      id: id ?? this.id,
-      title: title ?? this.title,
-      description: description ?? this.description,
-      targetCount: targetCount ?? this.targetCount,
-      currentCount: currentCount ?? this.currentCount,
-      xpReward: xpReward ?? this.xpReward,
-      coinReward: coinReward ?? this.coinReward,
-      isCompleted: isCompleted ?? this.isCompleted,
-    );
-  }
-}
-
-class DailyChallengesNotifier extends StateNotifier<List<DailyChallenge>> {
-  DailyChallengesNotifier()
-      : super([
-          DailyChallenge(
-            id: 'daily_1',
-            title: 'Talk to 3 NPCs',
-            description: 'Have conversations with 3 different NPCs',
-            targetCount: 3,
-            xpReward: 100,
-            coinReward: 50,
-          ),
-          DailyChallenge(
-            id: 'daily_2',
-            title: 'Visit all Locations',
-            description: 'Visit all 8 locations in town',
-            targetCount: 8,
-            xpReward: 250,
-            coinReward: 100,
-          ),
-          DailyChallenge(
-            id: 'daily_3',
-            title: 'Have 5 Conversations',
-            description: 'Complete 5 conversation scenes',
-            targetCount: 5,
-            xpReward: 150,
-            coinReward: 75,
-          ),
-        ]);
-
-  void updateChallengeProgress(String challengeId, int newCount) {
-    state = state.map((challenge) {
-      if (challenge.id == challengeId) {
-        final isCompleted = newCount >= challenge.targetCount;
-        return challenge.copyWith(
-          currentCount: newCount,
-          isCompleted: isCompleted,
-        );
-      }
-      return challenge;
-    }).toList();
-  }
-
-  void resetDaily() {
-    state = state
-        .map((challenge) => challenge.copyWith(currentCount: 0, isCompleted: false))
-        .toList();
-  }
-}
-
-final dailyChallengesProvider =
-    StateNotifierProvider<DailyChallengesNotifier, List<DailyChallenge>>((ref) {
-  return DailyChallengesNotifier();
-});
-
-/// Get completed challenges count
-final completedChallengesCountProvider = Provider<int>((ref) {
-  final challenges = ref.watch(dailyChallengesProvider);
-  return challenges.where((c) => c.isCompleted).length;
-});
-
-/// ==================== CONVERSATION ENGINE (Phase 3) ====================
-
-/// Generate NPC dialogue based on player input
-/// Uses Claude API with context about NPC, location, time of day, and difficulty
-final npcDialogueProvider =
-    FutureProvider.family<String, ({
-      NPC npc,
-      Location location,
-      TimeOfDay timeOfDay,
-      ConversationDifficulty difficulty,
-      String playerMessage,
-      List<ConversationTurn> history,
-    })>((ref, params) async {
-  // This provider will be implemented in Phase 3 with actual Claude API integration
-  // For now, returns a placeholder response
-  await Future.delayed(const Duration(milliseconds: 500));
-  return "That's interesting! Can you tell me more?";
-});
-
-/// Evaluate player's response for correctness and provide feedback
-final responseEvaluationProvider =
-    FutureProvider.family<({
-      int score,
-      String feedback,
-      List<String> vocabulary,
-      bool passed,
-    }), ({
-      String playerResponse,
-      NPC npc,
-      ConversationDifficulty difficulty,
-      String npcExpectation,
-    })>((ref, params) async {
-  // This provider will be implemented in Phase 3 with actual evaluation logic
-  // For now, returns a placeholder evaluation
-  await Future.delayed(const Duration(milliseconds: 300));
-  return (
-    score: 75,
-    feedback: "Good job! Keep practicing.",
-    vocabulary: [],
-    passed: true,
-  );
-});
-
-/// Get speech-to-text input (will be integrated with speech_provider)
-final playerSpeechInputProvider =
-    StateProvider<String>((ref) => '');
-
-/// Track conversation XP earned
-final conversationXpProvider = StateProvider<int>((ref) => 0);
-
-/// Track conversation coins earned
-final conversationCoinsProvider = StateProvider<int>((ref) => 0);

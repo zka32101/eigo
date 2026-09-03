@@ -1,390 +1,479 @@
-import 'package:flutter/material.dart';
+import 'package:json_annotation/json_annotation.dart';
 
-/// Difficulty level for conversations in English-Only Town
-enum ConversationDifficulty {
-  easy,
-  medium,
-  hard,
-  expert,
-}
+part 'english_town_model.g.dart';
 
-/// Mood states for NPCs that affect dialogue
-enum NPCMood {
-  happy,
-  neutral,
-  tired,
-  excited,
-  sad,
-}
+/// 町のエリアタイプ
+enum TownAreaType {
+  school(
+    '🏫 学校',
+    'School',
+    'Learn classroom and educational phrases',
+    1,
+  ),
+  market(
+    '🛒 市場',
+    'Market',
+    'Practice shopping and transaction phrases',
+    2,
+  ),
+  park(
+    '🌳 公園',
+    'Park',
+    'Learn outdoor and activity phrases',
+    2,
+  ),
+  restaurant(
+    '🍽️ レストラン',
+    'Restaurant',
+    'Practice dining and food-related conversations',
+    3,
+  ),
+  library(
+    '📚 図書館',
+    'Library',
+    'Learn academic and research-related phrases',
+    3,
+  ),
+  hospital(
+    '🏥 病院',
+    'Hospital',
+    'Practice health and emergency phrases',
+    3,
+  ),
+  station(
+    '🚉 駅',
+    'Station',
+    'Learn transportation and travel phrases',
+    4,
+  ),
+  beach(
+    '🏖️ ビーチ',
+    'Beach',
+    'Practice vacation and leisure conversations',
+    4,
+  );
 
-/// Time of day affects NPC locations and available dialogue
-enum TimeOfDay {
-  morning,
-  afternoon,
-  evening,
-  night,
-}
-
-/// Weather conditions affect NPC behavior and dialogue context
-enum WeatherType {
-  sunny,
-  rainy,
-  cloudy,
-  snowy,
-}
-
-/// Represents a single location in the English-Only Town
-class Location {
-  final String id;
-  final String name;
-  final String emoji;
+  final String displayName;
+  final String englishName;
   final String description;
-  final Offset position; // x, y coordinates on the 2D map
-  final List<String> npcIds; // IDs of NPCs present at this location
-  final List<String> sceneIds; // IDs of available interaction scenes
-  final String backgroundImage;
-  final bool isUnlocked;
-  final int requiredConversations; // How many conversations needed to unlock
-  final int? unlockedAt; // Timestamp when this location was unlocked
+  final int difficulty;
 
-  Location({
-    required this.id,
-    required this.name,
-    required this.emoji,
-    required this.description,
-    required this.position,
-    required this.npcIds,
-    required this.sceneIds,
-    required this.backgroundImage,
-    this.isUnlocked = true,
-    this.requiredConversations = 0,
-    this.unlockedAt,
-  });
-
-  Location copyWith({
-    String? id,
-    String? name,
-    String? emoji,
-    String? description,
-    Offset? position,
-    List<String>? npcIds,
-    List<String>? sceneIds,
-    String? backgroundImage,
-    bool? isUnlocked,
-    int? requiredConversations,
-    int? unlockedAt,
-  }) {
-    return Location(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      emoji: emoji ?? this.emoji,
-      description: description ?? this.description,
-      position: position ?? this.position,
-      npcIds: npcIds ?? this.npcIds,
-      sceneIds: sceneIds ?? this.sceneIds,
-      backgroundImage: backgroundImage ?? this.backgroundImage,
-      isUnlocked: isUnlocked ?? this.isUnlocked,
-      requiredConversations: requiredConversations ?? this.requiredConversations,
-      unlockedAt: unlockedAt ?? this.unlockedAt,
-    );
-  }
+  const TownAreaType(
+    this.displayName,
+    this.englishName,
+    this.description,
+    this.difficulty,
+  );
 }
 
-/// Represents an NPC character in the town
+/// NPC（ノンプレイヤーキャラクター）の職業
+enum NPCProfession {
+  teacher('先生', 'Teacher'),
+  shopkeeper('店員', 'Shopkeeper'),
+  doctor('医者', 'Doctor'),
+  chef('シェフ', 'Chef'),
+  librarian('図書館員', 'Librarian'),
+  tourist('旅行者', 'Tourist'),
+  student('学生', 'Student'),
+  parent('親', 'Parent');
+
+  final String japanese;
+  final String english;
+
+  const NPCProfession(this.japanese, this.english);
+}
+
+/// NPC（ノンプレイヤーキャラクター）
+@JsonSerializable()
 class NPC {
-  final String id;
+  /// NPC ID
+  final String npcId;
+
+  /// NPC名
   final String name;
+
+  /// NPC職業
+  final String profession; // "teacher", "shopkeeper", etc.
+
+  /// エモジキャラクター
   final String emoji;
-  final String personality; // e.g., "Friendly", "Professional", "Intellectual"
-  final String nativeLocation; // Primary location where NPC works
-  final List<String> frequentLocations; // Other locations NPC visits
-  final String backstory; // Brief background for contextual dialogue
-  final ConversationDifficulty typicalDifficulty;
-  final int conversationCount; // How many times player has talked to this NPC
-  final NPCMood currentMood; // Affects dialogue tone
-  final TimeOfDay? preferredTime; // NPC is most likely present at this time
-  final Color characterColor; // For UI representation
+
+  /// エリアID
+  final String areaId;
+
+  /// NPCの初期位置 (x, y座標)
+  final String position; // "x:100,y:200"
+
+  /// NPCとの会話フレーズ
+  final List<String> conversationPhrases;
+
+  /// NPCの学習テーマ
+  final String learningTheme;
+
+  /// NPCレベル（難易度）
+  final int difficultyLevel;
+
+  /// NPCが学習した単語数
+  final int vocabularyCount;
+
+  /// NPCとの総会話回数
+  final int talkCount;
+
+  /// 最後に会話した日時
+  final DateTime? lastTalkedAt;
 
   NPC({
-    required this.id,
-    required this.name,
-    required this.emoji,
-    required this.personality,
-    required this.nativeLocation,
-    required this.frequentLocations,
-    required this.backstory,
-    required this.typicalDifficulty,
-    this.conversationCount = 0,
-    this.currentMood = NPCMood.neutral,
-    this.preferredTime,
-    required this.characterColor,
-  });
-
-  NPC copyWith({
-    String? id,
-    String? name,
-    String? emoji,
-    String? personality,
-    String? nativeLocation,
-    List<String>? frequentLocations,
-    String? backstory,
-    ConversationDifficulty? typicalDifficulty,
-    int? conversationCount,
-    NPCMood? currentMood,
-    TimeOfDay? preferredTime,
-    Color? characterColor,
-  }) {
-    return NPC(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      emoji: emoji ?? this.emoji,
-      personality: personality ?? this.personality,
-      nativeLocation: nativeLocation ?? this.nativeLocation,
-      frequentLocations: frequentLocations ?? this.frequentLocations,
-      backstory: backstory ?? this.backstory,
-      typicalDifficulty: typicalDifficulty ?? this.typicalDifficulty,
-      conversationCount: conversationCount ?? this.conversationCount,
-      currentMood: currentMood ?? this.currentMood,
-      preferredTime: preferredTime ?? this.preferredTime,
-      characterColor: characterColor ?? this.characterColor,
-    );
-  }
-}
-
-/// Represents a single conversation turn
-class ConversationTurn {
-  final String id;
-  final String speaker; // 'NPC' or 'PLAYER'
-  final String message;
-  final int? expectedCorrectness; // 0-100 score if this is a player turn
-  final String? feedback; // Optional feedback from AI
-
-  ConversationTurn({
-    required this.id,
-    required this.speaker,
-    required this.message,
-    this.expectedCorrectness,
-    this.feedback,
-  });
-
-  ConversationTurn copyWith({
-    String? id,
-    String? speaker,
-    String? message,
-    int? expectedCorrectness,
-    String? feedback,
-  }) {
-    return ConversationTurn(
-      id: id ?? this.id,
-      speaker: speaker ?? this.speaker,
-      message: message ?? this.message,
-      expectedCorrectness: expectedCorrectness ?? this.expectedCorrectness,
-      feedback: feedback ?? this.feedback,
-    );
-  }
-}
-
-/// Represents an interactive conversation scene in a location
-class InteractionScene {
-  final String id;
-  final String npcId;
-  final String locationId;
-  final String title; // e.g., "Ordering Coffee"
-  final String description;
-  final String initialGreeting; // How the NPC starts the conversation
-  final List<ConversationTurn> baseConversation; // Template conversation
-  final ConversationDifficulty difficulty;
-  final int xpReward;
-  final int coinReward;
-  final int conversationCount; // How many times this scene has been played
-  final DateTime? lastPlayedAt;
-  final List<String>? keywords; // Words/topics covered in this scene
-  final bool isCompleted; // Whether player has completed this scene at least once
-
-  InteractionScene({
-    required this.id,
     required this.npcId,
-    required this.locationId,
-    required this.title,
-    required this.description,
-    required this.initialGreeting,
-    required this.baseConversation,
-    required this.difficulty,
-    required this.xpReward,
-    required this.coinReward,
-    this.conversationCount = 0,
-    this.lastPlayedAt,
-    this.keywords,
-    this.isCompleted = false,
-  });
-
-  InteractionScene copyWith({
-    String? id,
-    String? npcId,
-    String? locationId,
-    String? title,
-    String? description,
-    String? initialGreeting,
-    List<ConversationTurn>? baseConversation,
-    ConversationDifficulty? difficulty,
-    int? xpReward,
-    int? coinReward,
-    int? conversationCount,
-    DateTime? lastPlayedAt,
-    List<String>? keywords,
-    bool? isCompleted,
-  }) {
-    return InteractionScene(
-      id: id ?? this.id,
-      npcId: npcId ?? this.npcId,
-      locationId: locationId ?? this.locationId,
-      title: title ?? this.title,
-      description: description ?? this.description,
-      initialGreeting: initialGreeting ?? this.initialGreeting,
-      baseConversation: baseConversation ?? this.baseConversation,
-      difficulty: difficulty ?? this.difficulty,
-      xpReward: xpReward ?? this.xpReward,
-      coinReward: coinReward ?? this.coinReward,
-      conversationCount: conversationCount ?? this.conversationCount,
-      lastPlayedAt: lastPlayedAt ?? this.lastPlayedAt,
-      keywords: keywords ?? this.keywords,
-      isCompleted: isCompleted ?? this.isCompleted,
-    );
-  }
-}
-
-/// Represents the complete English-Only Town
-class TownMap {
-  final String id;
-  final String name;
-  final List<Location> locations;
-  final List<NPC> npcs;
-  final List<InteractionScene> scenes;
-  final DateTime createdAt;
-  final DateTime? lastUpdatedAt;
-
-  TownMap({
-    required this.id,
     required this.name,
-    required this.locations,
-    required this.npcs,
-    required this.scenes,
-    required this.createdAt,
-    this.lastUpdatedAt,
+    required this.profession,
+    required this.emoji,
+    required this.areaId,
+    required this.position,
+    required this.conversationPhrases,
+    required this.learningTheme,
+    required this.difficultyLevel,
+    required this.vocabularyCount,
+    required this.talkCount,
+    this.lastTalkedAt,
   });
 
-  TownMap copyWith({
-    String? id,
-    String? name,
-    List<Location>? locations,
-    List<NPC>? npcs,
-    List<InteractionScene>? scenes,
-    DateTime? createdAt,
-    DateTime? lastUpdatedAt,
-  }) {
-    return TownMap(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      locations: locations ?? this.locations,
-      npcs: npcs ?? this.npcs,
-      scenes: scenes ?? this.scenes,
-      createdAt: createdAt ?? this.createdAt,
-      lastUpdatedAt: lastUpdatedAt ?? this.lastUpdatedAt,
-    );
-  }
+  factory NPC.fromJson(Map<String, dynamic> json) => _$NPCFromJson(json);
 
-  /// Get location by ID
-  Location? getLocation(String locationId) {
-    try {
-      return locations.firstWhere((loc) => loc.id == locationId);
-    } catch (e) {
-      return null;
-    }
-  }
-
-  /// Get NPC by ID
-  NPC? getNPC(String npcId) {
-    try {
-      return npcs.firstWhere((npc) => npc.id == npcId);
-    } catch (e) {
-      return null;
-    }
-  }
-
-  /// Get scenes for a specific location
-  List<InteractionScene> getLocationScenes(String locationId) {
-    return scenes.where((scene) => scene.locationId == locationId).toList();
-  }
-
-  /// Get scenes for a specific NPC
-  List<InteractionScene> getNPCScenes(String npcId) {
-    return scenes.where((scene) => scene.npcId == npcId).toList();
-  }
+  Map<String, dynamic> toJson() => _$NPCToJson(this);
 }
 
-/// Represents player's progress in the English-Only Town
-class TownProgress {
+/// タウンエリア
+@JsonSerializable()
+class TownArea {
+  /// エリアID
+  final String areaId;
+
+  /// エリアタイプ
+  final String areaType; // "school", "market", "park", etc.
+
+  /// エリア名（英語）
+  final String englishName;
+
+  /// エリア名（日本語）
+  final String japaneseName;
+
+  /// エリア説明
+  final String description;
+
+  /// エリアの背景画像URL/タイル
+  final String backgroundTile;
+
+  /// エリアに居るNPCのリスト
+  final List<String> npcIds; // NPC IDのリスト
+
+  /// このエリアで学習できる主なテーマ
+  final List<String> learningThemes;
+
+  /// エリアの難易度
+  final int difficultyLevel;
+
+  /// エリアにおけるユーザーの進捗（0-100）
+  final int progressPercentage;
+
+  /// ユーザーがこのエリアで学習した単語数
+  final int wordsLearned;
+
+  /// ユーザーがこのエリアで獲得したコイン
+  final int coinsEarned;
+
+  /// エリアのアンロック状態
+  final bool isUnlocked;
+
+  /// 最初に訪れた日時
+  final DateTime? firstVisitedAt;
+
+  /// 最後に訪れた日時
+  final DateTime? lastVisitedAt;
+
+  TownArea({
+    required this.areaId,
+    required this.areaType,
+    required this.englishName,
+    required this.japaneseName,
+    required this.description,
+    required this.backgroundTile,
+    required this.npcIds,
+    required this.learningThemes,
+    required this.difficultyLevel,
+    required this.progressPercentage,
+    required this.wordsLearned,
+    required this.coinsEarned,
+    required this.isUnlocked,
+    this.firstVisitedAt,
+    this.lastVisitedAt,
+  });
+
+  factory TownArea.fromJson(Map<String, dynamic> json) =>
+      _$TownAreaFromJson(json);
+
+  Map<String, dynamic> toJson() => _$TownAreaToJson(this);
+}
+
+/// NPCとの会話
+@JsonSerializable()
+class Conversation {
+  /// 会話ID
+  final String conversationId;
+
+  /// ユーザーID
   final String userId;
-  final Set<String> visitedLocationIds;
-  final Map<String, int> npcConversationCounts; // npcId -> count
-  final Map<String, int> sceneCompletionCounts; // sceneId -> count
-  final Set<String> unlockedAchievements;
-  final int totalXpEarned;
-  final int totalCoinsEarned;
+
+  /// NPC ID
+  final String npcId;
+
+  /// エリアID
+  final String areaId;
+
+  /// NPCが言ったフレーズ
+  final String npcPhrase;
+
+  /// NPCフレーズの日本語訳
+  final String npcPhraseTranslation;
+
+  /// ユーザーの応答（音声→テキスト化）
+  final String? userResponse;
+
+  /// ユーザーの応答が正しいか
+  final bool isResponseCorrect;
+
+  /// 応答スコア（0-100）
+  final int responseScore;
+
+  /// 会話時の学習ポイント
+  final int learningPoints;
+
+  /// 会話時の獲得コイン
+  final int coinsEarned;
+
+  /// 会話日時
+  final DateTime conversationAt;
+
+  Conversation({
+    required this.conversationId,
+    required this.userId,
+    required this.npcId,
+    required this.areaId,
+    required this.npcPhrase,
+    required this.npcPhraseTranslation,
+    this.userResponse,
+    required this.isResponseCorrect,
+    required this.responseScore,
+    required this.learningPoints,
+    required this.coinsEarned,
+    required this.conversationAt,
+  });
+
+  factory Conversation.fromJson(Map<String, dynamic> json) =>
+      _$ConversationFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ConversationToJson(this);
+}
+
+/// ユーザーの町での進捗
+@JsonSerializable()
+class TownProgress {
+  /// 進捗ID
+  final String progressId;
+
+  /// ユーザーID
+  final String userId;
+
+  /// 総エリア数
+  final int totalAreas;
+
+  /// アンロック済みエリア数
+  final int unlockedAreas;
+
+  /// 訪問済みエリア数
+  final int visitedAreas;
+
+  /// 総会話数
   final int totalConversations;
-  final DateTime createdAt;
-  final DateTime lastPlayedAt;
-  final TimeOfDay? currentTimeOfDay;
-  final WeatherType? currentWeather;
+
+  /// 正解会話数
+  final int correctConversations;
+
+  /// 平均スコア（0-100）
+  final double averageScore;
+
+  /// 総獲得ポイント
+  final int totalLearningPoints;
+
+  /// 総獲得コイン
+  final int totalCoinsEarned;
+
+  /// 現在のエリアID
+  final String? currentAreaId;
+
+  /// 現在のNPC ID
+  final String? currentNPCId;
+
+  /// 最初に町を訪れた日時
+  final DateTime? firstVisitedAt;
+
+  /// 最後に町を訪れた日時
+  final DateTime? lastVisitedAt;
+
+  /// 最終更新日時
+  final DateTime lastUpdatedAt;
 
   TownProgress({
+    required this.progressId,
     required this.userId,
-    this.visitedLocationIds = const {},
-    this.npcConversationCounts = const {},
-    this.sceneCompletionCounts = const {},
-    this.unlockedAchievements = const {},
-    this.totalXpEarned = 0,
-    this.totalCoinsEarned = 0,
-    this.totalConversations = 0,
-    required this.createdAt,
-    required this.lastPlayedAt,
-    this.currentTimeOfDay = TimeOfDay.afternoon,
-    this.currentWeather = WeatherType.sunny,
+    required this.totalAreas,
+    required this.unlockedAreas,
+    required this.visitedAreas,
+    required this.totalConversations,
+    required this.correctConversations,
+    required this.averageScore,
+    required this.totalLearningPoints,
+    required this.totalCoinsEarned,
+    this.currentAreaId,
+    this.currentNPCId,
+    this.firstVisitedAt,
+    this.lastVisitedAt,
+    required this.lastUpdatedAt,
   });
 
-  TownProgress copyWith({
-    String? userId,
-    Set<String>? visitedLocationIds,
-    Map<String, int>? npcConversationCounts,
-    Map<String, int>? sceneCompletionCounts,
-    Set<String>? unlockedAchievements,
-    int? totalXpEarned,
-    int? totalCoinsEarned,
-    int? totalConversations,
-    DateTime? createdAt,
-    DateTime? lastPlayedAt,
-    TimeOfDay? currentTimeOfDay,
-    WeatherType? currentWeather,
-  }) {
-    return TownProgress(
-      userId: userId ?? this.userId,
-      visitedLocationIds: visitedLocationIds ?? this.visitedLocationIds,
-      npcConversationCounts: npcConversationCounts ?? this.npcConversationCounts,
-      sceneCompletionCounts: sceneCompletionCounts ?? this.sceneCompletionCounts,
-      unlockedAchievements: unlockedAchievements ?? this.unlockedAchievements,
-      totalXpEarned: totalXpEarned ?? this.totalXpEarned,
-      totalCoinsEarned: totalCoinsEarned ?? this.totalCoinsEarned,
-      totalConversations: totalConversations ?? this.totalConversations,
-      createdAt: createdAt ?? this.createdAt,
-      lastPlayedAt: lastPlayedAt ?? this.lastPlayedAt,
-      currentTimeOfDay: currentTimeOfDay ?? this.currentTimeOfDay,
-      currentWeather: currentWeather ?? this.currentWeather,
-    );
-  }
+  factory TownProgress.fromJson(Map<String, dynamic> json) =>
+      _$TownProgressFromJson(json);
 
-  /// Calculate progress percentage (0-100)
-  int getProgressPercentage(int totalScenes) {
-    if (totalScenes == 0) return 0;
-    return ((totalConversations / (totalScenes * 2)) * 100).toInt().clamp(0, 100);
-  }
+  Map<String, dynamic> toJson() => _$TownProgressToJson(this);
+}
+
+/// ユーザープロフィール（町内）
+@JsonSerializable()
+class TownPlayerProfile {
+  /// プロフィールID
+  final String profileId;
+
+  /// ユーザーID
+  final String userId;
+
+  /// プレイヤーのキャラクター（使用するエモジ）
+  final String playerCharacter; // 🧒, 👦, 👧
+
+  /// 現在のレベル
+  final int level;
+
+  /// 現在の経験値
+  final int experience;
+
+  /// 総獲得コイン
+  final int totalCoinsEarned;
+
+  /// 現在のコイン
+  final int currentCoins;
+
+  /// 学習したユニークな単語数
+  final int uniqueWordsLearned;
+
+  /// 親友NPCのID
+  final String? bestFriendNPCId;
+
+  /// 達成したマイルストーン
+  final List<String> milestonesClaimed;
+
+  /// バッジコレクション
+  final List<String> badgesEarned;
+
+  /// 最終更新日時
+  final DateTime lastUpdatedAt;
+
+  TownPlayerProfile({
+    required this.profileId,
+    required this.userId,
+    required this.playerCharacter,
+    required this.level,
+    required this.experience,
+    required this.totalCoinsEarned,
+    required this.currentCoins,
+    required this.uniqueWordsLearned,
+    this.bestFriendNPCId,
+    required this.milestonesClaimed,
+    required this.badgesEarned,
+    required this.lastUpdatedAt,
+  });
+
+  factory TownPlayerProfile.fromJson(Map<String, dynamic> json) =>
+      _$TownPlayerProfileFromJson(json);
+
+  Map<String, dynamic> toJson() => _$TownPlayerProfileToJson(this);
+}
+
+/// 町の統計
+@JsonSerializable()
+class TownStats {
+  /// 統計ID
+  final String statsId;
+
+  /// ユーザーID
+  final String userId;
+
+  /// 総訪問時間（分）
+  final int totalPlayTime;
+
+  /// 総会話数
+  final int totalConversations;
+
+  /// 平均スコア（0-100）
+  final double averageScore;
+
+  /// 高スコア（0-100）
+  final int highScore;
+
+  /// 訪問日数
+  final int visitDays;
+
+  /// 連続訪問日数
+  final int consecutiveVisitDays;
+
+  /// 最も訪問したエリア
+  final String? mostVisitedArea;
+
+  /// 最も会話したNPC
+  final String? mostTalkedNPC;
+
+  /// 学習した総単語数
+  final int totalWordsLearned;
+
+  /// 獲得した総コイン
+  final int totalCoinsEarned;
+
+  /// 獲得したバッジ数
+  final int badgesCount;
+
+  /// 達成したマイルストーン数
+  final int milestonesCount;
+
+  /// 最終更新日時
+  final DateTime lastUpdatedAt;
+
+  TownStats({
+    required this.statsId,
+    required this.userId,
+    required this.totalPlayTime,
+    required this.totalConversations,
+    required this.averageScore,
+    required this.highScore,
+    required this.visitDays,
+    required this.consecutiveVisitDays,
+    this.mostVisitedArea,
+    this.mostTalkedNPC,
+    required this.totalWordsLearned,
+    required this.totalCoinsEarned,
+    required this.badgesCount,
+    required this.milestonesCount,
+    required this.lastUpdatedAt,
+  });
+
+  factory TownStats.fromJson(Map<String, dynamic> json) =>
+      _$TownStatsFromJson(json);
+
+  Map<String, dynamic> toJson() => _$TownStatsToJson(this);
 }

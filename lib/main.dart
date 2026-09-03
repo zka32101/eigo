@@ -39,6 +39,7 @@ import 'screens/pronunciation_check_screen.dart';
 import 'screens/vocabulary_screen.dart';
 import 'screens/stage_intro_screen.dart';
 import 'screens/pet_screen.dart';
+import 'screens/pet_breeding_screen.dart';
 import 'screens/teacher_mode_screen.dart';
 import 'screens/shop_screen.dart';
 import 'screens/learning_pace_screen.dart';
@@ -56,6 +57,7 @@ import 'screens/parent_child_battle_screen.dart';
 import 'screens/pronunciation_video_screen.dart';
 import 'screens/plush_toy_screen.dart';
 import 'screens/passport_screen.dart';
+import 'screens/english_town_screen.dart';
 import 'screens/song_generator_screen.dart';
 import 'screens/english_town_hub_screen.dart';
 import 'screens/challenge_hub_screen.dart';
@@ -153,6 +155,7 @@ class EigoKoreApp extends ConsumerWidget {
         '/ai-freetalk': (context) => const AiFreetalkScreen(),
         '/vocabulary': (context) => const VocabularyScreen(),
         '/pet': (context) => const PetScreen(),
+        '/pet-breeding': (context) => const PetBreedingScreen(),
         '/teacher-mode': (context) => const TeacherModeScreen(),
         '/shop': (context) => const ShopScreen(),
         '/learning-pace': (context) => const LearningPaceScreen(),
@@ -170,6 +173,7 @@ class EigoKoreApp extends ConsumerWidget {
         '/pronunciation-video': (context) => const PronunciationVideoScreen(),
         '/plush-toy': (context) => const PlushToyScreen(),
         '/passport': (context) => const PassportScreen(),
+        '/english-town': (context) => const EnglishTownScreen(),
         '/song-generator': (context) => const SongGeneratorScreen(),
         '/english-town': (context) => const EnglishTownHubScreen(),
         '/challenges': (context) => const ChallengeHubScreen(), // Social challenges
