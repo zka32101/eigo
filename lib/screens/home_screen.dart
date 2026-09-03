@@ -288,6 +288,16 @@ class _QuickActions extends StatelessWidget {
               const Expanded(child: SizedBox.shrink()),
             ],
           ),
+          AppSpacing.verticalSpacerXs,
+          Row(
+            children: [
+              _SocialQuickBtn('👤 プロフィール', AppColors.primary),
+              AppSpacing.horizontalSpacerXs,
+              _SocialQuickBtn('👥 フレンド', AppColors.accentGreen),
+              AppSpacing.horizontalSpacerXs,
+              _SocialQuickBtn('📊 アクティビティ', AppColors.accentPurple),
+            ],
+          ),
         ],
       ),
     );
@@ -309,6 +319,52 @@ class _QuickBtn extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
           onTap: () => Navigator.of(context).pushNamed(route),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
+            child: Text(
+              label,
+              style: AppTypography.labelSmall.copyWith(fontWeight: FontWeight.bold, color: color),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SocialQuickBtn extends ConsumerWidget {
+  final String label;
+  final Color color;
+
+  const _SocialQuickBtn(this.label, this.color);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentUser = ref.watch(currentUserProvider);
+
+    return Expanded(
+      child: Material(
+        color: color.withAlpha(20),
+        borderRadius: BorderRadius.circular(12),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: () {
+            if (currentUser == null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('ログインしてください')),
+              );
+              return;
+            }
+
+            if (label.contains('プロフィール')) {
+              Navigator.of(context).pushNamed('/user-profile', arguments: currentUser.id);
+            } else if (label.contains('フレンド')) {
+              Navigator.of(context).pushNamed('/friends');
+            } else if (label.contains('アクティビティ')) {
+              Navigator.of(context).pushNamed('/activity-feed');
+            }
+          },
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
             child: Text(
