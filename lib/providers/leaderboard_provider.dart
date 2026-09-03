@@ -1,207 +1,132 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/leaderboard_model.dart';
-import '../models/user_profile.dart';
-import 'user_profile_provider.dart';
-import 'friend_provider.dart';
+import '../services/leaderboard_service.dart';
 
-/// グローバルランキングを取得
-final globalLeaderboardProvider =
-    FutureProvider.autoDispose<LeaderboardData>((ref) async {
-  final currentUser = ref.watch(currentUserProvider);
-
-  // サンプルデータを生成（実装時はAPIから取得）
-  final entries = [
-    LeaderboardEntry(
-      rank: 1,
-      userId: 'user_001',
-      name: '太郎',
-      avatar: '👨',
-      score: 15000,
-      level: 25,
-      totalStudyMinutes: 5400,
-      longestStreak: 45,
-      lastActiveAt: DateTime.now(),
-      isCurrentUser: currentUser?.id == 'user_001',
-    ),
-    LeaderboardEntry(
-      rank: 2,
-      userId: 'user_002',
-      name: '花子',
-      avatar: '👩',
-      score: 14500,
-      level: 24,
-      totalStudyMinutes: 5200,
-      longestStreak: 42,
-      lastActiveAt: DateTime.now().subtract(const Duration(hours: 2)),
-      isCurrentUser: currentUser?.id == 'user_002',
-    ),
-    LeaderboardEntry(
-      rank: 3,
-      userId: 'user_003',
-      name: '次郎',
-      avatar: '👨',
-      score: 14000,
-      level: 23,
-      totalStudyMinutes: 5000,
-      longestStreak: 40,
-      lastActiveAt: DateTime.now().subtract(const Duration(hours: 5)),
-      isCurrentUser: currentUser?.id == 'user_003',
-    ),
-  ];
-
-  return LeaderboardData(
-    type: LeaderboardType.global,
-    entries: entries,
-    currentUserEntry: entries.firstWhere(
-      (e) => e.isCurrentUser,
-      orElse: () => LeaderboardEntry(
-        rank: 999,
-        userId: currentUser?.id ?? 'unknown',
-        name: currentUser?.name ?? 'ユーザー',
-        avatar: currentUser?.avatar ?? '👤',
-        score: currentUser?.coinsEarned ?? 0,
-        level: 1,
-        totalStudyMinutes: currentUser?.totalStudyMinutes ?? 0,
-        longestStreak: currentUser?.longestStreak ?? 0,
-        lastActiveAt: currentUser?.lastAccessedAt ?? DateTime.now(),
-        isCurrentUser: true,
-      ),
-    ),
-    updatedAt: DateTime.now(),
-  );
+// Service provider
+final leaderboardServiceProvider = Provider((ref) {
+  return LeaderboardService();
 });
 
-/// フレンドランキングを取得
-final friendLeaderboardProvider =
-    FutureProvider.autoDispose<LeaderboardData>((ref) async {
-  final friends = ref.watch(friendListProvider);
-  final currentUser = ref.watch(currentUserProvider);
-
-  // フレンドのランキングエントリーを作成
-  final friendEntries = friends
-      .asMap()
-      .entries
-      .map((entry) {
-        final index = entry.key;
-        final friend = entry.value;
-        return LeaderboardEntry(
-          rank: index + 1,
-          userId: friend.userId,
-          name: friend.name,
-          avatar: friend.avatar,
-          score: friend.coinsEarned,
-          level: 1,
-          totalStudyMinutes: friend.totalStudyMinutes,
-          longestStreak: 0,
-          lastActiveAt: DateTime.now(),
-          isCurrentUser: false,
-        );
-      })
-      .toList();
-
-  return LeaderboardData(
-    type: LeaderboardType.friends,
-    entries: friendEntries,
-    currentUserEntry: currentUser != null
-        ? LeaderboardEntry(
-            rank: 0,
-            userId: currentUser.id,
-            name: currentUser.name,
-            avatar: currentUser.avatar,
-            score: currentUser.coinsEarned,
-            level: 1,
-            totalStudyMinutes: currentUser.totalStudyMinutes,
-            longestStreak: currentUser.longestStreak,
-            lastActiveAt: currentUser.lastAccessedAt,
-            isCurrentUser: true,
-          )
-        : null,
-    updatedAt: DateTime.now(),
-  );
+// Global leaderboard provider
+final globalLeaderboardProvider = FutureProvider<Leaderboard>((ref) async {
+  final service = ref.watch(leaderboardServiceProvider);
+  return service.getGlobalLeaderboard();
 });
 
-/// 週間ランキングを取得
-final weeklyLeaderboardProvider =
-    FutureProvider.autoDispose<LeaderboardData>((ref) async {
-  final currentUser = ref.watch(currentUserProvider);
-
-  // サンプル週間ランキングデータ
-  final entries = [
-    LeaderboardEntry(
-      rank: 1,
-      userId: 'week_user_001',
-      name: '学太',
-      avatar: '📚',
-      score: 3500,
-      level: 1,
-      totalStudyMinutes: 720,
-      longestStreak: 7,
-      lastActiveAt: DateTime.now(),
-      isCurrentUser: false,
-    ),
-    LeaderboardEntry(
-      rank: 2,
-      userId: 'week_user_002',
-      name: '英子',
-      avatar: '📖',
-      score: 3200,
-      level: 1,
-      totalStudyMinutes: 680,
-      longestStreak: 7,
-      lastActiveAt: DateTime.now().subtract(const Duration(hours: 1)),
-      isCurrentUser: false,
-    ),
-    LeaderboardEntry(
-      rank: 3,
-      userId: 'week_user_003',
-      name: '文男',
-      avatar: '✏️',
-      score: 2800,
-      level: 1,
-      totalStudyMinutes: 600,
-      longestStreak: 6,
-      lastActiveAt: DateTime.now().subtract(const Duration(hours: 3)),
-      isCurrentUser: false,
-    ),
-  ];
-
-  return LeaderboardData(
-    type: LeaderboardType.weekly,
-    entries: entries,
-    currentUserEntry: LeaderboardEntry(
-      rank: 5,
-      userId: currentUser?.id ?? 'unknown',
-      name: currentUser?.name ?? 'ユーザー',
-      avatar: currentUser?.avatar ?? '👤',
-      score: currentUser?.coinsEarned ?? 0,
-      level: 1,
-      totalStudyMinutes: currentUser?.totalStudyMinutes ?? 0,
-      longestStreak: currentUser?.longestStreak ?? 0,
-      lastActiveAt: currentUser?.lastAccessedAt ?? DateTime.now(),
-      isCurrentUser: true,
-    ),
-    updatedAt: DateTime.now(),
-  );
+// Weekly leaderboard provider
+final weeklyLeaderboardProvider = FutureProvider<Leaderboard>((ref) async {
+  final service = ref.watch(leaderboardServiceProvider);
+  return service.getWeeklyLeaderboard();
 });
 
-/// ユーザー比較データプロバイダー
-final userComparisonProvider =
-    FutureProvider.family<UserComparison?, (String, String)>((ref, userIds) async {
-  final (userId1, userId2) = userIds;
+// Monthly leaderboard provider
+final monthlyLeaderboardProvider = FutureProvider<Leaderboard>((ref) async {
+  final service = ref.watch(leaderboardServiceProvider);
+  return service.getMonthlyLeaderboard();
+});
 
-  // サンプル比較データ
-  return UserComparison(
-    userId1: userId1,
-    name1: '太郎',
-    avatar1: '👨',
-    level1: 25,
-    score1: 15000,
-    studyMinutes1: 5400,
-    userId2: userId2,
-    name2: '花子',
-    avatar2: '👩',
-    level2: 24,
-    score2: 14500,
-    studyMinutes2: 5200,
-  );
+// Friend leaderboard provider
+final friendsLeaderboardProvider =
+    FutureProvider.family<Leaderboard, String>((ref, userId) async {
+  final service = ref.watch(leaderboardServiceProvider);
+  return service.getFriendsLeaderboard(userId);
+});
+
+// Skill leaderboard provider
+final skillLeaderboardProvider =
+    FutureProvider.family<Leaderboard, String>((ref, skill) async {
+  final service = ref.watch(leaderboardServiceProvider);
+  return service.getSkillLeaderboard(skill);
+});
+
+// Player rank statistics provider
+final playerRankStatsProvider =
+    FutureProvider.family<PlayerRankStats, String>((ref, userId) async {
+  final service = ref.watch(leaderboardServiceProvider);
+  return service.getPlayerRankStats(userId);
+});
+
+// Leaderboard statistics provider
+final leaderboardStatsProvider = FutureProvider<LeaderboardStats>((ref) async {
+  final service = ref.watch(leaderboardServiceProvider);
+  return service.getLeaderboardStats();
+});
+
+// Search leaderboard provider
+final searchLeaderboardProvider = FutureProvider.family<List<LeaderboardEntry>, String>(
+  (ref, query) async {
+    if (query.isEmpty) return [];
+    final service = ref.watch(leaderboardServiceProvider);
+    return service.searchLeaderboard(query);
+  },
+);
+
+// Compare rankings provider
+class CompareRankingsParams {
+  final String userId1;
+  final String userId2;
+
+  CompareRankingsParams({
+    required this.userId1,
+    required this.userId2,
+  });
+}
+
+final compareRankingsProvider = FutureProvider.family<RankingComparison, CompareRankingsParams>(
+  (ref, params) async {
+    final service = ref.watch(leaderboardServiceProvider);
+    return service.comparePlayerRankings(params.userId1, params.userId2);
+  },
+);
+
+// Entries around rank provider
+class EntriesAroundRankParams {
+  final String userId;
+  final LeaderboardType type;
+
+  EntriesAroundRankParams({
+    required this.userId,
+    required this.type,
+  });
+}
+
+final entriesAroundRankProvider =
+    FutureProvider.family<List<LeaderboardEntry>, EntriesAroundRankParams>(
+  (ref, params) async {
+    final service = ref.watch(leaderboardServiceProvider);
+    return service.getEntriesAroundRank(params.userId, params.type);
+  },
+);
+
+// Refresh action for global leaderboard
+final refreshGlobalLeaderboardProvider = FutureProvider<Leaderboard>((ref) async {
+  ref.refresh(globalLeaderboardProvider);
+  return ref.watch(globalLeaderboardProvider.future);
+});
+
+// Refresh action for weekly leaderboard
+final refreshWeeklyLeaderboardProvider = FutureProvider<Leaderboard>((ref) async {
+  ref.refresh(weeklyLeaderboardProvider);
+  return ref.watch(weeklyLeaderboardProvider.future);
+});
+
+// Refresh action for monthly leaderboard
+final refreshMonthlyLeaderboardProvider = FutureProvider<Leaderboard>((ref) async {
+  ref.refresh(monthlyLeaderboardProvider);
+  return ref.watch(monthlyLeaderboardProvider.future);
+});
+
+// Leaderboard type state for UI
+final leaderboardTypeProvider = StateProvider<LeaderboardType>((ref) {
+  return LeaderboardType.global;
+});
+
+// Search query state for leaderboard search
+final leaderboardSearchQueryProvider = StateProvider<String>((ref) {
+  return '';
+});
+
+// Metric selection state
+final rankingMetricProvider = StateProvider<RankingMetric>((ref) {
+  return RankingMetric.totalScore;
 });

@@ -2,15 +2,12 @@ import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/conversation_data.dart';
+import '../design_system/design_system.dart';
 import '../providers/coin_provider.dart';
 import '../providers/level_provider.dart';
 import '../providers/progress_provider.dart';
 import '../services/speech_service.dart';
 import '../services/tts_service.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
 
 class ConversationScreen extends ConsumerStatefulWidget {
   const ConversationScreen({super.key});
@@ -53,24 +50,38 @@ class _SelectionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF0F7FF),
+      backgroundColor: AppColors.bgLight,
       appBar: AppBar(
         title: const Text('💬 会話シミュレーション'),
-        backgroundColor: kPrimaryColor,
-        foregroundColor: Colors.white,
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.textWhite,
         elevation: 0,
       ),
-      body: ListView(
+      body: ListView.builder(
         padding: AppSpacing.allPaddingMd,
-        children: [
-          Text('シナリオを選ぼう！',
-            style: AppTypography.headlineSmall.copyWith(color: kTextDark)),
-          AppSpacing.verticalSpacerXs,
-          Text('AIキャラクターと英語で会話練習しよう',
-            style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
-          AppSpacing.verticalSpacerSm,
-          ...allConversations.map((s) => _ScriptCard(script: s, onTap: () => onSelect(s))),
-        ],
+        itemCount: 4 + allConversations.length,
+        itemBuilder: (context, index) {
+          // Static items (header, spacers, description)
+          if (index == 0) {
+            return Text('シナリオを選ぼう！',
+              style: AppTypography.headlineSmall.copyWith(color: AppColors.textPrimary));
+          }
+          if (index == 1) {
+            return AppSpacing.verticalSpacerXs;
+          }
+          if (index == 2) {
+            return Text('AIキャラクターと英語で会話練習しよう',
+              style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted));
+          }
+          if (index == 3) {
+            return AppSpacing.verticalSpacerSm;
+          }
+
+          // Dynamic conversation cards (index 4+)
+          final conversationIndex = index - 4;
+          final script = allConversations[conversationIndex];
+          return _ScriptCard(script: script, onTap: () => onSelect(script));
+        },
       ),
     );
   }
@@ -101,15 +112,15 @@ class _ScriptCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(script.titleJa,
-                      style: AppTypography.labelLarge.copyWith(color: kTextDark)),
+                      style: AppTypography.labelLarge.copyWith(color: AppColors.textPrimary)),
                     AppSpacing.verticalSpacerXs,
-                    Text(script.title, style: AppTypography.bodySmall.copyWith(color: kPrimaryColor)),
+                    Text(script.title, style: AppTypography.bodySmall.copyWith(color: AppColors.primary)),
                     AppSpacing.verticalSpacerXs,
-                    Text(script.situation, style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+                    Text(script.situation, style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
                   ],
                 ),
               ),
-              const Icon(Icons.arrow_forward_ios, size: 16, color: kTextMuted),
+              Icon(Icons.arrow_forward_ios, size: AppSizes.iconSizeSmall, color: AppColors.textMuted),
             ],
           ),
         ),
@@ -129,11 +140,11 @@ class _IntroScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF0F7FF),
+      backgroundColor: AppColors.bgLight,
       appBar: AppBar(
         title: Text(script.titleJa),
-        backgroundColor: kPrimaryColor,
-        foregroundColor: Colors.white,
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.textWhite,
         leading: BackButton(onPressed: onBack),
       ),
       body: Center(
@@ -145,31 +156,31 @@ class _IntroScreen extends StatelessWidget {
               Text(script.emoji, style: AppTypography.headlineLarge),
               AppSpacing.verticalSpacerSm,
               Text(script.titleJa,
-                style: AppTypography.headlineMedium.copyWith(color: kTextDark)),
+                style: AppTypography.headlineMedium.copyWith(color: AppColors.textPrimary)),
               AppSpacing.verticalSpacerXs,
               Container(
                 padding: AppSpacing.allPaddingMd,
                 decoration: BoxDecoration(
-                  color: kPrimaryColor.withAlpha(20),
+                  color: AppColors.withOpacity(AppColors.primary, 0.1),
                   borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
                 ),
                 child: Text(script.situation,
                   textAlign: TextAlign.center,
-                  style: AppTypography.bodySmall.copyWith(color: kPrimaryDark)),
+                  style: AppTypography.bodySmall.copyWith(color: AppColors.primaryDark)),
               ),
               AppSpacing.verticalSpacerXs,
-              Text('全${script.turns.length}ターン', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+              Text('全${script.turns.length}ターン', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
               AppSpacing.verticalSpacerXxl,
               ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: kPrimaryColor,
-                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: AppSpacing.sm),
+                  backgroundColor: AppColors.primary,
+                  padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl * 2, vertical: AppSpacing.sm),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge)),
                 ),
                 onPressed: onStart,
-                icon: const Icon(Icons.play_arrow, color: Colors.white),
+                icon: const Icon(Icons.play_arrow, color: AppColors.textWhite),
                 label: Text('スタート！',
-                  style: AppTypography.labelLarge.copyWith(color: Colors.white)),
+                  style: AppTypography.labelLarge.copyWith(color: AppColors.textWhite)),
               ),
             ],
           ),
@@ -296,11 +307,11 @@ class _ConversationPlayScreenState extends ConsumerState<_ConversationPlayScreen
         _currentTurn.speaker == 'user';
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF0F7FF),
+      backgroundColor: AppColors.bgLight,
       appBar: AppBar(
         title: Text('${widget.script.emoji} ${widget.script.titleJa}'),
-        backgroundColor: kPrimaryColor,
-        foregroundColor: Colors.white,
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.textWhite,
         elevation: 0,
       ),
       body: Stack(
@@ -310,8 +321,8 @@ class _ConversationPlayScreenState extends ConsumerState<_ConversationPlayScreen
               // 進捗インジケーター
               LinearProgressIndicator(
                 value: _turnIndex / widget.script.turns.length,
-                backgroundColor: Colors.white,
-                color: kPrimaryColor,
+                backgroundColor: AppColors.textWhite,
+                color: AppColors.primary,
                 minHeight: 4,
               ),
 
@@ -346,7 +357,7 @@ class _ConversationPlayScreenState extends ConsumerState<_ConversationPlayScreen
               confettiController: _confetti,
               blastDirectionality: BlastDirectionality.explosive,
               numberOfParticles: 20,
-              colors: const [kPrimaryColor, Colors.yellow, Colors.pink],
+              colors: const [AppColors.primary, AppColors.accentOrange, AppColors.accentPink],
             ),
           ),
         ],
@@ -359,33 +370,33 @@ class _ConversationPlayScreenState extends ConsumerState<_ConversationPlayScreen
     return Container(
       padding: AppSpacing.allPaddingMd,
       decoration: const BoxDecoration(
-        color: Colors.white,
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, -2))],
+        color: AppColors.textWhite,
+        boxShadow: [BoxShadow(color: AppColors.textPrimary.withAlpha(31), blurRadius: 8, offset: Offset(0, -2))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Text('🎙️ あなたの番！', style: AppTypography.bodySmall.copyWith(fontWeight: FontWeight.bold, color: kSpeakingColor)),
+              Text('🎙️ あなたの番！', style: AppTypography.bodySmall.copyWith(fontWeight: FontWeight.bold, color: AppColors.speakingColor)),
               const Spacer(),
               if (turn.hint != null)
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
                   decoration: BoxDecoration(
-                    color: kPrimaryColor.withAlpha(20),
+                    color: AppColors.withOpacity(AppColors.primary, 0.1),
                     borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                   ),
                   child: Text('ヒント: ${turn.hint}',
-                    style: AppTypography.bodySmall.copyWith(color: kPrimaryColor, fontSize: 11)),
+                    style: AppTypography.labelSmall.copyWith(color: AppColors.primary)),
                 ),
             ],
           ),
           AppSpacing.verticalSpacerXs,
-          Text(turn.textJa, style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+          Text(turn.textJa, style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
           if (_recognizedText.isNotEmpty) ...[
             AppSpacing.verticalSpacerXs,
-            Text('"$_recognizedText"', style: AppTypography.bodySmall.copyWith(color: kTextDark, fontStyle: FontStyle.italic)),
+            Text('"$_recognizedText"', style: AppTypography.bodySmall.copyWith(color: AppColors.textPrimary, fontStyle: FontStyle.italic)),
           ],
           AppSpacing.verticalSpacerXs,
           Row(
@@ -393,20 +404,20 @@ class _ConversationPlayScreenState extends ConsumerState<_ConversationPlayScreen
               Expanded(
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: _isListening ? kAccentRed : kSpeakingColor,
+                    backgroundColor: _isListening ? AppColors.error : AppColors.speakingColor,
                     padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSizes.borderRadius)),
                   ),
                   onPressed: _isListening ? _stopAndSubmit : _startListening,
-                  icon: Icon(_isListening ? Icons.stop : Icons.mic, color: Colors.white, size: 18),
+                  icon: Icon(_isListening ? Icons.stop : Icons.mic, color: AppColors.textWhite, size: AppSizes.iconSize),
                   label: Text(_isListening ? '停止' : '話す',
-                    style: AppTypography.bodySmall.copyWith(color: Colors.white, fontWeight: FontWeight.bold)),
+                    style: AppTypography.bodySmall.copyWith(color: AppColors.textWhite, fontWeight: FontWeight.bold)),
                 ),
               ),
               AppSpacing.horizontalSpacerXs,
               TextButton(
                 onPressed: _skipUserTurn,
-                child: Text('スキップ', style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 12)),
+                child: Text('スキップ', style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted)),
               ),
             ],
           ),
@@ -420,21 +431,21 @@ class _ConversationPlayScreenState extends ConsumerState<_ConversationPlayScreen
       width: double.infinity,
       padding: EdgeInsets.all(AppSpacing.lg),
       decoration: const BoxDecoration(
-        color: Colors.white,
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, -2))],
+        color: AppColors.textWhite,
+        boxShadow: [BoxShadow(color: AppColors.textPrimary.withAlpha(31), blurRadius: 8, offset: Offset(0, -2))],
       ),
       child: Column(
         children: [
-          Text('🎉 会話完了！ +20コイン', style: AppTypography.labelLarge.copyWith(color: kAccentGreen)),
+          Text('🎉 会話完了！ +20コイン', style: AppTypography.labelLarge.copyWith(color: AppColors.accentGreen)),
           AppSpacing.verticalSpacerXs,
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: kPrimaryColor,
+              backgroundColor: AppColors.primary,
               minimumSize: const Size(double.infinity, 46),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSizes.borderRadius)),
             ),
             onPressed: widget.onComplete,
-            child: Text('シナリオ選択に戻る', style: AppTypography.labelLarge.copyWith(color: Colors.white)),
+            child: Text('シナリオ選択に戻る', style: AppTypography.labelLarge.copyWith(color: AppColors.textWhite)),
           ),
         ],
       ),
@@ -460,7 +471,11 @@ class _ChatBubble extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (isAi) ...[
-            CircleAvatar(backgroundColor: kPrimaryColor, radius: 18, child: const Text('🤖', style: TextStyle(fontSize: 16))),
+            CircleAvatar(
+              backgroundColor: AppColors.primary,
+              radius: 18,
+              child: Text('🤖', style: TextStyle(fontSize: AppTypography.headlineSmall.fontSize)),
+            ),
             AppSpacing.horizontalSpacerXs,
           ],
           Flexible(
@@ -470,14 +485,14 @@ class _ChatBubble extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
                   decoration: BoxDecoration(
-                    color: isAi ? Colors.white : kPrimaryColor,
+                    color: isAi ? AppColors.textWhite : AppColors.primary,
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(AppSizes.borderRadiusLarge),
                       topRight: Radius.circular(AppSizes.borderRadiusLarge),
-                      bottomLeft: Radius.circular(isAi ? 4 : AppSizes.borderRadiusLarge),
-                      bottomRight: Radius.circular(isAi ? AppSizes.borderRadiusLarge : 4),
+                      bottomLeft: Radius.circular(isAi ? AppSizes.borderRadiusSmall : AppSizes.borderRadiusLarge),
+                      bottomRight: Radius.circular(isAi ? AppSizes.borderRadiusLarge : AppSizes.borderRadiusSmall),
                     ),
-                    boxShadow: [BoxShadow(color: Colors.black.withAlpha(13), blurRadius: 6)],
+                    boxShadow: [BoxShadow(color: AppColors.textPrimary.withAlpha(13), blurRadius: 6)],
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -485,16 +500,15 @@ class _ChatBubble extends StatelessWidget {
                       Text(
                         isAi ? text : (userInput ?? text),
                         style: AppTypography.bodySmall.copyWith(
-                          color: isAi ? kTextDark : Colors.white,
+                          color: isAi ? AppColors.textPrimary : AppColors.textWhite,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
                       AppSpacing.verticalSpacerXs,
                       Text(
                         textJa,
-                        style: AppTypography.bodySmall.copyWith(
-                          color: isAi ? kTextMuted : Colors.white70,
-                          fontSize: 11,
+                        style: AppTypography.labelSmall.copyWith(
+                          color: isAi ? AppColors.textMuted : AppColors.textWhite70,
                         ),
                       ),
                     ],
@@ -505,7 +519,11 @@ class _ChatBubble extends StatelessWidget {
           ),
           if (!isAi) ...[
             AppSpacing.horizontalSpacerXs,
-            CircleAvatar(backgroundColor: kSpeakingColor, radius: 18, child: const Text('😊', style: TextStyle(fontSize: 16))),
+            CircleAvatar(
+              backgroundColor: AppColors.speakingColor,
+              radius: 18,
+              child: Text('😊', style: TextStyle(fontSize: AppTypography.headlineSmall.fontSize)),
+            ),
           ],
         ],
       ),
@@ -520,15 +538,19 @@ class _TypingBubble extends StatelessWidget {
       padding: EdgeInsets.only(bottom: AppSpacing.xs),
       child: Row(
         children: [
-          CircleAvatar(backgroundColor: kPrimaryColor, radius: 18, child: const Text('🤖', style: TextStyle(fontSize: 16))),
+          CircleAvatar(
+            backgroundColor: AppColors.primary,
+            radius: 18,
+            child: Text('🤖', style: TextStyle(fontSize: AppTypography.headlineSmall.fontSize)),
+          ),
           AppSpacing.horizontalSpacerXs,
           Container(
             padding: EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.textWhite,
               borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
             ),
-            child: const Text('…', style: TextStyle(fontSize: 18, color: kTextMuted, letterSpacing: 4)),
+            child: Text('…', style: TextStyle(fontSize: AppTypography.displaySmall.fontSize! / 1.3, color: AppColors.textMuted, letterSpacing: 4)),
           ),
         ],
       ),

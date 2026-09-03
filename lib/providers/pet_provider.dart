@@ -2,6 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../models/pet_model.dart';
+import '../services/logger_service.dart';
+import '../services/pet_service.dart';
 
 /// 現在のペットプロバイダー
 final currentPetProvider = StateNotifierProvider<PetNotifier, Pet?>((ref) {
@@ -76,7 +78,7 @@ class PetNotifier extends StateNotifier<Pet?> {
         state = Pet.fromJson(json);
       }
     } catch (e) {
-      print('Error loading pet: $e');
+      LoggerService.error('Error loading pet', tag: 'PetNotifier', exception: e);
     }
   }
 
@@ -230,7 +232,7 @@ class PetNotifier extends StateNotifier<Pet?> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_petStorageKey, jsonEncode(state!.toJson()));
     } catch (e) {
-      print('Error saving pet: $e');
+      LoggerService.error('Error saving pet', tag: 'PetNotifier', exception: e);
     }
   }
 
@@ -241,7 +243,7 @@ class PetNotifier extends StateNotifier<Pet?> {
       await prefs.remove(_petStorageKey);
       state = null;
     } catch (e) {
-      print('Error deleting pet: $e');
+      LoggerService.error('Error deleting pet', tag: 'PetNotifier', exception: e);
     }
   }
 }
@@ -273,7 +275,7 @@ class PetStatsNotifier extends StateNotifier<PetStats> {
         state = PetStats.fromJson(json);
       }
     } catch (e) {
-      print('Error loading pet stats: $e');
+      LoggerService.error('Error loading pet stats', tag: 'PetStatsNotifier', exception: e);
     }
   }
 
@@ -296,7 +298,7 @@ class PetStatsNotifier extends StateNotifier<PetStats> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_statsStorageKey, jsonEncode(state.toJson()));
     } catch (e) {
-      print('Error saving pet stats: $e');
+      LoggerService.error('Error saving pet stats', tag: 'PetStatsNotifier', exception: e);
     }
   }
 
@@ -313,3 +315,45 @@ class PetStatsNotifier extends StateNotifier<PetStats> {
     await _saveStats();
   }
 }
+
+// ===== Firestore-backed Providers for Cloud Sync =====
+
+/// Pet Service instance provider
+final petServiceProvider = Provider((ref) {
+  return PetService();
+});
+
+/// User's pet from Firestore
+final userPetProvider = FutureProvider.family<Pet?, String>((ref, userId) async {
+  final petService = ref.watch(petServiceProvider);
+  return await petService.getUserPet(userId);
+});
+
+/// Pet leaderboard provider
+final petLeaderboardProvider = FutureProvider.family<List<Map<String, dynamic>>, int>((ref, limit) async {
+  final petService = ref.watch(petServiceProvider);
+  return await petService.getPetLeaderboard(limit: limit, orderBy: 'level');
+});
+
+/// User's pet rank provider
+final userPetRankProvider = FutureProvider.family<int?, String>((ref, userId) async {
+  final petService = ref.watch(petServiceProvider);
+  return await petService.getUserPetRank(userId, orderBy: 'level');
+});
+
+/// Pet status provider
+final petStatusProvider = FutureProvider.family<PetStatus?, String>((ref, userId) async {
+  final petService = ref.watch(petServiceProvider);
+  try {
+    return await petService.getPetStatus(userId);
+  } catch (e) {
+    LoggerService.error('Error getting pet status', tag: 'petStatusProvider', exception: e);
+    return null;
+  }
+});
+
+/// Pet statistics provider
+final petStatsCloudProvider = FutureProvider.family<Map<String, dynamic>, String>((ref, userId) async {
+  final petService = ref.watch(petServiceProvider);
+  return await petService.getPetStats(userId);
+});

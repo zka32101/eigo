@@ -1,12 +1,9 @@
+import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/promotion_model.dart';
 import '../providers/promotion_provider.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
 
 class PromotionScreen extends ConsumerStatefulWidget {
   const PromotionScreen({super.key});
@@ -40,11 +37,11 @@ class _PromotionScreenState extends ConsumerState<PromotionScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('📢 おすすめアプリ'),
-          backgroundColor: kPrimaryColor,
+          backgroundColor: AppColors.primary,
           bottom: const TabBar(
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.white70,
-            indicatorColor: kAccentOrange,
+            labelColor: AppColors.textWhite,
+            unselectedLabelColor: AppColors.textWhite.withOpacity(0.7),
+            indicatorColor: AppColors.accentOrange,
             tabs: [
               Tab(text: 'キャンペーン'),
               Tab(text: '統計'),
@@ -76,7 +73,7 @@ class _CampaignsListView extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.campaign_outlined, size: 64, color: kTextMuted),
+            const Icon(Icons.campaign_outlined, size: 64, color: AppColors.textMuted),
             AppSpacing.verticalSpacerMd,
             const Text('現在のキャンペーンはありません'),
           ],
@@ -192,7 +189,7 @@ class _PromotionCard extends ConsumerWidget {
                       child: Text(
                         categoryLabel,
                         style: AppTypography.labelSmall.copyWith(
-                          color: Colors.white,
+                          color:AppColors.textWhite,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -208,7 +205,7 @@ class _PromotionCard extends ConsumerWidget {
                           vertical: AppSpacing.xs,
                         ),
                         decoration: BoxDecoration(
-                          color: kAccentOrange,
+                          color: AppColors.accentOrange,
                           borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
                         ),
                         child: Row(
@@ -217,7 +214,7 @@ class _PromotionCard extends ConsumerWidget {
                             Text(
                               'ピック',
                               style: AppTypography.labelSmall.copyWith(
-                                color: Colors.white,
+                                color:AppColors.textWhite,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -248,7 +245,7 @@ class _PromotionCard extends ConsumerWidget {
                     campaign.description,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                    style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                   ),
                   AppSpacing.verticalSpacerMd,
                   Row(
@@ -265,13 +262,13 @@ class _PromotionCard extends ConsumerWidget {
                             vertical: AppSpacing.xs,
                           ),
                           decoration: BoxDecoration(
-                            color: kAccentRed.withAlpha(20),
+                            color: AppColors.error.withAlpha(20),
                             borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
                           ),
                           child: Text(
                             '終了まであと${campaign.endDate!.difference(DateTime.now()).inDays}日',
                             style: AppTypography.bodySmall.copyWith(
-                              color: kAccentRed,
+                              color: AppColors.error,
                               fontSize: 11,
                             ),
                           ),
@@ -305,15 +302,15 @@ class _PromotionCard extends ConsumerWidget {
   Color _getCategoryColor(String category) {
     switch (category) {
       case 'new_app':
-        return kAccentGreen;
+        return AppColors.accentGreen;
       case 'limited_time':
-        return kAccentRed;
+        return AppColors.error;
       case 'seasonal':
-        return kAccentOrange;
+        return AppColors.accentOrange;
       case 'exclusive':
-        return kPrimaryColor;
+        return AppColors.primary;
       default:
-        return Colors.grey;
+        return AppColors.textMuted;
     }
   }
 }
@@ -358,7 +355,7 @@ class _PromotionDetailSheet extends ConsumerWidget {
               Container(
                 padding: AppSpacing.allPaddingMd,
                 decoration: BoxDecoration(
-                  color: Colors.grey[50],
+                  color: AppColors.bgLight,
                   borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                 ),
                 child: Column(
@@ -385,7 +382,7 @@ class _PromotionDetailSheet extends ConsumerWidget {
                     child: ElevatedButton.icon(
                       onPressed: () => _launchUrl(campaign.appStoreUrl),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black87,
+                        backgroundColor: AppColors.textPrimary,
                         padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
                       ),
                       icon: const Icon(Icons.apple),
@@ -397,7 +394,7 @@ class _PromotionDetailSheet extends ConsumerWidget {
                     child: ElevatedButton.icon(
                       onPressed: () => _launchUrl(campaign.playStoreUrl),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green[700],
+                        backgroundColor: AppColors.accentGreen,
                         padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
                       ),
                       icon: const Icon(Icons.android),
@@ -432,15 +429,15 @@ class _PromotionDetailSheet extends ConsumerWidget {
   Color _getCategoryColor(String category) {
     switch (category) {
       case 'new_app':
-        return kAccentGreen;
+        return AppColors.accentGreen;
       case 'limited_time':
-        return kAccentRed;
+        return AppColors.error;
       case 'seasonal':
-        return kAccentOrange;
+        return AppColors.accentOrange;
       case 'exclusive':
-        return kPrimaryColor;
+        return AppColors.primary;
       default:
-        return Colors.grey;
+        return AppColors.textMuted;
     }
   }
 
@@ -482,25 +479,25 @@ class _StatsView extends ConsumerWidget {
                 label: '総キャンペーン',
                 value: '${stats.totalCampaigns}',
                 icon: '📋',
-                color: kPrimaryColor,
+                color: AppColors.primary,
               ),
               _StatCard(
                 label: 'アクティブ',
                 value: '${stats.activeCampaigns}',
                 icon: '✨',
-                color: kAccentGreen,
+                color: AppColors.accentGreen,
               ),
               _StatCard(
                 label: '総表示数',
                 value: '${stats.totalViews}',
                 icon: '👁️',
-                color: kAccentOrange,
+                color: AppColors.accentOrange,
               ),
               _StatCard(
                 label: '総クリック',
                 value: '${stats.totalClicks}',
                 icon: '👆',
-                color: kAccentRed,
+                color: AppColors.error,
               ),
             ],
           ),
@@ -510,7 +507,7 @@ class _StatsView extends ConsumerWidget {
           Container(
             padding: AppSpacing.allPaddingMd,
             decoration: BoxDecoration(
-              color: kPrimaryColor.withAlpha(10),
+              color: AppColors.primary.withAlpha(10),
               borderRadius: BorderRadius.circular(AppSizes.borderRadius),
             ),
             child: Row(
@@ -518,7 +515,7 @@ class _StatsView extends ConsumerWidget {
                 Container(
                   padding: EdgeInsets.all(AppSpacing.md),
                   decoration: BoxDecoration(
-                    color: kPrimaryColor.withAlpha(30),
+                    color: AppColors.primary.withAlpha(30),
                     shape: BoxShape.circle,
                   ),
                   child: const Text('📊', style: TextStyle(fontSize: 28)),
@@ -528,7 +525,7 @@ class _StatsView extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('平均クリック率', style: AppTypography.labelSmall.copyWith(color: kTextMuted)),
+                      Text('平均クリック率', style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted)),
                       AppSpacing.verticalSpacerXs,
                       Text(
                         '${stats.averageCTR.toStringAsFixed(2)}%',
@@ -577,7 +574,7 @@ class _StatCard extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label, style: AppTypography.labelSmall.copyWith(color: kTextMuted)),
+              Text(label, style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted)),
               AppSpacing.verticalSpacerXs,
               Text(value, style: AppTypography.headlineSmall.copyWith(color: color)),
             ],
@@ -599,7 +596,7 @@ class _InfoRow extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: AppTypography.labelSmall.copyWith(color: kTextMuted)),
+        Text(label, style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted)),
         Text(value, style: AppTypography.labelSmall),
       ],
     );

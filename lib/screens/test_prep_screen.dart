@@ -1,3 +1,4 @@
+import '../design_system/design_system.dart';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,10 +8,6 @@ import '../providers/settings_provider.dart';
 import '../providers/weakness_provider.dart';
 import '../services/speech_service.dart';
 import '../services/tts_service.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
 import '../widgets/speaking_score_ring.dart';
 
 /// テスト対策モード: 弱点問題を集めた特別レッスン
@@ -147,7 +144,7 @@ class _TestPrepScreenState extends ConsumerState<TestPrepScreen> {
 
     if (_questions.isEmpty) {
       return Scaffold(
-        appBar: AppBar(title: const Text('🎯 テスト対策'), backgroundColor: kPrimaryColor),
+        appBar: AppBar(title: const Text('🎯 テスト対策'), backgroundColor: AppColors.primary),
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -156,7 +153,7 @@ class _TestPrepScreenState extends ConsumerState<TestPrepScreen> {
               AppSpacing.verticalSpacerMd,
               Text('弱点問題がありません！', style: AppTypography.headlineSmall.copyWith(fontWeight: FontWeight.bold)),
               AppSpacing.verticalSpacerXs,
-              Text('全問題を正確に解けています。\nすごい！', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+              Text('全問題を正確に解けています。\nすごい！', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
               AppSpacing.verticalSpacerXl,
               ElevatedButton(
                 onPressed: () => Navigator.of(context).pop(),
@@ -169,9 +166,9 @@ class _TestPrepScreenState extends ConsumerState<TestPrepScreen> {
     }
 
     return Scaffold(
-      backgroundColor: kBgLight,
+      backgroundColor: AppColors.bgLight,
       appBar: AppBar(
-        backgroundColor: kAccentRed,
+        backgroundColor: AppColors.error,
         title: const Text('🎯 テスト対策モード'),
         actions: [
           Padding(
@@ -179,7 +176,7 @@ class _TestPrepScreenState extends ConsumerState<TestPrepScreen> {
             child: Center(
               child: Text(
                 '${_qIndex + 1} / ${_questions.length}',
-                style: AppTypography.labelLarge.copyWith(color: Colors.white),
+                style: AppTypography.labelLarge.copyWith(color: AppColors.textWhite),
               ),
             ),
           ),
@@ -191,8 +188,8 @@ class _TestPrepScreenState extends ConsumerState<TestPrepScreen> {
             children: [
               LinearProgressIndicator(
                 value: (_qIndex + 1) / _questions.length,
-                backgroundColor: Colors.grey.shade200,
-                color: kAccentRed,
+                backgroundColor:AppColors.textMuted,
+                color: AppColors.error,
                 minHeight: 6,
               ),
               Expanded(
@@ -206,9 +203,9 @@ class _TestPrepScreenState extends ConsumerState<TestPrepScreen> {
                         padding: EdgeInsets.symmetric(horizontal: AppSpacing.xs, vertical: 6),
                         margin: EdgeInsets.only(bottom: AppSpacing.xs),
                         decoration: BoxDecoration(
-                          color: kAccentRed.withAlpha(20),
+                          color: AppColors.error.withAlpha(20),
                           borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
-                          border: Border.all(color: kAccentRed.withAlpha(80)),
+                          border: Border.all(color: AppColors.error.withAlpha(80)),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -217,7 +214,7 @@ class _TestPrepScreenState extends ConsumerState<TestPrepScreen> {
                             AppSpacing.horizontalSpacerXs,
                             Text(
                               '弱点問題 - ${_typeLabel(_current.type)}',
-                              style: AppTypography.bodySmall.copyWith(color: kAccentRed, fontWeight: FontWeight.bold, fontSize: 13),
+                              style: AppTypography.bodySmall.copyWith(color: AppColors.error, fontWeight: FontWeight.bold, fontSize: 13),
                             ),
                           ],
                         ),
@@ -234,17 +231,17 @@ class _TestPrepScreenState extends ConsumerState<TestPrepScreen> {
                               AppSpacing.verticalSpacerXs,
                               Text(
                                 _current.text,
-                                style: AppTypography.headlineLarge.copyWith(color: kTextDark),
+                                style: AppTypography.headlineLarge.copyWith(color: AppColors.textPrimary),
                                 textAlign: TextAlign.center,
                               ),
                               if (_current.phonetic != null) ...[
                                 AppSpacing.verticalSpacerXs,
                                 Text(_current.phonetic!,
-                                    style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontStyle: FontStyle.italic)),
+                                    style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, fontStyle: FontStyle.italic)),
                               ],
                               AppSpacing.verticalSpacerXs,
                               Text(_current.textJa,
-                                  style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                                  style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                                   textAlign: TextAlign.center),
                               AppSpacing.verticalSpacerXs,
                               Row(
@@ -253,14 +250,14 @@ class _TestPrepScreenState extends ConsumerState<TestPrepScreen> {
                                   IconButton.filled(
                                     icon: const Icon(Icons.volume_up),
                                     onPressed: () => _tts.speak(_current.text),
-                                    style: IconButton.styleFrom(backgroundColor: kPrimaryColor),
+                                    style: IconButton.styleFrom(backgroundColor: AppColors.primary),
                                   ),
                                   AppSpacing.horizontalSpacerXs,
                                   OutlinedButton.icon(
                                     icon: const Icon(Icons.slow_motion_video, size: 16),
                                     label: const Text('ゆっくり'),
                                     onPressed: () => _tts.speakSlow(_current.text),
-                                    style: OutlinedButton.styleFrom(foregroundColor: kPrimaryColor),
+                                    style: OutlinedButton.styleFrom(foregroundColor: AppColors.primary),
                                   ),
                                 ],
                               ),
@@ -281,7 +278,7 @@ class _TestPrepScreenState extends ConsumerState<TestPrepScreen> {
                           child: ElevatedButton(
                             onPressed: _next,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: _isLast ? kAccentGreen : kAccentRed,
+                              backgroundColor: _isLast ? AppColors.accentGreen : AppColors.error,
                               padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
                             ),
                             child: Text(_isLast ? '結果を見る！🎉' : 'つぎへ →',
@@ -294,18 +291,18 @@ class _TestPrepScreenState extends ConsumerState<TestPrepScreen> {
               ),
               // スコアバー
               Container(
-                color: Colors.white,
+                color:AppColors.textWhite,
                 padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl, vertical: AppSpacing.xs),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Column(children: [
-                      Text('$_score', style: AppTypography.headlineSmall.copyWith(fontWeight: FontWeight.bold, color: kAccentRed)),
-                      Text('スコア', style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 11)),
+                      Text('$_score', style: AppTypography.headlineSmall.copyWith(fontWeight: FontWeight.bold, color: AppColors.error)),
+                      Text('スコア', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, fontSize: 11)),
                     ]),
                     Column(children: [
-                      Text('$_correct/${_qIndex + 1}', style: AppTypography.headlineSmall.copyWith(fontWeight: FontWeight.bold, color: kAccentGreen)),
-                      Text('正解', style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 11)),
+                      Text('$_correct/${_qIndex + 1}', style: AppTypography.headlineSmall.copyWith(fontWeight: FontWeight.bold, color: AppColors.accentGreen)),
+                      Text('正解', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, fontSize: 11)),
                     ]),
                   ],
                 ),
@@ -318,7 +315,7 @@ class _TestPrepScreenState extends ConsumerState<TestPrepScreen> {
               confettiController: _confetti,
               blastDirectionality: BlastDirectionality.explosive,
               shouldLoop: false,
-              colors: const [kAccentGreen, kPrimaryColor, kAccentOrange],
+              colors: const [AppColors.accentGreen, AppColors.primary, AppColors.accentOrange],
             ),
           ),
         ],
@@ -331,13 +328,13 @@ class _TestPrepScreenState extends ConsumerState<TestPrepScreen> {
       children: _current.choices.map((choice) {
         final isSelected = _selectedAnswer == choice;
         final isCorrect = choice == _current.correctAnswer;
-        Color bg = Colors.white;
-        Color border = Colors.grey.shade300;
-        Color text = kTextDark;
+        Color bg = AppColors.textWhite;
+        Color border = AppColors.bgLight;
+        Color text = AppColors.textPrimary;
         Widget? icon;
         if (_answered) {
-          if (isCorrect) { bg = kAccentGreen.withAlpha(26); border = kAccentGreen; text = kAccentGreen; icon = const Icon(Icons.check_circle, color: kAccentGreen); }
-          else if (isSelected) { bg = kAccentRed.withAlpha(26); border = kAccentRed; text = kAccentRed; icon = const Icon(Icons.cancel, color: kAccentRed); }
+          if (isCorrect) { bg = AppColors.accentGreen.withAlpha(26); border = AppColors.accentGreen; text = AppColors.accentGreen; icon = const Icon(Icons.check_circle, color: AppColors.accentGreen); }
+          else if (isSelected) { bg = AppColors.error.withAlpha(26); border = AppColors.error; text = AppColors.error; icon = const Icon(Icons.cancel, color: AppColors.error); }
         }
         return Padding(
           padding: EdgeInsets.only(bottom: AppSpacing.xs),
@@ -383,9 +380,9 @@ class _TestPrepScreenState extends ConsumerState<TestPrepScreen> {
                   ),
                   if (_recognizedText.isNotEmpty) ...[
                     AppSpacing.verticalSpacerXs,
-                    Text('あなた: "$_recognizedText"', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+                    Text('あなた: "$_recognizedText"', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
                     Text('正解: "${_current.correctAnswer}"',
-                        style: AppTypography.bodySmall.copyWith(color: kAccentGreen, fontWeight: FontWeight.bold)),
+                        style: AppTypography.bodySmall.copyWith(color: AppColors.accentGreen, fontWeight: FontWeight.bold)),
                   ],
                 ],
               )
@@ -401,28 +398,28 @@ class _TestPrepScreenState extends ConsumerState<TestPrepScreen> {
                       width: 80, height: 80,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: _isListening ? kSpeakingColor : kAccentRed,
+                        color: _isListening ? AppColors.speakingColor : AppColors.error,
                         boxShadow: _isListening
-                            ? [BoxShadow(color: kSpeakingColor.withAlpha(100), blurRadius: 20, spreadRadius: 5)]
+                            ? [BoxShadow(color: AppColors.speakingColor.withAlpha(100), blurRadius: 20, spreadRadius: 5)]
                             : [],
                       ),
-                      child: Icon(_isListening ? Icons.mic : Icons.mic_none, color: Colors.white, size: 36),
+                      child: Icon(_isListening ? Icons.mic : Icons.mic_none, color: AppColors.textWhite, size: 36),
                     ),
                   ),
                   AppSpacing.verticalSpacerMd,
                   Text(
                     _isListening ? '聞いています...' : 'タップして話す',
                     style: AppTypography.labelLarge.copyWith(
-                      color: _isListening ? kSpeakingColor : kTextMuted,
+                      color: _isListening ? AppColors.speakingColor : AppColors.textMuted,
                     ),
                   ),
                   if (_recognizedText.isNotEmpty) ...[
                     AppSpacing.verticalSpacerXs,
                     Container(
                       padding: EdgeInsets.all(AppSpacing.xs),
-                      decoration: BoxDecoration(color: kBgLight, borderRadius: BorderRadius.circular(AppSizes.borderRadius)),
+                      decoration: BoxDecoration(color: AppColors.bgLight, borderRadius: BorderRadius.circular(AppSizes.borderRadius)),
                       child: Text('"$_recognizedText"',
-                          style: AppTypography.labelLarge.copyWith(color: kTextDark), textAlign: TextAlign.center),
+                          style: AppTypography.labelLarge.copyWith(color: AppColors.textPrimary), textAlign: TextAlign.center),
                     ),
                   ],
                 ],

@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../models/camera_scan_model.dart';
+import '../services/logger_service.dart';
 
 /// My Dictionary - all scanned vocabulary items
 final myDictionaryProvider = StateNotifierProvider<MyDictionaryNotifier, List<ScannedVocabulary>>((ref) {
@@ -24,7 +25,7 @@ class MyDictionaryNotifier extends StateNotifier<List<ScannedVocabulary>> {
         state = decoded.map((json) => ScannedVocabulary.fromJson(json)).toList();
       }
     } catch (e) {
-      print('Error loading dictionary: $e');
+      LoggerService.error('Error loading dictionary', tag: 'MyDictionaryNotifier', exception: e);
     }
   }
   
@@ -34,7 +35,7 @@ class MyDictionaryNotifier extends StateNotifier<List<ScannedVocabulary>> {
       final jsonString = jsonEncode(state.map((item) => item.toJson()).toList());
       await prefs.setString(_storageKey, jsonString);
     } catch (e) {
-      print('Error saving dictionary: $e');
+      LoggerService.error('Error saving dictionary', tag: 'MyDictionaryNotifier', exception: e);
     }
   }
   
@@ -137,7 +138,7 @@ class CategoriesNotifier extends StateNotifier<List<VocabularyCategory>> {
         state = decoded.map((json) => VocabularyCategory.fromJson(json)).toList();
       }
     } catch (e) {
-      print('Error loading categories: $e');
+      LoggerService.error('Error loading categories', tag: 'CategoriesNotifier', exception: e);
     }
   }
   
@@ -147,7 +148,7 @@ class CategoriesNotifier extends StateNotifier<List<VocabularyCategory>> {
       final jsonString = jsonEncode(state.map((cat) => cat.toJson()).toList());
       await prefs.setString(_storageKey, jsonString);
     } catch (e) {
-      print('Error saving categories: $e');
+      LoggerService.error('Error saving categories', tag: 'CategoriesNotifier', exception: e);
     }
   }
   
@@ -198,7 +199,7 @@ class DictionaryStatsNotifier extends StateNotifier<DictionaryStats> {
         state = DictionaryStats.fromJson(json);
       }
     } catch (e) {
-      print('Error loading stats: $e');
+      LoggerService.error('Error loading stats', tag: 'CameraStatsNotifier', exception: e);
     }
   }
   
@@ -207,7 +208,7 @@ class DictionaryStatsNotifier extends StateNotifier<DictionaryStats> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_storageKey, jsonEncode(state.toJson()));
     } catch (e) {
-      print('Error saving stats: $e');
+      LoggerService.error('Error saving stats', tag: 'CameraStatsNotifier', exception: e);
     }
   }
   
@@ -333,7 +334,7 @@ class ScanAchievementsNotifier extends StateNotifier<List<ScanAchievement>> {
         state = decoded.map((json) => ScanAchievement.fromJson(json)).toList();
       }
     } catch (e) {
-      print('Error loading achievements: $e');
+      LoggerService.error('Error loading achievements', tag: 'ScanAchievementsNotifier', exception: e);
     }
   }
   
@@ -343,7 +344,7 @@ class ScanAchievementsNotifier extends StateNotifier<List<ScanAchievement>> {
       final jsonString = jsonEncode(state.map((a) => a.toJson()).toList());
       await prefs.setString(_storageKey, jsonString);
     } catch (e) {
-      print('Error saving achievements: $e');
+      LoggerService.error('Error saving achievements', tag: 'ScanAchievementsNotifier', exception: e);
     }
   }
   

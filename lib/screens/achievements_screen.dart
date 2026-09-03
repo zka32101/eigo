@@ -1,70 +1,102 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/badge_model.dart';
-import '../providers/badge_provider.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
+import '../models/achievement_model.dart';
+import '../providers/achievement_provider.dart';
+import '../providers/user_profile_provider.dart';
+import '../design_system/design_system.dart';
+import '../widgets/achievement_card.dart';
 
-class AchievementsScreen extends ConsumerWidget {
-  const AchievementsScreen({super.key});
+class AchievementsScreen extends ConsumerStatefulWidget {
+  const AchievementsScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final badgeState = ref.watch(badgeProvider);
+  ConsumerState<AchievementsScreen> createState() => _AchievementsScreenState();
+}
+
+class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
+  late PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final userId = ref.watch(currentUserIdProvider) ?? '';
+    final achievementsAsync = ref.watch(achievementsProvider);
+    final userAchievementsAsync = ref.watch(userAchievementsProvider(userId));
+    final statsAsync = ref.watch(achievementStatsProvider(userId));
+    final typeFilter = ref.watch(achievementTypeFilterProvider);
+    final tierFilter = ref.watch(achievementTierFilterProvider);
+    final showOnlyUnlocked = ref.watch(showOnlyUnlockedProvider);
 
     return DefaultTabController(
       length: 3,
       child: Scaffold(
         appBar: AppBar(
           title: const Text('🏆 アチーブメント'),
-          backgroundColor: kPrimaryColor,
+          centerTitle: true,
+          elevation: 0,
           bottom: TabBar(
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.white70,
-            indicatorColor: kAccentOrange,
             tabs: [
               Tab(
-                child: Stack(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('獲得バッジ'),
-                    if (badgeState.newlyEarned.isNotEmpty)
-                      Positioned(
-                        right: 0,
-                        top: 0,
+                    const Text('全て'),
+                    statsAsync.whenData((stats) {
+                      if (stats == null) return SizedBox.shrink();
+                      return Padding(
+                        padding: const EdgeInsets.only(left: 8),
                         child: Container(
-                          padding: const EdgeInsets.all(4),
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                           decoration: BoxDecoration(
-                            color: kAccentOrange,
-                            shape: BoxShape.circle,
+                            color: AppColors.primary,
+                            borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
-                            '${badgeState.newlyEarned.length}',
+                            '${stats.unlockedCount}',
                             style: const TextStyle(
                               color: Colors.white,
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
-                      ),
+                      );
+                    }).value ?? SizedBox.shrink(),
                   ],
                 ),
               ),
-              const Tab(text: '進捗'),
-              const Tab(text: '全バッジ'),
+              const Tab(text: '未獲得'),
+              const Tab(text: '統計'),
             ],
           ),
         ),
         body: TabBarView(
           children: [
-            // 獲得バッジタブ
-            _UnlockedBadgesTab(earnedBadges: badgeState.earnedBadges),
-            // 進捗タブ
-            _ProgressTab(),
-            // 全バッジタブ
-            _AllBadgesTab(earnedIds: badgeState.earnedIds),
+            // All achievements tab
+            _AllAchievementsTab(
+              achievementsAsync: achievementsAsync,
+              userAchievementsAsync: userAchievementsAsync,
+              typeFilter: typeFilter,
+              tierFilter: tierFilter,
+            ),
+            // Locked achievements tab
+            _LockedAchievementsTab(
+              achievementsAsync: achievementsAsync,
+              userAchievementsAsync: userAchievementsAsync,
+            ),
+            // Stats tab
+            _AchievementStatsTab(statsAsync: statsAsync),
           ],
         ),
       ),
@@ -72,414 +104,490 @@ class AchievementsScreen extends ConsumerWidget {
   }
 }
 
-class _UnlockedBadgesTab extends StatelessWidget {
-  final List<EarnedBadge> earnedBadges;
+class _AllAchievementsTab extends ConsumerWidget {
+  final AsyncValue<List<Achievement>> achievementsAsync;
+  final AsyncValue<List<UserAchievement>> userAchievementsAsync;
+  final AchievementType? typeFilter;
+  final AchievementTier? tierFilter;
 
-  const _UnlockedBadgesTab({required this.earnedBadges});
-
-  @override
-  Widget build(BuildContext context) {
-    if (earnedBadges.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.card_giftcard_outlined, size: 64, color: kTextMuted),
-            AppSpacing.verticalSpacerMd,
-            const Text('獲得したバッジはまだありません'),
-            AppSpacing.verticalSpacerSm,
-            const Text(
-              'レッスンを完了してバッジを獲得しましょう！',
-              style: TextStyle(color: kTextMuted, fontSize: 12),
-            ),
-          ],
-        ),
-      );
-    }
-
-    return SingleChildScrollView(
-      padding: AppSpacing.allPaddingLg,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: AppSpacing.allPaddingMd,
-            decoration: BoxDecoration(
-              color: kAccentGreen.withAlpha(20),
-              borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-              border: Border.all(color: kAccentGreen.withAlpha(50)),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('獲得バッジ', style: AppTypography.labelSmall.copyWith(color: kTextMuted)),
-                    AppSpacing.verticalSpacerXs,
-                    Text('${earnedBadges.length}個', style: AppTypography.headlineMedium),
-                  ],
-                ),
-                Container(
-                  padding: EdgeInsets.all(AppSpacing.md),
-                  decoration: const BoxDecoration(
-                    color: kAccentGreen,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Text(
-                    '✓',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 24,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          AppSpacing.verticalSpacerLg,
-
-          // バッジグリッド
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              childAspectRatio: 1,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-            ),
-            itemCount: earnedBadges.length,
-            itemBuilder: (context, index) {
-              final badge = earnedBadges[index];
-              return _BadgeCard(
-                icon: badge.badge.emoji,
-                title: badge.badge.title,
-                onTap: () => _showBadgeDetails(context, badge),
-              );
-            },
-          ),
-          AppSpacing.verticalSpacerXxl,
-        ],
-      ),
-    );
-  }
-
-  void _showBadgeDetails(BuildContext context, EarnedBadge badge) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(badge.badge.title),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Text(badge.badge.emoji, style: const TextStyle(fontSize: 64)),
-            ),
-            AppSpacing.verticalSpacerMd,
-            Text(badge.badge.description),
-            AppSpacing.verticalSpacerMd,
-            Text(
-              '獲得日: ${badge.earnedAt.year}年${badge.earnedAt.month}月${badge.earnedAt.day}日',
-              style: const TextStyle(color: kTextMuted, fontSize: 12),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('閉じる'),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ProgressTab extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final progressList = ref.watch(badgeProgressProvider);
-
-    if (progressList.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    final unlockedCount = progressList.where((b) => b.isUnlocked).length;
-    final overallProgress = progressList.isEmpty
-        ? 0.0
-        : progressList.fold<double>(0, (sum, b) => sum + b.progress) / progressList.length;
-
-    return SingleChildScrollView(
-      padding: AppSpacing.allPaddingLg,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 全体進捗
-          Container(
-            padding: AppSpacing.allPaddingMd,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [kPrimaryColor.withAlpha(20), kPrimaryColor.withAlpha(5)],
-              ),
-              borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-              border: Border.all(color: kPrimaryColor.withAlpha(50)),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('全体進捗', style: AppTypography.labelSmall.copyWith(color: kTextMuted)),
-                    Text('${(overallProgress * 100).toStringAsFixed(0)}%', style: AppTypography.labelLarge),
-                  ],
-                ),
-                AppSpacing.verticalSpacerMd,
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
-                  child: LinearProgressIndicator(
-                    value: overallProgress,
-                    minHeight: 12,
-                    backgroundColor: Colors.grey[300],
-                    valueColor: AlwaysStoppedAnimation(kPrimaryColor),
-                  ),
-                ),
-                AppSpacing.verticalSpacerMd,
-                Text(
-                  '$unlockedCount/${progressList.length} バッジ獲得済み',
-                  style: AppTypography.bodySmall.copyWith(color: kTextMuted),
-                ),
-              ],
-            ),
-          ),
-          AppSpacing.verticalSpacerLg,
-
-          // バッジ進捗一覧
-          Text('進捗状況', style: AppTypography.headlineSmall),
-          AppSpacing.verticalSpacerMd,
-          ...progressList.map((badge) {
-            return Padding(
-              padding: EdgeInsets.only(bottom: AppSpacing.md),
-              child: _BadgeProgressCard(badge: badge),
-            );
-          }).toList(),
-          AppSpacing.verticalSpacerXxl,
-        ],
-      ),
-    );
-  }
-}
-
-class _AllBadgesTab extends StatelessWidget {
-  final Set<String> earnedIds;
-
-  const _AllBadgesTab({required this.earnedIds});
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: AppSpacing.allPaddingLg,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('全バッジ一覧', style: AppTypography.headlineSmall),
-          AppSpacing.verticalSpacerMd,
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              childAspectRatio: 1.2,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-            ),
-            itemCount: 12, // 全バッジ数
-            itemBuilder: (context, index) {
-              final isEarned = index < earnedIds.length;
-              return _AllBadgeCard(
-                icon: ['🌱', '📚', '🎓', '🏃', '🪙', '🔥', '👑', '🎯', '🦋', '📈', '⭐', '🌟'][index],
-                title: ['はじめ', '勉強仲', '献身的', 'マラソ', 'コイン', '熱い', '伝説', '精密', 'ソーシ', 'テン', 'ステ1', 'ステ5'][index],
-                isEarned: isEarned,
-              );
-            },
-          ),
-          AppSpacing.verticalSpacerXxl,
-        ],
-      ),
-    );
-  }
-}
-
-class _BadgeCard extends StatelessWidget {
-  final String icon;
-  final String title;
-  final VoidCallback onTap;
-
-  const _BadgeCard({
-    required this.icon,
-    required this.title,
-    required this.onTap,
+  const _AllAchievementsTab({
+    required this.achievementsAsync,
+    required this.userAchievementsAsync,
+    this.typeFilter,
+    this.tierFilter,
   });
 
   @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(color: Colors.grey[300]!),
-          borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(icon, style: const TextStyle(fontSize: 32)),
-            AppSpacing.verticalSpacerXs,
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: AppTypography.labelSmall,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
-      ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    return achievementsAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stackTrace) => Center(child: Text('エラー: $error')),
+      data: (achievements) {
+        return userAchievementsAsync.when(
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (error, stackTrace) => Center(child: Text('エラー: $error')),
+          data: (userAchievements) {
+            // Filter achievements
+            var filtered = achievements;
+            if (typeFilter != null) {
+              filtered = filtered.where((a) => a.type == typeFilter).toList();
+            }
+            if (tierFilter != null) {
+              filtered = filtered.where((a) => a.tier == tierFilter).toList();
+            }
+
+            final unlockedIds = userAchievements.map((ua) => ua.achievementId).toSet();
+            final unlockedAchievements =
+                filtered.where((a) => unlockedIds.contains(a.id)).toList();
+            final lockedAchievements =
+                filtered.where((a) => !unlockedIds.contains(a.id)).toList();
+
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Filters
+                  _FilterChips(ref: ref),
+                  const SizedBox(height: 16),
+                  // Unlocked section
+                  if (unlockedAchievements.isNotEmpty) ...[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '獲得済み (${unlockedAchievements.length})',
+                          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: AppColors.accentGreen,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            '✓',
+                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 0.9,
+                        crossAxisSpacing: 12,
+                        mainAxisSpacing: 12,
+                      ),
+                      itemCount: unlockedAchievements.length,
+                      itemBuilder: (context, index) {
+                        final achievement = unlockedAchievements[index];
+                        final userAch = userAchievements.firstWhere(
+                          (ua) => ua.achievementId == achievement.id,
+                        );
+                        return AchievementCard(
+                          achievement: achievement,
+                          userAchievement: userAch,
+                          isUnlocked: true,
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 24),
+                  ],
+                  // Locked section
+                  if (lockedAchievements.isNotEmpty) ...[
+                    Text(
+                      '未獲得 (${lockedAchievements.length})',
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 0.9,
+                        crossAxisSpacing: 12,
+                        mainAxisSpacing: 12,
+                      ),
+                      itemCount: lockedAchievements.length,
+                      itemBuilder: (context, index) {
+                        final achievement = lockedAchievements[index];
+                        return AchievementCard(
+                          achievement: achievement,
+                          isUnlocked: false,
+                        );
+                      },
+                    ),
+                  ],
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }
 
-class _BadgeProgressCard extends StatelessWidget {
-  final BadgeProgress badge;
+class _LockedAchievementsTab extends ConsumerWidget {
+  final AsyncValue<List<Achievement>> achievementsAsync;
+  final AsyncValue<List<UserAchievement>> userAchievementsAsync;
 
-  const _BadgeProgressCard({required this.badge});
+  const _LockedAchievementsTab({
+    required this.achievementsAsync,
+    required this.userAchievementsAsync,
+  });
 
   @override
-  Widget build(BuildContext context) {
-    final progressColor = badge.isUnlocked ? kAccentGreen : kAccentOrange;
+  Widget build(BuildContext context, WidgetRef ref) {
+    return achievementsAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stackTrace) => Center(child: Text('エラー: $error')),
+      data: (achievements) {
+        return userAchievementsAsync.when(
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (error, stackTrace) => Center(child: Text('エラー: $error')),
+          data: (userAchievements) {
+            final unlockedIds = userAchievements.map((ua) => ua.achievementId).toSet();
+            final lockedAchievements = achievements
+                .where((a) => !unlockedIds.contains(a.id))
+                .toList();
 
-    return Container(
-      padding: AppSpacing.allPaddingMd,
-      decoration: BoxDecoration(
-        color: badge.isUnlocked ? kAccentGreen.withAlpha(10) : Colors.grey[50],
-        border: Border.all(
-          color: badge.isUnlocked ? kAccentGreen.withAlpha(50) : Colors.grey[300]!,
-        ),
-        borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            if (lockedAchievements.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.celebration, size: 64, color: AppColors.primary),
+                    const SizedBox(height: 16),
+                    Text(
+                      'すべてのアチーブメント獲得済み！',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 0.9,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                ),
+                itemCount: lockedAchievements.length,
+                itemBuilder: (context, index) {
+                  return AchievementCard(
+                    achievement: lockedAchievements[index],
+                    isUnlocked: false,
+                  );
+                },
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+class _AchievementStatsTab extends ConsumerWidget {
+  final AsyncValue<AchievementStats?> statsAsync;
+
+  const _AchievementStatsTab({required this.statsAsync});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return statsAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stackTrace) => Center(child: Text('エラー: $error')),
+      data: (stats) {
+        if (stats == null) {
+          return const Center(child: Text('統計情報がありません'));
+        }
+
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Text(badge.icon, style: const TextStyle(fontSize: 28)),
-                  AppSpacing.horizontalSpacerMd,
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(badge.title, style: AppTypography.labelLarge),
-                      AppSpacing.verticalSpacerXs,
-                      Text(
-                        badge.isUnlocked ? '✓ 獲得済み' : '${badge.currentValue}/${badge.targetValue}',
-                        style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 11),
-                      ),
+              // Overall completion
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      AppColors.primary.withOpacity(0.1),
+                      AppColors.primary.withOpacity(0.05),
                     ],
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: AppColors.primary.withOpacity(0.2)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '全体進捗',
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                    const SizedBox(height: 12),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: LinearProgressIndicator(
+                        value: stats.completionPercent / 100,
+                        minHeight: 12,
+                        backgroundColor: AppColors.surfaceVariant,
+                        valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      '${stats.completionDisplay} (${stats.completionPercent.toStringAsFixed(1)}%)',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppColors.textMuted,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+              // Stats grid
+              GridView.count(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                crossAxisCount: 2,
+                mainAxisSpacing: 12,
+                crossAxisSpacing: 12,
+                children: [
+                  _StatCard(
+                    icon: '🏆',
+                    label: '獲得アチーブメント',
+                    value: stats.unlockedCount.toString(),
+                    color: AppColors.accentOrange,
+                  ),
+                  _StatCard(
+                    icon: '💎',
+                    label: '報酬受取済み',
+                    value: stats.claimedCount.toString(),
+                    color: AppColors.accentGreen,
+                  ),
+                  _StatCard(
+                    icon: '⭐',
+                    label: '合計XP',
+                    value: stats.totalXpEarned.toString(),
+                    color: AppColors.primary,
+                  ),
+                  _StatCard(
+                    icon: '💰',
+                    label: '合計コイン',
+                    value: stats.totalCoinsEarned.toString(),
+                    color: AppColors.accentGreen,
                   ),
                 ],
               ),
-              if (badge.isUnlocked)
-                const Icon(Icons.check_circle, color: kAccentGreen)
-              else
-                Container(
-                  padding: EdgeInsets.all(AppSpacing.sm),
-                  decoration: BoxDecoration(
-                    color: progressColor.withAlpha(30),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Text(
-                    '${(badge.progress * 100).toStringAsFixed(0)}%',
-                    style: TextStyle(
-                      color: progressColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 10,
-                    ),
-                  ),
+              const SizedBox(height: 24),
+              // Recent achievements
+              Text(
+                'その他の情報',
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w600,
                 ),
+              ),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceVariant.withOpacity(0.5),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  children: [
+                    _StatRow(
+                      label: '最終獲得',
+                      value: _formatDate(stats.lastAchievementAt),
+                    ),
+                    const SizedBox(height: 8),
+                    _StatRow(
+                      label: '連続日数',
+                      value: '${stats.currentStreak}日',
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
-          if (!badge.isUnlocked) ...[
-            AppSpacing.verticalSpacerMd,
-            ClipRRect(
-              borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
-              child: LinearProgressIndicator(
-                value: badge.progress,
-                minHeight: 8,
-                backgroundColor: Colors.grey[300],
-                valueColor: AlwaysStoppedAnimation(progressColor),
+        );
+      },
+    );
+  }
+
+  String _formatDate(DateTime date) {
+    final now = DateTime.now();
+    final difference = now.difference(date);
+    if (difference.inDays == 0) return '今日';
+    if (difference.inDays == 1) return '昨日';
+    if (difference.inDays < 7) return '${difference.inDays}日前';
+    return '${date.month}月${date.day}日';
+  }
+}
+
+class _FilterChips extends ConsumerWidget {
+  final WidgetRef ref;
+
+  const _FilterChips({required this.ref});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final typeFilter = ref.watch(achievementTypeFilterProvider);
+    final tierFilter = ref.watch(achievementTierFilterProvider);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'タイプ別',
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            fontWeight: FontWeight.w600,
+            color: AppColors.textMuted,
+          ),
+        ),
+        const SizedBox(height: 8),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: AchievementType.values
+                .map((type) => Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: FilterChip(
+                label: Text(type.toString().split('.').last),
+                selected: typeFilter == type,
+                onSelected: (selected) {
+                  ref.read(achievementTypeFilterProvider.notifier).state =
+                      selected ? type : null;
+                },
               ),
-            ),
-          ],
-        ],
-      ),
+            ))
+                .toList(),
+          ),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          '難易度',
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            fontWeight: FontWeight.w600,
+            color: AppColors.textMuted,
+          ),
+        ),
+        const SizedBox(height: 8),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: AchievementTier.values
+                .map((tier) => Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: FilterChip(
+                label: Text(tier.toString().split('.').last),
+                selected: tierFilter == tier,
+                onSelected: (selected) {
+                  ref.read(achievementTierFilterProvider.notifier).state =
+                      selected ? tier : null;
+                },
+              ),
+            ))
+                .toList(),
+          ),
+        ),
+      ],
     );
   }
 }
 
-class _AllBadgeCard extends StatelessWidget {
+class _StatCard extends StatelessWidget {
   final String icon;
-  final String title;
-  final bool isEarned;
+  final String label;
+  final String value;
+  final Color color;
 
-  const _AllBadgeCard({
+  const _StatCard({
     required this.icon,
-    required this.title,
-    required this.isEarned,
+    required this.label,
+    required this.value,
+    required this.color,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isEarned ? Colors.white : Colors.grey[200],
-        border: Border.all(
-          color: isEarned ? Colors.grey[300]! : Colors.grey[300]!,
-        ),
-        borderRadius: BorderRadius.circular(AppSizes.borderRadius),
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.2)),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          Text(icon, style: const TextStyle(fontSize: 32)),
+          const SizedBox(height: 8),
           Text(
-            icon,
-            style: TextStyle(
-              fontSize: 28,
-              opacity: isEarned ? 1.0 : 0.3,
+            value,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: color,
             ),
           ),
-          AppSpacing.verticalSpacerXs,
+          const SizedBox(height: 4),
           Text(
-            title,
+            label,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: AppColors.textMuted,
+            ),
             textAlign: TextAlign.center,
-            style: AppTypography.labelSmall.copyWith(
-              color: isEarned ? Colors.black : kTextMuted,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
           ),
-          if (!isEarned)
-            Padding(
-              padding: EdgeInsets.only(top: AppSpacing.xs),
-              child: const Icon(Icons.lock, size: 16, color: kTextMuted),
-            ),
         ],
       ),
+    );
+  }
+}
+
+class _StatRow extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _StatRow({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: AppColors.textMuted,
+          ),
+        ),
+        Text(
+          value,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
     );
   }
 }

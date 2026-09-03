@@ -1,10 +1,7 @@
+import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/purchase_provider.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
 
 enum PlanType { lite, pro, plus, premium }
 
@@ -23,7 +20,7 @@ class _UpgradeScreenState extends ConsumerState<UpgradeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('🌟 プランを選ぼう'),
-        backgroundColor: kPrimaryColor,
+        backgroundColor: AppColors.primary,
       ),
       body: SingleChildScrollView(
         padding: AppSpacing.allPaddingMd,
@@ -81,7 +78,7 @@ class _HeroSection extends StatelessWidget {
       padding: EdgeInsets.all(AppSpacing.xl),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [kPrimaryColor, kPrimaryLight],
+          colors: [AppColors.primary, AppColors.primary.withAlpha(25)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -93,13 +90,13 @@ class _HeroSection extends StatelessWidget {
           AppSpacing.verticalSpacerXs,
           Text(
             'スピーキング力を\n本物にしよう！',
-            style: AppTypography.headlineLarge.copyWith(color: Colors.white, height: 1.4),
+            style: AppTypography.headlineLarge.copyWith(color:AppColors.textWhite, height: 1.4),
             textAlign: TextAlign.center,
           ),
           AppSpacing.verticalSpacerXs,
           Text(
             'AI発音チェック × 親向け詳細フィードバック',
-            style: AppTypography.bodySmall.copyWith(color: Colors.white70),
+            style: AppTypography.bodySmall.copyWith(color: AppColors.textWhite.withOpacity(0.7)),
             textAlign: TextAlign.center,
           ),
         ],
@@ -118,7 +115,7 @@ class _ComparisonHeader extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: AppSpacing.xs),
           child: Text(
             'プランを選択',
-            style: AppTypography.bodySmall.copyWith(color: Colors.grey.shade600, fontWeight: FontWeight.bold, fontSize: 13),
+            style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, fontWeight: FontWeight.bold, fontSize: 13),
           ),
         ),
         const Expanded(child: Divider()),
@@ -191,10 +188,10 @@ List<String> _planFeatures(PlanType p) {
 
 Color _planColor(PlanType p) {
   switch (p) {
-    case PlanType.lite: return kListeningColor;
-    case PlanType.pro: return kPrimaryColor;
-    case PlanType.plus: return kAccentGreen;
-    case PlanType.premium: return kAccentOrange;
+    case PlanType.lite: return AppColors.listeningColor;
+    case PlanType.pro: return AppColors.primary;
+    case PlanType.plus: return AppColors.accentGreen;
+    case PlanType.premium: return AppColors.accentOrange;
   }
 }
 
@@ -219,10 +216,10 @@ class _PlanCard extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color:AppColors.textWhite,
           borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
           border: Border.all(
-            color: selected ? color : Colors.grey.shade200,
+            color: selected ? color :AppColors.textMuted,
             width: selected ? 2.5 : 1,
           ),
           boxShadow: selected
@@ -241,15 +238,15 @@ class _PlanCard extends StatelessWidget {
                     height: 20,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: selected ? color : Colors.grey.shade300, width: 2),
+                      border: Border.all(color: selected ? color :AppColors.textMuted, width: 2),
                       color: selected ? color : Colors.transparent,
                     ),
-                    child: selected ? const Icon(Icons.check, color: Colors.white, size: 12) : null,
+                    child: selected ? const Icon(Icons.check, color: AppColors.textWhite, size: 12) : null,
                   ),
                   AppSpacing.horizontalSpacerXs,
                   Text(
                     _planName(plan),
-                    style: AppTypography.headlineSmall.copyWith(fontWeight: FontWeight.bold, color: selected ? color : kTextDark),
+                    style: AppTypography.headlineSmall.copyWith(fontWeight: FontWeight.bold, color: selected ? color : AppColors.textPrimary),
                   ),
                   AppSpacing.horizontalSpacerXs,
                   if (isRecommended)
@@ -268,9 +265,9 @@ class _PlanCard extends StatelessWidget {
                     children: [
                       Text(
                         _planPrice(plan),
-                        style: AppTypography.headlineLarge.copyWith(fontWeight: FontWeight.bold, color: selected ? color : kTextDark),
+                        style: AppTypography.headlineLarge.copyWith(fontWeight: FontWeight.bold, color: selected ? color : AppColors.textPrimary),
                       ),
-                      Text('/月', style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 11)),
+                      Text('/月', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, fontSize: 11)),
                     ],
                   ),
                 ],
@@ -278,7 +275,7 @@ class _PlanCard extends StatelessWidget {
               AppSpacing.verticalSpacerXs,
               Padding(
                 padding: EdgeInsets.only(left: 30),
-                child: Text(_planSubtitle(plan), style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 13)),
+                child: Text(_planSubtitle(plan), style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, fontSize: 13)),
               ),
               if (selected) ...[
                 AppSpacing.verticalSpacerXs,
@@ -288,7 +285,7 @@ class _PlanCard extends StatelessWidget {
                   padding: EdgeInsets.only(bottom: AppSpacing.xs, left: 4),
                   child: Text(f, style: AppTypography.bodySmall.copyWith(
                     fontSize: 13,
-                    color: f.startsWith('✅') ? kTextDark : Colors.grey,
+                    color: f.startsWith('✅') ? AppColors.textPrimary : Colors.grey,
                   )),
                 )),
               ],
@@ -327,10 +324,10 @@ class _SubscribeButton extends ConsumerWidget {
       ),
       onPressed: isLoading ? null : () => _showPurchaseDialog(context, ref, plan),
       child: isLoading
-          ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+          ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color:AppColors.textWhite, strokeWidth: 2))
           : Text(
               '${_planName(plan)} プランに登録する（${_planPrice(plan)}/月）',
-              style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold, color: Colors.white),
+              style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold, color: AppColors.textWhite),
             ),
     );
   }
@@ -348,7 +345,7 @@ class _SubscribeButton extends ConsumerWidget {
             AppSpacing.verticalSpacerXs,
             Text(
               'App Store / Google Play の決済を通じて請求されます。\nいつでもキャンセル可能です。',
-              style: AppTypography.bodySmall.copyWith(fontSize: 13, color: kTextMuted),
+              style: AppTypography.bodySmall.copyWith(fontSize: 13, color: AppColors.textMuted),
             ),
           ],
         ),
@@ -381,9 +378,9 @@ class _TrialBanner extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(AppSpacing.xs),
       decoration: BoxDecoration(
-        color: kAccentGreen.withAlpha(26),
+        color: AppColors.accentGreen.withAlpha(26),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-        border: Border.all(color: kAccentGreen.withAlpha(76)),
+        border: Border.all(color: AppColors.accentGreen.withAlpha(76)),
       ),
       child: Row(
         children: [
@@ -392,7 +389,7 @@ class _TrialBanner extends StatelessWidget {
           Expanded(
             child: Text(
               '2週間無料トライアル実施中！\nすべてのプランで全機能をお試しいただけます。',
-              style: AppTypography.bodySmall.copyWith(fontSize: 13, color: kAccentGreen, fontWeight: FontWeight.bold),
+              style: AppTypography.bodySmall.copyWith(fontSize: 13, color: AppColors.accentGreen, fontWeight: FontWeight.bold),
             ),
           ),
         ],
@@ -441,10 +438,10 @@ class _FeatureComparisonTable extends StatelessWidget {
   }
 
   TableRow _tableHeader() {
-    final style = AppTypography.bodySmall.copyWith(fontWeight: FontWeight.bold, color: kTextMuted, fontSize: 12);
+    final style = AppTypography.bodySmall.copyWith(fontWeight: FontWeight.bold, color: AppColors.textMuted, fontSize: 12);
     return TableRow(
       decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
+        border: Border(bottom: BorderSide(color: AppColors.textMuted)),
       ),
       children: [
         Padding(padding: EdgeInsets.only(bottom: 8), child: Text('機能', style: style)),
@@ -462,14 +459,14 @@ class _FeatureComparisonTable extends StatelessWidget {
       child: Icon(
         v ? Icons.check_circle : Icons.remove,
         size: 16,
-        color: v ? kAccentGreen : Colors.grey.shade300,
+        color: v ? AppColors.accentGreen :AppColors.textMuted,
       ),
     );
 
     return TableRow(children: [
       Padding(
         padding: EdgeInsets.symmetric(vertical: 6),
-        child: Text(label, style: AppTypography.bodySmall.copyWith(fontSize: 13, color: kTextDark)),
+        child: Text(label, style: AppTypography.bodySmall.copyWith(fontSize: 13, color: AppColors.textPrimary)),
       ),
       Align(alignment: Alignment.center, child: cell(lite)),
       Align(alignment: Alignment.center, child: cell(pro)),
@@ -486,7 +483,7 @@ class _Disclaimer extends StatelessWidget {
       '※ サブスクリプションは App Store / Google Play のアカウントに請求されます。\n'
       '現在の期間が終了する24時間前までに解約しない限り、自動的に更新されます。\n'
       'いつでも設定からキャンセルできます。',
-      style: AppTypography.bodySmall.copyWith(fontSize: 11, color: kTextMuted, height: 1.5),
+      style: AppTypography.bodySmall.copyWith(fontSize: 11, color: AppColors.textMuted, height: 1.5),
     );
   }
 }

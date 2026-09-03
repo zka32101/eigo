@@ -1,11 +1,8 @@
+import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import '../data/stage_intro_data.dart';
 import '../models/stage.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
 import '../widgets/educational_illustrations.dart';
 
 class StageIntroScreen extends StatefulWidget {
@@ -41,9 +38,9 @@ class _StageIntroScreenState extends State<StageIntroScreen> {
     final intro = stageIntroData[widget.stage.id];
 
     return Scaffold(
-      backgroundColor: kBgLight,
+      backgroundColor: AppColors.bgLight,
       appBar: AppBar(
-        backgroundColor: kPrimaryColor,
+        backgroundColor: AppColors.primary,
         title: Text('${widget.stage.emoji} ${widget.stage.titleJa}'),
       ),
       body: SingleChildScrollView(
@@ -89,8 +86,8 @@ class _StageIntroScreenState extends State<StageIntroScreen> {
                 onPressed: _startLesson,
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(vertical: AppSpacing.lg),
-                  backgroundColor: kAccentGreen,
-                  foregroundColor: Colors.white,
+                  backgroundColor: AppColors.accentGreen,
+                  foregroundColor: AppColors.textWhite,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
                   ),
@@ -119,7 +116,7 @@ class _HeaderCard extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
           gradient: const LinearGradient(
-            colors: [kPrimaryColor, Color(0xFF5B9BD5)],
+            colors: [AppColors.primary, Color(0xFF5B9BD5)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -132,24 +129,24 @@ class _HeaderCard extends StatelessWidget {
             Text(
               stage.titleJa,
               style: AppTypography.headlineMedium.copyWith(
-                color: Colors.white,
+                color: AppColors.textWhite,
               ),
             ),
             Text(
               stage.title,
-              style: AppTypography.bodySmall.copyWith(color: Colors.white.withAlpha(200)),
+              style: AppTypography.bodySmall.copyWith(color: AppColors.textWhite.withAlpha(200)),
             ),
             if (intro != null) ...[
               AppSpacing.verticalSpacerSm,
               Container(
                 padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.xs),
                 decoration: BoxDecoration(
-                  color: Colors.white.withAlpha(30),
+                  color: AppColors.textWhite.withAlpha(30),
                   borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge * 2),
                 ),
                 child: Text(
                   intro!.overviewJa,
-                  style: AppTypography.bodySmall.copyWith(color: Colors.white),
+                  style: AppTypography.bodySmall.copyWith(color: AppColors.textWhite),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -177,7 +174,7 @@ class _VocabSection extends StatelessWidget {
           padding: EdgeInsets.only(left: AppSpacing.xs, bottom: AppSpacing.xs),
           child: Text(
             '📝 キーワード',
-            style: AppTypography.labelLarge.copyWith(color: kTextDark),
+            style: AppTypography.labelLarge.copyWith(color: AppColors.textPrimary),
           ),
         ),
         GridView.count(
@@ -229,20 +226,20 @@ class _VocabChip extends StatelessWidget {
               Text(
                 vocab.english,
                 style: AppTypography.labelLarge.copyWith(
-                  color: kPrimaryColor,
+                  color: AppColors.primary,
                 ),
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
               ),
               Text(
                 vocab.japanese,
-                style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                 textAlign: TextAlign.center,
               ),
               if (vocab.phonetic.isNotEmpty)
                 Text(
                   vocab.phonetic,
-                  style: AppTypography.bodySmall.copyWith(fontSize: 9, color: kTextMuted),
+                  style: AppTypography.bodySmall.copyWith(fontSize: 9, color: AppColors.textMuted),
                   textAlign: TextAlign.center,
                 ),
             ],
@@ -277,13 +274,13 @@ class _TipCard extends StatelessWidget {
                   const Text(
                     'ポイント！',
                     style: AppTypography.labelLarge.copyWith(
-                      color: kAccentOrange,
+                      color: AppColors.accentOrange,
                     ),
                   ),
                   AppSpacing.verticalSpacerXs,
                   Text(
                     intro.tipJa,
-                    style: AppTypography.bodySmall.copyWith(color: kTextDark, height: 1.5),
+                    style: AppTypography.bodySmall.copyWith(color: AppColors.textPrimary, height: 1.5),
                   ),
                 ],
               ),
@@ -305,7 +302,7 @@ class _ExampleCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: kPrimaryColor.withAlpha(13),
+      color: AppColors.primary.withAlpha(13),
       child: Padding(
         padding: AppSpacing.allPaddingLg,
         child: Column(
@@ -313,7 +310,7 @@ class _ExampleCard extends StatelessWidget {
           children: [
             const Text(
               '🗣️ 例文',
-              style: AppTypography.labelLarge.copyWith(color: kTextDark),
+              style: AppTypography.labelLarge.copyWith(color: AppColors.textPrimary),
             ),
             AppSpacing.verticalSpacerSm,
             Row(
@@ -325,19 +322,19 @@ class _ExampleCard extends StatelessWidget {
                       Text(
                         intro.exampleEn,
                         style: AppTypography.headlineSmall.copyWith(
-                          color: kPrimaryColor,
+                          color: AppColors.primary,
                         ),
                       ),
                       AppSpacing.verticalSpacerXs,
                       Text(
                         intro.exampleJa,
-                        style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                        style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                       ),
                     ],
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.volume_up, color: kPrimaryColor),
+                  icon: const Icon(Icons.volume_up, color: AppColors.primary),
                   onPressed: () => tts.speak(intro.exampleEn),
                 ),
               ],
@@ -377,28 +374,28 @@ class _ContentBreakdownCard extends StatelessWidget {
                     emoji: '👂',
                     title: 'リスニング',
                     description: '聞いて理解する',
-                    color: kListeningColor,
+                    color: AppColors.listeningColor,
                   ),
                 if (stage.speakingCount > 0)
                   LearningMethodCard(
                     emoji: '🎤',
                     title: 'スピーキング',
                     description: '発音して話す',
-                    color: kSpeakingColor,
+                    color: AppColors.speakingColor,
                   ),
                 if (stage.readingCount > 0)
                   LearningMethodCard(
                     emoji: '📖',
                     title: 'リーディング',
                     description: '読んで理解する',
-                    color: kReadingColor,
+                    color: AppColors.readingColor,
                   ),
                 if (stage.writingCount > 0)
                   LearningMethodCard(
                     emoji: '✏️',
                     title: 'ライティング',
                     description: '書いて学ぶ',
-                    color: kWritingColor,
+                    color: AppColors.writingColor,
                   ),
               ],
             ),
@@ -407,7 +404,7 @@ class _ContentBreakdownCard extends StatelessWidget {
               width: double.infinity,
               padding: EdgeInsets.all(AppSpacing.md),
               decoration: BoxDecoration(
-                color: kPrimaryColor.withAlpha(13),
+                color: AppColors.primary.withAlpha(13),
                 borderRadius: BorderRadius.circular(AppSizes.borderRadius),
               ),
               child: Column(
@@ -415,14 +412,14 @@ class _ContentBreakdownCard extends StatelessWidget {
                   Text(
                     '合計 ${stage.questions.length} 問',
                     style: AppTypography.labelLarge.copyWith(
-                      color: kPrimaryColor,
+                      color: AppColors.primary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   AppSpacing.verticalSpacerXs,
                   Text(
                     'すべてを完了してマスターしよう！',
-                    style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                    style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                   ),
                 ],
               ),
@@ -451,7 +448,7 @@ class _TypeCount extends StatelessWidget {
           '$count問',
           style: AppTypography.labelLarge.copyWith(color: color),
         ),
-        Text(label, style: AppTypography.bodySmall.copyWith(fontSize: 10, color: kTextMuted)),
+        Text(label, style: AppTypography.bodySmall.copyWith(fontSize: 10, color: AppColors.textMuted)),
       ],
     );
   }
@@ -500,7 +497,7 @@ class _InfoRow extends StatelessWidget {
       child: Row(
         children: [
           SizedBox(width: 110, child: Text(type, style: AppTypography.labelMedium)),
-          Expanded(child: Text(desc, style: AppTypography.labelMedium.copyWith(color: kTextMuted))),
+          Expanded(child: Text(desc, style: AppTypography.labelMedium.copyWith(color: AppColors.textMuted))),
         ],
       ),
     );

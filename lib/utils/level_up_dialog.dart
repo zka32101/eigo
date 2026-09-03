@@ -1,3 +1,4 @@
+import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:confetti/confetti.dart';
 
@@ -16,7 +17,7 @@ void showLevelUpDialog(BuildContext context, int newLevel) {
           title: const Text(
             '🎉 レベルアップ！',
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+            style: TextStyle(color:AppColors.textWhite, fontSize: 24, fontWeight: FontWeight.bold),
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -27,7 +28,7 @@ void showLevelUpDialog(BuildContext context, int newLevel) {
                 height: 80,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white,
+                  color:AppColors.textWhite,
                   boxShadow: [
                     BoxShadow(
                       color: const Color(0xFF1A73E8).withAlpha(127),
@@ -51,7 +52,7 @@ void showLevelUpDialog(BuildContext context, int newLevel) {
               const Text(
                 'おめでとうございます！',
                 style: TextStyle(
-                  color: Colors.white,
+                  color:AppColors.textWhite,
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                 ),
@@ -66,7 +67,7 @@ void showLevelUpDialog(BuildContext context, int newLevel) {
               },
               child: const Text(
                 '次へ',
-                style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(color:AppColors.textWhite, fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
           ],

@@ -1,5 +1,5 @@
+import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
 
 class SpeakingScoreRing extends StatelessWidget {
   final int score;
@@ -14,10 +14,10 @@ class SpeakingScoreRing extends StatelessWidget {
   });
 
   Color get _color {
-    if (score >= 85) return kAccentGreen;
-    if (score >= 70) return kPrimaryColor;
-    if (score >= 55) return kAccentOrange;
-    return kAccentRed;
+    if (score >= 85) return AppColors.accentGreen;
+    if (score >= 70) return AppColors.primary;
+    if (score >= 55) return AppColors.accentOrange;
+    return AppColors.error;
   }
 
   String get _grade {
@@ -43,7 +43,7 @@ class SpeakingScoreRing extends StatelessWidget {
                 child: CircularProgressIndicator(
                   value: score / 100,
                   strokeWidth: size * 0.09,
-                  backgroundColor: Colors.grey.shade200,
+                  backgroundColor: AppColors.bgLight,
                   valueColor: AlwaysStoppedAnimation<Color>(_color),
                   strokeCap: StrokeCap.round,
                 ),
@@ -76,7 +76,7 @@ class SpeakingScoreRing extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             '発音スコア',
-            style: TextStyle(fontSize: size * 0.14, color: kTextMuted),
+            style: TextStyle(fontSize: size * 0.14, color: AppColors.textMuted),
           ),
         ],
       ],

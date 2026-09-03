@@ -1,11 +1,8 @@
+import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import '../models/question.dart';
 import '../models/stage.dart';
 import '../services/tts_service.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
 
 class WordReviewScreen extends StatefulWidget {
   final Stage stage;
@@ -45,14 +42,14 @@ class _WordReviewScreenState extends State<WordReviewScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('📚 ${widget.stage.titleJa} 単語カード'),
-        backgroundColor: kPrimaryColor,
+        backgroundColor: AppColors.primary,
         actions: [
           Padding(
             padding: EdgeInsets.only(right: AppSpacing.lg),
             child: Center(
               child: Text(
                 '${_currentIndex + 1} / ${_cards.length}',
-                style: AppTypography.labelLarge.copyWith(color: Colors.white),
+                style: AppTypography.labelLarge.copyWith(color: AppColors.textWhite),
               ),
             ),
           ),
@@ -63,8 +60,8 @@ class _WordReviewScreenState extends State<WordReviewScreen> {
           // プログレス
           LinearProgressIndicator(
             value: (_currentIndex + 1) / _cards.length,
-            backgroundColor: Colors.grey.shade200,
-            color: kPrimaryColor,
+            backgroundColor:AppColors.textMuted,
+            color: AppColors.primary,
             minHeight: 4,
           ),
           Expanded(
@@ -87,7 +84,7 @@ class _WordReviewScreenState extends State<WordReviewScreen> {
                   // ヒント
                   Text(
                     _showBack ? '表に戻すにはタップ' : 'タップして意味を確認',
-                    style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                    style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                   ),
                   AppSpacing.verticalSpacerLg,
                   // ボタン列
@@ -97,7 +94,7 @@ class _WordReviewScreenState extends State<WordReviewScreen> {
                       IconButton.outlined(
                         icon: const Icon(Icons.volume_up),
                         onPressed: () => _tts.speak(_current.text),
-                        style: IconButton.styleFrom(foregroundColor: kPrimaryColor),
+                        style: IconButton.styleFrom(foregroundColor: AppColors.primary),
                       ),
                       AppSpacing.horizontalSpacerXs,
                       // ゆっくりボタン
@@ -105,14 +102,14 @@ class _WordReviewScreenState extends State<WordReviewScreen> {
                         icon: const Icon(Icons.slow_motion_video, size: 16),
                         label: const Text('ゆっくり'),
                         onPressed: () => _tts.speakSlow(_current.text),
-                        style: OutlinedButton.styleFrom(foregroundColor: kPrimaryColor),
+                        style: OutlinedButton.styleFrom(foregroundColor: AppColors.primary),
                       ),
                       const Spacer(),
                       // 前へ
                       IconButton.filled(
                         icon: const Icon(Icons.arrow_back),
                         onPressed: _currentIndex > 0 ? _prev : null,
-                        style: IconButton.styleFrom(backgroundColor: Colors.grey.shade200),
+                        style: IconButton.styleFrom(backgroundColor:AppColors.textMuted),
                       ),
                       AppSpacing.horizontalSpacerXs,
                       // 次へ
@@ -148,7 +145,7 @@ class _FrontCard extends StatelessWidget {
         width: double.infinity,
         decoration: BoxDecoration(
           gradient: const LinearGradient(
-            colors: [kPrimaryColor, kPrimaryLight],
+            colors: [AppColors.primary, AppColors.primary.withAlpha(25)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -164,7 +161,7 @@ class _FrontCard extends StatelessWidget {
             Text(
               question.text,
               style: AppTypography.headlineLarge.copyWith(
-                color: Colors.white,
+                color:AppColors.textWhite,
                 letterSpacing: 1,
               ),
               textAlign: TextAlign.center,
@@ -173,7 +170,7 @@ class _FrontCard extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 question.phonetic!,
-                style: AppTypography.bodySmall.copyWith(color: Colors.white70, fontStyle: FontStyle.italic),
+                style: AppTypography.bodySmall.copyWith(color: AppColors.textWhite.withOpacity(0.7), fontStyle: FontStyle.italic),
               ),
             ],
           ],
@@ -196,9 +193,9 @@ class _BackCard extends StatelessWidget {
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color:AppColors.textWhite,
           borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
-          border: Border.all(color: kPrimaryColor.withAlpha(76), width: 2),
+          border: Border.all(color: AppColors.primary.withAlpha(76), width: 2),
         ),
         padding: EdgeInsets.all(AppSpacing.xxl),
         child: Column(
@@ -211,7 +208,7 @@ class _BackCard extends StatelessWidget {
                   ? question.correctAnswer
                   : question.textJa,
               style: AppTypography.headlineSmall.copyWith(
-                color: kTextDark,
+                color: AppColors.textPrimary,
               ),
               textAlign: TextAlign.center,
             ),
@@ -219,19 +216,19 @@ class _BackCard extends StatelessWidget {
             Container(
               padding: AppSpacing.allPaddingMd,
               decoration: BoxDecoration(
-                color: kBgLight,
+                color: AppColors.bgLight,
                 borderRadius: BorderRadius.circular(AppSizes.borderRadius),
               ),
               child: Text(
                 question.text,
-                style: AppTypography.labelLarge.copyWith(fontSize: 22, color: kPrimaryColor),
+                style: AppTypography.labelLarge.copyWith(fontSize: 22, color: AppColors.primary),
               ),
             ),
             if (question.phonetic != null) ...[
               const SizedBox(height: 8),
               Text(
                 question.phonetic!,
-                style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontStyle: FontStyle.italic),
+                style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, fontStyle: FontStyle.italic),
               ),
             ],
           ],

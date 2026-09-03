@@ -1,5 +1,5 @@
+import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
 
 class StreakBadge extends StatelessWidget {
   final int days;
@@ -12,8 +12,8 @@ class StreakBadge extends StatelessWidget {
     final Color color = days >= 30
         ? const Color(0xFFF59E0B)
         : days >= 7
-            ? kAccentOrange
-            : kPrimaryColor;
+            ? AppColors.accentOrange
+            : AppColors.primary;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
@@ -34,7 +34,7 @@ class StreakBadge extends StatelessWidget {
           Text(
             '$days日連続',
             style: const TextStyle(
-              color: Colors.white,
+              color:AppColors.textWhite,
               fontSize: 13,
               fontWeight: FontWeight.bold,
             ),

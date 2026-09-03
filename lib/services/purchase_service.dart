@@ -1,172 +1,391 @@
-import 'dart:async';
-import 'package:in_app_purchase/in_app_purchase.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-enum PurchasePlan { free, lite, pro, plus, premium }
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../models/purchase_model.dart';
+import 'logger_service.dart';
 
 class PurchaseService {
-  static final PurchaseService _instance = PurchaseService._();
-  factory PurchaseService() => _instance;
-  PurchaseService._();
+  static final PurchaseService _instance = PurchaseService._internal();
 
-  static const _planKey = 'active_plan';
-
-  // Google Play / App Store の商品ID
-  static const Map<String, PurchasePlan> _productToPlan = {
-    'eigo_kore_lite_monthly': PurchasePlan.lite,
-    'eigo_kore_pro_monthly': PurchasePlan.pro,
-    'eigo_kore_plus_monthly': PurchasePlan.plus,
-    'eigo_kore_premium_monthly': PurchasePlan.premium,
-  };
-
-  static const Set<String> _productIds = {
-    'eigo_kore_lite_monthly',
-    'eigo_kore_pro_monthly',
-    'eigo_kore_plus_monthly',
-    'eigo_kore_premium_monthly',
-  };
-
-  final InAppPurchase _iap = InAppPurchase.instance;
-  StreamSubscription<List<PurchaseDetails>>? _subscription;
-  List<ProductDetails> _products = [];
-  PurchasePlan _activePlan = PurchasePlan.free;
-  bool _available = false;
-
-  bool get isAvailable => _available;
-  PurchasePlan get activePlan => _activePlan;
-  List<ProductDetails> get products => _products;
-
-  bool get hasProFeatures => _activePlan.index >= PurchasePlan.pro.index;
-  bool get hasPlusFeatures => _activePlan.index >= PurchasePlan.plus.index;
-  bool get hasPremiumFeatures => _activePlan == PurchasePlan.premium;
-
-  Function(PurchasePlan)? onPlanChanged;
-  Function(String)? onError;
-
-  Future<void> init() async {
-    _available = await _iap.isAvailable();
-    await _loadSavedPlan();
-
-    if (!_available) return;
-
-    // 購入ストリームを購読
-    _subscription = _iap.purchaseStream.listen(
-      _handlePurchaseUpdates,
-      onError: (e) => onError?.call(e.toString()),
-    );
-
-    // 商品情報を取得
-    await _fetchProducts();
-
-    // 過去の購入を復元
-    await _iap.restorePurchases();
+  factory PurchaseService() {
+    return _instance;
   }
 
-  Future<void> _fetchProducts() async {
+  PurchaseService._internal();
+
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final LoggerService _logger = LoggerService();
+
+  // Get all available products
+  Future<List<Product>> getAvailableProducts() async {
     try {
-      final response = await _iap.queryProductDetails(_productIds);
-      _products = response.productDetails;
-    } catch (_) {}
+      final snapshot = await _firestore
+          .collection('products')
+          .where('isActive', isEqualTo: true)
+          .orderBy('createdAt', descending: true)
+          .get();
+
+      return snapshot.docs
+          .map((doc) => Product.fromJson(doc.data()))
+          .toList();
+    } catch (e) {
+      _logger.error('Failed to get products: $e', 'PurchaseService');
+      rethrow;
+    }
   }
 
-  Future<void> _loadSavedPlan() async {
-    final prefs = await SharedPreferences.getInstance();
-    final planName = prefs.getString(_planKey) ?? 'free';
-    _activePlan = PurchasePlan.values.firstWhere(
-      (p) => p.name == planName,
-      orElse: () => PurchasePlan.free,
-    );
+  // Get products by type
+  Future<List<Product>> getProductsByType(ProductType type) async {
+    try {
+      final snapshot = await _firestore
+          .collection('products')
+          .where('type', isEqualTo: type.toString().split('.').last)
+          .where('isActive', isEqualTo: true)
+          .orderBy('createdAt', descending: true)
+          .get();
+
+      return snapshot.docs
+          .map((doc) => Product.fromJson(doc.data()))
+          .toList();
+    } catch (e) {
+      _logger.error('Failed to get products by type: $e', 'PurchaseService');
+      rethrow;
+    }
   }
 
-  Future<void> _savePlan(PurchasePlan plan) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_planKey, plan.name);
-    _activePlan = plan;
-    onPlanChanged?.call(plan);
+  // Get subscription plans
+  Future<List<SubscriptionPlan>> getSubscriptionPlans() async {
+    try {
+      final snapshot = await _firestore
+          .collection('subscriptionPlans')
+          .orderBy('isMostPopular', descending: true)
+          .orderBy('createdAt', descending: true)
+          .get();
+
+      return snapshot.docs
+          .map((doc) => SubscriptionPlan.fromJson(doc.data()))
+          .toList();
+    } catch (e) {
+      _logger.error('Failed to get subscription plans: $e', 'PurchaseService');
+      rethrow;
+    }
   }
 
-  void _handlePurchaseUpdates(List<PurchaseDetails> purchases) {
-    for (final purchase in purchases) {
-      switch (purchase.status) {
-        case PurchaseStatus.purchased:
-        case PurchaseStatus.restored:
-          _verifyAndDeliver(purchase);
-          break;
-        case PurchaseStatus.error:
-          onError?.call(purchase.error?.message ?? '購入エラーが発生しました');
-          if (purchase.pendingCompletePurchase) {
-            _iap.completePurchase(purchase);
-          }
-          break;
-        case PurchaseStatus.canceled:
-          if (purchase.pendingCompletePurchase) {
-            _iap.completePurchase(purchase);
-          }
-          break;
-        case PurchaseStatus.pending:
-          break;
+  // Get featured packages
+  Future<List<PurchasePackage>> getFeaturedPackages() async {
+    try {
+      final snapshot = await _firestore
+          .collection('purchasePackages')
+          .where('isFeatured', isEqualTo: true)
+          .orderBy('createdAt', descending: true)
+          .get();
+
+      final packages = <PurchasePackage>[];
+      for (var doc in snapshot.docs) {
+        final pkg = PurchasePackage.fromJson(doc.data());
+        if (!pkg.isExpired) {
+          packages.add(pkg);
+        }
       }
+      return packages;
+    } catch (e) {
+      _logger.error('Failed to get featured packages: $e', 'PurchaseService');
+      rethrow;
     }
   }
 
-  Future<void> _verifyAndDeliver(PurchaseDetails purchase) async {
-    // 本番では Server-side verification を実装
-    // ここでは簡易的にクライアント側で処理
-    final plan = _productToPlan[purchase.productID];
-    if (plan != null) {
-      await _savePlan(plan);
-    }
-    if (purchase.pendingCompletePurchase) {
-      await _iap.completePurchase(purchase);
-    }
-  }
-
-  /// 商品を購入
-  Future<bool> purchase(String productId) async {
-    if (!_available) return false;
-    final product = _products.where((p) => p.id == productId).toList();
-    if (product.isEmpty) return false;
-
-    final purchaseParam = PurchaseParam(productDetails: product.first);
+  // Create a purchase
+  Future<Purchase> createPurchase({
+    required String userId,
+    required String productId,
+    required String transactionId,
+    required double amount,
+    required String currency,
+    String? receiptData,
+    String? platform,
+  }) async {
     try {
-      return await _iap.buyNonConsumable(purchaseParam: purchaseParam);
-    } catch (_) {
-      return false;
+      final purchaseId = _firestore.collection('purchases').doc().id;
+      final purchase = Purchase(
+        id: purchaseId,
+        userId: userId,
+        productId: productId,
+        transactionId: transactionId,
+        amount: amount,
+        currency: currency,
+        status: PurchaseStatus.completed,
+        purchasedAt: DateTime.now(),
+        isSubscriptionActive: false,
+        receiptData: receiptData,
+        platform: platform,
+      );
+
+      await _firestore
+          .collection('purchases')
+          .doc(purchaseId)
+          .set(purchase.toJson());
+
+      // Create transaction record
+      final txnId = _firestore.collection('transactions').doc().id;
+      final transaction = Transaction(
+        id: txnId,
+        userId: userId,
+        purchaseId: purchaseId,
+        amount: amount,
+        currency: currency,
+        transactionDate: DateTime.now(),
+        transactionId: transactionId,
+        status: 'completed',
+        paymentMethod: platform,
+      );
+
+      await _firestore
+          .collection('transactions')
+          .doc(txnId)
+          .set(transaction.toJson());
+
+      _logger.info(
+        'Purchase created for user $userId: $purchaseId',
+        'PurchaseService',
+      );
+      return purchase;
+    } catch (e) {
+      _logger.error('Failed to create purchase: $e', 'PurchaseService');
+      rethrow;
     }
   }
 
-  /// 購入を復元
-  Future<void> restorePurchases() async {
-    if (!_available) return;
-    await _iap.restorePurchases();
-  }
+  // Get user's purchase history
+  Future<List<Purchase>> getUserPurchases(String userId) async {
+    try {
+      final snapshot = await _firestore
+          .collection('purchases')
+          .where('userId', isEqualTo: userId)
+          .orderBy('purchasedAt', descending: true)
+          .get();
 
-  /// デバッグ用: プランを強制設定
-  Future<void> debugSetPlan(PurchasePlan plan) async {
-    await _savePlan(plan);
-  }
-
-  String get planDisplayName {
-    switch (_activePlan) {
-      case PurchasePlan.free: return '無料プラン';
-      case PurchasePlan.lite: return 'Lite プラン';
-      case PurchasePlan.pro: return 'Pro プラン';
-      case PurchasePlan.plus: return 'Plus プラン';
-      case PurchasePlan.premium: return 'Premium プラン';
+      return snapshot.docs
+          .map((doc) => Purchase.fromJson(doc.data()))
+          .toList();
+    } catch (e) {
+      _logger.error(
+        'Failed to get user purchases: $e',
+        'PurchaseService',
+      );
+      rethrow;
     }
   }
 
-  String get planPrice {
-    switch (_activePlan) {
-      case PurchasePlan.free: return '無料';
-      case PurchasePlan.lite: return '¥200/月';
-      case PurchasePlan.pro: return '¥400/月';
-      case PurchasePlan.plus: return '¥550/月';
-      case PurchasePlan.premium: return '¥1,800/月';
+  // Get active subscriptions for user
+  Future<List<Purchase>> getActiveSubscriptions(String userId) async {
+    try {
+      final purchases = await getUserPurchases(userId);
+      return purchases
+          .where((p) => p.isSubscriptionActive && !p.isExpired)
+          .toList();
+    } catch (e) {
+      _logger.error(
+        'Failed to get active subscriptions: $e',
+        'PurchaseService',
+      );
+      rethrow;
     }
   }
 
-  void dispose() {
-    _subscription?.cancel();
+  // Check if user owns a product
+  Future<bool> userOwnsProduct(String userId, String productId) async {
+    try {
+      final purchases = await getUserPurchases(userId);
+      return purchases.any((p) => p.productId == productId && p.isValid);
+    } catch (e) {
+      _logger.error(
+        'Failed to check product ownership: $e',
+        'PurchaseService',
+      );
+      rethrow;
+    }
+  }
+
+  // Restore purchases (for subscription recovery)
+  Future<List<Purchase>> restorePurchases(String userId) async {
+    try {
+      final purchases = await getUserPurchases(userId);
+      
+      for (final purchase in purchases) {
+        if (purchase.expiresAt != null && 
+            DateTime.now().isBefore(purchase.expiresAt!)) {
+          // Update subscription status if not expired
+          await _firestore
+              .collection('purchases')
+              .doc(purchase.id)
+              .update({
+                'isSubscriptionActive': true,
+                'status': 'completed',
+              });
+        }
+      }
+
+      _logger.info(
+        'Purchases restored for user $userId',
+        'PurchaseService',
+      );
+      return purchases;
+    } catch (e) {
+      _logger.error(
+        'Failed to restore purchases: $e',
+        'PurchaseService',
+      );
+      rethrow;
+    }
+  }
+
+  // Get purchase history with stats
+  Future<PurchaseHistory> getPurchaseHistory(String userId) async {
+    try {
+      final purchases = await getUserPurchases(userId);
+      
+      double totalSpent = 0;
+      final purchasedProductIds = <String>{};
+      DateTime? firstPurchaseDate;
+      DateTime? lastPurchaseDate;
+
+      for (final purchase in purchases) {
+        if (purchase.status == PurchaseStatus.completed) {
+          totalSpent += purchase.amount;
+          purchasedProductIds.add(purchase.productId);
+          
+          if (firstPurchaseDate == null ||
+              purchase.purchasedAt.isBefore(firstPurchaseDate)) {
+            firstPurchaseDate = purchase.purchasedAt;
+          }
+          
+          if (lastPurchaseDate == null ||
+              purchase.purchasedAt.isAfter(lastPurchaseDate)) {
+            lastPurchaseDate = purchase.purchasedAt;
+          }
+        }
+      }
+
+      return PurchaseHistory(
+        userId: userId,
+        totalPurchases: purchases.where((p) => p.isValid).length,
+        totalSpent: totalSpent,
+        currency: 'JPY',
+        purchases: purchases,
+        firstPurchaseDate: firstPurchaseDate,
+        lastPurchaseDate: lastPurchaseDate,
+        purchasedProductIds: purchasedProductIds.toList(),
+      );
+    } catch (e) {
+      _logger.error(
+        'Failed to get purchase history: $e',
+        'PurchaseService',
+      );
+      rethrow;
+    }
+  }
+
+  // Get user's account value (total spent)
+  Future<double> getUserAccountValue(String userId) async {
+    try {
+      final history = await getPurchaseHistory(userId);
+      return history.totalSpent;
+    } catch (e) {
+      _logger.error(
+        'Failed to get user account value: $e',
+        'PurchaseService',
+      );
+      rethrow;
+    }
+  }
+
+  // Verify receipt
+  Future<bool> verifyReceipt(String receiptData, String platform) async {
+    try {
+      // In production, this would call RevenueCat API or your backend
+      // For now, this is a placeholder
+      _logger.info(
+        'Receipt verification for platform: $platform',
+        'PurchaseService',
+      );
+      return true;
+    } catch (e) {
+      _logger.error('Failed to verify receipt: $e', 'PurchaseService');
+      rethrow;
+    }
+  }
+
+  // Cancel subscription
+  Future<void> cancelSubscription(String purchaseId) async {
+    try {
+      await _firestore
+          .collection('purchases')
+          .doc(purchaseId)
+          .update({
+            'isSubscriptionActive': false,
+            'status': 'cancelled',
+          });
+
+      _logger.info(
+        'Subscription cancelled: $purchaseId',
+        'PurchaseService',
+      );
+    } catch (e) {
+      _logger.error(
+        'Failed to cancel subscription: $e',
+        'PurchaseService',
+      );
+      rethrow;
+    }
+  }
+
+  // Apply promo code
+  Future<double> applyPromoCode(
+    String userId,
+    String promoCode,
+    double originalPrice,
+  ) async {
+    try {
+      final doc = await _firestore
+          .collection('promoCodes')
+          .doc(promoCode)
+          .get();
+
+      if (!doc.exists) {
+        throw Exception('Invalid promo code');
+      }
+
+      final data = doc.data()!;
+      final isActive = data['isActive'] ?? false;
+      final discountType = data['discountType'] ?? 'percentage'; // 'percentage' or 'fixed'
+      final discountValue = data['discountValue'] ?? 0;
+      final usageLimit = data['usageLimit'];
+      final timesUsed = data['timesUsed'] ?? 0;
+
+      if (!isActive || (usageLimit != null && timesUsed >= usageLimit)) {
+        throw Exception('Promo code is not valid');
+      }
+
+      double discount = 0;
+      if (discountType == 'percentage') {
+        discount = originalPrice * (discountValue / 100);
+      } else {
+        discount = discountValue.toDouble();
+      }
+
+      final finalPrice = (originalPrice - discount).clamp(0.0, originalPrice);
+
+      // Update usage count
+      await _firestore
+          .collection('promoCodes')
+          .doc(promoCode)
+          .update({'timesUsed': FieldValue.increment(1)});
+
+      return finalPrice;
+    } catch (e) {
+      _logger.error(
+        'Failed to apply promo code: $e',
+        'PurchaseService',
+      );
+      rethrow;
+    }
   }
 }

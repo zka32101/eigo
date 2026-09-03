@@ -1,13 +1,10 @@
+import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/analytics_model.dart';
 import '../widgets/monthly_chart_widget.dart';
 import '../widgets/learning_stats_card.dart';
 import '../providers/analytics_provider.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
 import '../widgets/educational_illustrations.dart';
 
 class LearningAnalyticsScreen extends ConsumerWidget {
@@ -25,11 +22,11 @@ class LearningAnalyticsScreen extends ConsumerWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('学習分析'),
-          backgroundColor: Colors.blue,
+          backgroundColor: AppColors.readingColor,
           bottom: const TabBar(
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.white70,
-            indicatorColor: Colors.white,
+            labelColor: AppColors.textWhite,
+            unselectedLabelColor: AppColors.textWhite.withOpacity(0.7),
+            indicatorColor: AppColors.textWhite,
             tabs: [
               Tab(text: '📊 統計'),
               Tab(text: '📅 月別学力'),
@@ -63,8 +60,8 @@ class LearningAnalyticsScreen extends ConsumerWidget {
           Container(
             padding: AppSpacing.allPaddingMd,
             decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(color: Colors.grey.shade200),
+              color: AppColors.textWhite,
+              border: Border.all(color: AppColors.bgLight),
               borderRadius: BorderRadius.circular(AppSizes.borderRadius),
             ),
             child: Column(
@@ -76,22 +73,22 @@ class LearningAnalyticsScreen extends ConsumerWidget {
                     ProgressVisualization(
                       progress: 0.85,
                       label: 'リスニング',
-                      color: kListeningColor,
+                      color: AppColors.listeningColor,
                     ),
                     ProgressVisualization(
                       progress: 0.72,
                       label: 'スピーキング',
-                      color: kSpeakingColor,
+                      color: AppColors.speakingColor,
                     ),
                     ProgressVisualization(
                       progress: 0.68,
                       label: 'リーディング',
-                      color: kReadingColor,
+                      color: AppColors.readingColor,
                     ),
                     ProgressVisualization(
                       progress: 0.81,
                       label: 'ライティング',
-                      color: kWritingColor,
+                      color: AppColors.writingColor,
                     ),
                   ],
                 ),
@@ -116,7 +113,7 @@ class LearningAnalyticsScreen extends ConsumerWidget {
                   emoji: '👂',
                   title: 'リスニング',
                   description: '聞く力を伸ばす',
-                  color: kListeningColor,
+                  color: AppColors.listeningColor,
                 ),
               ),
               Flexible(
@@ -125,7 +122,7 @@ class LearningAnalyticsScreen extends ConsumerWidget {
                   emoji: '🎤',
                   title: 'スピーキング',
                   description: '話す自信を育てる',
-                  color: kSpeakingColor,
+                  color: AppColors.speakingColor,
                 ),
               ),
               Flexible(
@@ -134,7 +131,7 @@ class LearningAnalyticsScreen extends ConsumerWidget {
                   emoji: '📖',
                   title: 'リーディング',
                   description: '読む理解力を高める',
-                  color: kReadingColor,
+                  color: AppColors.readingColor,
                 ),
               ),
               Flexible(
@@ -143,7 +140,7 @@ class LearningAnalyticsScreen extends ConsumerWidget {
                   emoji: '✏️',
                   title: 'ライティング',
                   description: '書く表現力を培う',
-                  color: kWritingColor,
+                  color: AppColors.writingColor,
                 ),
               ),
             ],
@@ -164,7 +161,7 @@ class LearningAnalyticsScreen extends ConsumerWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.analytics, size: 64, color: Colors.grey),
+              const Icon(Icons.analytics, size: 64, color: AppColors.textMuted),
               AppSpacing.verticalSpacerMd,
               const Text('月ごとのデータがまだありません'),
             ],
@@ -183,7 +180,7 @@ class LearningAnalyticsScreen extends ConsumerWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.analytics, size: 64, color: Colors.grey),
+              const Icon(Icons.analytics, size: 64, color: AppColors.textMuted),
               AppSpacing.verticalSpacerMd,
               const Text('月ごとのデータがまだありません'),
             ],

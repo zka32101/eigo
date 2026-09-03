@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/parent_child_battle_model.dart';
 import '../providers/parent_child_battle_provider.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
+import '../design_system/design_system.dart';
 
 class ParentChildBattleScreen extends ConsumerWidget {
   const ParentChildBattleScreen({super.key});
@@ -22,11 +19,11 @@ class ParentChildBattleScreen extends ConsumerWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('👨‍👩‍👧‍👦 親子発音バトル'),
-          backgroundColor: kPrimaryColor,
+          backgroundColor: AppColors.primary,
           bottom: TabBar(
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.white70,
-            indicatorColor: kAccentOrange,
+            labelColor: AppColors.textWhite,
+            unselectedLabelColor: AppColors.textWhite.withOpacity(0.7),
+            indicatorColor: AppColors.accentOrange,
             isScrollable: true,
             tabs: const [
               Tab(text: 'バトル'),
@@ -119,7 +116,7 @@ class _BattleHeader extends StatelessWidget {
       padding: AppSpacing.allPaddingLg,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [kPrimaryColor, kPrimaryColor.withAlpha(150)],
+          colors: [AppColors.primary, AppColors.primary.withAlpha(150)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -131,7 +128,7 @@ class _BattleHeader extends StatelessWidget {
           Text(
             '本日の親子バトル',
             style: AppTypography.headlineSmall.copyWith(
-              color: Colors.white,
+              color: AppColors.textWhite,
             ),
           ),
           AppSpacing.verticalSpacerMd,
@@ -145,14 +142,14 @@ class _BattleHeader extends StatelessWidget {
                   Text(
                     '👨 ${battle.parentName}',
                     style: AppTypography.labelLarge.copyWith(
-                      color: Colors.white,
+                      color: AppColors.textWhite,
                     ),
                   ),
                   AppSpacing.verticalSpacerXs,
                   Text(
                     '${battle.parentScore}点',
                     style: AppTypography.headlineSmall.copyWith(
-                      color: Colors.white,
+                      color: AppColors.textWhite,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -165,13 +162,13 @@ class _BattleHeader extends StatelessWidget {
                   vertical: AppSpacing.sm,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.white.withAlpha(30),
+                  color: AppColors.textWhite.withAlpha(30),
                   borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
                 ),
                 child: Text(
                   'VS',
                   style: AppTypography.labelLarge.copyWith(
-                    color: Colors.white,
+                    color: AppColors.textWhite,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -183,14 +180,14 @@ class _BattleHeader extends StatelessWidget {
                   Text(
                     '👧 ${battle.childName}',
                     style: AppTypography.labelLarge.copyWith(
-                      color: Colors.white,
+                      color: AppColors.textWhite,
                     ),
                   ),
                   AppSpacing.verticalSpacerXs,
                   Text(
                     '${battle.childScore}点',
                     style: AppTypography.headlineSmall.copyWith(
-                      color: Colors.white,
+                      color: AppColors.textWhite,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -215,8 +212,8 @@ class _BattleSetupSection extends ConsumerWidget {
       margin: AppSpacing.allPaddingLg,
       padding: AppSpacing.allPaddingLg,
       decoration: BoxDecoration(
-        color: kAccentGreen.withAlpha(10),
-        border: Border.all(color: kAccentGreen.withAlpha(50)),
+        color: AppColors.accentGreen.withAlpha(10),
+        border: Border.all(color: AppColors.accentGreen.withAlpha(50)),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
       ),
       child: Column(
@@ -233,21 +230,21 @@ class _BattleSetupSection extends ConsumerWidget {
             width: double.infinity,
             padding: AppSpacing.allPaddingMd,
             decoration: BoxDecoration(
-              color: kPrimaryColor.withAlpha(10),
+              color: AppColors.primary.withAlpha(10),
               borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
             ),
             child: Column(
               children: [
                 Text(
                   'チャレンジフレーズ',
-                  style: AppTypography.labelSmall.copyWith(color: kTextMuted),
+                  style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted),
                 ),
                 AppSpacing.verticalSpacerMd,
                 Text(
                   battle.phrase,
                   textAlign: TextAlign.center,
                   style: AppTypography.headlineMedium.copyWith(
-                    color: kPrimaryColor,
+                    color: AppColors.primary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -255,7 +252,7 @@ class _BattleSetupSection extends ConsumerWidget {
                 Text(
                   battle.phraseMeaning,
                   textAlign: TextAlign.center,
-                  style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                  style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                 ),
               ],
             ),
@@ -266,7 +263,7 @@ class _BattleSetupSection extends ConsumerWidget {
           Container(
             padding: AppSpacing.allPaddingMd,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.textWhite,
               borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
             ),
             child: Column(
@@ -279,7 +276,7 @@ class _BattleSetupSection extends ConsumerWidget {
                 AppSpacing.verticalSpacerSm,
                 Text(
                   '1. 親が最初に発音します\n2. 子がその後に発音します\n3. 各自のスコアを比較します\n4. より高いスコアの方が勝利！',
-                  style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                  style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                 ),
               ],
             ),
@@ -304,8 +301,8 @@ class _BattleSetupSection extends ConsumerWidget {
               icon: const Icon(Icons.play_arrow),
               label: const Text('バトル開始'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: kAccentGreen,
-                foregroundColor: Colors.white,
+                backgroundColor: AppColors.accentGreen,
+                foregroundColor: AppColors.textWhite,
                 padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
               ),
             ),
@@ -390,12 +387,12 @@ class _DuoBattleInterfaceState extends ConsumerState<_DuoBattleInterface> {
       margin: AppSpacing.allPaddingLg,
       padding: AppSpacing.allPaddingLg,
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: kPrimaryColor.withAlpha(50)),
+        color: AppColors.textWhite,
+        border: Border.all(color: AppColors.primary.withAlpha(50)),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(10),
+            color: AppColors.textPrimary.withAlpha(10),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -407,7 +404,7 @@ class _DuoBattleInterfaceState extends ConsumerState<_DuoBattleInterface> {
           Container(
             padding: AppSpacing.allPaddingMd,
             decoration: BoxDecoration(
-              color: _currentTurn == 0 ? Colors.blue.shade50 : Colors.pink.shade50,
+              color: _currentTurn == 0 ? AppColors.readingColor.withAlpha(25) : AppColors.accentPink.withAlpha(25),
               borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
             ),
             child: Center(
@@ -416,7 +413,7 @@ class _DuoBattleInterfaceState extends ConsumerState<_DuoBattleInterface> {
                     ? '👨 ${widget.battle.parentName}のターン'
                     : '👧 ${widget.battle.childName}のターン',
                 style: AppTypography.headlineSmall.copyWith(
-                  color: _currentTurn == 0 ? Colors.blue : Colors.pink,
+                  color: _currentTurn == 0 ? AppColors.readingColor : AppColors.accentPink,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -429,7 +426,7 @@ class _DuoBattleInterfaceState extends ConsumerState<_DuoBattleInterface> {
             widget.battle.phrase,
             textAlign: TextAlign.center,
             style: AppTypography.headlineSmall.copyWith(
-              color: kPrimaryColor,
+              color: AppColors.primary,
             ),
           ),
           AppSpacing.verticalSpacerMd,
@@ -443,12 +440,12 @@ class _DuoBattleInterfaceState extends ConsumerState<_DuoBattleInterface> {
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
                   colors: _currentTurn == 0
-                      ? [Colors.blue.shade300, Colors.blue.shade600]
-                      : [Colors.pink.shade300, Colors.pink.shade600],
+                      ? [AppColors.readingColor.withAlpha(150), AppColors.readingColor]
+                      : [AppColors.accentPink.withAlpha(150), AppColors.accentPink],
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: (_currentTurn == 0 ? Colors.blue : Colors.pink)
+                    color: (_currentTurn == 0 ? AppColors.readingColor : AppColors.accentPink)
                         .withAlpha(100),
                     blurRadius: 12,
                     spreadRadius: 2,
@@ -464,7 +461,7 @@ class _DuoBattleInterfaceState extends ConsumerState<_DuoBattleInterface> {
                     child: Icon(
                       Icons.mic,
                       size: 60,
-                      color: Colors.white,
+                      color: AppColors.textWhite,
                     ),
                   ),
                 ),
@@ -473,7 +470,7 @@ class _DuoBattleInterfaceState extends ConsumerState<_DuoBattleInterface> {
             AppSpacing.verticalSpacerMd,
             Text(
               'タップして発音',
-              style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+              style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
             ),
           ] else ...[
             // Results
@@ -498,8 +495,8 @@ class _DuoBattleInterfaceState extends ConsumerState<_DuoBattleInterface> {
                 icon: const Icon(Icons.check_circle),
                 label: const Text('バトルを終了'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: kAccentGreen,
-                  foregroundColor: Colors.white,
+                  backgroundColor: AppColors.accentGreen,
+                  foregroundColor: AppColors.textWhite,
                   padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
                 ),
               ),
@@ -539,14 +536,14 @@ class _BattleResultDisplay extends StatelessWidget {
             Container(
               padding: AppSpacing.allPaddingMd,
               decoration: BoxDecoration(
-                color: parentWins ? Colors.blue.shade50 : Colors.grey.shade50,
+                color: parentWins ? AppColors.readingColor.withAlpha(25) : AppColors.bgLight.withAlpha(25),
                 borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
               ),
               child: Column(
                 children: [
                   Text(
                     '👨',
-                    style: const TextStyle(fontSize: 40),
+                    style: TextStyle(fontSize: AppTypography.displayMedium.fontSize! * 1.43),
                   ),
                   AppSpacing.verticalSpacerSm,
                   Text(
@@ -557,14 +554,14 @@ class _BattleResultDisplay extends StatelessWidget {
                   Text(
                     '$parentScore点',
                     style: AppTypography.headlineSmall.copyWith(
-                      color: parentWins ? Colors.blue : Colors.grey,
+                      color: parentWins ? AppColors.readingColor : AppColors.textMuted,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   if (parentWins)
                     Chip(
                       label: const Text('勝利！'),
-                      backgroundColor: Colors.blue.shade200,
+                      backgroundColor: AppColors.readingColor.withAlpha(50),
                     ),
                 ],
               ),
@@ -574,11 +571,11 @@ class _BattleResultDisplay extends StatelessWidget {
             if (isTie)
               Column(
                 children: [
-                  const Text('=', style: TextStyle(fontSize: 32)),
+                  const Text('=', style: TextStyle(fontSize: AppTypography.displayMedium.fontSize)),
                   AppSpacing.verticalSpacerMd,
                   const Chip(
                     label: Text('同点'),
-                    backgroundColor: Colors.amber,
+                    backgroundColor: AppColors.accentOrange,
                   ),
                 ],
               ),
@@ -587,14 +584,14 @@ class _BattleResultDisplay extends StatelessWidget {
             Container(
               padding: AppSpacing.allPaddingMd,
               decoration: BoxDecoration(
-                color: childWins ? Colors.pink.shade50 : Colors.grey.shade50,
+                color: childWins ? AppColors.accentPink.withAlpha(25) : AppColors.bgLight.withAlpha(25),
                 borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
               ),
               child: Column(
                 children: [
                   Text(
                     '👧',
-                    style: const TextStyle(fontSize: 40),
+                    style: TextStyle(fontSize: AppTypography.displayMedium.fontSize! * 1.43),
                   ),
                   AppSpacing.verticalSpacerSm,
                   Text(
@@ -605,14 +602,14 @@ class _BattleResultDisplay extends StatelessWidget {
                   Text(
                     '$childScore点',
                     style: AppTypography.headlineSmall.copyWith(
-                      color: childWins ? Colors.pink : Colors.grey,
+                      color: childWins ? AppColors.accentPink : AppColors.textMuted,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   if (childWins)
                     Chip(
                       label: const Text('勝利！'),
-                      backgroundColor: Colors.pink.shade200,
+                      backgroundColor: AppColors.accentPink.withAlpha(50),
                     ),
                 ],
               ),
@@ -645,7 +642,7 @@ class _LeaderboardTab extends ConsumerWidget {
                     padding: AppSpacing.allPaddingLg,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [kAccentOrange, kAccentOrange.withAlpha(150)],
+                        colors: [AppColors.accentOrange, AppColors.accentOrange.withAlpha(150)],
                       ),
                       borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                     ),
@@ -655,14 +652,14 @@ class _LeaderboardTab extends ConsumerWidget {
                         Text(
                           '📅 週間ファミリーリーグ',
                           style: AppTypography.headlineSmall.copyWith(
-                            color: Colors.white,
+                            color: AppColors.textWhite,
                           ),
                         ),
                         AppSpacing.verticalSpacerMd,
                         Text(
                           'Week ${league.weekNumber} (${league.startDate.month}/${league.startDate.day} - ${league.endDate.month}/${league.endDate.day})',
                           style: AppTypography.bodySmall.copyWith(
-                            color: Colors.white70,
+                            color: AppColors.textWhite.withOpacity(0.7),
                           ),
                         ),
                       ],
@@ -707,9 +704,9 @@ class _FamilyLeagueCard extends StatelessWidget {
       margin: AppSpacing.allPaddingLg,
       padding: AppSpacing.allPaddingMd,
       decoration: BoxDecoration(
-        color: isTopThree ? Colors.amber.shade50 : Colors.white,
+        color: isTopThree ? AppColors.accentOrange.withAlpha(25) : AppColors.textWhite,
         border: Border.all(
-          color: isTopThree ? kAccentOrange.withAlpha(50) : Colors.grey[300]!,
+          color: isTopThree ? AppColors.accentOrange.withAlpha(50) : AppColors.bgLight,
         ),
         borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
       ),
@@ -724,7 +721,7 @@ class _FamilyLeagueCard extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: isTopThree ? kAccentOrange.withAlpha(30) : Colors.grey[100],
+                  color: isTopThree ? AppColors.accentOrange.withAlpha(30) : AppColors.bgLight.withAlpha(50),
                   shape: BoxShape.circle,
                 ),
                 child: Center(
@@ -751,7 +748,7 @@ class _FamilyLeagueCard extends StatelessWidget {
                     AppSpacing.verticalSpacerXs,
                     Text(
                       '親: ${entry.parentName} • 子: ${entry.childName}',
-                      style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                      style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                     ),
                   ],
                 ),
@@ -764,13 +761,13 @@ class _FamilyLeagueCard extends StatelessWidget {
                   vertical: AppSpacing.sm,
                 ),
                 decoration: BoxDecoration(
-                  color: kPrimaryColor.withAlpha(20),
+                  color: AppColors.primary.withAlpha(20),
                   borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
                 ),
                 child: Text(
                   '${entry.weeklyPoints}pt',
                   style: AppTypography.labelLarge.copyWith(
-                    color: kPrimaryColor,
+                    color: AppColors.primary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -785,35 +782,35 @@ class _FamilyLeagueCard extends StatelessWidget {
             children: [
               Column(
                 children: [
-                  Text('🎮', style: const TextStyle(fontSize: 24)),
+                  Text('🎮', style: TextStyle(fontSize: AppTypography.displaySmall.fontSize)),
                   AppSpacing.verticalSpacerXs,
                   Text(
                     '${entry.weeklyBattles}',
                     style: AppTypography.labelMedium,
                   ),
-                  Text('対戦', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+                  Text('対戦', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
                 ],
               ),
               Column(
                 children: [
-                  Text('🏆', style: const TextStyle(fontSize: 24)),
+                  Text('🏆', style: TextStyle(fontSize: AppTypography.displaySmall.fontSize)),
                   AppSpacing.verticalSpacerXs,
                   Text(
                     '${entry.weeklyWins}',
                     style: AppTypography.labelMedium,
                   ),
-                  Text('勝利', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+                  Text('勝利', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
                 ],
               ),
               Column(
                 children: [
-                  Text('📊', style: const TextStyle(fontSize: 24)),
+                  Text('📊', style: TextStyle(fontSize: AppTypography.displaySmall.fontSize)),
                   AppSpacing.verticalSpacerXs,
                   Text(
                     '${(entry.winRate * 100).toStringAsFixed(0)}%',
                     style: AppTypography.labelMedium,
                   ),
-                  Text('勝率', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+                  Text('勝率', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
                 ],
               ),
             ],
@@ -906,7 +903,7 @@ class _ActivePassCard extends StatelessWidget {
       padding: AppSpacing.allPaddingLg,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [kAccentGreen, kAccentGreen.withAlpha(150)],
+          colors: [AppColors.accentGreen, AppColors.accentGreen.withAlpha(150)],
         ),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
       ),
@@ -915,19 +912,19 @@ class _ActivePassCard extends StatelessWidget {
         children: [
           Text(
             '✅ アクティブなパス',
-            style: AppTypography.headlineSmall.copyWith(color: Colors.white),
+            style: AppTypography.headlineSmall.copyWith(color: AppColors.textWhite),
           ),
           AppSpacing.verticalSpacerMd,
 
           Text(
             pass.passType == 'weekly_unlimited' ? '📅 週間無制限' : '📆 月間無制限',
-            style: AppTypography.labelLarge.copyWith(color: Colors.white),
+            style: AppTypography.labelLarge.copyWith(color: AppColors.textWhite),
           ),
           AppSpacing.verticalSpacerSm,
 
           Text(
             'あと $daysRemaining 日で期限切れ',
-            style: AppTypography.bodySmall.copyWith(color: Colors.white70),
+            style: AppTypography.bodySmall.copyWith(color: AppColors.textWhite.withOpacity(0.7)),
           ),
         ],
       ),
@@ -958,8 +955,8 @@ class _PassOfferCard extends StatelessWidget {
       margin: AppSpacing.allPaddingLg,
       padding: AppSpacing.allPaddingLg,
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: kPrimaryColor.withAlpha(50)),
+        color: AppColors.textWhite,
+        border: Border.all(color: AppColors.primary.withAlpha(50)),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
       ),
       child: Column(
@@ -967,7 +964,7 @@ class _PassOfferCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text(icon, style: const TextStyle(fontSize: 32)),
+              Text(icon, style: TextStyle(fontSize: AppTypography.displayMedium.fontSize)),
               AppSpacing.horizontalSpacerMd,
               Expanded(
                 child: Column(
@@ -980,7 +977,7 @@ class _PassOfferCard extends StatelessWidget {
                     AppSpacing.verticalSpacerXs,
                     Text(
                       description,
-                      style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                      style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                     ),
                   ],
                 ),
@@ -994,7 +991,7 @@ class _PassOfferCard extends StatelessWidget {
             padding: EdgeInsets.only(bottom: AppSpacing.xs),
             child: Row(
               children: [
-                const Text('✓ ', style: TextStyle(color: kAccentGreen)),
+                const Text('✓ ', style: TextStyle(color: AppColors.accentGreen)),
                 Text(
                   benefit,
                   style: AppTypography.bodySmall,
@@ -1015,13 +1012,13 @@ class _PassOfferCard extends StatelessWidget {
                   vertical: AppSpacing.sm,
                 ),
                 decoration: BoxDecoration(
-                  color: kAccentOrange.withAlpha(30),
+                  color: AppColors.accentOrange.withAlpha(30),
                   borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
                 ),
                 child: Text(
                   price,
                   style: AppTypography.labelLarge.copyWith(
-                    color: kAccentOrange,
+                    color: AppColors.accentOrange,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -1029,7 +1026,7 @@ class _PassOfferCard extends StatelessWidget {
               ElevatedButton(
                 onPressed: onTap,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: kPrimaryColor,
+                  backgroundColor: AppColors.primary,
                 ),
                 child: const Text('購入'),
               ),
@@ -1109,7 +1106,7 @@ class _BattleStatsHeader extends StatelessWidget {
       padding: AppSpacing.allPaddingLg,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [kPrimaryColor, kPrimaryColor.withAlpha(150)],
+          colors: [AppColors.primary, AppColors.primary.withAlpha(150)],
         ),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
       ),
@@ -1118,7 +1115,7 @@ class _BattleStatsHeader extends StatelessWidget {
         children: [
           Text(
             '📊 バトル統計',
-            style: AppTypography.headlineSmall.copyWith(color: Colors.white),
+            style: AppTypography.headlineSmall.copyWith(color: AppColors.textWhite),
           ),
           AppSpacing.verticalSpacerMd,
 
@@ -1127,35 +1124,35 @@ class _BattleStatsHeader extends StatelessWidget {
             children: [
               Column(
                 children: [
-                  Text('🎮', style: const TextStyle(fontSize: 32)),
+                  Text('🎮', style: TextStyle(fontSize: AppTypography.displayMedium.fontSize)),
                   AppSpacing.verticalSpacerXs,
                   Text(
                     '${stats.totalBattles}',
-                    style: AppTypography.headlineSmall.copyWith(color: Colors.white),
+                    style: AppTypography.headlineSmall.copyWith(color: AppColors.textWhite),
                   ),
-                  Text('総対戦', style: AppTypography.bodySmall.copyWith(color: Colors.white70)),
+                  Text('総対戦', style: AppTypography.bodySmall.copyWith(color: AppColors.textWhite.withOpacity(0.7))),
                 ],
               ),
               Column(
                 children: [
-                  Text('👨', style: const TextStyle(fontSize: 32)),
+                  Text('👨', style: TextStyle(fontSize: AppTypography.displayMedium.fontSize)),
                   AppSpacing.verticalSpacerXs,
                   Text(
                     '${stats.parentWins}',
-                    style: AppTypography.headlineSmall.copyWith(color: Colors.white),
+                    style: AppTypography.headlineSmall.copyWith(color: AppColors.textWhite),
                   ),
-                  Text('親の勝利', style: AppTypography.bodySmall.copyWith(color: Colors.white70)),
+                  Text('親の勝利', style: AppTypography.bodySmall.copyWith(color: AppColors.textWhite.withOpacity(0.7))),
                 ],
               ),
               Column(
                 children: [
-                  Text('👧', style: const TextStyle(fontSize: 32)),
+                  Text('👧', style: TextStyle(fontSize: AppTypography.displayMedium.fontSize)),
                   AppSpacing.verticalSpacerXs,
                   Text(
                     '${stats.childWins}',
-                    style: AppTypography.headlineSmall.copyWith(color: Colors.white),
+                    style: AppTypography.headlineSmall.copyWith(color: AppColors.textWhite),
                   ),
-                  Text('子の勝利', style: AppTypography.bodySmall.copyWith(color: Colors.white70)),
+                  Text('子の勝利', style: AppTypography.bodySmall.copyWith(color: AppColors.textWhite.withOpacity(0.7))),
                 ],
               ),
             ],
@@ -1181,9 +1178,9 @@ class _BattleHistoryCard extends StatelessWidget {
       margin: EdgeInsets.only(bottom: AppSpacing.md),
       padding: AppSpacing.allPaddingMd,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.textWhite,
         border: Border.all(
-          color: parentWins ? Colors.blue.shade300 : Colors.pink.shade300,
+          color: parentWins ? AppColors.readingColor.withAlpha(150) : AppColors.accentPink.withAlpha(150),
         ),
         borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
       ),
@@ -1194,13 +1191,13 @@ class _BattleHistoryCard extends StatelessWidget {
             width: 50,
             height: 50,
             decoration: BoxDecoration(
-              color: parentWins ? Colors.blue.shade50 : Colors.pink.shade50,
+              color: parentWins ? AppColors.readingColor.withAlpha(25) : AppColors.accentPink.withAlpha(25),
               shape: BoxShape.circle,
             ),
             child: Center(
               child: Text(
                 parentWins ? '👨' : '👧',
-                style: const TextStyle(fontSize: 24),
+                style: TextStyle(fontSize: AppTypography.displaySmall.fontSize),
               ),
             ),
           ),
@@ -1220,7 +1217,7 @@ class _BattleHistoryCard extends StatelessWidget {
                 AppSpacing.verticalSpacerXs,
                 Text(
                   '${battle.parentName} vs ${battle.childName}',
-                  style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                  style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                 ),
               ],
             ),
@@ -1233,13 +1230,13 @@ class _BattleHistoryCard extends StatelessWidget {
               vertical: AppSpacing.sm,
             ),
             decoration: BoxDecoration(
-              color: kPrimaryColor.withAlpha(20),
+              color: AppColors.primary.withAlpha(20),
               borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
             ),
             child: Text(
               '${battle.parentScore} - ${battle.childScore}',
               style: AppTypography.labelMedium.copyWith(
-                color: kPrimaryColor,
+                color: AppColors.primary,
               ),
             ),
           ),
@@ -1294,9 +1291,9 @@ class _AchievementCard extends StatelessWidget {
       margin: AppSpacing.allPaddingLg,
       padding: AppSpacing.allPaddingLg,
       decoration: BoxDecoration(
-        color: isUnlocked ? Colors.yellow.shade50 : Colors.grey.shade50,
+        color: isUnlocked ? AppColors.accentOrange.withAlpha(25) : AppColors.bgLight.withAlpha(25),
         border: Border.all(
-          color: isUnlocked ? Colors.amber : Colors.grey[300]!,
+          color: isUnlocked ? AppColors.accentOrange : AppColors.bgLight,
         ),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
       ),
@@ -1307,7 +1304,7 @@ class _AchievementCard extends StatelessWidget {
             children: [
               Text(
                 achievement.icon,
-                style: const TextStyle(fontSize: 40),
+                style: TextStyle(fontSize: AppTypography.displayMedium.fontSize! * 1.43),
               ),
               AppSpacing.horizontalSpacerMd,
               Expanded(
@@ -1317,14 +1314,14 @@ class _AchievementCard extends StatelessWidget {
                     Text(
                       achievement.title,
                       style: AppTypography.labelLarge.copyWith(
-                        color: isUnlocked ? Colors.black : Colors.grey,
+                        color: isUnlocked ? AppColors.textPrimary : Colors.grey,
                       ),
                     ),
                     AppSpacing.verticalSpacerXs,
                     Text(
                       achievement.description,
                       style: AppTypography.bodySmall.copyWith(
-                        color: isUnlocked ? kTextMuted : Colors.grey,
+                        color: isUnlocked ? AppColors.textMuted : Colors.grey,
                       ),
                     ),
                   ],
@@ -1338,7 +1335,7 @@ class _AchievementCard extends StatelessWidget {
                     vertical: AppSpacing.sm,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.amber.shade200,
+                    color: AppColors.accentOrange.withAlpha(50),
                     borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
                   ),
                   child: Text(
@@ -1358,9 +1355,9 @@ class _AchievementCard extends StatelessWidget {
             child: LinearProgressIndicator(
               value: progress,
               minHeight: 8,
-              backgroundColor: Colors.grey[300],
+              backgroundColor: AppColors.bgLight,
               valueColor: AlwaysStoppedAnimation<Color>(
-                isUnlocked ? Colors.amber : kPrimaryColor,
+                isUnlocked ? AppColors.accentOrange : AppColors.primary,
               ),
             ),
           ),
@@ -1369,7 +1366,7 @@ class _AchievementCard extends StatelessWidget {
           Text(
             '${achievement.currentCount}/${achievement.targetCount}',
             style: AppTypography.bodySmall.copyWith(
-              color: isUnlocked ? kAccentGreen : kTextMuted,
+              color: isUnlocked ? AppColors.accentGreen : AppColors.textMuted,
             ),
           ),
 
@@ -1381,7 +1378,7 @@ class _AchievementCard extends StatelessWidget {
                 Text(
                   '✅ 獲得済み',
                   style: AppTypography.labelSmall.copyWith(
-                    color: kAccentGreen,
+                    color: AppColors.accentGreen,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

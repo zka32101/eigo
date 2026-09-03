@@ -7,10 +7,7 @@ import '../providers/ai_api_key_provider.dart';
 import '../providers/morning_notification_provider.dart';
 import '../services/purchase_service.dart';
 import '../services/notification_service.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
+import '../design_system/design_system.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -26,7 +23,7 @@ class SettingsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('笞呻ｸ・縺帙▲縺ｦ縺・),
-        backgroundColor: kPrimaryColor,
+        backgroundColor: AppColors.primary,
       ),
       body: ListView(
         padding: AppSpacing.allPaddingLg,
@@ -58,14 +55,14 @@ class SettingsScreen extends ConsumerWidget {
           _SectionHeader('繧｢繧ｫ繧ｦ繝ｳ繝・),
           _SettingsTile(
             icon: Icons.star,
-            color: kAccentOrange,
+            color: AppColors.accentOrange,
             label: '繝励Λ繝ｳ繧偵い繝・・繧ｰ繝ｬ繝ｼ繝・,
             subtitle: purchase.planDisplayName,
             onTap: () => Navigator.of(context).pushNamed('/upgrade'),
           ),
           _SettingsTile(
             icon: Icons.restore,
-            color: kPrimaryColor,
+            color: AppColors.primary,
             label: '雉ｼ蜈･繧貞ｾｩ蜈・,
             subtitle: '莉･蜑阪・雉ｼ蜈･繧貞ｾｩ蜈・＠縺ｾ縺・,
             onTap: () async {
@@ -79,14 +76,14 @@ class SettingsScreen extends ConsumerWidget {
           ),
           _SettingsTile(
             icon: Icons.bar_chart,
-            color: kAccentGreen,
+            color: AppColors.accentGreen,
             label: '隕ｪ蜷代￠繝繝・す繝･繝懊・繝・,
             subtitle: '蟄ｦ鄙定ｩｳ邏ｰ繝ｻ繧ｹ繝斐・繧ｭ繝ｳ繧ｰ蛻・梵',
             onTap: () => Navigator.of(context).pushNamed('/parent'),
           ),
           _SettingsTile(
             icon: Icons.emoji_events,
-            color: kAccentOrange,
+            color: AppColors.accentOrange,
             label: '繝舌ャ繧ｸ荳隕ｧ',
             subtitle: '${progress.clearedStages.length}繧ｹ繝・・繧ｸ繧ｯ繝ｪ繧｢貂医∩',
             onTap: () => Navigator.of(context).pushNamed('/badges'),
@@ -96,13 +93,13 @@ class SettingsScreen extends ConsumerWidget {
           _SectionHeader('縺昴・莉・),
           _SettingsTile(
             icon: Icons.privacy_tip,
-            color: kTextMuted,
+            color: AppColors.textMuted,
             label: '繝励Λ繧､繝舌す繝ｼ繝昴Μ繧ｷ繝ｼ',
             onTap: () => Navigator.of(context).pushNamed('/privacy'),
           ),
           _SettingsTile(
             icon: Icons.info,
-            color: kTextMuted,
+            color: AppColors.textMuted,
             label: '繧｢繝励Μ縺ｫ縺､縺・※',
             subtitle: '繝舌・繧ｸ繝ｧ繝ｳ 1.1.0',
             onTap: () => showAboutDialog(
@@ -130,7 +127,7 @@ class _PlanBadgeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isFree = purchase.activePlan == PurchasePlan.free;
     return Card(
-      color: isFree ? kBgLight : kPrimaryColor.withAlpha(15),
+      color: isFree ? AppColors.bgLight : AppColors.primary.withAlpha(15),
       child: Padding(
         padding: AppSpacing.allPaddingLg,
         child: Row(
@@ -138,12 +135,12 @@ class _PlanBadgeCard extends StatelessWidget {
             Container(
               padding: AppSpacing.allPaddingSm,
               decoration: BoxDecoration(
-                color: isFree ? Colors.grey.shade200 : kAccentOrange.withAlpha(26),
+                color: isFree ? AppColors.bgLight : AppColors.accentOrange.withAlpha(26),
                 shape: BoxShape.circle,
               ),
               child: Text(
                 isFree ? '・' : '箝・,
-                style: const TextStyle(fontSize: 24),
+                style: TextStyle(fontSize: AppTypography.displaySmall.fontSize),
               ),
             ),
             AppSpacing.horizontalSpacerSm,
@@ -158,7 +155,7 @@ class _PlanBadgeCard extends StatelessWidget {
                   if (isFree)
                     const Text(
                       '2騾ｱ髢鍋┌譁吶〒Pro繧偵♀隧ｦ縺励￥縺縺輔＞・・,
-                      style: AppTypography.bodySmall.copyWith(color: kAccentOrange),
+                      style: AppTypography.bodySmall.copyWith(color: AppColors.accentOrange),
                     ),
                 ],
               ),
@@ -167,7 +164,7 @@ class _PlanBadgeCard extends StatelessWidget {
               ElevatedButton(
                 onPressed: () => Navigator.of(context).pushNamed('/upgrade'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: kAccentOrange,
+                  backgroundColor: AppColors.accentOrange,
                   padding: EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
                 ),
                 child: const Text('隧ｦ縺・),
@@ -190,13 +187,13 @@ class _ChildNameCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        leading: const Icon(Icons.child_care, color: kPrimaryColor),
+        leading: const Icon(Icons.child_care, color: AppColors.primary),
         title: const Text('蟄舌←繧ゅ・蜷榊燕'),
         subtitle: Text(
           settings.childName.isEmpty ? '譛ｪ險ｭ螳夲ｼ医ち繝・・縺励※險ｭ螳夲ｼ・ : settings.childName,
-          style: TextStyle(color: settings.childName.isEmpty ? kTextMuted : kTextDark),
+          style: TextStyle(color: settings.childName.isEmpty ? AppColors.textMuted : AppColors.textPrimary),
         ),
-        trailing: const Icon(Icons.edit, color: kTextMuted, size: 18),
+        trailing: const Icon(Icons.edit, color: AppColors.textMuted, size: 18),
         onTap: () => _showNameDialog(context),
       ),
     );
@@ -245,13 +242,13 @@ class _SoundToggle extends StatelessWidget {
       child: SwitchListTile(
         secondary: Icon(
           settings.soundEnabled ? Icons.volume_up : Icons.volume_off,
-          color: kPrimaryColor,
+          color: AppColors.primary,
         ),
         title: const Text('繧ｵ繧ｦ繝ｳ繝・),
         subtitle: const Text('蜉ｹ譫憺浹縺ｨTTS繧呈怏蜉ｹ縺ｫ縺吶ｋ'),
         value: settings.soundEnabled,
         onChanged: (v) => ref.read(settingsProvider.notifier).setSoundEnabled(v),
-        activeThumbColor: kPrimaryColor,
+        activeThumbColor: AppColors.primary,
       ),
     );
   }
@@ -275,13 +272,13 @@ class _TTSSpeedCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                const Icon(Icons.speed, color: kPrimaryColor),
+                const Icon(Icons.speed, color: AppColors.primary),
                 AppSpacing.horizontalSpacerSm,
                 Text('TTS逋ｺ髻ｳ騾溷ｺｦ', style: AppTypography.labelLarge),
                 const Spacer(),
                 Text(
                   settings.ttsSpeed < 0.4 ? '繧・▲縺上ｊ' : settings.ttsSpeed > 0.7 ? '騾溘＞' : '譎ｮ騾・,
-                  style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                  style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                 ),
               ],
             ),
@@ -290,15 +287,15 @@ class _TTSSpeedCard extends StatelessWidget {
               min: 0.3,
               max: 1.0,
               divisions: 7,
-              activeColor: kPrimaryColor,
+              activeColor: AppColors.primary,
               label: settings.ttsSpeed.toStringAsFixed(1),
               onChanged: (v) => ref.read(settingsProvider.notifier).setTtsSpeed(v),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: const [
-                Text('繧・▲縺上ｊ', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
-                Text('騾溘＞', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+                Text('繧・▲縺上ｊ', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
+                Text('騾溘＞', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
               ],
             ),
           ],
@@ -320,12 +317,12 @@ class _AutoPlayToggle extends StatelessWidget {
     return Card(
       margin: EdgeInsets.only(bottom: AppSpacing.xs),
       child: SwitchListTile(
-        secondary: const Icon(Icons.play_circle, color: kListeningColor),
+        secondary: const Icon(Icons.play_circle, color: AppColors.listeningColor),
         title: const Text('繝ｪ繧ｹ繝九Φ繧ｰ閾ｪ蜍募・逕・),
         subtitle: const Text('蝠城｡後′蟋九∪縺｣縺溘ｉ閾ｪ蜍輔〒闍ｱ隱槭ｒ蜀咲函'),
         value: settings.autoPlayListening,
         onChanged: (v) => ref.read(settingsProvider.notifier).setAutoPlayListening(v),
-        activeThumbColor: kListeningColor,
+        activeThumbColor: AppColors.listeningColor,
       ),
     );
   }
@@ -343,12 +340,12 @@ class _PhoneticToggle extends StatelessWidget {
     return Card(
       margin: EdgeInsets.only(bottom: AppSpacing.xs),
       child: SwitchListTile(
-        secondary: const Icon(Icons.text_fields, color: kAccentPurple),
+        secondary: const Icon(Icons.text_fields, color: AppColors.accentPurple),
         title: const Text('逋ｺ髻ｳ險伜捷繧定｡ｨ遉ｺ'),
         subtitle: const Text('IPA 逋ｺ髻ｳ險伜捷繧貞撫鬘後き繝ｼ繝峨↓陦ｨ遉ｺ'),
         value: settings.showPhonetics,
         onChanged: (v) => ref.read(settingsProvider.notifier).setShowPhonetics(v),
-        activeThumbColor: kAccentPurple,
+        activeThumbColor: AppColors.accentPurple,
       ),
     );
   }
@@ -368,7 +365,7 @@ class _NotificationCard extends StatelessWidget {
       child: Column(
         children: [
           SwitchListTile(
-            secondary: const Icon(Icons.notifications, color: kAccentOrange),
+            secondary: const Icon(Icons.notifications, color: AppColors.accentOrange),
             title: const Text('豈取律繝ｪ繝槭う繝ｳ繝繝ｼ'),
             subtitle: const Text('豈取律縺ｮ蟄ｦ鄙偵ｒ騾夂衍縺ｧ繧ｵ繝昴・繝・),
             value: settings.notificationEnabled,
@@ -384,7 +381,7 @@ class _NotificationCard extends StatelessWidget {
                 await ref.read(settingsProvider.notifier).setNotificationEnabled(false);
               }
             },
-            activeThumbColor: kAccentOrange,
+            activeThumbColor: AppColors.accentOrange,
           ),
           if (settings.notificationEnabled)
             ListTile(
@@ -393,7 +390,7 @@ class _NotificationCard extends StatelessWidget {
                 '繝ｪ繝槭う繝ｳ繝繝ｼ譎ょ綾: ${settings.reminderTimeLabel}',
                 style: AppTypography.bodySmall,
               ),
-              trailing: const Icon(Icons.access_time, color: kTextMuted),
+              trailing: const Icon(Icons.access_time, color: AppColors.textMuted),
               onTap: () => _showTimePicker(context),
             ),
         ],
@@ -427,7 +424,7 @@ class _SectionHeader extends StatelessWidget {
       padding: EdgeInsets.only(bottom: AppSpacing.xs, left: AppSpacing.xs, top: AppSpacing.xs),
       child: Text(
         title,
-        style: AppTypography.labelMedium.copyWith(color: kTextMuted),
+        style: AppTypography.labelMedium.copyWith(color: AppColors.textMuted),
       ),
     );
   }
@@ -462,8 +459,8 @@ class _SettingsTile extends StatelessWidget {
           child: Icon(icon, color: color, size: 20),
         ),
         title: Text(label),
-        subtitle: subtitle != null ? Text(subtitle!, style: AppTypography.bodySmall.copyWith(color: kTextMuted)) : null,
-        trailing: const Icon(Icons.chevron_right, color: kTextMuted),
+        subtitle: subtitle != null ? Text(subtitle!, style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)) : null,
+        trailing: const Icon(Icons.chevron_right, color: AppColors.textMuted),
         onTap: onTap,
       ),
     );
@@ -487,7 +484,7 @@ class _MorningEnglishCard extends StatelessWidget {
       child: Column(
         children: [
           SwitchListTile(
-            secondary: const Icon(Icons.wb_sunny, color: kAccentOrange),
+            secondary: const Icon(Icons.wb_sunny, color: AppColors.accentOrange),
             title: const Text('譛晁恭隱樣夂衍'),
             subtitle: const Text('豈取悃繝ｩ繝ｳ繝繝縺ｪ闍ｱ隱槭ヵ繝ｬ繝ｼ繧ｺ繧帝夂衍'),
             value: morningNotification.isEnabled,
@@ -503,7 +500,7 @@ class _MorningEnglishCard extends StatelessWidget {
                     .disableMorningNotification();
               }
             },
-            activeThumbColor: kAccentOrange,
+            activeThumbColor: AppColors.accentOrange,
           ),
           if (morningNotification.isEnabled) ...[
             const Divider(height: 1),
@@ -513,7 +510,7 @@ class _MorningEnglishCard extends StatelessWidget {
                 '騾夂衍譎ょ綾: ${morningNotification.timeLabel}',
                 style: AppTypography.bodySmall,
               ),
-              trailing: const Icon(Icons.access_time, color: kTextMuted),
+              trailing: const Icon(Icons.access_time, color: AppColors.textMuted),
               onTap: () => _showTimePicker(context),
             ),
             Padding(
@@ -537,7 +534,7 @@ class _MorningEnglishCard extends StatelessWidget {
                     }
                   },
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: kAccentOrange,
+                    foregroundColor: AppColors.accentOrange,
                   ),
                 ),
               ),
@@ -546,10 +543,10 @@ class _MorningEnglishCard extends StatelessWidget {
           if (morningNotification.error != null)
             Container(
               padding: AppSpacing.allPaddingMd,
-              color: Colors.red[50],
+              color: AppColors.error.withAlpha(25),
               child: Text(
                 morningNotification.error!,
-                style: AppTypography.bodySmall.copyWith(color: Colors.red),
+                style: AppTypography.bodySmall.copyWith(color: AppColors.error),
               ),
             ),
         ],
@@ -588,30 +585,30 @@ class _ApiKeysCard extends StatelessWidget {
       child: Column(
         children: [
           ListTile(
-            leading: const Icon(Icons.api, color: kPrimaryColor),
+            leading: const Icon(Icons.api, color: AppColors.primary),
             title: const Text('Gemini API 繧ｭ繝ｼ'),
             subtitle: Text(
               apiKeys.hasGeminiKey ? '笨・險ｭ螳壽ｸ医∩' : '譛ｪ險ｭ螳・,
               style: TextStyle(
-                color: apiKeys.hasGeminiKey ? kAccentGreen : kTextMuted,
-                fontSize: 12,
+                color: apiKeys.hasGeminiKey ? AppColors.accentGreen : AppColors.textMuted,
+                fontSize: AppTypography.bodySmall.fontSize,
               ),
             ),
-            trailing: const Icon(Icons.edit, color: kTextMuted, size: 18),
+            trailing: const Icon(Icons.edit, color: AppColors.textMuted, size: 18),
             onTap: () => _showKeyDialog(context, 'Gemini', apiKeys.geminiKey),
           ),
           const Divider(height: 1),
           ListTile(
-            leading: const Icon(Icons.api, color: Color(0xFF7C3AED)),
+            leading: const Icon(Icons.api, color: AppColors.accentPurple),
             title: const Text('Claude API 繧ｭ繝ｼ'),
             subtitle: Text(
               apiKeys.hasClaudeKey ? '笨・險ｭ螳壽ｸ医∩ (繝輔か繝ｼ繝ｫ繝舌ャ繧ｯ)' : '譛ｪ險ｭ螳・,
               style: TextStyle(
-                color: apiKeys.hasClaudeKey ? kAccentGreen : kTextMuted,
-                fontSize: 12,
+                color: apiKeys.hasClaudeKey ? AppColors.accentGreen : AppColors.textMuted,
+                fontSize: AppTypography.bodySmall.fontSize,
               ),
             ),
-            trailing: const Icon(Icons.edit, color: kTextMuted, size: 18),
+            trailing: const Icon(Icons.edit, color: AppColors.textMuted, size: 18),
             onTap: () => _showKeyDialog(context, 'Claude', apiKeys.claudeKey),
           ),
         ],
@@ -633,7 +630,7 @@ class _ApiKeysCard extends StatelessWidget {
               provider == 'Gemini'
                   ? 'Google AI Studio (https://aistudio.google.com) 縺九ｉ蜿門ｾ励＠縺溘く繝ｼ繧貞・蜉帙＠縺ｦ縺上□縺輔＞'
                   : 'Anthropic 繧ｳ繝ｳ繧ｽ繝ｼ繝ｫ縺九ｉ蜿門ｾ励＠縺溘く繝ｼ繧貞・蜉帙＠縺ｦ縺上□縺輔＞',
-              style: const TextStyle(fontSize: 12, color: kTextMuted),
+              style: TextStyle(fontSize: AppTypography.bodySmall.fontSize, color: AppColors.textMuted),
             ),
             const SizedBox(height: 12),
             TextField(
@@ -661,7 +658,7 @@ class _ApiKeysCard extends StatelessWidget {
                 }
                 Navigator.pop(ctx);
               },
-              child: Text('蜑企勁', style: AppTypography.bodySmall.copyWith(color: Colors.red)),
+              child: Text('蜑企勁', style: AppTypography.bodySmall.copyWith(color: AppColors.error)),
             ),
           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('繧ｭ繝｣繝ｳ繧ｻ繝ｫ')),
           ElevatedButton(

@@ -1,3 +1,4 @@
+import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 
 void showCoinNotification(BuildContext context, int amount) {
@@ -8,7 +9,7 @@ void showCoinNotification(BuildContext context, int amount) {
           Text(
             '+$amount',
             style: const TextStyle(
-              color: Colors.white,
+              color:AppColors.textWhite,
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),

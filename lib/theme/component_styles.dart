@@ -1,3 +1,4 @@
+import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'app_theme.dart';
 import 'sizes.dart';
@@ -20,8 +21,8 @@ class AppComponentStyles {
   /// プライマリボタンスタイル
   /// 青色の標準ボタン、最優先アクション用
   static ButtonStyle get primaryButton => ElevatedButton.styleFrom(
-        backgroundColor: kPrimaryColor,
-        foregroundColor: Colors.white,
+        backgroundColor: AppColors.primary,
+        foregroundColor:AppColors.textWhite,
         minimumSize: const Size(double.infinity, AppSizes.buttonHeight),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppSizes.borderRadius),
@@ -39,8 +40,8 @@ class AppComponentStyles {
   /// セカンダリボタンスタイル
   /// グリーン色のボタン、次点のアクション用
   static ButtonStyle get secondaryButton => ElevatedButton.styleFrom(
-        backgroundColor: kSecondaryColor,
-        foregroundColor: Colors.white,
+        backgroundColor: AppColors.accentGreen,
+        foregroundColor:AppColors.textWhite,
         minimumSize: const Size(double.infinity, AppSizes.buttonHeight),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppSizes.borderRadius),
@@ -50,9 +51,9 @@ class AppComponentStyles {
   /// アウトラインボタンスタイル
   /// 枠線のみ、キャンセルなど低優先度アクション用
   static ButtonStyle get outlineButton => OutlinedButton.styleFrom(
-        foregroundColor: kPrimaryColor,
+        foregroundColor: AppColors.primary,
         minimumSize: const Size(double.infinity, AppSizes.buttonHeight),
-        side: const BorderSide(color: kPrimaryColor, width: 2),
+        side: const BorderSide(color: AppColors.primary, width: 2),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppSizes.borderRadius),
         ),
@@ -61,7 +62,7 @@ class AppComponentStyles {
   /// テキストボタンスタイル
   /// 背景なし、最低優先度のアクション用
   static ButtonStyle get textButton => TextButton.styleFrom(
-        foregroundColor: kPrimaryColor,
+        foregroundColor: AppColors.primary,
         minimumSize: const Size(double.infinity, AppSizes.buttonHeight),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppSizes.borderRadius),
@@ -70,8 +71,8 @@ class AppComponentStyles {
 
   /// 小さいボタンスタイル
   static ButtonStyle get smallButton => ElevatedButton.styleFrom(
-        backgroundColor: kPrimaryColor,
-        foregroundColor: Colors.white,
+        backgroundColor: AppColors.primary,
+        foregroundColor:AppColors.textWhite,
         minimumSize: const Size(double.infinity, AppSizes.buttonHeightSmall),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppSizes.borderRadius),
@@ -88,53 +89,53 @@ class AppComponentStyles {
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppSizes.textFieldBorderRadius),
-          borderSide: const BorderSide(color: kBorderColor),
+          borderSide: const BorderSide(color: AppColors.bgLight),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppSizes.textFieldBorderRadius),
-          borderSide: const BorderSide(color: kBorderColor),
+          borderSide: const BorderSide(color: AppColors.bgLight),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppSizes.textFieldBorderRadius),
-          borderSide: const BorderSide(color: kPrimaryColor, width: 2),
+          borderSide: const BorderSide(color: AppColors.primary, width: 2),
         ),
         filled: true,
-        fillColor: Colors.white,
-        hintStyle: const TextStyle(color: kTextMuted),
+        fillColor:AppColors.textWhite,
+        hintStyle: const TextStyle(color: AppColors.textMuted),
       );
 
   // ===== カードスタイル =====
 
   /// 標準カードのデコレーション
   static BoxDecoration get cardDecoration => BoxDecoration(
-        color: Colors.white,
+        color:AppColors.textWhite,
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(13),
+            color: AppColors.textPrimary.withAlpha(13),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
         ],
         border: Border.all(
-          color: kBorderColor,
+          color: AppColors.bgLight,
           width: 1,
         ),
       );
 
   /// 強調されたカードのデコレーション
   static BoxDecoration get highlightedCardDecoration => BoxDecoration(
-        color: Colors.white,
+        color:AppColors.textWhite,
         borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(25),
+            color: AppColors.textPrimary.withAlpha(25),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
         ],
         border: Border.all(
-          color: kPrimaryLight,
+          color: AppColors.primary.withAlpha(25),
           width: 2,
         ),
       );
@@ -143,30 +144,30 @@ class AppComponentStyles {
 
   /// 標準チップの装飾
   static BoxDecoration get chipDecoration => BoxDecoration(
-        color: kPrimaryLight.withAlpha(51),
+        color: AppColors.primary.withAlpha(25).withAlpha(51),
         borderRadius: BorderRadius.circular(AppSizes.chipBorderRadius),
         border: Border.all(
-          color: kPrimaryLight,
+          color: AppColors.primary.withAlpha(25),
           width: 1,
         ),
       );
 
   /// 成功バッジの装飾
   static BoxDecoration get successBadgeDecoration => BoxDecoration(
-        color: kSuccessColor.withAlpha(25),
+        color: AppColors.accentGreen.withAlpha(25),
         borderRadius: BorderRadius.circular(AppSizes.badgeBorderRadius),
         border: Border.all(
-          color: kSuccessColor,
+          color: AppColors.accentGreen,
           width: 1,
         ),
       );
 
   /// 警告バッジの装飾
   static BoxDecoration get warningBadgeDecoration => BoxDecoration(
-        color: kWarningColor.withAlpha(25),
+        color: AppColors.accentOrange.withAlpha(25),
         borderRadius: BorderRadius.circular(AppSizes.badgeBorderRadius),
         border: Border.all(
-          color: kWarningColor,
+          color: AppColors.accentOrange,
           width: 1,
         ),
       );
@@ -176,14 +177,14 @@ class AppComponentStyles {
   /// 標準ディバイダー
   static const Divider standardDivider = Divider(
     height: AppSizes.dividerHeight,
-    color: kBorderColor,
+    color: AppColors.bgLight,
     thickness: 1,
   );
 
   /// 太いディバイダー
   static const Divider boldDivider = Divider(
     height: AppSizes.dividerHeightBold,
-    color: kBorderColor,
+    color: AppColors.bgLight,
     thickness: 2,
   );
 
@@ -206,8 +207,8 @@ class AppComponentStyles {
 class AppBarStyles {
   /// 標準 AppBar のテーマ
   static const AppBarTheme standardTheme = AppBarTheme(
-    backgroundColor: kPrimaryColor,
-    foregroundColor: Colors.white,
+    backgroundColor: AppColors.primary,
+    foregroundColor:AppColors.textWhite,
     elevation: AppSizes.elevationStandard,
     centerTitle: false,
   );
@@ -215,7 +216,7 @@ class AppBarStyles {
   /// ダークテーマの AppBar
   static const AppBarTheme darkTheme = AppBarTheme(
     backgroundColor: Color(0xFF1E1E1E),
-    foregroundColor: Colors.white,
+    foregroundColor:AppColors.textWhite,
     elevation: 0,
   );
 }
