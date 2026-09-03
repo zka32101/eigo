@@ -71,7 +71,6 @@ import 'screens/pet_evolution_screen.dart';
 import 'screens/user_profile_screen.dart';
 import 'screens/activity_feed_screen.dart';
 import 'screens/leaderboard_screen.dart';
-import 'screens/challenge_hub_screen.dart';
 import 'screens/conversation_list_screen.dart';
 import 'screens/chat_screen.dart';
 import 'services/notification_service.dart';
@@ -256,9 +255,12 @@ class EigoKoreApp extends ConsumerWidget {
           );
         }
         if (settings.name == '/pet-evolution') {
-          final petState = settings.arguments as PetState;
+          final args = settings.arguments as Map<String, dynamic>;
           return MaterialPageRoute(
-            builder: (_) => PetEvolutionScreen(petState: petState),
+            builder: (_) => PetEvolutionScreen(
+              currentPet: args['currentPet'] as Pet,
+              evolvedPet: args['evolvedPet'] as Pet,
+            ),
             settings: settings,
           );
         }

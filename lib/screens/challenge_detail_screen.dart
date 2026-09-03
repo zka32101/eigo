@@ -21,12 +21,9 @@ class ChallengeDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _ChallengeDetailScreenState extends ConsumerState<ChallengeDetailScreen> {
-  late int _currentProgress;
-
   @override
   void initState() {
     super.initState();
-    _currentProgress = widget.challenge.currentValue;
   }
 
   @override
@@ -84,7 +81,7 @@ class _ChallengeDetailScreenState extends ConsumerState<ChallengeDetailScreen> {
                             ),
                           ),
                           Text(
-                            widget.challenge.difficultyEmoji,
+                            widget.challenge.typeLabel.substring(0, 1),
                             style: const TextStyle(fontSize: 32),
                           ),
                         ],
@@ -108,7 +105,7 @@ class _ChallengeDetailScreenState extends ConsumerState<ChallengeDetailScreen> {
                                     ),
                               ),
                               Text(
-                                widget.challenge.formattedTimeRemaining,
+                                widget.challenge.daysRemaining,
                                 style: Theme.of(context).textTheme.labelLarge?.copyWith(
                                       fontWeight: FontWeight.bold,
                                       color: Colors.orange,
@@ -126,7 +123,7 @@ class _ChallengeDetailScreenState extends ConsumerState<ChallengeDetailScreen> {
                                     ),
                               ),
                               Text(
-                                '${widget.challenge.participantCount}名',
+                                '${widget.challenge.currentParticipants}名',
                                 style: Theme.of(context).textTheme.labelLarge?.copyWith(
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -174,7 +171,7 @@ class _ChallengeDetailScreenState extends ConsumerState<ChallengeDetailScreen> {
                     );
                   }
 
-                  final percentage = (userProgress.progress / widget.challenge.targetValue * 100)
+                  final percentage = (userProgress.progress / widget.challenge.goalValue * 100)
                       .clamp(0.0, 100.0);
 
                   return Column(
@@ -197,7 +194,7 @@ class _ChallengeDetailScreenState extends ConsumerState<ChallengeDetailScreen> {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    '${userProgress.progress}/${widget.challenge.targetValue}',
+                                    '${userProgress.progress}/${widget.challenge.goalValue}',
                                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -283,14 +280,31 @@ class _ChallengeDetailScreenState extends ConsumerState<ChallengeDetailScreen> {
                     ),
               ),
               AppSpacing.verticalSpacerMd,
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: widget.challenge.rewards.length,
-                itemBuilder: (context, index) {
-                  final reward = widget.challenge.rewards[index];
-                  return _RewardCard(reward: reward);
-                },
+              Column(
+                children: [
+                  if (widget.challenge.firstPlacePrize != null)
+                    _PrizeCard(
+                      rank: '1位',
+                      prize: widget.challenge.firstPlacePrize!,
+                      icon: '🥇',
+                    ),
+                  if (widget.challenge.secondPlacePrize != null) ...[
+                    AppSpacing.verticalSpacerSm,
+                    _PrizeCard(
+                      rank: '2位',
+                      prize: widget.challenge.secondPlacePrize!,
+                      icon: '🥈',
+                    ),
+                  ],
+                  if (widget.challenge.thirdPlacePrize != null) ...[
+                    AppSpacing.verticalSpacerSm,
+                    _PrizeCard(
+                      rank: '3位',
+                      prize: widget.challenge.thirdPlacePrize!,
+                      icon: '🥉',
+                    ),
+                  ],
+                ],
               ),
               AppSpacing.verticalSpacerLg,
 
@@ -428,7 +442,7 @@ class _ChallengeDetailScreenState extends ConsumerState<ChallengeDetailScreen> {
                                       ),
                                       AppSpacing.verticalSpacerSm,
                                       Text(
-                                        '進捗: ${entry['progress']}/${widget.challenge.targetValue}',
+                                        '進捗: ${entry['progress']}/${widget.challenge.goalValue}',
                                         style: Theme.of(context).textTheme.labelSmall?.copyWith(
                                               color: Colors.grey,
                                             ),
@@ -437,7 +451,7 @@ class _ChallengeDetailScreenState extends ConsumerState<ChallengeDetailScreen> {
                                   ),
                                 ),
                                 Text(
-                                  '${(entry['progress'] / widget.challenge.targetValue * 100).toStringAsFixed(0)}%',
+                                  '${(entry['progress'] / widget.challenge.goalValue * 100).toStringAsFixed(0)}%',
                                   style: Theme.of(context).textTheme.labelLarge?.copyWith(
                                         fontWeight: FontWeight.bold,
                                         color: Colors.blue,
@@ -463,117 +477,50 @@ class _ChallengeDetailScreenState extends ConsumerState<ChallengeDetailScreen> {
   }
 }
 
-/// 報酬カード
-class _RewardCard extends StatelessWidget {
-  final ChallengeReward reward;
+/// 順位別報酬カード
+class _PrizeCard extends StatelessWidget {
+  final String rank;
+  final int prize;
+  final String icon;
 
-  const _RewardCard({
-    required this.reward,
+  const _PrizeCard({
+    required this.rank,
+    required this.prize,
+    required this.icon,
   });
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 8),
       child: Padding(
         padding: AppSpacing.allPaddingMd,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  reward.tierLabel,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.blue.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    '${reward.minProgress}%達成で獲得',
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            Text(icon, style: const TextStyle(fontSize: 28)),
+            AppSpacing.horizontalSpacerMd,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    rank,
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                   ),
-                ),
-              ],
-            ),
-            AppSpacing.verticalSpacerMd,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _RewardItem(
-                  icon: '🪙',
-                  label: 'コイン',
-                  value: '${reward.coinReward}',
-                ),
-                _RewardItem(
-                  icon: '⭐',
-                  label: 'XP',
-                  value: '${reward.xpReward}',
-                ),
-                if (reward.badgeId != null)
-                  _RewardItem(
-                    icon: '🏅',
-                    label: 'バッジ',
-                    value: reward.badgeId!,
+                  Text(
+                    '報酬: $prize XP',
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: Colors.grey,
+                        ),
                   ),
-                if (reward.specialItem != null)
-                  _RewardItem(
-                    icon: '🎁',
-                    label: '特別',
-                    value: reward.specialItem!,
-                  ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
       ),
-    );
-  }
-}
-
-/// 報酬アイテム
-class _RewardItem extends StatelessWidget {
-  final String icon;
-  final String label;
-  final String value;
-
-  const _RewardItem({
-    required this.icon,
-    required this.label,
-    required this.value,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(icon, style: const TextStyle(fontSize: 24)),
-        AppSpacing.verticalSpacerSm,
-        Text(
-          label,
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: Colors.grey,
-              ),
-        ),
-        AppSpacing.verticalSpacerSm,
-        Text(
-          value,
-          style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-        ),
-      ],
     );
   }
 }
