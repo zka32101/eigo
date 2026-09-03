@@ -268,6 +268,16 @@ class _QuickActions extends StatelessWidget {
               const Expanded(child: SizedBox.shrink()),
             ],
           ),
+          AppSpacing.verticalSpacerXs,
+          Row(
+            children: [
+              _QuickBtn('🏆 チャレンジ', AppColors.accentPurple, '/challenges'),
+              AppSpacing.horizontalSpacerXs,
+              _QuickBtn('📹 ビデオ\nギャラリー', AppColors.accentRed, '/video-gallery'),
+              AppSpacing.horizontalSpacerXs,
+              _QuickBtn('👥 フレンド\nチャレンジ', AppColors.accentGreen, '/friend-challenges'),
+            ],
+          ),
         ],
       ),
     );

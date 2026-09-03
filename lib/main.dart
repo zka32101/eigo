@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'models/stage.dart';
+import 'models/challenge_model.dart';
+import 'models/video_model.dart';
+import 'models/pet_model.dart';
 import 'providers/purchase_provider.dart';
 import 'providers/settings_provider.dart';
 import 'screens/badge_screen.dart';
@@ -54,6 +57,16 @@ import 'screens/plush_toy_screen.dart';
 import 'screens/passport_screen.dart';
 import 'screens/song_generator_screen.dart';
 import 'screens/english_town_hub_screen.dart';
+import 'screens/challenge_hub_screen.dart';
+import 'screens/challenge_detail_screen.dart';
+import 'screens/challenge_completion_screen.dart';
+import 'screens/friend_challenge_screen.dart';
+import 'screens/video_gallery_screen.dart';
+import 'screens/video_player_screen.dart';
+import 'screens/pet_adoption_screen.dart';
+import 'screens/pet_status_screen.dart';
+import 'screens/pet_interaction_screen.dart';
+import 'screens/pet_evolution_screen.dart';
 import 'services/notification_service.dart';
 import 'services/ad_service.dart';
 import 'services/firebase_service.dart';
@@ -152,6 +165,12 @@ class EigoKoreApp extends ConsumerWidget {
         '/passport': (context) => const PassportScreen(),
         '/song-generator': (context) => const SongGeneratorScreen(),
         '/english-town': (context) => const EnglishTownHubScreen(),
+        '/challenges': (context) => const ChallengeHubScreen(),
+        '/friend-challenges': (context) => const FriendChallengeScreen(),
+        '/video-gallery': (context) => const VideoGalleryScreen(),
+        '/pet-adoption': (context) => const PetAdoptionScreen(),
+        '/pet-status': (context) => const PetStatusScreen(),
+        '/pet-interaction': (context) => const PetInteractionScreen(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/test-prep-result') {
@@ -193,6 +212,41 @@ class EigoKoreApp extends ConsumerWidget {
           final stage = settings.arguments as Stage;
           return MaterialPageRoute(
             builder: (_) => PronunciationCheckScreen(stage: stage),
+            settings: settings,
+          );
+        }
+        if (settings.name == '/challenge-detail') {
+          final args = settings.arguments as Map<String, dynamic>;
+          return MaterialPageRoute(
+            builder: (_) => ChallengeDetailScreen(
+              challenge: args['challenge'] as SocialChallenge,
+              userId: args['userId'] as String,
+            ),
+            settings: settings,
+          );
+        }
+        if (settings.name == '/challenge-completion') {
+          final args = settings.arguments as Map<String, dynamic>;
+          return MaterialPageRoute(
+            builder: (_) => ChallengeCompletionScreen(
+              challengeId: args['challengeId'] as String,
+              userId: args['userId'] as String,
+              challenge: args['challenge'] as SocialChallenge,
+            ),
+            settings: settings,
+          );
+        }
+        if (settings.name == '/video-player') {
+          final video = settings.arguments as PronunciationVideo;
+          return MaterialPageRoute(
+            builder: (_) => VideoPlayerScreen(video: video),
+            settings: settings,
+          );
+        }
+        if (settings.name == '/pet-evolution') {
+          final petState = settings.arguments as PetState;
+          return MaterialPageRoute(
+            builder: (_) => PetEvolutionScreen(petState: petState),
             settings: settings,
           );
         }
