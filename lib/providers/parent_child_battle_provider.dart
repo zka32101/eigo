@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../models/parent_child_battle_model.dart';
+import '../services/logger_service.dart';
 
 /// Current parent-child battle session
 final currentParentChildBattleProvider = StateNotifierProvider<ParentChildBattleNotifier, ParentChildBattle?>((ref) {
@@ -24,7 +25,7 @@ class ParentChildBattleNotifier extends StateNotifier<ParentChildBattle?> {
         state = ParentChildBattle.fromJson(json);
       }
     } catch (e) {
-      print('Error loading battle: $e');
+      LoggerService.error('Error loading battle', tag: 'ParentChildBattleNotifier', exception: e);
     }
   }
   
@@ -37,7 +38,7 @@ class ParentChildBattleNotifier extends StateNotifier<ParentChildBattle?> {
         await prefs.remove(_storageKey);
       }
     } catch (e) {
-      print('Error saving battle: $e');
+      LoggerService.error('Error saving battle', tag: 'ParentChildBattleNotifier', exception: e);
     }
   }
   
@@ -136,7 +137,7 @@ class ParentChildBattleNotifier extends StateNotifier<ParentChildBattle?> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(_storageKey);
     } catch (e) {
-      print('Error resetting battle: $e');
+      LoggerService.error('Error resetting battle', tag: 'ParentChildBattleNotifier', exception: e);
     }
   }
 }
@@ -162,7 +163,7 @@ class BattleHistoryNotifier extends StateNotifier<List<ParentChildBattle>> {
         state = decoded.map((json) => ParentChildBattle.fromJson(json)).toList();
       }
     } catch (e) {
-      print('Error loading history: $e');
+      LoggerService.error('Error loading history', tag: 'BattleHistoryNotifier', exception: e);
     }
   }
   
@@ -172,7 +173,7 @@ class BattleHistoryNotifier extends StateNotifier<List<ParentChildBattle>> {
       final jsonString = jsonEncode(state.map((b) => b.toJson()).toList());
       await prefs.setString(_storageKey, jsonString);
     } catch (e) {
-      print('Error saving history: $e');
+      LoggerService.error('Error saving history', tag: 'BattleHistoryNotifier', exception: e);
     }
   }
   
@@ -263,7 +264,7 @@ class ParentBattlePassNotifier extends StateNotifier<ParentBattlePass?> {
         }
       }
     } catch (e) {
-      print('Error loading pass: $e');
+      LoggerService.error('Error loading pass', tag: 'ParentBattlePassNotifier', exception: e);
     }
   }
   
@@ -276,7 +277,7 @@ class ParentBattlePassNotifier extends StateNotifier<ParentBattlePass?> {
         await prefs.remove(_storageKey);
       }
     } catch (e) {
-      print('Error saving pass: $e');
+      LoggerService.error('Error saving pass', tag: 'ParentBattlePassNotifier', exception: e);
     }
   }
   
@@ -349,7 +350,7 @@ class FamilyBattleStatsNotifier extends StateNotifier<ParentChildBattleStats> {
         state = ParentChildBattleStats.fromJson(json);
       }
     } catch (e) {
-      print('Error loading stats: $e');
+      LoggerService.error('Error loading stats', tag: 'FamilyBattleStatsNotifier', exception: e);
     }
   }
   
@@ -358,10 +359,10 @@ class FamilyBattleStatsNotifier extends StateNotifier<ParentChildBattleStats> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_storageKey, jsonEncode(state.toJson()));
     } catch (e) {
-      print('Error saving stats: $e');
+      LoggerService.error('Error saving stats', tag: 'FamilyBattleStatsNotifier', exception: e);
     }
   }
-  
+
   /// Record completed battle in statistics
   Future<void> recordBattle(ParentChildBattle battle) async {
     final newTotal = state.totalBattles + 1;
@@ -474,7 +475,7 @@ class FamilyBattleAchievementsNotifier extends StateNotifier<List<FamilyBattleAc
         state = decoded.map((json) => FamilyBattleAchievement.fromJson(json)).toList();
       }
     } catch (e) {
-      print('Error loading achievements: $e');
+      LoggerService.error('Error loading achievements', tag: 'FamilyBattleAchievementsNotifier', exception: e);
     }
   }
   
@@ -484,7 +485,7 @@ class FamilyBattleAchievementsNotifier extends StateNotifier<List<FamilyBattleAc
       final jsonString = jsonEncode(state.map((a) => a.toJson()).toList());
       await prefs.setString(_storageKey, jsonString);
     } catch (e) {
-      print('Error saving achievements: $e');
+      LoggerService.error('Error saving achievements', tag: 'FamilyBattleAchievementsNotifier', exception: e);
     }
   }
   

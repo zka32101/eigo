@@ -1,11 +1,8 @@
+import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/level_provider.dart';
 import '../providers/speaking_history_provider.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
 import '../widgets/xp_bar.dart';
 
 class StudyCalendarScreen extends ConsumerWidget {
@@ -19,7 +16,7 @@ class StudyCalendarScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('📅 学習カレンダー'),
-        backgroundColor: kPrimaryColor,
+        backgroundColor: AppColors.primary,
         actions: [
           IconButton(
             icon: const Icon(Icons.bar_chart),
@@ -112,10 +109,10 @@ class _MonthCalendarState extends State<_MonthCalendar> {
                 ),
                 Text(
                   '${_displayMonth.year}年${_displayMonth.month}月',
-                  style: AppTypography.headlineSmall.copyWith(color: kTextDark),
+                  style: AppTypography.headlineSmall.copyWith(color: AppColors.textPrimary),
                 ),
                 IconButton(
-                  icon: Icon(Icons.chevron_right, color: isCurrentMonth ? Colors.grey.shade300 : kTextDark),
+                  icon: Icon(Icons.chevron_right, color: isCurrentMonth ? AppColors.bgLight : AppColors.textPrimary),
                   onPressed: isCurrentMonth ? null : _nextMonth,
                 ),
               ],
@@ -127,7 +124,7 @@ class _MonthCalendarState extends State<_MonthCalendar> {
                 child: Center(
                   child: Text(d, style: AppTypography.bodySmall.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: d == '日' ? kAccentRed : d == '土' ? kPrimaryColor : kTextMuted,
+                    color: d == '日' ? AppColors.error : d == '土' ? AppColors.primary : AppColors.textMuted,
                   )),
                 ),
               )).toList(),
@@ -178,10 +175,10 @@ class _DayCell extends StatelessWidget {
     if (isFuture) return Colors.transparent;
     if (record == null) return Colors.transparent;
     final score = record!.avgScore;
-    if (score >= 85) return kAccentGreen.withAlpha(200);
-    if (score >= 70) return kPrimaryColor.withAlpha(160);
-    if (score >= 55) return kAccentOrange.withAlpha(140);
-    return kSpeakingColor.withAlpha(120);
+    if (score >= 85) return AppColors.accentGreen.withAlpha(200);
+    if (score >= 70) return AppColors.primary.withAlpha(160);
+    if (score >= 55) return AppColors.accentOrange.withAlpha(140);
+    return AppColors.speakingColor.withAlpha(120);
   }
 
   @override
@@ -193,7 +190,7 @@ class _DayCell extends StatelessWidget {
       decoration: BoxDecoration(
         color: hasRecord ? bg : Colors.transparent,
         shape: BoxShape.circle,
-        border: isToday ? Border.all(color: kPrimaryColor, width: 2) : null,
+        border: isToday ? Border.all(color: AppColors.primary, width: 2) : null,
       ),
       child: Center(
         child: Text(
@@ -201,12 +198,12 @@ class _DayCell extends StatelessWidget {
           style: AppTypography.bodySmall.copyWith(
             fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
             color: hasRecord
-                ? Colors.white
+                ? AppColors.textWhite
                 : isFuture
-                    ? Colors.grey.shade300
+                    ? AppColors.bgLight
                     : isToday
-                        ? kPrimaryColor
-                        : kTextDark,
+                        ? AppColors.primary
+                        : AppColors.textPrimary,
           ),
         ),
       ),
@@ -224,8 +221,8 @@ class _HeatmapLegend extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Text('スコア低 ', style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 11)),
-          ...[kSpeakingColor, kAccentOrange, kPrimaryColor, kAccentGreen].map((c) =>
+          Text('スコア低 ', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, fontSize: 11)),
+          ...[AppColors.speakingColor, AppColors.accentOrange, AppColors.primary, AppColors.accentGreen].map((c) =>
             Container(
               width: 14,
               height: 14,
@@ -233,7 +230,7 @@ class _HeatmapLegend extends StatelessWidget {
               decoration: BoxDecoration(color: c.withAlpha(180), borderRadius: BorderRadius.circular(3)),
             ),
           ),
-          Text(' 高', style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 11)),
+          Text(' 高', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, fontSize: 11)),
         ],
       ),
     );
@@ -260,13 +257,13 @@ class _WeeklyStats extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('📊 今週のサマリー',
-                style: AppTypography.labelLarge.copyWith(color: kTextDark)),
+                style: AppTypography.labelLarge.copyWith(color: AppColors.textPrimary)),
             AppSpacing.verticalSpacerXs,
             Row(
               children: [
-                Expanded(child: _WeekStat('📅', '学習日数', '$studyDays日', kPrimaryColor)),
-                Expanded(child: _WeekStat('🎤', '練習回数', '$totalPractice回', kSpeakingColor)),
-                Expanded(child: _WeekStat('📈', '平均スコア', '${avgScore.round()}点', kAccentGreen)),
+                Expanded(child: _WeekStat('📅', '学習日数', '$studyDays日', AppColors.primary)),
+                Expanded(child: _WeekStat('🎤', '練習回数', '$totalPractice回', AppColors.speakingColor)),
+                Expanded(child: _WeekStat('📈', '平均スコア', '${avgScore.round()}点', AppColors.accentGreen)),
               ],
             ),
           ],
@@ -288,7 +285,7 @@ class _WeekStat extends StatelessWidget {
     children: [
       Text(icon, style: const TextStyle(fontSize: 22)),
       Text(value, style: AppTypography.labelLarge.copyWith(color: color)),
-      Text(label, style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 11)),
+      Text(label, style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, fontSize: 11)),
     ],
   );
 }
@@ -306,7 +303,7 @@ class _RecentActivityList extends StatelessWidget {
       return Card(
         child: Padding(
           padding: EdgeInsets.all(AppSpacing.xl),
-          child: Center(child: Text('まだ学習記録がありません', style: AppTypography.bodySmall.copyWith(color: kTextMuted))),
+          child: Center(child: Text('まだ学習記録がありません', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted))),
         ),
       );
     }
@@ -318,15 +315,15 @@ class _RecentActivityList extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('📋 最近の学習履歴',
-                style: AppTypography.labelLarge.copyWith(color: kTextDark)),
+                style: AppTypography.labelLarge.copyWith(color: AppColors.textPrimary)),
             AppSpacing.verticalSpacerXs,
             ...recent.map((r) {
               final dateStr = '${r.date.month}/${r.date.day}（${_weekdayLabel(r.date.weekday)}）';
               final scoreColor = r.avgScore >= 85
-                  ? kAccentGreen
+                  ? AppColors.accentGreen
                   : r.avgScore >= 70
-                      ? kPrimaryColor
-                      : kAccentOrange;
+                      ? AppColors.primary
+                      : AppColors.accentOrange;
               return Padding(
                 padding: EdgeInsets.only(bottom: AppSpacing.sm),
                 child: Row(
@@ -336,12 +333,12 @@ class _RecentActivityList extends StatelessWidget {
                       margin: EdgeInsets.only(right: AppSpacing.sm),
                       decoration: BoxDecoration(color: scoreColor, shape: BoxShape.circle),
                     ),
-                    Text(dateStr, style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+                    Text(dateStr, style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
                     AppSpacing.horizontalSpacerXs,
                     Expanded(
                       child: Text(
                         '単語${r.wordCount}・フレーズ${r.phraseCount}・会話${r.conversationCount}',
-                        style: AppTypography.bodySmall.copyWith(color: kTextDark),
+                        style: AppTypography.bodySmall.copyWith(color: AppColors.textPrimary),
                       ),
                     ),
                     Text(

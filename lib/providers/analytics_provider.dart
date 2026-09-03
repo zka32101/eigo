@@ -1,125 +1,134 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/analytics_model.dart';
+import '../services/english_town_analytics_service.dart';
 
-final analyticsProvider = StateNotifierProvider<AnalyticsNotifier, List<DailyStats>?>((ref) {
-  return AnalyticsNotifier();
+/// Analytics service provider
+final analyticsServiceProvider = Provider<EnglishTownAnalyticsService>((ref) {
+  return EnglishTownAnalyticsService();
 });
 
-class AnalyticsNotifier extends StateNotifier<List<DailyStats>?> {
-  AnalyticsNotifier() : super(null);
+/// Get player analytics for specific period
+final playerAnalyticsProvider =
+    FutureProvider.family<PlayerAnalytics?, String>((ref, userId) async {
+  final service = ref.watch(analyticsServiceProvider);
+  return await service.getPlayerAnalytics(userId);
+});
 
-  /// Save daily stats
-  Future<void> recordDailyStats({
-    required int questsCompleted,
-    required int correctAnswers,
-    required int totalAnswers,
-    required int coinsEarned,
-    required int studyMinutes,
-    required Map<String, dynamic> categoryStats,
-  }) async {
-    try {
-      final today = DateTime.now();
-      final dateStr =
-          '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
+/// Get engagement score for user
+final engagementScoreProvider =
+    FutureProvider.family<EngagementScore?, String>((ref, userId) async {
+  final service = ref.watch(analyticsServiceProvider);
+  return await service.calculateEngagementScore(userId);
+});
 
-      final dailyStats = DailyStats(
-        date: dateStr,
-        questsCompleted: questsCompleted,
-        correctAnswers: correctAnswers,
-        totalAnswers: totalAnswers,
-        coinsEarned: coinsEarned,
-        studyMinutes: studyMinutes,
-        categoryStats: categoryStats,
-      );
+/// Get daily metrics
+final dailyMetricsProvider =
+    FutureProvider.family<DailyMetrics?, DateTime>((ref, date) async {
+  final service = ref.watch(analyticsServiceProvider);
+  return await service.getDailyMetrics(date);
+});
 
-      final currentStats = state ?? [];
-      state = [...currentStats, dailyStats];
-    } catch (e) {
-      debugPrint('❌ Error recording daily stats: $e');
-      rethrow;
-    }
-  }
+/// Get user's recent events
+final userEventsProvider =
+    FutureProvider.family<List<AnalyticsEvent>, String>((ref, userId) async {
+  final service = ref.watch(analyticsServiceProvider);
+  return await service.getUserEvents(userId, limit: 50);
+});
 
-  /// Calculate monthly statistics for a specific month (YYYY-MM)
-  MonthlyStats? calculateMonthlyStats(String month) {
-    if (state == null || state!.isEmpty) return null;
+/// Get events by type
+final eventsByTypeProvider = FutureProvider.family<List<AnalyticsEvent>, AnalyticsEventType>(
+  (ref, eventType) async {
+    final service = ref.watch(analyticsServiceProvider);
+    return await service.getEventsByType(eventType, limit: 50);
+  },
+);
 
-    final targetYear = int.parse(month.split('-')[0]);
-    final targetMonth = int.parse(month.split('-')[1]);
+/// Track event (action function)
+Future<String> trackAnalyticsEvent(
+  WidgetRef ref, {
+  required String userId,
+  required AnalyticsEventType type,
+  required Map<String, dynamic> properties,
+  String? sessionId,
+  String? deviceId,
+  int? xpGained,
+  int? coinsGained,
+  String? relatedUserId,
+  String? relatedChallengeId,
+  int? currentLevel,
+  int? currentRank,
+}) async {
+  final service = ref.read(analyticsServiceProvider);
+  return await service.trackEvent(
+    userId,
+    type,
+    properties,
+    sessionId: sessionId,
+    deviceId: deviceId,
+    xpGained: xpGained,
+    coinsGained: coinsGained,
+    relatedUserId: relatedUserId,
+    relatedChallengeId: relatedChallengeId,
+    currentLevel: currentLevel,
+    currentRank: currentRank,
+  );
+}
 
-    // Filter daily stats for this month
-    final monthlyDailyStats = state!.where((s) {
-      final date = DateTime.parse(s.date);
-      return date.year == targetYear && date.month == targetMonth;
-    }).toList();
+/// Track conversation (helper)
+Future<void> trackConversationEvent(
+  WidgetRef ref, {
+  required String userId,
+  required String npcName,
+  required bool success,
+  required int xpGained,
+  required Duration duration,
+}) async {
+  final service = ref.read(analyticsServiceProvider);
+  await service.trackConversation(userId, npcName, success, xpGained, duration);
+}
 
-    if (monthlyDailyStats.isEmpty) return null;
+/// Track achievement (helper)
+Future<void> trackAchievementEvent(
+  WidgetRef ref, {
+  required String userId,
+  required String achievementId,
+  required String title,
+  required int rewardXp,
+}) async {
+  final service = ref.read(analyticsServiceProvider);
+  await service.trackAchievement(userId, achievementId, title, rewardXp);
+}
 
-    int totalQuests = 0;
-    int totalCorrect = 0;
-    int totalAnswers = 0;
-    int totalMinutes = 0;
-    int totalCoins = 0;
-    final Map<String, dynamic> categoryStats = {};
+/// Track challenge (helper)
+Future<void> trackChallengeEvent(
+  WidgetRef ref, {
+  required String userId,
+  required String challengeId,
+  required String action,
+  required bool success,
+}) async {
+  final service = ref.read(analyticsServiceProvider);
+  await service.trackChallenge(userId, challengeId, action, success);
+}
 
-    for (final daily in monthlyDailyStats) {
-      totalQuests += daily.questsCompleted;
-      totalCorrect += daily.correctAnswers;
-      totalAnswers += daily.totalAnswers;
-      totalMinutes += daily.studyMinutes;
-      totalCoins += daily.coinsEarned;
+/// Track rank change (helper)
+Future<void> trackRankChangeEvent(
+  WidgetRef ref, {
+  required String userId,
+  required int previousRank,
+  required int currentRank,
+}) async {
+  final service = ref.read(analyticsServiceProvider);
+  await service.trackRankChange(userId, previousRank, currentRank);
+}
 
-      // Aggregate category stats
-      daily.categoryStats.forEach((catId, catData) {
-        if (!categoryStats.containsKey(catId)) {
-          categoryStats[catId] = {'correct': 0, 'total': 0};
-        }
-        categoryStats[catId]['correct'] += catData['correct'] as int? ?? 0;
-        categoryStats[catId]['total'] += catData['total'] as int? ?? 0;
-      });
-    }
-
-    // Calculate accuracy rate for each category
-    categoryStats.forEach((catId, stats) {
-      if (stats['total'] > 0) {
-        stats['accuracy'] = stats['correct'] / stats['total'];
-      } else {
-        stats['accuracy'] = 0.0;
-      }
-    });
-
-    final accuracyRate = totalAnswers > 0 ? totalCorrect / totalAnswers : 0.0;
-
-    return MonthlyStats(
-      month: month,
-      totalQuestsCompleted: totalQuests,
-      totalCorrectAnswers: totalCorrect,
-      totalAnswers: totalAnswers,
-      accuracyRate: accuracyRate,
-      totalStudyMinutes: totalMinutes,
-      totalCoinsEarned: totalCoins,
-      studyDaysCount: monthlyDailyStats.length,
-      categoryStats: categoryStats,
-    );
-  }
-
-  /// Get monthly stats for last N months
-  List<MonthlyStats> getMonthlyStatsList(int months) {
-    if (state == null || state!.isEmpty) return [];
-
-    final monthlyStatsList = <MonthlyStats>[];
-    final now = DateTime.now();
-
-    for (int i = 0; i < months; i++) {
-      final date = DateTime(now.year, now.month - i, 1);
-      final monthStr = '${date.year}-${date.month.toString().padLeft(2, '0')}';
-      final monthly = calculateMonthlyStats(monthStr);
-      if (monthly != null) {
-        monthlyStatsList.add(monthly);
-      }
-    }
-
-    return monthlyStatsList;
-  }
+/// Track session end (helper)
+Future<void> trackSessionEvent(
+  WidgetRef ref, {
+  required String userId,
+  required Duration duration,
+  required int eventCount,
+}) async {
+  final service = ref.read(analyticsServiceProvider);
+  await service.trackSession(userId, duration, eventCount);
 }

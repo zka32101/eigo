@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/pet_model.dart';
 import '../providers/pet_provider.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
+import '../design_system/design_system.dart';
 
 class PetBreedingScreen extends ConsumerStatefulWidget {
   const PetBreedingScreen({super.key});
@@ -85,13 +82,13 @@ class _PetBreedingScreenState extends ConsumerState<PetBreedingScreen> with Sing
       return Scaffold(
         appBar: AppBar(
           title: const Text('🐢 ペット育成'),
-          backgroundColor: kPrimaryColor,
+          backgroundColor: AppColors.primary,
         ),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.pets, size: 64, color: kTextMuted),
+              const Icon(Icons.pets, size: 64, color: AppColors.textMuted),
               AppSpacing.verticalSpacerMd,
               const Text('まだペットがいません'),
               AppSpacing.verticalSpacerMd,
@@ -99,7 +96,7 @@ class _PetBreedingScreenState extends ConsumerState<PetBreedingScreen> with Sing
                 onPressed: _showPetCreationDialog,
                 icon: const Icon(Icons.add),
                 label: const Text('ペットを作成'),
-                style: ElevatedButton.styleFrom(backgroundColor: kAccentGreen),
+                style: ElevatedButton.styleFrom(backgroundColor: AppColors.accentGreen),
               ),
             ],
           ),
@@ -110,7 +107,7 @@ class _PetBreedingScreenState extends ConsumerState<PetBreedingScreen> with Sing
     return Scaffold(
       appBar: AppBar(
         title: const Text('🐢 ペット育成'),
-        backgroundColor: kPrimaryColor,
+        backgroundColor: AppColors.primary,
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -142,12 +139,12 @@ class _PetBreedingScreenState extends ConsumerState<PetBreedingScreen> with Sing
       padding: AppSpacing.allPaddingLg,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [kPrimaryColor.withAlpha(20), kPrimaryColor.withAlpha(5)],
+          colors: [AppColors.primary.withAlpha(20), AppColors.primary.withAlpha(5)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-        border: Border.all(color: kPrimaryColor.withAlpha(50)),
+        border: Border.all(color: AppColors.primary.withAlpha(50)),
       ),
       child: Column(
         children: [
@@ -167,7 +164,7 @@ class _PetBreedingScreenState extends ConsumerState<PetBreedingScreen> with Sing
           AppSpacing.verticalSpacerXs,
           Text(
             '${pet.evolutionStageName} • Lv.${pet.level}',
-            style: AppTypography.labelSmall.copyWith(color: kTextMuted),
+            style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted),
           ),
         ],
       ),
@@ -183,7 +180,7 @@ class _PetBreedingScreenState extends ConsumerState<PetBreedingScreen> with Sing
           label: 'お腹',
           status: pet.satietyStatus,
           value: pet.satiety,
-          color: Colors.orange,
+          color: AppColors.accentOrange,
         ),
         AppSpacing.verticalSpacerMd,
 
@@ -193,7 +190,7 @@ class _PetBreedingScreenState extends ConsumerState<PetBreedingScreen> with Sing
           label: 'きもち',
           status: pet.happinessStatus,
           value: pet.happiness,
-          color: Colors.red,
+          color: AppColors.accentPink,
         ),
         AppSpacing.verticalSpacerMd,
 
@@ -203,7 +200,7 @@ class _PetBreedingScreenState extends ConsumerState<PetBreedingScreen> with Sing
           label: '経験値',
           status: '${pet.experienceToNextLevel}まで',
           value: pet.experience,
-          color: Colors.amber,
+          color: AppColors.accentOrange,
         ),
       ],
     );
@@ -219,8 +216,8 @@ class _PetBreedingScreenState extends ConsumerState<PetBreedingScreen> with Sing
     return Container(
       padding: AppSpacing.allPaddingMd,
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: Colors.grey[300]!),
+        color: AppColors.textWhite,
+        border: Border.all(color: AppColors.bgLight),
         borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
       ),
       child: Column(
@@ -239,14 +236,14 @@ class _PetBreedingScreenState extends ConsumerState<PetBreedingScreen> with Sing
             child: LinearProgressIndicator(
               value: value / 100,
               minHeight: 12,
-              backgroundColor: Colors.grey[300],
+              backgroundColor: AppColors.bgLight,
               valueColor: AlwaysStoppedAnimation(color),
             ),
           ),
           AppSpacing.verticalSpacerXs,
           Text(
             '$value / 100',
-            style: AppTypography.bodySmall.copyWith(fontSize: 10, color: kTextMuted),
+            style: AppTypography.bodySmall.copyWith(fontSize: 10, color: AppColors.textMuted),
           ),
         ],
       ),
@@ -267,7 +264,7 @@ class _PetBreedingScreenState extends ConsumerState<PetBreedingScreen> with Sing
                 icon: const Icon(Icons.restaurant),
                 label: const Text('エサをあげる'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
+                  backgroundColor: AppColors.accentOrange,
                   padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
                 ),
               ),
@@ -279,7 +276,7 @@ class _PetBreedingScreenState extends ConsumerState<PetBreedingScreen> with Sing
                 icon: const Icon(Icons.sports_soccer),
                 label: const Text('遊ぶ'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: kPrimaryColor,
+                  backgroundColor: AppColors.primary,
                   padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
                 ),
               ),
@@ -291,7 +288,7 @@ class _PetBreedingScreenState extends ConsumerState<PetBreedingScreen> with Sing
                 icon: const Icon(Icons.favorite),
                 label: const Text('なでる'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
+                  backgroundColor: AppColors.accentPink,
                   padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
                 ),
               ),
@@ -306,8 +303,8 @@ class _PetBreedingScreenState extends ConsumerState<PetBreedingScreen> with Sing
     return Container(
       padding: AppSpacing.allPaddingMd,
       decoration: BoxDecoration(
-        color: kAccentGreen.withAlpha(10),
-        border: Border.all(color: kAccentGreen.withAlpha(50)),
+        color: AppColors.accentGreen.withAlpha(10),
+        border: Border.all(color: AppColors.accentGreen.withAlpha(50)),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
       ),
       child: Column(
@@ -341,7 +338,7 @@ class _PetBreedingScreenState extends ConsumerState<PetBreedingScreen> with Sing
             isCurrent ? '✓' : isReached ? '◆' : '○',
             style: TextStyle(
               fontSize: 16,
-              color: isCurrent ? kAccentGreen : isReached ? Colors.amber : kTextMuted,
+              color: isCurrent ? AppColors.accentGreen : isReached ? AppColors.accentOrange : AppColors.textMuted,
             ),
           ),
           AppSpacing.horizontalSpacerMd,
@@ -349,7 +346,7 @@ class _PetBreedingScreenState extends ConsumerState<PetBreedingScreen> with Sing
             child: Text(
               '$name (Lv.$requiredLevel以上)',
               style: AppTypography.bodySmall.copyWith(
-                color: isCurrent ? kAccentGreen : isReached ? Colors.black : kTextMuted,
+                color: isCurrent ? AppColors.accentGreen : isReached ? AppColors.textPrimary : AppColors.textMuted,
                 fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal,
               ),
             ),
@@ -417,11 +414,11 @@ class _PetCreationDialogState extends State<_PetCreationDialog> {
                   child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: isSelected ? kPrimaryColor : Colors.grey[300]!,
+                        color: isSelected ? AppColors.primary : AppColors.bgLight,
                         width: isSelected ? 2 : 1,
                       ),
                       borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
-                      color: isSelected ? kPrimaryColor.withAlpha(20) : Colors.white,
+                      color: isSelected ? AppColors.primary.withAlpha(20) : AppColors.textWhite,
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,

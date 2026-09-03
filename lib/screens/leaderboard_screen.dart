@@ -2,41 +2,277 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/leaderboard_model.dart';
 import '../providers/leaderboard_provider.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
+import '../design_system/design_system.dart';
+import '../widgets/leaderboard_entry_card.dart';
 
-class LeaderboardScreen extends ConsumerWidget {
+class LeaderboardScreen extends ConsumerStatefulWidget {
   const LeaderboardScreen({super.key});
 
   @override
+  ConsumerState<LeaderboardScreen> createState() => _LeaderboardScreenState();
+}
+
+class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  final _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 4, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: Get current user ID from provider
+    const currentUserId = 'current-user-id';
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('ランキング'),
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.textWhite,
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: AppColors.textWhite,
+          labelColor: AppColors.textWhite,
+          unselectedLabelColor: AppColors.textWhite.withOpacity(0.6),
+          tabs: const [
+            Tab(text: 'グローバル'),
+            Tab(text: 'ウィークリー'),
+            Tab(text: 'マンスリー'),
+            Tab(text: 'フレンド'),
+          ],
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          _LeaderboardTab(
+            leaderboardProvider: globalLeaderboardProvider,
+            userId: currentUserId,
+          ),
+          _LeaderboardTab(
+            leaderboardProvider: weeklyLeaderboardProvider,
+            userId: currentUserId,
+          ),
+          _LeaderboardTab(
+            leaderboardProvider: monthlyLeaderboardProvider,
+            userId: currentUserId,
+          ),
+          _FriendLeaderboardTab(userId: currentUserId),
+        ],
+      ),
+    );
+  }
+}
+
+class _LeaderboardTab extends ConsumerWidget {
+  final FutureProvider<Leaderboard> leaderboardProvider;
+  final String userId;
+
+  const _LeaderboardTab({
+    required this.leaderboardProvider,
+    required this.userId,
+  });
+
+  @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('🏆 ランキング'),
-          backgroundColor: kPrimaryColor,
-          bottom: const TabBar(
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.white70,
-            indicatorColor: kAccentOrange,
-            tabs: [
-              Tab(text: 'グローバル'),
-              Tab(text: 'フレンド'),
-              Tab(text: '週間'),
+    final leaderboardAsync = ref.watch(leaderboardProvider);
+    final playerStatsAsync = ref.watch(playerRankStatsProvider(userId));
+
+    return leaderboardAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stack) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('エラーが発生しました', style: AppTypography.labelLarge),
+            AppSpacing.verticalSpacerMd,
+            ElevatedButton(
+              onPressed: () => ref.refresh(leaderboardProvider),
+              child: const Text('再試行'),
+            ),
+          ],
+        ),
+      ),
+      data: (leaderboard) {
+        if (leaderboard.entries.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('🏆', style: TextStyle(fontSize: 64)),
+                AppSpacing.verticalSpacerMd,
+                Text('ランキングデータはまだありません', style: AppTypography.labelLarge),
+              ],
+            ),
+          );
+        }
+
+        return RefreshIndicator(
+          onRefresh: () async {
+            await ref.refresh(leaderboardProvider.future);
+          },
+          child: CustomScrollView(
+            slivers: [
+              // Player's current rank (if available)
+              playerStatsAsync.when(
+                data: (stats) {
+                  if (stats.globalRank == 999999) return SliverToBoxAdapter(child: SizedBox.shrink());
+                  return SliverToBoxAdapter(
+                    child: _PlayerRankCard(stats: stats),
+                  );
+                },
+                loading: () => SliverToBoxAdapter(child: SizedBox.shrink()),
+                error: (_, __) => SliverToBoxAdapter(child: SizedBox.shrink()),
+              ),
+              // Leaderboard entries
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    return LeaderboardEntryCard(
+                      entry: leaderboard.entries[index],
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          '/user-profile',
+                          arguments: leaderboard.entries[index].userId,
+                        );
+                      },
+                    );
+                  },
+                  childCount: leaderboard.entries.length,
+                ),
+              ),
+              SliverToBoxAdapter(child: SizedBox(height: AppSpacing.xxl)),
             ],
           ),
-        ),
-        body: TabBarView(
+        );
+      },
+    );
+  }
+}
+
+class _FriendLeaderboardTab extends ConsumerWidget {
+  final String userId;
+
+  const _FriendLeaderboardTab({required this.userId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final leaderboardAsync = ref.watch(friendsLeaderboardProvider(userId));
+
+    return leaderboardAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stack) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // グローバルランキング
-            _GlobalLeaderboardTab(),
-            // フレンドランキング
-            _FriendLeaderboardTab(),
-            // 週間ランキング
-            _WeeklyLeaderboardTab(),
+            Text('エラーが発生しました', style: AppTypography.labelLarge),
+            AppSpacing.verticalSpacerMd,
+            ElevatedButton(
+              onPressed: () => ref.refresh(friendsLeaderboardProvider(userId)),
+              child: const Text('再試行'),
+            ),
+          ],
+        ),
+      ),
+      data: (leaderboard) {
+        if (leaderboard.entries.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('👥', style: TextStyle(fontSize: 64)),
+                AppSpacing.verticalSpacerMd,
+                Text('フレンドがいません', style: AppTypography.labelLarge),
+                AppSpacing.verticalSpacerMd,
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/friends');
+                  },
+                  child: const Text('フレンドを追加'),
+                ),
+              ],
+            ),
+          );
+        }
+
+        return RefreshIndicator(
+          onRefresh: () async {
+            await ref.refresh(friendsLeaderboardProvider(userId).future);
+          },
+          child: ListView.builder(
+            itemCount: leaderboard.entries.length,
+            itemBuilder: (context, index) {
+              return LeaderboardEntryCard(
+                entry: leaderboard.entries[index],
+                onTap: () {
+                  Navigator.pushNamed(
+                    context,
+                    '/user-profile',
+                    arguments: leaderboard.entries[index].userId,
+                  );
+                },
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _PlayerRankCard extends StatelessWidget {
+  final PlayerRankStats stats;
+
+  const _PlayerRankCard({required this.stats});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [AppColors.primary, AppColors.primaryDark],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(AppSizes.borderRadius),
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(AppSpacing.md),
+        child: Column(
+          children: [
+            Text(
+              'あなたのランキング',
+              style: AppTypography.labelLarge.copyWith(color: AppColors.textWhite),
+            ),
+            AppSpacing.verticalSpacerMd,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _RankInfo('グローバル', stats.globalRankDisplay, AppColors.textWhite),
+                _RankInfo('ウィークリー', '#${stats.weeklyRank}', AppColors.textWhite.withOpacity(0.8)),
+                _RankInfo('マンスリー', '#${stats.monthlyRank}', AppColors.textWhite.withOpacity(0.8)),
+              ],
+            ),
+            AppSpacing.verticalSpacerMd,
+            Text(
+              stats.rankingTrend,
+              style: AppTypography.labelMedium.copyWith(
+                color: AppColors.textWhite.withOpacity(0.8),
+              ),
+            ),
           ],
         ),
       ),
@@ -44,362 +280,27 @@ class LeaderboardScreen extends ConsumerWidget {
   }
 }
 
-class _GlobalLeaderboardTab extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final leaderboardAsync = ref.watch(globalLeaderboardProvider);
+class _RankInfo extends StatelessWidget {
+  final String label;
+  final String rank;
+  final Color color;
 
-    return leaderboardAsync.when(
-      data: (leaderboard) {
-        return SingleChildScrollView(
-          padding: AppSpacing.allPaddingLg,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // ユーザーの現在位置
-              if (leaderboard.currentUserEntry != null)
-                _CurrentUserCard(entry: leaderboard.currentUserEntry!),
-              AppSpacing.verticalSpacerLg,
-
-              // ランキング一覧
-              Text('ランキング', style: AppTypography.headlineSmall),
-              AppSpacing.verticalSpacerMd,
-              ...leaderboard.entries.asMap().entries.map((entry) {
-                final index = entry.key;
-                final leaderboardEntry = entry.value;
-                return Padding(
-                  padding: EdgeInsets.only(bottom: AppSpacing.md),
-                  child: _LeaderboardEntryCard(
-                    entry: leaderboardEntry,
-                    isHighlighted: leaderboardEntry.isCurrentUser,
-                  ),
-                );
-              }).toList(),
-              AppSpacing.verticalSpacerXxl,
-            ],
-          ),
-        );
-      },
-      loading: () => const Center(
-        child: CircularProgressIndicator(),
-      ),
-      error: (error, stack) => Center(
-        child: Text('エラーが発生しました: $error'),
-      ),
-    );
-  }
-}
-
-class _FriendLeaderboardTab extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final leaderboardAsync = ref.watch(friendLeaderboardProvider);
-
-    return leaderboardAsync.when(
-      data: (leaderboard) {
-        if (leaderboard.entries.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.people_outline, size: 64, color: kTextMuted),
-                AppSpacing.verticalSpacerMd,
-                const Text('フレンドがいません'),
-                AppSpacing.verticalSpacerSm,
-                const Text(
-                  'フレンドを追加してランキングを競いましょう',
-                  style: TextStyle(color: kTextMuted, fontSize: 12),
-                ),
-              ],
-            ),
-          );
-        }
-
-        return SingleChildScrollView(
-          padding: AppSpacing.allPaddingLg,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // ユーザーの現在位置
-              if (leaderboard.currentUserEntry != null)
-                _CurrentUserCard(entry: leaderboard.currentUserEntry!),
-              AppSpacing.verticalSpacerLg,
-
-              // ランキング一覧
-              Text('フレンドランキング', style: AppTypography.headlineSmall),
-              AppSpacing.verticalSpacerMd,
-              ...leaderboard.entries.asMap().entries.map((entry) {
-                final index = entry.key;
-                final leaderboardEntry = entry.value;
-                return Padding(
-                  padding: EdgeInsets.only(bottom: AppSpacing.md),
-                  child: _LeaderboardEntryCard(
-                    entry: leaderboardEntry,
-                    isHighlighted: leaderboardEntry.isCurrentUser,
-                  ),
-                );
-              }).toList(),
-              AppSpacing.verticalSpacerXxl,
-            ],
-          ),
-        );
-      },
-      loading: () => const Center(
-        child: CircularProgressIndicator(),
-      ),
-      error: (error, stack) => Center(
-        child: Text('エラーが発生しました: $error'),
-      ),
-    );
-  }
-}
-
-class _WeeklyLeaderboardTab extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final leaderboardAsync = ref.watch(weeklyLeaderboardProvider);
-
-    return leaderboardAsync.when(
-      data: (leaderboard) {
-        return SingleChildScrollView(
-          padding: AppSpacing.allPaddingLg,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // 週間情報
-              Container(
-                padding: AppSpacing.allPaddingMd,
-                decoration: BoxDecoration(
-                  color: kAccentOrange.withAlpha(20),
-                  borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-                  border: Border.all(color: kAccentOrange.withAlpha(50)),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.calendar_today, color: kAccentOrange),
-                    AppSpacing.horizontalSpacerMd,
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('今週のランキング',
-                              style: AppTypography.labelLarge),
-                          AppSpacing.verticalSpacerXs,
-                          Text(
-                            '毎週月曜日にリセット',
-                            style: AppTypography.bodySmall
-                                .copyWith(color: kTextMuted),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              AppSpacing.verticalSpacerLg,
-
-              // ユーザーの現在位置
-              if (leaderboard.currentUserEntry != null)
-                _CurrentUserCard(entry: leaderboard.currentUserEntry!),
-              AppSpacing.verticalSpacerLg,
-
-              // ランキング一覧
-              Text('ランキング', style: AppTypography.headlineSmall),
-              AppSpacing.verticalSpacerMd,
-              ...leaderboard.entries.asMap().entries.map((entry) {
-                final index = entry.key;
-                final leaderboardEntry = entry.value;
-                return Padding(
-                  padding: EdgeInsets.only(bottom: AppSpacing.md),
-                  child: _LeaderboardEntryCard(
-                    entry: leaderboardEntry,
-                    isHighlighted: leaderboardEntry.isCurrentUser,
-                  ),
-                );
-              }).toList(),
-              AppSpacing.verticalSpacerXxl,
-            ],
-          ),
-        );
-      },
-      loading: () => const Center(
-        child: CircularProgressIndicator(),
-      ),
-      error: (error, stack) => Center(
-        child: Text('エラーが発生しました: $error'),
-      ),
-    );
-  }
-}
-
-class _CurrentUserCard extends StatelessWidget {
-  final LeaderboardEntry entry;
-
-  const _CurrentUserCard({required this.entry});
+  const _RankInfo(this.label, this.rank, this.color);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: AppSpacing.allPaddingMd,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [kPrimaryColor.withAlpha(20), kPrimaryColor.withAlpha(5)],
+    return Column(
+      children: [
+        Text(
+          rank,
+          style: AppTypography.headlineSmall.copyWith(color: color, fontWeight: FontWeight.bold),
         ),
-        borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-        border: Border.all(color: kPrimaryColor.withAlpha(50)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('あなたの順位', style: AppTypography.labelSmall.copyWith(color: kTextMuted)),
-          AppSpacing.verticalSpacerMd,
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Text(entry.avatar, style: const TextStyle(fontSize: 32)),
-                  AppSpacing.horizontalSpacerMd,
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(entry.name, style: AppTypography.labelLarge),
-                      AppSpacing.verticalSpacerXs,
-                      Text(
-                        'スコア: ${entry.score}',
-                        style: AppTypography.bodySmall.copyWith(color: kTextMuted),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: AppSpacing.md,
-                  vertical: AppSpacing.sm,
-                ),
-                decoration: BoxDecoration(
-                  color: kPrimaryColor,
-                  borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
-                ),
-                child: Text(
-                  '第${entry.rank}位',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _LeaderboardEntryCard extends StatelessWidget {
-  final LeaderboardEntry entry;
-  final bool isHighlighted;
-
-  const _LeaderboardEntryCard({
-    required this.entry,
-    this.isHighlighted = false,
-  });
-
-  Color _getRankColor(int rank) {
-    switch (rank) {
-      case 1:
-        return const Color(0xFFFFD700); // ゴールド
-      case 2:
-        return const Color(0xFFC0C0C0); // シルバー
-      case 3:
-        return const Color(0xFFCD7F32); // ブロンズ
-      default:
-        return kPrimaryColor;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final rankColor = _getRankColor(entry.rank);
-
-    return Container(
-      padding: AppSpacing.allPaddingMd,
-      decoration: BoxDecoration(
-        color: isHighlighted ? kPrimaryColor.withAlpha(10) : Colors.white,
-        border: Border.all(
-          color: isHighlighted ? kPrimaryColor.withAlpha(50) : Colors.grey[300]!,
+        AppSpacing.verticalSpacerXs,
+        Text(
+          label,
+          style: AppTypography.bodySmall.copyWith(color: color),
         ),
-        borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-      ),
-      child: Row(
-        children: [
-          // ランク表示
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: rankColor.withAlpha(30),
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Text(
-                '${entry.rank}',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  color: rankColor,
-                ),
-              ),
-            ),
-          ),
-          AppSpacing.horizontalSpacerMd,
-
-          // ユーザー情報
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(entry.avatar, style: const TextStyle(fontSize: 24)),
-                    AppSpacing.horizontalSpacerSm,
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(entry.name, style: AppTypography.labelLarge),
-                          AppSpacing.verticalSpacerXs,
-                          Text(
-                            'Lv.${entry.level} • ${entry.totalStudyMinutes}分学習',
-                            style: AppTypography.bodySmall
-                                .copyWith(color: kTextMuted, fontSize: 11),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-
-          // スコア表示
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text('${entry.score}', style: AppTypography.labelLarge),
-              AppSpacing.verticalSpacerXs,
-              Text(
-                '🔥 ${entry.longestStreak}日',
-                style: AppTypography.bodySmall.copyWith(fontSize: 11),
-              ),
-            ],
-          ),
-        ],
-      ),
+      ],
     );
   }
 }

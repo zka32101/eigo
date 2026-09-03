@@ -1,9 +1,6 @@
+import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
 import '../widgets/educational_illustrations.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -22,25 +19,25 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       emoji: '🎧',
       title: 'リスニングで英語耳を鍛える',
       subtitle: 'ネイティブの発音を聞いて、\n本物の英語感覚を身につけよう！',
-      color: kListeningColor,
+      color: AppColors.listeningColor,
     ),
     _OnboardPage(
       emoji: '🎤',
       title: 'スピーキングで話す力を育てる',
       subtitle: 'マイクに向かって発音練習。\nAIが発音をチェックしてくれる！',
-      color: kSpeakingColor,
+      color: AppColors.speakingColor,
     ),
     _OnboardPage(
       emoji: '👨‍👩‍👧',
       title: '親向け詳細フィードバック',
       subtitle: '子どもの発音の上達を\n親が毎日確認できる！',
-      color: kAccentGreen,
+      color: AppColors.accentGreen,
     ),
     _OnboardPage(
       emoji: '🏆',
       title: '楽しくゲーム感覚で学習',
       subtitle: 'バッジを集めて、\n毎日の学習を続けよう！',
-      color: kPrimaryColor,
+      color: AppColors.primary,
     ),
   ];
 
@@ -76,7 +73,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       width: _page == i ? 24 : 8,
                       height: 8,
                       decoration: BoxDecoration(
-                        color: _page == i ? kPrimaryColor : Colors.grey.shade300,
+                        color: _page == i ? AppColors.primary : AppColors.bgLight,
                         borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
                       ),
                     )),
@@ -101,7 +98,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   if (_page < _pages.length - 1)
                     TextButton(
                       onPressed: _complete,
-                      child: Text('スキップ', style: AppTypography.bodySmall.copyWith(color: kTextMuted)),
+                      child: Text('スキップ', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
                     ),
                 ],
               ),
@@ -138,13 +135,13 @@ class _OnboardPage extends StatelessWidget {
           AppSpacing.verticalSpacerXl,
           Text(
             title,
-            style: AppTypography.headlineSmall.copyWith(fontWeight: FontWeight.bold, color: kTextDark),
+            style: AppTypography.headlineSmall.copyWith(fontWeight: FontWeight.bold, color: AppColors.textPrimary),
             textAlign: TextAlign.center,
           ),
           AppSpacing.verticalSpacerMd,
           Text(
             subtitle,
-            style: AppTypography.bodySmall.copyWith(color: kTextMuted, height: 1.6),
+            style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, height: 1.6),
             textAlign: TextAlign.center,
           ),
         ],

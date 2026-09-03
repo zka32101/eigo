@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/badge_model.dart';
 import '../providers/badge_provider.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
+import ../design_system/design_system.dartapp_theme.dart';
+import ../design_system/design_system.dartspacing.dart';
+import ../design_system/design_system.dartsizes.dart';
+import ../design_system/design_system.darttypography.dart';
 import '../widgets/educational_illustrations.dart';
 
 class BadgeScreen extends ConsumerWidget {
@@ -22,13 +22,13 @@ class BadgeScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('🏆 バッジ ($earned / $total)'),
-        backgroundColor: kPrimaryColor,
+        backgroundColor: AppColors.primary,
       ),
       body: Column(
         children: [
           // Progress section
           Container(
-            color: Colors.white,
+            color: AppColors.textWhite,
             padding: EdgeInsets.all(AppSpacing.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -46,9 +46,9 @@ class BadgeScreen extends ConsumerWidget {
                         child: LinearProgressIndicator(
                           value: progressPercent,
                           minHeight: 12,
-                          backgroundColor: Colors.grey.shade200,
+                          backgroundColor: AppColors.bgLight,
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            progressPercent >= 1.0 ? kAccentGreen : kAccentOrange,
+                            progressPercent >= 1.0 ? AppColors.accentGreen : AppColors.accentOrange,
                           ),
                         ),
                       ),
@@ -57,7 +57,7 @@ class BadgeScreen extends ConsumerWidget {
                     Text(
                       '${(progressPercent * 100).toStringAsFixed(0)}%',
                       style: AppTypography.labelLarge.copyWith(
-                        color: kAccentOrange,
+                        color: AppColors.accentOrange,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -66,7 +66,7 @@ class BadgeScreen extends ConsumerWidget {
                 AppSpacing.verticalSpacerSm,
                 Text(
                   '$earned / $total 個のバッジを獲得しました！',
-                  style: AppTypography.bodySmall.copyWith(color: kTextMuted),
+                  style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                 ),
               ],
             ),
@@ -102,13 +102,13 @@ class _BadgeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: isEarned ? Colors.white : Colors.grey.shade100,
+      color: isEarned ? AppColors.textWhite : AppColors.bgLight,
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppSizes.borderRadius),
           border: isEarned
-              ? Border.all(color: kAccentGreen.withAlpha(100), width: 2)
-              : Border.all(color: Colors.grey.shade300, width: 1),
+              ? Border.all(color: AppColors.accentGreen.withAlpha(100), width: 2)
+              : Border.all(color: AppColors.bgLight, width: 1),
         ),
         child: Padding(
           padding: AppSpacing.allPaddingMd,
@@ -122,10 +122,10 @@ class _BadgeCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: isEarned
-                      ? kAccentGreen.withAlpha(26)
-                      : Colors.grey.shade300,
+                      ? AppColors.accentGreen.withAlpha(26)
+                      : AppColors.bgLight,
                   border: Border.all(
-                    color: isEarned ? kAccentGreen.withAlpha(100) : Colors.grey.shade400,
+                    color: isEarned ? AppColors.accentGreen.withAlpha(100) : AppColors.bgLight,
                     width: 2,
                   ),
                 ),
@@ -147,7 +147,7 @@ class _BadgeCard extends StatelessWidget {
               Text(
                 badge.title,
                 style: AppTypography.labelLarge.copyWith(
-                  color: isEarned ? kTextDark : Colors.grey,
+                  color: isEarned ? AppColors.textPrimary : Colors.grey,
                   fontWeight: isEarned ? FontWeight.bold : FontWeight.normal,
                 ),
                 textAlign: TextAlign.center,
@@ -156,7 +156,7 @@ class _BadgeCard extends StatelessWidget {
               Text(
                 badge.description,
                 style: AppTypography.bodySmall.copyWith(
-                  color: isEarned ? kTextMuted : Colors.grey.shade400,
+                  color: isEarned ? AppColors.textMuted : AppColors.bgLight,
                   fontSize: 11,
                 ),
                 textAlign: TextAlign.center,
@@ -168,15 +168,15 @@ class _BadgeCard extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
                   decoration: BoxDecoration(
-                    color: kAccentGreen.withAlpha(26),
+                    color: AppColors.accentGreen.withAlpha(26),
                     borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
-                    border: Border.all(color: kAccentGreen.withAlpha(100), width: 1),
+                    border: Border.all(color: AppColors.accentGreen.withAlpha(100), width: 1),
                   ),
                   child: Text(
                     '✓ 獲得済み',
                     style: AppTypography.bodySmall.copyWith(
                       fontSize: 10,
-                      color: kAccentGreen,
+                      color: AppColors.accentGreen,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

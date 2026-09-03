@@ -46,6 +46,31 @@ class ProgressState {
       lastPlayedDate: lastPlayedDate ?? this.lastPlayedDate,
     );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ProgressState &&
+          runtimeType == other.runtimeType &&
+          clearedStages == other.clearedStages &&
+          streakDays == other.streakDays &&
+          totalLessons == other.totalLessons &&
+          totalSpeakingPractice == other.totalSpeakingPractice &&
+          totalConversations == other.totalConversations &&
+          stageBestScores == other.stageBestScores &&
+          stageSpeakingAvg == other.stageSpeakingAvg &&
+          lastPlayedDate == other.lastPlayedDate;
+
+  @override
+  int get hashCode =>
+      clearedStages.hashCode ^
+      streakDays.hashCode ^
+      totalLessons.hashCode ^
+      totalSpeakingPractice.hashCode ^
+      totalConversations.hashCode ^
+      stageBestScores.hashCode ^
+      stageSpeakingAvg.hashCode ^
+      lastPlayedDate.hashCode;
 }
 
 class ProgressNotifier extends StateNotifier<ProgressState> {
@@ -136,6 +161,20 @@ class ProgressNotifier extends StateNotifier<ProgressState> {
   }
 }
 
-final progressProvider = StateNotifierProvider<ProgressNotifier, ProgressState>(
+/// 学習進捗状態管理プロバイダ
+///
+/// 最適化:
+/// - .autoDispose: ウィジェットが利用されなくなると自動的にリソースを解放
+///   メモリ使用量を削減し、アプリのパフォーマンスを向上
+/// - ProgressState に == と hashCode を実装
+///   進捗データの比較を正確に行い、不要なリビルドを削減
+///   特にMap型フィールド(stageBestScores, stageSpeakingAvg)の比較が最適化される
+///
+/// 使用例:
+/// - final progress = ref.watch(progressProvider);
+/// - final streak = ref.watch(progressProvider.select((p) => p.streakDays));
+/// - final isStageCleared = ref.watch(progressProvider.select((p) => p.isCleared(stageId)));
+final progressProvider =
+    StateNotifierProvider.autoDispose<ProgressNotifier, ProgressState>(
   (ref) => ProgressNotifier(),
 );

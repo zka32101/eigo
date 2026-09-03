@@ -1,7 +1,7 @@
+import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../models/analytics_model.dart';
-import '../theme/app_theme.dart';
 
 class MonthlyChartWidget extends StatelessWidget {
   final List<MonthlyStats> monthlyStatsList;
@@ -99,8 +99,8 @@ class MonthlyChartWidget extends StatelessWidget {
                     isCurved: true,
                     gradient: LinearGradient(
                       colors: [
-                        kPrimaryColor,
-                        kPrimaryColor.withOpacity(0.3),
+                        AppColors.primary,
+                        AppColors.primary.withOpacity(0.3),
                       ],
                     ),
                     barWidth: 3,
@@ -109,9 +109,9 @@ class MonthlyChartWidget extends StatelessWidget {
                       getDotPainter: (spot, percent, barData, index) {
                         return FlDotCirclePainter(
                           radius: 4,
-                          color: kPrimaryColor,
+                          color: AppColors.primary,
                           strokeWidth: 2,
-                          strokeColor: Colors.white,
+                          strokeColor:AppColors.textWhite,
                         );
                       },
                     ),
@@ -119,8 +119,8 @@ class MonthlyChartWidget extends StatelessWidget {
                       show: true,
                       gradient: LinearGradient(
                         colors: [
-                          kPrimaryColor.withOpacity(0.3),
-                          kPrimaryColor.withOpacity(0.0),
+                          AppColors.primary.withOpacity(0.3),
+                          AppColors.primary.withOpacity(0.0),
                         ],
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
@@ -245,7 +245,7 @@ class MonthlyBarChartWidget extends StatelessWidget {
                     barRods: [
                       BarChartRodData(
                         toY: _getMetricValue(sorted[index]),
-                        color: kPrimaryColor,
+                        color: AppColors.primary,
                         width: 12,
                         borderRadius: BorderRadius.circular(4),
                       ),

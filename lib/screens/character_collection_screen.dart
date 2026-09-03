@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/character_model.dart';
 import '../providers/character_collection_provider.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
+import '../design_system/design_system.dart';
 
 class CharacterCollectionScreen extends ConsumerStatefulWidget {
   const CharacterCollectionScreen({super.key});
@@ -26,11 +23,11 @@ class _CharacterCollectionScreenState extends ConsumerState<CharacterCollectionS
       child: Scaffold(
         appBar: AppBar(
           title: const Text('🎭 キャラクター図鑑'),
-          backgroundColor: kPrimaryColor,
+          backgroundColor: AppColors.primary,
           bottom: const TabBar(
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.white70,
-            indicatorColor: kAccentOrange,
+            labelColor: AppColors.textWhite,
+            unselectedLabelColor: AppColors.textWhite,
+            indicatorColor: AppColors.accentOrange,
             tabs: [
               Tab(text: 'コレクション'),
               Tab(text: 'レアリティ'),
@@ -69,11 +66,11 @@ class _CollectionListView extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             AppSpacing.verticalSpacerXxl,
-            const Icon(Icons.people_outline, size: 64, color: kTextMuted),
+            const Icon(Icons.people_outline, size: 64, color: AppColors.textMuted),
             AppSpacing.verticalSpacerMd,
             const Text('キャラクターをまだ収集していません'),
             AppSpacing.verticalSpacerLg,
-            const Text('学習を進めるとキャラクターが手に入ります！', style: TextStyle(color: kTextMuted)),
+            const Text('学習を進めるとキャラクターが手に入ります！', style: TextStyle(color: AppColors.textMuted)),
           ],
         ),
       );
@@ -147,70 +144,104 @@ class _RarityView extends ConsumerWidget {
       'legendary': '⭐⭐⭐⭐',
     };
     final rarityColors = {
-      'common': Colors.grey,
-      'uncommon': kAccentGreen,
-      'rare': kAccentOrange,
-      'legendary': const Color(0xFFFFD700),
+      'common': AppColors.textMuted,
+      'uncommon': AppColors.accentGreen,
+      'rare': AppColors.accentOrange,
+      'legendary': AppColors.accentOrange, // Gold
     };
 
-    return SingleChildScrollView(
+    // Build rarity sections for ListView
+    final raritySections = <Map<String, dynamic>>[];
+    for (final rarity in rarities) {
+      final byRarity = collection.where((c) => c.character.rarity == rarity).toList();
+      raritySections.add({
+        'type': 'header',
+        'rarity': rarity,
+      });
+      raritySections.add({
+        'type': 'spacer',
+      });
+
+      if (byRarity.isEmpty) {
+        raritySections.add({
+          'type': 'empty',
+        });
+      } else {
+        for (final character in byRarity) {
+          raritySections.add({
+            'type': 'character',
+            'collected': character,
+          });
+        }
+      }
+
+      raritySections.add({
+        'type': 'spacer_lg',
+      });
+    }
+    raritySections.add({'type': 'bottom_spacer'});
+
+    return ListView.builder(
       padding: AppSpacing.allPaddingLg,
-      child: Column(
-        children: [
-          ...rarities.map((rarity) {
+      itemCount: raritySections.length,
+      itemBuilder: (context, index) {
+        final section = raritySections[index];
+
+        switch (section['type']) {
+          case 'header':
+            final rarity = section['rarity'] as String;
             final byRarity = collection.where((c) => c.character.rarity == rarity).toList();
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            return Row(
               children: [
-                Row(
-                  children: [
-                    Text(
-                      rarityEmojis[rarity]!,
-                      style: const TextStyle(fontSize: 20),
-                    ),
-                    AppSpacing.horizontalSpacerMd,
-                    Text(
-                      '${rarityLabels[rarity]} (${byRarity.length})',
-                      style: AppTypography.headlineSmall.copyWith(
-                        color: rarityColors[rarity],
-                      ),
-                    ),
-                  ],
+                Text(
+                  rarityEmojis[rarity]!,
+                  style: const TextStyle(fontSize: 20),
                 ),
-                AppSpacing.verticalSpacerMd,
-                if (byRarity.isEmpty)
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
-                    child: Text(
-                      'まだこのレアリティのキャラクターは収集していません',
-                      style: AppTypography.bodySmall.copyWith(color: kTextMuted),
-                    ),
-                  )
-                else
-                  GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 0.85,
-                      crossAxisSpacing: 12,
-                      mainAxisSpacing: 12,
-                    ),
-                    itemCount: byRarity.length,
-                    itemBuilder: (context, index) {
-                      return _CharacterCard(
-                        collected: byRarity[index],
-                        onTap: () => _showCharacterDetail(context, byRarity[index]),
-                      );
-                    },
+                AppSpacing.horizontalSpacerMd,
+                Text(
+                  '${rarityLabels[rarity]} (${byRarity.length})',
+                  style: AppTypography.headlineSmall.copyWith(
+                    color: rarityColors[rarity],
                   ),
-                AppSpacing.verticalSpacerLg,
+                ),
               ],
             );
-          }).toList(),
-          AppSpacing.verticalSpacerXxl,
-        ],
-      ),
+
+          case 'spacer':
+            return AppSpacing.verticalSpacerMd;
+
+          case 'spacer_lg':
+            return AppSpacing.verticalSpacerLg;
+
+          case 'empty':
+            return Padding(
+              padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
+              child: Text(
+                'まだこのレアリティのキャラクターは収集していません',
+                style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
+              ),
+            );
+
+          case 'character':
+            final collected = section['collected'] as CollectedCharacter;
+            return Padding(
+              padding: const EdgeInsets.all(6),
+              child: GestureDetector(
+                onTap: () => _showCharacterDetail(context, collected),
+                child: _CharacterCard(
+                  collected: collected,
+                  onTap: () => _showCharacterDetail(context, collected),
+                ),
+              ),
+            );
+
+          case 'bottom_spacer':
+            return AppSpacing.verticalSpacerXxl;
+
+          default:
+            return const SizedBox();
+        }
+      },
     );
   }
 
@@ -237,11 +268,11 @@ class _UncollectedView extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.check_circle, size: 64, color: kAccentGreen),
+            const Icon(Icons.check_circle, size: 64, color: AppColors.accentGreen),
             AppSpacing.verticalSpacerMd,
             const Text('すべてのキャラクターを収集しました！'),
             AppSpacing.verticalSpacerLg,
-            const Text('おめでとうございます！', style: TextStyle(color: kTextMuted)),
+            const Text('おめでとうございます！', style: TextStyle(color: AppColors.textMuted)),
           ],
         ),
       );
@@ -283,7 +314,7 @@ class _UncollectedView extends ConsumerWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('${character.name}をゲットしました！'),
-        backgroundColor: kAccentGreen,
+        backgroundColor: AppColors.accentGreen,
       ),
     );
   }
@@ -336,7 +367,7 @@ class _CharacterCard extends StatelessWidget {
                           ),
                           if (collected.isFavorite) ...[
                             AppSpacing.verticalSpacerXs,
-                            const Icon(Icons.favorite, color: Colors.red, size: 20),
+                            const Icon(Icons.favorite, color: AppColors.error, size: 20),
                           ],
                         ],
                       ),
@@ -356,7 +387,7 @@ class _CharacterCard extends StatelessWidget {
                         child: Text(
                           'Lv.${collected.level}',
                           style: AppTypography.labelSmall.copyWith(
-                            color: Colors.white,
+                            color: AppColors.textWhite,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -389,7 +420,7 @@ class _CharacterCard extends StatelessWidget {
                     child: LinearProgressIndicator(
                       value: collected.affection / 100,
                       minHeight: 6,
-                      backgroundColor: Colors.grey[300],
+                      backgroundColor: AppColors.bgLight,
                       valueColor: AlwaysStoppedAnimation<Color>(rarityColor),
                     ),
                   ),
@@ -397,7 +428,7 @@ class _CharacterCard extends StatelessWidget {
                   Text(
                     '好感度: ${collected.affection}%',
                     style: AppTypography.bodySmall.copyWith(
-                      color: kTextMuted,
+                      color: AppColors.textMuted,
                       fontSize: 11,
                     ),
                   ),
@@ -413,15 +444,15 @@ class _CharacterCard extends StatelessWidget {
   Color _getRarityColor(String rarity) {
     switch (rarity) {
       case 'common':
-        return Colors.grey;
+        return AppColors.textMuted;
       case 'uncommon':
-        return kAccentGreen;
+        return AppColors.accentGreen;
       case 'rare':
-        return kAccentOrange;
+        return AppColors.accentOrange;
       case 'legendary':
-        return const Color(0xFFFFD700);
+        return AppColors.accentOrange; // Gold
       default:
-        return Colors.grey;
+        return AppColors.textMuted;
     }
   }
 }
@@ -452,7 +483,7 @@ class _UncollectedCharacterCard extends StatelessWidget {
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.grey[200],
+                color: AppColors.bgLight,
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(AppSizes.borderRadiusLarge),
                   topRight: Radius.circular(AppSizes.borderRadiusLarge),
@@ -464,10 +495,10 @@ class _UncollectedCharacterCard extends StatelessWidget {
                   children: [
                     Text(
                       character.emoji,
-                      style: const TextStyle(fontSize: 40, color: Colors.grey),
+                      style: const TextStyle(fontSize: 40, color: AppColors.textMuted),
                     ),
                     AppSpacing.verticalSpacerSm,
-                    const Icon(Icons.lock, color: Colors.grey, size: 24),
+                    const Icon(Icons.lock, color: AppColors.textMuted, size: 24),
                   ],
                 ),
               ),
@@ -487,7 +518,7 @@ class _UncollectedCharacterCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: AppTypography.labelMedium.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: Colors.grey,
+                    color: AppColors.textMuted,
                   ),
                 ),
                 AppSpacing.verticalSpacerSm,
@@ -508,7 +539,7 @@ class _UncollectedCharacterCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: AppColors.textWhite,
                       ),
                     ),
                   ),
@@ -524,15 +555,15 @@ class _UncollectedCharacterCard extends StatelessWidget {
   Color _getRarityColor(String rarity) {
     switch (rarity) {
       case 'common':
-        return Colors.grey;
+        return AppColors.textMuted;
       case 'uncommon':
-        return kAccentGreen;
+        return AppColors.accentGreen;
       case 'rare':
-        return kAccentOrange;
+        return AppColors.accentOrange;
       case 'legendary':
-        return const Color(0xFFFFD700);
+        return AppColors.accentOrange; // Gold
       default:
-        return Colors.grey;
+        return AppColors.textMuted;
     }
   }
 }
@@ -564,7 +595,7 @@ class _CharacterDetailSheet extends ConsumerWidget {
                   IconButton(
                     icon: Icon(
                       collected.isFavorite ? Icons.favorite : Icons.favorite_border,
-                      color: Colors.red,
+                      color: AppColors.error,
                     ),
                     onPressed: () {
                       ref
@@ -580,7 +611,7 @@ class _CharacterDetailSheet extends ConsumerWidget {
               Container(
                 padding: AppSpacing.allPaddingMd,
                 decoration: BoxDecoration(
-                  color: Colors.grey[50],
+                  color: AppColors.bgLight.withAlpha(25),
                   borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                 ),
                 child: Column(
@@ -599,7 +630,7 @@ class _CharacterDetailSheet extends ConsumerWidget {
                             children: [
                               Text(
                                 '${collected.character.type}',
-                                style: AppTypography.labelSmall.copyWith(color: kTextMuted),
+                                style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted),
                               ),
                               AppSpacing.verticalSpacerXs,
                               Text(
@@ -617,13 +648,13 @@ class _CharacterDetailSheet extends ConsumerWidget {
               AppSpacing.verticalSpacerMd,
 
               // 説明
-              Text('説明', style: AppTypography.labelSmall.copyWith(color: kTextMuted)),
+              Text('説明', style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted)),
               AppSpacing.verticalSpacerSm,
               Text(collected.character.description, style: AppTypography.bodyMedium),
               AppSpacing.verticalSpacerMd,
 
               // ストーリー
-              Text('背景', style: AppTypography.labelSmall.copyWith(color: kTextMuted)),
+              Text('背景', style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted)),
               AppSpacing.verticalSpacerSm,
               Text(collected.character.background, style: AppTypography.bodySmall),
               AppSpacing.verticalSpacerMd,
@@ -635,7 +666,7 @@ class _CharacterDetailSheet extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('レベル', style: AppTypography.labelSmall.copyWith(color: kTextMuted)),
+                        Text('レベル', style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted)),
                         AppSpacing.verticalSpacerSm,
                         Text('${collected.level} / 10', style: AppTypography.headlineSmall),
                         AppSpacing.verticalSpacerSm,
@@ -650,7 +681,7 @@ class _CharacterDetailSheet extends ConsumerWidget {
                               }
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: kPrimaryColor,
+                              backgroundColor: AppColors.primary,
                             ),
                             child: const Text('レベルアップ'),
                           ),
@@ -662,7 +693,7 @@ class _CharacterDetailSheet extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('好感度', style: AppTypography.labelSmall.copyWith(color: kTextMuted)),
+                        Text('好感度', style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted)),
                         AppSpacing.verticalSpacerSm,
                         Text('${collected.affection} %', style: AppTypography.headlineSmall),
                         AppSpacing.verticalSpacerSm,
@@ -682,7 +713,7 @@ class _CharacterDetailSheet extends ConsumerWidget {
 
               // スキル
               if (collected.character.skills.isNotEmpty) ...[
-                Text('スキル', style: AppTypography.labelSmall.copyWith(color: kTextMuted)),
+                Text('スキル', style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted)),
                 AppSpacing.verticalSpacerSm,
                 ...collected.character.skills.map((skill) {
                   return Padding(
@@ -716,10 +747,10 @@ class _StatsCard extends StatelessWidget {
       padding: AppSpacing.allPaddingMd,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [kPrimaryColor.withAlpha(20), kPrimaryColor.withAlpha(5)],
+          colors: [AppColors.primary.withAlpha(20), AppColors.primary.withAlpha(5)],
         ),
         borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
-        border: Border.all(color: kPrimaryColor.withAlpha(50)),
+        border: Border.all(color: AppColors.primary.withAlpha(50)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -740,16 +771,16 @@ class _StatsCard extends StatelessWidget {
                       child: LinearProgressIndicator(
                         value: stats.collected / stats.totalAvailable,
                         minHeight: 8,
-                        backgroundColor: Colors.grey[300],
+                        backgroundColor: AppColors.bgLight,
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          stats.completionRate == 100 ? kAccentGreen : kAccentOrange,
+                          stats.completionRate == 100 ? AppColors.accentGreen : AppColors.accentOrange,
                         ),
                       ),
                     ),
                     AppSpacing.verticalSpacerSm,
                     Text(
                       '${stats.completionRate}% 完成',
-                      style: AppTypography.labelSmall.copyWith(color: kTextMuted),
+                      style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted),
                     ),
                   ],
                 ),

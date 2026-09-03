@@ -12,7 +12,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('プライバシーポリシー'),
-        backgroundColor: kPrimaryColor,
+        backgroundColor: AppColors.primary,
       ),
       body: SingleChildScrollView(
         padding: AppSpacing.allPaddingMd,
@@ -38,7 +38,7 @@ info@petitworks.example.com
 
 5. 変更について
 本ポリシーは予告なく変更される場合があります。''',
-          style: AppTypography.bodySmall.copyWith(height: 1.7, color: kTextDark),
+          style: AppTypography.bodySmall.copyWith(height: 1.7, color: AppColors.textPrimary),
         ),
       ),
     );

@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'dart:async';
 import '../models/teacher_mode_model.dart';
+import '../services/logger_service.dart';
 
 /// Teacher Modeプロバイダー：現在のセッション管理
 final teacherModeSessionProvider =
@@ -117,7 +118,7 @@ class TeacherModeSessionNotifier extends StateNotifier<TeacherModeSession?> {
       existingList.add(jsonEncode(session.toJson()));
       await prefs.setStringList(key, existingList);
     } catch (e) {
-      print('Error saving session history: $e');
+      LoggerService.error('Error saving session history', tag: 'TeacherModeSessionNotifier', exception: e);
     }
   }
 }
@@ -147,7 +148,7 @@ class TeacherModeStatsNotifier extends StateNotifier<TeacherModeStats> {
         state = TeacherModeStats.fromJson(json);
       }
     } catch (e) {
-      print('Error loading teacher mode stats: $e');
+      LoggerService.error('Error loading teacher mode stats', tag: 'TeacherModeStatsNotifier', exception: e);
     }
   }
 
@@ -181,7 +182,7 @@ class TeacherModeStatsNotifier extends StateNotifier<TeacherModeStats> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_storageKey, jsonEncode(state.toJson()));
     } catch (e) {
-      print('Error saving stats: $e');
+      LoggerService.error('Error saving stats', tag: 'TeacherModeStatsNotifier', exception: e);
     }
   }
 

@@ -3,11 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/stage_data.dart';
 import '../models/stage.dart';
 import '../providers/progress_provider.dart';
-import '../theme/app_theme.dart';
-import '../theme/component_styles.dart';
-import '../theme/sizes.dart';
-import '../theme/spacing.dart';
-import '../theme/typography.dart';
+import '../design_system/design_system.dart';
 
 /// 改善されたステージ選択画面
 /// GridView を使用した 2 列/3 列レスポンシブレイアウト
@@ -23,7 +19,7 @@ class StageSelectScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('🇬🇧 ステージ選択'),
-        backgroundColor: kPrimaryColor,
+        backgroundColor: AppColors.primary,
         elevation: 0,
       ),
       body: CustomScrollView(
@@ -102,9 +98,9 @@ class _StageStatsBar extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: kPrimaryLight.withAlpha(25),
+        color: AppColors.primary.withAlpha(25).withAlpha(25),
         border: const Border(
-          bottom: BorderSide(color: kBorderColor, width: 1),
+          bottom: BorderSide(color: AppColors.bgLight, width: 1),
         ),
       ),
       child: Padding(
@@ -118,13 +114,13 @@ class _StageStatsBar extends StatelessWidget {
                 Text(
                   'ステージ進捗',
                   style: AppTypography.headlineSmall.copyWith(
-                    color: kTextDark,
+                    color: AppColors.textPrimary,
                   ),
                 ),
                 Text(
                   '$clearedStages/$totalStages (${percentage}%)',
                   style: AppTypography.labelLarge.copyWith(
-                    color: kPrimaryColor,
+                    color: AppColors.primary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -136,8 +132,8 @@ class _StageStatsBar extends StatelessWidget {
               child: LinearProgressIndicator(
                 value: clearedStages / totalStages,
                 minHeight: AppSizes.progressBarHeightBold,
-                backgroundColor: kBorderColor,
-                valueColor: const AlwaysStoppedAnimation<Color>(kPrimaryColor),
+                backgroundColor: AppColors.bgLight,
+                valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
               ),
             ),
           ],
@@ -186,12 +182,12 @@ class _ImprovedStageCardState extends State<ImprovedStageCard> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           decoration: BoxDecoration(
-            color: widget.isLocked ? Colors.grey.shade100 : Colors.white,
+            color: widget.isLocked ? AppColors.bgLight : AppColors.textWhite,
             borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
             border: Border.all(
               color: _isHovered && !widget.isLocked
-                  ? kPrimaryColor
-                  : kBorderColor,
+                  ? AppColors.primary
+                  : AppColors.bgLight,
               width: _isHovered && !widget.isLocked ? 2 : 1,
             ),
             boxShadow: [
@@ -199,8 +195,8 @@ class _ImprovedStageCardState extends State<ImprovedStageCard> {
                 color: widget.isLocked
                     ? Colors.transparent
                     : (_isHovered
-                        ? kPrimaryColor.withAlpha(76)
-                        : Colors.black.withAlpha(13)),
+                        ? AppColors.primary.withAlpha(76)
+                        : AppColors.textPrimary.withAlpha(13)),
                 blurRadius: _isHovered ? 8 : 4,
                 offset: _isHovered ? const Offset(0, 4) : const Offset(0, 2),
               ),
@@ -218,15 +214,15 @@ class _ImprovedStageCardState extends State<ImprovedStageCard> {
                   height: AppSizes.iconSizeLarge + 16,
                   decoration: BoxDecoration(
                     color: widget.isLocked
-                        ? Colors.grey.shade200
+                        ? AppColors.bgLight
                         : (widget.isCleared
-                            ? kAccentGreen.withAlpha(25)
-                            : kPrimaryColor.withAlpha(25)),
+                            ? AppColors.accentGreen.withAlpha(25)
+                            : AppColors.primary.withAlpha(25)),
                     borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                   ),
                   child: Center(
                     child: widget.isLocked
-                        ? const Icon(Icons.lock, color: Colors.grey, size: 20)
+                        ? const Icon(Icons.lock, color: AppColors.textMuted, size: 20)
                         : Text(
                             widget.stage.emoji,
                             style: const TextStyle(fontSize: 28),
@@ -240,7 +236,7 @@ class _ImprovedStageCardState extends State<ImprovedStageCard> {
                 Text(
                   'Stage ${widget.stage.stageNumber}',
                   style: AppTypography.labelMedium.copyWith(
-                    color: widget.isLocked ? Colors.grey : kPrimaryColor,
+                    color: widget.isLocked ? AppColors.textMuted : AppColors.primary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -252,7 +248,7 @@ class _ImprovedStageCardState extends State<ImprovedStageCard> {
                   widget.stage.titleJa,
                   textAlign: TextAlign.center,
                   style: AppTypography.bodySmall.copyWith(
-                    color: widget.isLocked ? Colors.grey : kTextDark,
+                    color: widget.isLocked ? AppColors.textMuted : AppColors.textPrimary,
                     fontWeight: FontWeight.bold,
                   ),
                   maxLines: 2,
@@ -268,13 +264,13 @@ class _ImprovedStageCardState extends State<ImprovedStageCard> {
                     _CompactSkillPill(
                       icon: '👂',
                       count: widget.stage.listeningCount,
-                      color: kListeningColor,
+                      color: AppColors.listeningColor,
                     ),
                     AppSpacing.horizontalSpacerSm,
                     _CompactSkillPill(
                       icon: '🎤',
                       count: widget.stage.speakingCount,
-                      color: kSpeakingColor,
+                      color: AppColors.speakingColor,
                     ),
                   ],
                 ),
@@ -286,7 +282,7 @@ class _ImprovedStageCardState extends State<ImprovedStageCard> {
                   Column(
                     children: [
                       const Icon(Icons.check_circle,
-                          color: kAccentGreen, size: 20),
+                          color: AppColors.accentGreen, size: 20),
                       AppSpacing.verticalSpacerSm,
                       if (widget.onReview != null)
                         GestureDetector(
@@ -297,7 +293,7 @@ class _ImprovedStageCardState extends State<ImprovedStageCard> {
                               vertical: AppSpacing.xs,
                             ),
                             decoration: BoxDecoration(
-                              color: kAccentGreen.withAlpha(25),
+                              color: AppColors.accentGreen.withAlpha(25),
                               borderRadius: BorderRadius.circular(
                                 AppSizes.borderRadius,
                               ),
@@ -305,7 +301,7 @@ class _ImprovedStageCardState extends State<ImprovedStageCard> {
                             child: Text(
                               '復習',
                               style: AppTypography.labelSmall.copyWith(
-                                color: kAccentGreen,
+                                color: AppColors.accentGreen,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -319,13 +315,13 @@ class _ImprovedStageCardState extends State<ImprovedStageCard> {
                       Text(
                         '${widget.bestScore}',
                         style: AppTypography.numberDisplay.copyWith(
-                          color: kAccentOrange,
+                          color: AppColors.accentOrange,
                         ),
                       ),
                       Text(
                         '点',
                         style: AppTypography.bodySmall.copyWith(
-                          color: kTextMuted,
+                          color: AppColors.textMuted,
                         ),
                       ),
                     ],
@@ -333,7 +329,7 @@ class _ImprovedStageCardState extends State<ImprovedStageCard> {
                 else if (!widget.isLocked)
                   const Icon(
                     Icons.play_circle_filled,
-                    color: kPrimaryColor,
+                    color: AppColors.primary,
                     size: 28,
                   ),
               ],

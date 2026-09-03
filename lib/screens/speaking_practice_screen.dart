@@ -1,3 +1,4 @@
+import '../design_system/design_system.dart';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,10 +10,6 @@ import '../providers/progress_provider.dart';
 import '../providers/speaking_history_provider.dart';
 import '../services/speech_service.dart';
 import '../services/tts_service.dart';
-import '../theme/app_theme.dart';
-import '../theme/spacing.dart';
-import '../theme/sizes.dart';
-import '../theme/typography.dart';
 import '../widgets/speaking_score_ring.dart';
 
 /// スピーキング集中練習モード
@@ -165,7 +162,7 @@ class _SpeakingPracticeScreenState extends ConsumerState<SpeakingPracticeScreen>
     return Scaffold(
       appBar: AppBar(
         title: const Text('🎤 スピーキング練習'),
-        backgroundColor: kSpeakingColor,
+        backgroundColor: AppColors.speakingColor,
       ),
       body: _practicing ? _buildPracticeView() : _buildStageSelectView(progress),
     );
@@ -177,7 +174,7 @@ class _SpeakingPracticeScreenState extends ConsumerState<SpeakingPracticeScreen>
       children: [
         Container(
           padding: AppSpacing.allPaddingMd,
-          color: kSpeakingColor.withAlpha(20),
+          color: AppColors.speakingColor.withAlpha(20),
           child: Row(
             children: [
               const Text('🎤', style: TextStyle(fontSize: 28)),
@@ -185,7 +182,7 @@ class _SpeakingPracticeScreenState extends ConsumerState<SpeakingPracticeScreen>
               Expanded(
                 child: Text(
                   'ステージを選んでスピーキングだけを集中練習しよう！',
-                  style: AppTypography.labelLarge.copyWith(color: kTextDark),
+                  style: AppTypography.labelLarge.copyWith(color: AppColors.textPrimary),
                 ),
               ),
             ],
@@ -203,24 +200,24 @@ class _SpeakingPracticeScreenState extends ConsumerState<SpeakingPracticeScreen>
 
               return Card(
                 margin: EdgeInsets.only(bottom: AppSpacing.xs),
-                color: isLocked ? Colors.grey.shade100 : Colors.white,
+                color: isLocked ? AppColors.bgLight :AppColors.textWhite,
                 child: ListTile(
                   leading: Container(
                     width: 48, height: 48,
                     decoration: BoxDecoration(
-                      color: isLocked ? Colors.grey.shade200 : kSpeakingColor.withAlpha(26),
+                      color: isLocked ? AppColors.bgLight : AppColors.speakingColor.withAlpha(26),
                       borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                     ),
                     child: Center(
                       child: isLocked
-                          ? const Icon(Icons.lock, color: Colors.grey)
+                          ? const Icon(Icons.lock, color: AppColors.textMuted)
                           : Text(stage.emoji, style: const TextStyle(fontSize: 24)),
                     ),
                   ),
                   title: Text(
                     '${stage.titleJa}（${stage.title}）',
                     style: AppTypography.labelLarge.copyWith(
-                      color: isLocked ? Colors.grey : kTextDark,
+                      color: isLocked ? Colors.grey : AppColors.textPrimary,
                     ),
                   ),
                   subtitle: Row(
@@ -228,24 +225,24 @@ class _SpeakingPracticeScreenState extends ConsumerState<SpeakingPracticeScreen>
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: AppSpacing.xs, vertical: 2),
                         decoration: BoxDecoration(
-                          color: kSpeakingColor.withAlpha(26),
+                          color: AppColors.speakingColor.withAlpha(26),
                           borderRadius: BorderRadius.circular(AppSizes.borderRadiusSmall),
                         ),
                         child: Text(
                           '🎤 ${stage.speakingCount}問',
-                          style: AppTypography.bodySmall.copyWith(color: kSpeakingColor, fontWeight: FontWeight.bold, fontSize: 11),
+                          style: AppTypography.bodySmall.copyWith(color: AppColors.speakingColor, fontWeight: FontWeight.bold, fontSize: 11),
                         ),
                       ),
                       if (speakAvg != null) ...[
                         SizedBox(width: AppSpacing.xs),
                         Text('前回: ${speakAvg.round()}点',
-                            style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 11)),
+                            style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, fontSize: 11)),
                       ],
                     ],
                   ),
                   trailing: isLocked ? null : Icon(
                     isCleared ? Icons.replay : Icons.play_arrow,
-                    color: kSpeakingColor,
+                    color: AppColors.speakingColor,
                   ),
                   onTap: isLocked ? null : () => _startPractice(stage),
                 ),
@@ -266,25 +263,25 @@ class _SpeakingPracticeScreenState extends ConsumerState<SpeakingPracticeScreen>
             // ヘッダー
             Container(
               padding: EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
-              color: kSpeakingColor,
+              color: AppColors.speakingColor,
               child: Row(
                 children: [
                   Text(
                     '${_selectedStage!.emoji} ${_selectedStage!.titleJa}',
-                    style: AppTypography.labelLarge.copyWith(color: Colors.white),
+                    style: AppTypography.labelLarge.copyWith(color: AppColors.textWhite),
                   ),
                   const Spacer(),
                   Text(
                     '${_qIndex + 1} / ${_questions.length}',
-                    style: AppTypography.bodySmall.copyWith(color: Colors.white70),
+                    style: AppTypography.bodySmall.copyWith(color: AppColors.textWhite.withOpacity(0.7)),
                   ),
                 ],
               ),
             ),
             LinearProgressIndicator(
               value: (_qIndex + 1) / _questions.length,
-              backgroundColor: Colors.grey.shade200,
-              color: kSpeakingColor,
+              backgroundColor:AppColors.textMuted,
+              color: AppColors.speakingColor,
               minHeight: 4,
             ),
             Expanded(
@@ -301,7 +298,7 @@ class _SpeakingPracticeScreenState extends ConsumerState<SpeakingPracticeScreen>
                         padding: EdgeInsets.all(AppSpacing.xl),
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
-                            colors: [kSpeakingColor, Color(0xFFFF6B9D)],
+                            colors: [AppColors.speakingColor, Color(0xFFFF6B9D)],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ),
@@ -314,17 +311,17 @@ class _SpeakingPracticeScreenState extends ConsumerState<SpeakingPracticeScreen>
                             AppSpacing.verticalSpacerXs,
                             Text(
                               q.textJa.replaceAll('言ってみよう', '').replaceAll('英語で', '').trim(),
-                              style: AppTypography.bodySmall.copyWith(color: Colors.white70),
+                              style: AppTypography.bodySmall.copyWith(color: AppColors.textWhite.withOpacity(0.7)),
                             ),
                             AppSpacing.verticalSpacerXs,
                             Text(
                               q.text,
-                              style: AppTypography.headlineLarge.copyWith(color: Colors.white),
+                              style: AppTypography.headlineLarge.copyWith(color: AppColors.textWhite),
                               textAlign: TextAlign.center,
                             ),
                             if (q.phonetic != null) ...[
                               AppSpacing.verticalSpacerXs,
-                              Text(q.phonetic!, style: AppTypography.bodySmall.copyWith(color: Colors.white60, fontStyle: FontStyle.italic)),
+                              Text(q.phonetic!, style: AppTypography.bodySmall.copyWith(color: AppColors.textWhite.withOpacity(0.6), fontStyle: FontStyle.italic)),
                             ],
                           ],
                         ),
@@ -339,14 +336,14 @@ class _SpeakingPracticeScreenState extends ConsumerState<SpeakingPracticeScreen>
                           icon: const Icon(Icons.volume_up),
                           label: const Text('聞く'),
                           onPressed: () => _tts.speak(q.text),
-                          style: ElevatedButton.styleFrom(backgroundColor: kPrimaryColor),
+                          style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
                         ),
                         AppSpacing.horizontalSpacerXs,
                         OutlinedButton.icon(
                           icon: const Icon(Icons.slow_motion_video, size: 16),
                           label: const Text('ゆっくり'),
                           onPressed: () => _tts.speakSlow(q.text),
-                          style: OutlinedButton.styleFrom(foregroundColor: kPrimaryColor),
+                          style: OutlinedButton.styleFrom(foregroundColor: AppColors.primary),
                         ),
                       ],
                     ),
@@ -360,14 +357,14 @@ class _SpeakingPracticeScreenState extends ConsumerState<SpeakingPracticeScreen>
                           width: 90, height: 90,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: _isListening ? kSpeakingColor : Colors.grey.shade800,
+                            color: _isListening ? AppColors.speakingColor :AppColors.textMuted,
                             boxShadow: _isListening
-                                ? [BoxShadow(color: kSpeakingColor.withAlpha(100), blurRadius: 24, spreadRadius: 6)]
+                                ? [BoxShadow(color: AppColors.speakingColor.withAlpha(100), blurRadius: 24, spreadRadius: 6)]
                                 : [],
                           ),
                           child: Icon(
                             _isListening ? Icons.mic : Icons.mic_none,
-                            color: Colors.white, size: 40,
+                            color:AppColors.textWhite, size: 40,
                           ),
                         ),
                       ),
@@ -375,14 +372,14 @@ class _SpeakingPracticeScreenState extends ConsumerState<SpeakingPracticeScreen>
                       Text(
                         _isListening ? '聞いています...' : 'タップして発音',
                         style: AppTypography.labelLarge.copyWith(
-                          color: _isListening ? kSpeakingColor : kTextMuted,
+                          color: _isListening ? AppColors.speakingColor : AppColors.textMuted,
                         ),
                       ),
                       if (_recognizedText.isNotEmpty)
                         Padding(
                           padding: EdgeInsets.only(top: AppSpacing.xs),
                           child: Text('"$_recognizedText"',
-                              style: AppTypography.labelLarge.copyWith(color: kTextDark)),
+                              style: AppTypography.labelLarge.copyWith(color: AppColors.textPrimary)),
                         ),
                     ] else ...[
                       SpeakingScoreRing(score: _speakingScore, size: 100),
@@ -400,7 +397,7 @@ class _SpeakingPracticeScreenState extends ConsumerState<SpeakingPracticeScreen>
                               icon: const Icon(Icons.replay),
                               label: Text('もう一度${_retryCount > 0 ? " (${_retryCount + 1}回目)" : ""}'),
                               onPressed: _retry,
-                              style: OutlinedButton.styleFrom(foregroundColor: kSpeakingColor),
+                              style: OutlinedButton.styleFrom(foregroundColor: AppColors.speakingColor),
                             ),
                           ),
                           AppSpacing.horizontalSpacerXs,
@@ -409,7 +406,7 @@ class _SpeakingPracticeScreenState extends ConsumerState<SpeakingPracticeScreen>
                               icon: Icon(_qIndex >= _questions.length - 1 ? Icons.flag : Icons.arrow_forward),
                               label: Text(_qIndex >= _questions.length - 1 ? '完了' : 'つぎへ'),
                               onPressed: _next,
-                              style: ElevatedButton.styleFrom(backgroundColor: kSpeakingColor),
+                              style: ElevatedButton.styleFrom(backgroundColor: AppColors.speakingColor),
                             ),
                           ),
                         ],
@@ -427,7 +424,7 @@ class _SpeakingPracticeScreenState extends ConsumerState<SpeakingPracticeScreen>
             confettiController: _confetti,
             blastDirectionality: BlastDirectionality.explosive,
             shouldLoop: false,
-            colors: const [kSpeakingColor, kPrimaryColor, kAccentGreen],
+            colors: const [AppColors.speakingColor, AppColors.primary, AppColors.accentGreen],
           ),
         ),
       ],
@@ -471,9 +468,9 @@ class _PracticeResultDialog extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _Stat('平均', '$avg点', kSpeakingColor),
-              _Stat('最高', '$best点', kAccentGreen),
-              _Stat('85点↑', '$perfect/${questions.length}問', kAccentOrange),
+              _Stat('平均', '$avg点', AppColors.speakingColor),
+              _Stat('最高', '$best点', AppColors.accentGreen),
+              _Stat('85点↑', '$perfect/${questions.length}問', AppColors.accentOrange),
             ],
           ),
           AppSpacing.verticalSpacerLg,
@@ -489,7 +486,7 @@ class _PracticeResultDialog extends StatelessWidget {
               Expanded(
                 child: ElevatedButton(
                   onPressed: onBack,
-                  style: ElevatedButton.styleFrom(backgroundColor: kSpeakingColor),
+                  style: ElevatedButton.styleFrom(backgroundColor: AppColors.speakingColor),
                   child: const Text('ステージ選択'),
                 ),
               ),
@@ -511,7 +508,7 @@ class _Stat extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     children: [
       Text(value, style: AppTypography.headlineSmall.copyWith(fontWeight: FontWeight.bold, color: color)),
-      Text(label, style: AppTypography.bodySmall.copyWith(color: kTextMuted, fontSize: 12)),
+      Text(label, style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted, fontSize: 12)),
     ],
   );
 }

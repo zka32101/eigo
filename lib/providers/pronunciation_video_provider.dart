@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../models/pronunciation_video_model.dart';
+import '../services/logger_service.dart';
 
 // === Providers ===
 
@@ -66,7 +67,7 @@ class ActiveRecordsNotifier extends StateNotifier<List<PronunciationVideoRecord>
             .toList();
       }
     } catch (e) {
-      print('Failed to load active records: $e');
+      LoggerService.error('Failed to load active records', tag: 'ActiveRecordsNotifier', exception: e);
     }
   }
 
@@ -76,7 +77,7 @@ class ActiveRecordsNotifier extends StateNotifier<List<PronunciationVideoRecord>
       final jsonList = state.map((e) => e.toJson()).toList();
       await prefs.setString(_storageKey, jsonEncode(jsonList));
     } catch (e) {
-      print('Failed to save active records: $e');
+      LoggerService.error('Failed to save active records', tag: 'ActiveRecordsNotifier', exception: e);
     }
   }
 
@@ -138,7 +139,7 @@ class CompletedComparisonsNotifier extends StateNotifier<List<PronunciationVideo
             .toList();
       }
     } catch (e) {
-      print('Failed to load completed comparisons: $e');
+      LoggerService.error('Failed to load completed comparisons', tag: 'CompletedComparisonsNotifier', exception: e);
     }
   }
 
@@ -148,7 +149,7 @@ class CompletedComparisonsNotifier extends StateNotifier<List<PronunciationVideo
       final jsonList = state.map((e) => e.toJson()).toList();
       await prefs.setString(_storageKey, jsonEncode(jsonList));
     } catch (e) {
-      print('Failed to save completed comparisons: $e');
+      LoggerService.error('Failed to save completed comparisons', tag: 'CompletedComparisonsNotifier', exception: e);
     }
   }
 
@@ -246,7 +247,7 @@ class PronunciationProgressNotifier extends StateNotifier<PronunciationProgress?
         );
       }
     } catch (e) {
-      print('Failed to load pronunciation progress: $e');
+      LoggerService.error('Failed to load pronunciation progress', tag: 'PronunciationProgressNotifier', exception: e);
     }
   }
 
@@ -256,7 +257,7 @@ class PronunciationProgressNotifier extends StateNotifier<PronunciationProgress?
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_storageKey, jsonEncode(state!.toJson()));
     } catch (e) {
-      print('Failed to save pronunciation progress: $e');
+      LoggerService.error('Failed to save pronunciation progress', tag: 'PronunciationProgressNotifier', exception: e);
     }
   }
 
@@ -344,7 +345,7 @@ class PronunciationVideoStatsNotifier extends StateNotifier<PronunciationVideoSt
         state = PronunciationVideoStats.fromJson(jsonDecode(jsonString));
       }
     } catch (e) {
-      print('Failed to load pronunciation video stats: $e');
+      LoggerService.error('Failed to load pronunciation video stats', tag: 'PronunciationVideoStatsNotifier', exception: e);
     }
   }
 
@@ -353,7 +354,7 @@ class PronunciationVideoStatsNotifier extends StateNotifier<PronunciationVideoSt
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_storageKey, jsonEncode(state.toJson()));
     } catch (e) {
-      print('Failed to save pronunciation video stats: $e');
+      LoggerService.error('Failed to save pronunciation video stats', tag: 'PronunciationVideoStatsNotifier', exception: e);
     }
   }
 
