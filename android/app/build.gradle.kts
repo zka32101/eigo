@@ -17,13 +17,9 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
-    }
-
     defaultConfig {
         applicationId = "com.petitworks.eigo_kore"
-        minSdk = 21  // flutter_local_notifications 対応
+        minSdk = flutter.minSdkVersion  // flutter_local_notifications 対応
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName

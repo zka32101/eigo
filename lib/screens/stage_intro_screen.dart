@@ -184,7 +184,7 @@ class _VocabSection extends StatelessWidget {
           physics: const NeverScrollableScrollPhysics(),
           crossAxisSpacing: 8,
           mainAxisSpacing: 8,
-          childAspectRatio: 1.1,
+          childAspectRatio: 1.4,
           children: intro.highlights.map((v) => _VocabChip(vocab: v, tts: tts)).toList(),
         ),
       ],

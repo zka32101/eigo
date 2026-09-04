@@ -12,13 +12,17 @@ dependencies:
     sdk: flutter
   shared_core:
     path: ../shared_core
+  path_provider: ^2.1.6
+  file: ^7.0.0
+  win32: ^6.0.0
+  platform: ^3.1.0
   cupertino_icons: ^1.0.8
   flutter_riverpod: ^2.6.1
   shared_preferences: ^2.3.0
   intl: ^0.19.0
   confetti: ^0.8.0
   flutter_tts: ^4.0.2
-  speech_to_text: ^7.0.0
+  speech_to_text: ^7.4.0
   google_fonts: ^6.2.1
   percent_indicator: ^4.2.4
   fl_chart: ^0.69.0
@@ -30,7 +34,8 @@ dependencies:
   cloud_firestore: ^5.6.0
   uuid: ^4.0.0
   http: ^1.1.0
-  flutter_secure_storage: ^9.0.0
+  flutter_secure_storage: ^10.3.1
+  url_launcher: ^6.3.2
   google_generative_ai: ^0.4.2
 
 dev_dependencies:

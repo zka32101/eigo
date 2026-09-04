@@ -45,8 +45,8 @@ class SettingsScreen extends ConsumerWidget {
 
           const SizedBox(height: 16),
           _SectionHeader('騾夂衍險ｭ螳・),
-          _NotificationCard(settings: settings, ref: ref),
-          _MorningEnglishCard(morningNotification: morningNotification, ref: ref),
+          // Temporarily disabled: _NotificationCard(settings: settings, ref: ref),
+          // Temporarily disabled: _MorningEnglishCard(morningNotification: morningNotification, ref: ref),
 
           const SizedBox(height: 16),
           _SectionHeader('AI 繧ｭ繝ｼ險ｭ螳・),
@@ -354,7 +354,7 @@ class _PhoneticToggle extends StatelessWidget {
 
 // 笏笏笏 Notification Card 笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏
 
-class _NotificationCard extends StatelessWidget {
+/*
   final AppSettings settings;
   final WidgetRef ref;
   const _NotificationCard({required this.settings, required this.ref});
@@ -376,6 +376,7 @@ class _NotificationCard extends StatelessWidget {
               } else {
                 unawaited(ref.read(settingsProvider.notifier).setNotificationEnabled(false));
               }
+*/
             },
             activeThumbColor: kAccentOrange,
           ),
@@ -474,7 +475,7 @@ class _SettingsTile extends StatelessWidget {
 
 // 笏笏笏 Morning English Card 笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏
 
-class _MorningEnglishCard extends StatelessWidget {
+/*
   final MorningNotificationState morningNotification;
   final WidgetRef ref;
   const _MorningEnglishCard({
@@ -504,6 +505,7 @@ class _MorningEnglishCard extends StatelessWidget {
                 unawaited(ref.read(morningNotificationStateProvider.notifier)
                     .disableMorningNotification());
               }
+*/
             },
             activeThumbColor: kAccentOrange,
           ),
