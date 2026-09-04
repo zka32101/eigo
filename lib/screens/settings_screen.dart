@@ -548,12 +548,14 @@ class _SettingsTile extends StatelessWidget {
             ),
           ],
           if (morningNotification.error != null)
-            Container(
-              padding: const EdgeInsets.all(12),
-              color: Colors.red[50],
-              child: Text(
-                morningNotification.error!,
-                style: const TextStyle(color: Colors.red, fontSize: 12),
+            DecoratedBox(
+              decoration: const BoxDecoration(color: Color(0xFFFFEBEE)),
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Text(
+                  morningNotification.error!,
+                  style: const TextStyle(color: Colors.red, fontSize: 12),
+                ),
               ),
             ),
         ],
