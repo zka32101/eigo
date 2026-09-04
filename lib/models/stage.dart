@@ -17,6 +17,15 @@ enum StageCategory {
   dailyRoutineAdv, sportsAdv, natureAdv2, familyPeople, schoolSubjects,
   jobsAdv, bodyHealth2, emotionsAdv, clothesFashion, technologyAdv,
   travelTransport, holidaysEvents, sentencePractice, eiken5prep, finalReview,
+  // Stage 81-90 (初級・食べ物拡張)
+  foodExtra1, foodExtra2, foodExtra3, foodExtra4, foodExtra5,
+  foodExtra6, foodExtra7, foodExtra8, foodExtra9, foodExtra10,
+  // Stage 91-100 (初級・動物拡張)
+  animalsExtra1, animalsExtra2, animalsExtra3, animalsExtra4, animalsExtra5,
+  animalsExtra6, animalsExtra7, animalsExtra8, animalsExtra9, animalsExtra10,
+  // Stage 101-110 (初級・色・形拡張)
+  colorsShapesExtra1, colorsShapesExtra2, colorsShapesExtra3, colorsShapesExtra4, colorsShapesExtra5,
+  colorsShapesExtra6, colorsShapesExtra7, colorsShapesExtra8, colorsShapesExtra9, colorsShapesExtra10,
 }
 
 class Stage {
@@ -130,5 +139,35 @@ String stageCategoryLabel(StageCategory cat) {
     case StageCategory.sentencePractice: return '文章練習';
     case StageCategory.eiken5prep:    return '英検5級対策';
     case StageCategory.finalReview:   return '最終まとめ';
+    case StageCategory.foodExtra1:    return '食べ物③';
+    case StageCategory.foodExtra2:    return '食べ物④';
+    case StageCategory.foodExtra3:    return '食べ物⑤';
+    case StageCategory.foodExtra4:    return '食べ物⑥';
+    case StageCategory.foodExtra5:    return '食べ物⑦';
+    case StageCategory.foodExtra6:    return '食べ物⑧';
+    case StageCategory.foodExtra7:    return '食べ物⑨';
+    case StageCategory.foodExtra8:    return '食べ物⑩';
+    case StageCategory.foodExtra9:    return '食べ物⑪';
+    case StageCategory.foodExtra10:   return '食べ物⑫';
+    case StageCategory.animalsExtra1:  return '動物③';
+    case StageCategory.animalsExtra2:  return '動物④';
+    case StageCategory.animalsExtra3:  return '動物⑤';
+    case StageCategory.animalsExtra4:  return '動物⑥';
+    case StageCategory.animalsExtra5:  return '動物⑦';
+    case StageCategory.animalsExtra6:  return '動物⑧';
+    case StageCategory.animalsExtra7:  return '動物⑨';
+    case StageCategory.animalsExtra8:  return '動物⑩';
+    case StageCategory.animalsExtra9:  return '動物⑪';
+    case StageCategory.animalsExtra10: return '動物⑫';
+    case StageCategory.colorsShapesExtra1:  return '色・形①';
+    case StageCategory.colorsShapesExtra2:  return '色・形②';
+    case StageCategory.colorsShapesExtra3:  return '色・形③';
+    case StageCategory.colorsShapesExtra4:  return '色・形④';
+    case StageCategory.colorsShapesExtra5:  return '色・形⑤';
+    case StageCategory.colorsShapesExtra6:  return '色・形⑥';
+    case StageCategory.colorsShapesExtra7:  return '色・形⑦';
+    case StageCategory.colorsShapesExtra8:  return '色・形⑧';
+    case StageCategory.colorsShapesExtra9:  return '色・形⑨';
+    case StageCategory.colorsShapesExtra10: return '色・形⑩';
   }
 }

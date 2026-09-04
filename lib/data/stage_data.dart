@@ -7,6 +7,9 @@ import 'question_data_extra4.dart';
 import 'writing_supplement.dart';
 import 'question_data_extra5.dart';
 import 'question_data_extra6.dart';
+import 'question_data_extra7.dart';
+import 'question_data_extra8.dart';
+import 'question_data_extra9.dart';
 
 final allStages = <Stage>[
   // ── 既存 Stage 1-10 ──────────────────────────────────────────────────────
@@ -100,4 +103,40 @@ final allStages = <Stage>[
   Stage(id: 'stage_78', grade: 6, stageNumber: 78, title: 'Sentence Practice',   titleJa: '文章練習',         emoji: '📝',  category: StageCategory.sentencePractice, questions: stage78Questions),
   Stage(id: 'stage_79', grade: 6, stageNumber: 79, title: 'Eiken Grade 5',       titleJa: '英検5級対策',      emoji: '📋',  category: StageCategory.eiken5prep,      questions: stage79Questions),
   Stage(id: 'stage_80', grade: 6, stageNumber: 80, title: 'Final Master Review', titleJa: '最終まとめ',       emoji: '🏅',  category: StageCategory.finalReview,     questions: stage80Questions),
+
+  // ── 初級追加 Stage 81-90: 食べ物（拡張）─────────────────────────────────────
+  Stage(id: 'stage_81', grade: 3, stageNumber: 81, title: 'Food Extra 1',       titleJa: '食べ物③',         emoji: '🍚',  category: StageCategory.foodExtra1,     questions: stage81Questions),
+  Stage(id: 'stage_82', grade: 3, stageNumber: 82, title: 'Food Extra 2',       titleJa: '食べ物④',         emoji: '🥚',  category: StageCategory.foodExtra2,     questions: stage82Questions),
+  Stage(id: 'stage_83', grade: 4, stageNumber: 83, title: 'Food Extra 3',       titleJa: '食べ物⑤',         emoji: '🍫',  category: StageCategory.foodExtra3,     questions: stage83Questions),
+  Stage(id: 'stage_84', grade: 4, stageNumber: 84, title: 'Food Extra 4',       titleJa: '食べ物⑥',         emoji: '☕',  category: StageCategory.foodExtra4,     questions: stage84Questions),
+  Stage(id: 'stage_85', grade: 4, stageNumber: 85, title: 'Food Extra 5',       titleJa: '食べ物⑦',         emoji: '🌽',  category: StageCategory.foodExtra5,     questions: stage85Questions),
+  Stage(id: 'stage_86', grade: 4, stageNumber: 86, title: 'Food Extra 6',       titleJa: '食べ物⑧',         emoji: '🔪',  category: StageCategory.foodExtra6,     questions: stage86Questions),
+  Stage(id: 'stage_87', grade: 4, stageNumber: 87, title: 'Food Extra 7',       titleJa: '食べ物⑨',         emoji: '🍄',  category: StageCategory.foodExtra7,     questions: stage87Questions),
+  Stage(id: 'stage_88', grade: 5, stageNumber: 88, title: 'Food Extra 8',       titleJa: '食べ物⑩',         emoji: '🧈',  category: StageCategory.foodExtra8,     questions: stage88Questions),
+  Stage(id: 'stage_89', grade: 5, stageNumber: 89, title: 'Food Extra 9',       titleJa: '食べ物⑪',         emoji: '🍓',  category: StageCategory.foodExtra9,     questions: stage89Questions),
+  Stage(id: 'stage_90', grade: 5, stageNumber: 90, title: 'Food Extra 10',      titleJa: '食べ物⑫',         emoji: '🫒',  category: StageCategory.foodExtra10,    questions: stage90Questions),
+
+  // ── 初級追加 Stage 91-100: 動物（拡張）─────────────────────────────────────
+  Stage(id: 'stage_91', grade: 3, stageNumber: 91, title: 'Animals Extra 1',    titleJa: '動物③',          emoji: '🐱',  category: StageCategory.animalsExtra1,  questions: stage91Questions),
+  Stage(id: 'stage_92', grade: 3, stageNumber: 92, title: 'Animals Extra 2',    titleJa: '動物④',          emoji: '🐘',  category: StageCategory.animalsExtra2,  questions: stage92Questions),
+  Stage(id: 'stage_93', grade: 4, stageNumber: 93, title: 'Animals Extra 3',    titleJa: '動物⑤',          emoji: '🐰',  category: StageCategory.animalsExtra3,  questions: stage93Questions),
+  Stage(id: 'stage_94', grade: 4, stageNumber: 94, title: 'Animals Extra 4',    titleJa: '動物⑥',          emoji: '🐆',  category: StageCategory.animalsExtra4,  questions: stage94Questions),
+  Stage(id: 'stage_95', grade: 4, stageNumber: 95, title: 'Animals Extra 5',    titleJa: '動物⑦',          emoji: '🦋',  category: StageCategory.animalsExtra5,  questions: stage95Questions),
+  Stage(id: 'stage_96', grade: 4, stageNumber: 96, title: 'Animals Extra 6',    titleJa: '動物⑧',          emoji: '🐧',  category: StageCategory.animalsExtra6,  questions: stage96Questions),
+  Stage(id: 'stage_97', grade: 4, stageNumber: 97, title: 'Animals Extra 7',    titleJa: '動物⑨',          emoji: '🦚',  category: StageCategory.animalsExtra7,  questions: stage97Questions),
+  Stage(id: 'stage_98', grade: 5, stageNumber: 98, title: 'Animals Extra 8',    titleJa: '動物⑩',          emoji: '🐪',  category: StageCategory.animalsExtra8,  questions: stage98Questions),
+  Stage(id: 'stage_99', grade: 5, stageNumber: 99, title: 'Animals Extra 9',    titleJa: '動物⑪',          emoji: '🦙',  category: StageCategory.animalsExtra9,  questions: stage99Questions),
+  Stage(id: 'stage_100', grade: 5, stageNumber: 100, title: 'Animals Extra 10',  titleJa: '動物⑫',         emoji: '🦥',  category: StageCategory.animalsExtra10, questions: stage100Questions),
+
+  // ── 初級追加 Stage 101-110: 色・形（拡張）────────────────────────────────────
+  Stage(id: 'stage_101', grade: 3, stageNumber: 101, title: 'Colors Extra 1',   titleJa: '色・形①',        emoji: '🔵',  category: StageCategory.colorsShapesExtra1,   questions: stage101Questions),
+  Stage(id: 'stage_102', grade: 3, stageNumber: 102, title: 'Colors Extra 2',   titleJa: '色・形②',        emoji: '🔴',  category: StageCategory.colorsShapesExtra2,   questions: stage102Questions),
+  Stage(id: 'stage_103', grade: 4, stageNumber: 103, title: 'Colors Extra 3',   titleJa: '色・形③',        emoji: '⚪',  category: StageCategory.colorsShapesExtra3,   questions: stage103Questions),
+  Stage(id: 'stage_104', grade: 4, stageNumber: 104, title: 'Colors Extra 4',   titleJa: '色・形④',        emoji: '⬛',  category: StageCategory.colorsShapesExtra4,   questions: stage104Questions),
+  Stage(id: 'stage_105', grade: 4, stageNumber: 105, title: 'Colors Extra 5',   titleJa: '色・形⑤',        emoji: '🔶',  category: StageCategory.colorsShapesExtra5,   questions: stage105Questions),
+  Stage(id: 'stage_106', grade: 4, stageNumber: 106, title: 'Colors Extra 6',   titleJa: '色・形⑥',        emoji: '🟢',  category: StageCategory.colorsShapesExtra6,   questions: stage106Questions),
+  Stage(id: 'stage_107', grade: 4, stageNumber: 107, title: 'Colors Extra 7',   titleJa: '色・形⑦',        emoji: '🟣',  category: StageCategory.colorsShapesExtra7,   questions: stage107Questions),
+  Stage(id: 'stage_108', grade: 5, stageNumber: 108, title: 'Colors Extra 8',   titleJa: '色・形⑧',        emoji: '🟡',  category: StageCategory.colorsShapesExtra8,   questions: stage108Questions),
+  Stage(id: 'stage_109', grade: 5, stageNumber: 109, title: 'Colors Extra 9',   titleJa: '色・形⑨',        emoji: '🟠',  category: StageCategory.colorsShapesExtra9,   questions: stage109Questions),
+  Stage(id: 'stage_110', grade: 5, stageNumber: 110, title: 'Colors Extra 10',  titleJa: '色・形⑩',        emoji: '🌈',  category: StageCategory.colorsShapesExtra10,  questions: stage110Questions),
 ];
