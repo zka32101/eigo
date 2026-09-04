@@ -1,232 +1,292 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/social_model.dart';
-import '../providers/social_provider.dart';
+import '../models/user_profile.dart';
+import '../providers/user_profile_service_provider.dart';
+import '../providers/user_profile_provider.dart';
 import '../design_system/design_system.dart';
-import '../widgets/activity_card.dart';
+import '../widgets/user_profile_card.dart';
 
-class UserProfileScreen extends ConsumerWidget {
-  final String userId;
-  final bool isCurrentUser;
+/// User Profile Screen
+/// Phase 14 Part 1: Enhanced User Profile System
+class UserProfileScreen extends ConsumerStatefulWidget {
+  final String? userId; // If null, shows current user
 
   const UserProfileScreen({
-    super.key,
-    required this.userId,
-    this.isCurrentUser = false,
-  });
+    Key? key,
+    this.userId,
+  }) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final profileAsync = ref.watch(userProfileProvider(userId));
-    final activitiesAsync = ref.watch(userActivitiesProvider(userId));
-    final statsAsync = ref.watch(socialStatsProvider(userId));
+  ConsumerState<UserProfileScreen> createState() => _UserProfileScreenState();
+}
+
+class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
+  late TextEditingController _bioController;
+  late TextEditingController _titleController;
+
+  @override
+  void initState() {
+    super.initState();
+    _bioController = TextEditingController();
+    _titleController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _bioController.dispose();
+    _titleController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final currentUserId = ref.watch(currentUserIdProvider) ?? '';
+    final profileUserId = widget.userId ?? currentUserId;
+    final isCurrentUser = profileUserId == currentUserId;
+
+    final profileAsync = ref.watch(userProfileProvider(profileUserId));
+    final editMode = ref.watch(profileEditModeProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('プロフィール'),
-        backgroundColor: AppColors.primary,
-        foregroundColor: AppColors.textWhite,
+        title: const Text('Profile'),
+        elevation: 0,
       ),
       body: profileAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(
+        error: (error, stackTrace) => Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('エラーが発生しました', style: AppTypography.labelLarge),
-              AppSpacing.verticalSpacerMd,
+              Icon(Icons.error_outline, size: 48, color: AppColors.textMuted),
+              const SizedBox(height: 16),
+              Text(
+                'Failed to load profile',
+                style: TextStyle(color: AppColors.textMuted),
+              ),
+              const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () => ref.refresh(userProfileProvider(userId)),
-                child: const Text('再試行'),
+                onPressed: () => ref.refresh(userProfileProvider(profileUserId)),
+                child: const Text('Retry'),
               ),
             ],
           ),
         ),
-        data: (profile) => CustomScrollView(
-          slivers: [
-            // Profile Header
-            SliverToBoxAdapter(
-              child: _ProfileHeader(
-                profile: profile,
-                isCurrentUser: isCurrentUser,
-                userId: userId,
+        data: (profile) {
+          if (profile == null) {
+            return Center(
+              child: Text(
+                'User profile not found',
+                style: TextStyle(color: AppColors.textMuted),
               ),
-            ),
-            // Stats Section
-            SliverToBoxAdapter(
-              child: statsAsync.when(
-                data: (stats) => _StatsSection(stats: stats),
-                loading: () => const SizedBox(height: 100),
-                error: (_, __) => const SizedBox.shrink(),
-              ),
-            ),
-            // Skill Breakdown
-            SliverToBoxAdapter(
-              child: _SkillBreakdown(skillScores: profile.skillScores),
-            ),
-            // Recent Activities
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.lg, AppSpacing.md, AppSpacing.sm),
-                child: Text(
-                  '最近のアクティビティ',
-                  style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-            activitiesAsync.when(
-              data: (activities) {
-                if (activities.isEmpty) {
-                  return SliverToBoxAdapter(
+            );
+          }
+
+          _bioController.text = profile.bio ?? '';
+          _titleController.text = profile.title ?? '';
+
+          return SingleChildScrollView(
+            child: Padding(
+              padding: AppSpacing.allPaddingMd,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Profile Card
+                  UserProfileCard(
+                    profile: profile,
+                    isCurrentUser: isCurrentUser,
+                    onEditProfile: isCurrentUser
+                        ? () {
+                            ref.read(profileEditModeProvider.notifier).state = !editMode;
+                          }
+                        : null,
+                  ),
+                  AppSpacing.verticalSpacerLg,
+
+                  // Edit Mode
+                  if (editMode && isCurrentUser) ...[
+                    _EditProfileSection(
+                      profile: profile,
+                      bioController: _bioController,
+                      titleController: _titleController,
+                      userId: profileUserId,
+                      onSave: () {
+                        // Save logic here
+                        ref.read(profileEditModeProvider.notifier).state = false;
+                      },
+                    ),
+                    AppSpacing.verticalSpacerLg,
+                  ],
+
+                  // Stats Section
+                  Text(
+                    'Statistics',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  AppSpacing.verticalSpacerMd,
+                  Card(
                     child: Padding(
-                      padding: EdgeInsets.all(AppSpacing.lg),
-                      child: Center(
+                      padding: AppSpacing.allPaddingMd,
+                      child: Column(
+                        children: [
+                          _StatsRow(
+                            label: 'Study Time',
+                            value: '${(profile.totalStudyMinutes ~/ 60)}h ${profile.totalStudyMinutes % 60}m',
+                          ),
+                          Divider(height: 24),
+                          _StatsRow(
+                            label: 'Coins Earned',
+                            value: profile.coinsEarned.toString(),
+                          ),
+                          Divider(height: 24),
+                          _StatsRow(
+                            label: 'Longest Streak',
+                            value: '${profile.longestStreak} days',
+                          ),
+                          Divider(height: 24),
+                          _StatsRow(
+                            label: 'Achievements',
+                            value: profile.unlockedBadges.length.toString(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  AppSpacing.verticalSpacerLg,
+
+                  // Privacy Settings (only for current user)
+                  if (isCurrentUser) ...[
+                    Text(
+                      'Privacy Settings',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                    AppSpacing.verticalSpacerMd,
+                    Card(
+                      child: Padding(
+                        padding: AppSpacing.allPaddingMd,
                         child: Column(
                           children: [
-                            Text('📭', style: TextStyle(fontSize: 48)),
-                            AppSpacing.verticalSpacerMd,
-                            Text('アクティビティはまだありません', style: AppTypography.labelMedium),
+                            _PrivacyToggle(
+                              label: 'Allow Friend Requests',
+                              value: profile.allowFriendRequests,
+                              onChanged: (value) {
+                                // Update privacy setting
+                              },
+                            ),
+                            Divider(height: 24),
+                            _PrivacyToggle(
+                              label: 'Show Online Status',
+                              value: profile.showOnlineStatus,
+                              onChanged: (value) {
+                                // Update privacy setting
+                              },
+                            ),
+                            Divider(height: 24),
+                            _PrivacyToggle(
+                              label: 'Allow Messages',
+                              value: profile.allowMessages,
+                              onChanged: (value) {
+                                // Update privacy setting
+                              },
+                            ),
+                            Divider(height: 24),
+                            _PrivacyToggle(
+                              label: 'Show Achievements',
+                              value: profile.showAchievements,
+                              onChanged: (value) {
+                                // Update privacy setting
+                              },
+                            ),
+                            Divider(height: 24),
+                            _PrivacyToggle(
+                              label: 'Show Statistics',
+                              value: profile.showStatistics,
+                              onChanged: (value) {
+                                // Update privacy setting
+                              },
+                            ),
                           ],
                         ),
                       ),
                     ),
-                  );
-                }
-                return SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      return ActivityCard(
-                        activity: activities[index],
-                        showUserAvatar: false,
-                      );
-                    },
-                    childCount: activities.take(5).length,
-                  ),
-                );
-              },
-              loading: () => SliverToBoxAdapter(
-                child: SizedBox(
-                  height: 200,
-                  child: Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                ),
+                    AppSpacing.verticalSpacerLg,
+                  ],
+                ],
               ),
-              error: (_, __) => SliverToBoxAdapter(child: SizedBox.shrink()),
             ),
-            // Badges Section
-            if (profile.badges.isNotEmpty)
-              SliverToBoxAdapter(
-                child: _BadgesSection(badges: profile.badges),
-              ),
-            SliverToBoxAdapter(child: SizedBox(height: AppSpacing.xxl)),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
 }
 
-class _ProfileHeader extends ConsumerWidget {
+class _EditProfileSection extends StatelessWidget {
   final UserProfile profile;
-  final bool isCurrentUser;
+  final TextEditingController bioController;
+  final TextEditingController titleController;
   final String userId;
+  final VoidCallback onSave;
 
-  const _ProfileHeader({
+  const _EditProfileSection({
     required this.profile,
-    required this.isCurrentUser,
+    required this.bioController,
+    required this.titleController,
     required this.userId,
+    required this.onSave,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [AppColors.primary, AppColors.primaryDark],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
+  Widget build(BuildContext context) {
+    return Card(
+      color: Colors.blue.withOpacity(0.05),
       child: Padding(
-        padding: EdgeInsets.all(AppSpacing.lg),
+        padding: AppSpacing.allPaddingMd,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Avatar
-            Container(
-              width: 96,
-              height: 96,
-              decoration: BoxDecoration(
-                color: AppColors.textWhite,
-                shape: BoxShape.circle,
-                border: Border.all(color: AppColors.accentGreen, width: 4),
-              ),
-              child: Center(
-                child: Text(
-                  profile.avatar,
-                  style: TextStyle(fontSize: 56),
-                ),
-              ),
-            ),
-            AppSpacing.verticalSpacerMd,
-            // Name and status
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  profile.name,
-                  style: AppTypography.headlineSmall.copyWith(
-                    color: AppColors.textWhite,
+            Text(
+              'Edit Profile',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
+            ),
+            AppSpacing.verticalSpacerMd,
+            TextField(
+              controller: titleController,
+              decoration: InputDecoration(
+                labelText: 'Title (Optional)',
+                hintText: 'e.g., English Master',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                AppSpacing.horizontalSpacerSm,
-                Container(
-                  width: 12,
-                  height: 12,
-                  decoration: BoxDecoration(
-                    color: profile.isOnline ? AppColors.accentGreen : AppColors.textMuted,
-                    shape: BoxShape.circle,
+              ),
+            ),
+            AppSpacing.verticalSpacerMd,
+            TextField(
+              controller: bioController,
+              maxLines: 3,
+              decoration: InputDecoration(
+                labelText: 'Bio',
+                hintText: 'Tell others about yourself',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ),
+            AppSpacing.verticalSpacerMd,
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: onSave,
+                    child: const Text('Save Changes'),
                   ),
                 ),
-              ],
-            ),
-            AppSpacing.verticalSpacerXs,
-            if (profile.bio != null)
-              Text(
-                profile.bio!,
-                style: AppTypography.bodySmall.copyWith(color: AppColors.textWhite.withOpacity(0.8)),
-                textAlign: TextAlign.center,
-              ),
-            AppSpacing.verticalSpacerXs,
-            Text(
-              profile.joinedDaysAgo,
-              style: AppTypography.bodySmall.copyWith(color: AppColors.textWhite.withOpacity(0.7)),
-            ),
-            AppSpacing.verticalSpacerMd,
-            // Level and XP
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Lv${profile.level}',
-                  style: AppTypography.headlineSmall.copyWith(color: AppColors.textWhite),
-                ),
-                AppSpacing.horizontalSpacerMd,
-                Text(
-                  '⭐ ${profile.totalXp} XP',
-                  style: AppTypography.labelLarge.copyWith(color: AppColors.textWhite),
-                ),
-              ],
-            ),
-            AppSpacing.verticalSpacerMd,
-            // Quick stats
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _QuickStat('🪙', '${profile.totalCoins}', 'コイン'),
-                _QuickStat('🔥', '${profile.streakDays}', 'ストリーク'),
-                _QuickStat('👥', '${profile.friendCount}', 'フレンド'),
               ],
             ),
           ],
@@ -236,194 +296,60 @@ class _ProfileHeader extends ConsumerWidget {
   }
 }
 
-class _QuickStat extends StatelessWidget {
-  final String emoji;
-  final String value;
+class _StatsRow extends StatelessWidget {
   final String label;
+  final String value;
 
-  const _QuickStat(this.emoji, this.value, this.label);
+  const _StatsRow({
+    required this.label,
+    required this.value,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(emoji, style: TextStyle(fontSize: 24)),
-        AppSpacing.verticalSpacerXs,
-        Text(value, style: AppTypography.labelLarge.copyWith(color: AppColors.textWhite)),
-        Text(label, style: AppTypography.bodySmall.copyWith(color: AppColors.textWhite.withOpacity(0.7))),
+        Text(
+          label,
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        Text(
+          value,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+        ),
       ],
     );
   }
 }
 
-class _StatsSection extends StatelessWidget {
-  final SocialStats stats;
-
-  const _StatsSection({required this.stats});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(AppSpacing.md),
-      child: Card(
-        child: Padding(
-          padding: EdgeInsets.all(AppSpacing.md),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('統計情報', style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold)),
-              AppSpacing.verticalSpacerMd,
-              _StatRow('総レッスン数', '${stats.totalActivities}'),
-              _StatRow('このヶ月', '${stats.activitiesThisMonth}'),
-              _StatRow('このアクティビティ週', '${stats.activitiesThisWeek}'),
-              _StatRow('いいね数', '${stats.likes}'),
-              _StatRow('コメント数', '${stats.comments}'),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _StatRow extends StatelessWidget {
+class _PrivacyToggle extends StatelessWidget {
   final String label;
-  final String value;
+  final bool value;
+  final ValueChanged<bool> onChanged;
 
-  const _StatRow(this.label, this.value);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: AppTypography.bodySmall),
-          Text(value, style: AppTypography.labelMedium.copyWith(fontWeight: FontWeight.bold)),
-        ],
-      ),
-    );
-  }
-}
-
-class _SkillBreakdown extends StatelessWidget {
-  final Map<String, int> skillScores;
-
-  const _SkillBreakdown({required this.skillScores});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(AppSpacing.md),
-      child: Card(
-        child: Padding(
-          padding: EdgeInsets.all(AppSpacing.md),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('スキル進捗', style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold)),
-              AppSpacing.verticalSpacerMd,
-              ...skillScores.entries.map((e) => _SkillBar(
-                skill: e.key,
-                score: e.value,
-                maxScore: 100,
-              )),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _SkillBar extends StatelessWidget {
-  final String skill;
-  final int score;
-  final int maxScore;
-
-  const _SkillBar({
-    required this.skill,
-    required this.score,
-    required this.maxScore,
+  const _PrivacyToggle({
+    required this.label,
+    required this.value,
+    required this.onChanged,
   });
 
-  Color get _skillColor {
-    switch (skill.toLowerCase()) {
-      case 'listening':
-        return AppColors.listeningColor;
-      case 'speaking':
-        return AppColors.speakingColor;
-      case 'reading':
-        return AppColors.readingColor;
-      case 'writing':
-        return AppColors.writingColor;
-      default:
-        return AppColors.primary;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final progress = score / maxScore;
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(skill, style: AppTypography.bodySmall.copyWith(fontWeight: FontWeight.bold)),
-              Text('$score/$maxScore', style: AppTypography.bodySmall),
-            ],
-          ),
-          AppSpacing.verticalSpacerXs,
-          ClipRRect(
-            borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-            child: LinearProgressIndicator(
-              value: progress,
-              backgroundColor: AppColors.bgLight,
-              valueColor: AlwaysStoppedAnimation<Color>(_skillColor),
-              minHeight: 6,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _BadgesSection extends StatelessWidget {
-  final List<String> badges;
-
-  const _BadgesSection({required this.badges});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(AppSpacing.md),
-      child: Card(
-        child: Padding(
-          padding: EdgeInsets.all(AppSpacing.md),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('バッジ (${badges.length})', style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold)),
-              AppSpacing.verticalSpacerMd,
-              Wrap(
-                spacing: AppSpacing.md,
-                runSpacing: AppSpacing.md,
-                children: badges.map((badge) => Column(
-                  children: [
-                    Text(badge, style: TextStyle(fontSize: 32)),
-                  ],
-                )).toList(),
-              ),
-            ],
-          ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: Theme.of(context).textTheme.bodyMedium,
         ),
-      ),
+        Switch(
+          value: value,
+          onChanged: onChanged,
+        ),
+      ],
     );
   }
 }
