@@ -5,431 +5,281 @@ import '../models/question.dart';
 // ────────────────────────────────────────────────────────────────────────────
 
 final stage91Questions = <Question>[
-  Question(
-    id: 'stage91_q1',
-    englishText: 'What is this animal?',
-    englishAudio: 'audio/stage91/q1_en.mp3',
-    options: ['cat', 'cow', 'bear', 'monkey'],
-    correctAnswer: 0,
-    japaneseText: 'これはどの動物ですか？',
+  const Question(
+    id: 's91_l1', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Cat', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🐱',
+    choices: ['犬', '猫', 'ウサギ', 'ねずみ'], correctAnswer: '猫', phonetic: '/kæt/',
   ),
-  Question(
-    id: 'stage91_q2',
-    englishText: 'A dog is an ___.',
-    englishAudio: 'audio/stage91/q2_en.mp3',
-    options: ['animal', 'animals', 'pet', 'pets'],
-    correctAnswer: 0,
-    japaneseText: '犬は動物です。',
+  const Question(
+    id: 's91_l2', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Dog', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🐕',
+    choices: ['猫', '犬', 'ウサギ', 'ねずみ'], correctAnswer: '犬', phonetic: '/dɔːɡ/',
   ),
-  Question(
-    id: 'stage91_q3',
-    englishText: 'Do you have a pet?',
-    englishAudio: 'audio/stage91/q3_en.mp3',
-    options: ['Yes, I do.', 'Yes, I have.', 'Yes, I am.', 'Yes, I can.'],
-    correctAnswer: 0,
-    japaneseText: 'ペットを飼っていますか？',
+  const Question(
+    id: 's91_l3', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Rabbit', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🐰',
+    choices: ['ねずみ', 'ウサギ', 'リス', 'モルモット'], correctAnswer: 'ウサギ', phonetic: '/ˈræbət/',
   ),
-  Question(
-    id: 'stage91_q4',
-    englishText: 'A cow is ___.',
-    englishAudio: 'audio/stage91/q4_en.mp3',
-    options: ['white and black', 'white', 'black', 'brown'],
-    correctAnswer: 0,
-    japaneseText: '牛は白と黒です。',
+  const Question(
+    id: 's91_l4', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Bird', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🐦',
+    choices: ['蜂', '鳥', 'バッタ', 'トンボ'], correctAnswer: '鳥', phonetic: '/bɜːrd/',
   ),
-  Question(
-    id: 'stage91_q5',
-    englishText: 'Which is a wild animal?',
-    englishAudio: 'audio/stage91/q5_en.mp3',
-    options: ['lion', 'dog', 'cat', 'rabbit'],
-    correctAnswer: 0,
-    japaneseText: 'どれが野生動物ですか？',
+  const Question(
+    id: 's91_l5', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Fish', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🐟',
+    choices: ['カニ', 'エビ', '魚', 'イカ'], correctAnswer: '魚', phonetic: '/fɪʃ/',
   ),
 ];
 
 final stage92Questions = <Question>[
-  Question(
-    id: 'stage92_q1',
-    englishText: '___ are very large animals.',
-    englishAudio: 'audio/stage92/q1_en.mp3',
-    options: ['Elephants', 'Elephant', 'Giraffes', 'Lions'],
-    correctAnswer: 0,
-    japaneseText: '象は非常に大きな動物です。',
+  const Question(
+    id: 's92_l1', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Cow', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🐄',
+    choices: ['馬', '牛', 'ヤギ', 'ヒツジ'], correctAnswer: '牛', phonetic: '/kaʊ/',
   ),
-  Question(
-    id: 'stage92_q2',
-    englishText: 'A fish lives in ___.',
-    englishAudio: 'audio/stage92/q2_en.mp3',
-    options: ['water', 'waters', 'a water', 'the water'],
-    correctAnswer: 0,
-    japaneseText: '魚は水に住んでいます。',
+  const Question(
+    id: 's92_l2', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Horse', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🐴',
+    choices: ['ロバ', '馬', 'ポニー', 'シマウマ'], correctAnswer: '馬', phonetic: '/hɔːrs/',
   ),
-  Question(
-    id: 'stage92_q3',
-    englishText: 'Which bird can fly?',
-    englishAudio: 'audio/stage92/q3_en.mp3',
-    options: ['eagle', 'penguin', 'chicken', 'owl'],
-    correctAnswer: 0,
-    japaneseText: 'どの鳥が飛べますか？',
+  const Question(
+    id: 's92_l3', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Elephant', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🐘',
+    choices: ['ライオン', 'キリン', '象', 'サイ'], correctAnswer: '象', phonetic: '/ˈɛləfənt/',
   ),
-  Question(
-    id: 'stage92_q4',
-    englishText: 'A ___ has eight legs.',
-    englishAudio: 'audio/stage92/q4_en.mp3',
-    options: ['spider', 'insect', 'butterfly', 'ant'],
-    correctAnswer: 0,
-    japaneseText: 'クモは8本の足があります。',
+  const Question(
+    id: 's92_l4', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Lion', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🦁',
+    choices: ['虎', 'ライオン', 'ヒョウ', 'チーター'], correctAnswer: 'ライオン', phonetic: '/ˈlaɪən/',
   ),
-  Question(
-    id: 'stage92_q5',
-    englishText: 'Choose the farm animal word.',
-    englishAudio: 'audio/stage92/q5_en.mp3',
-    options: ['sheep', 'tiger', 'elephant', 'penguin'],
-    correctAnswer: 0,
-    japaneseText: '農場の動物を選んでください。',
+  const Question(
+    id: 's92_l5', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Tiger', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🐯',
+    choices: ['ライオン', '虎', 'ヒョウ', 'チーター'], correctAnswer: '虎', phonetic: '/ˈtaɪɡər/',
   ),
 ];
 
 final stage93Questions = <Question>[
-  Question(
-    id: 'stage93_q1',
-    englishText: 'Pandas eat ___.',
-    englishAudio: 'audio/stage93/q1_en.mp3',
-    options: ['bamboo', 'bamboos', 'a bamboo', 'the bamboo'],
-    correctAnswer: 0,
-    japaneseText: 'パンダは竹を食べます。',
+  const Question(
+    id: 's93_l1', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Bear', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🐻',
+    choices: ['狼', '熊', 'オス', 'パンダ'], correctAnswer: '熊', phonetic: '/bɛr/',
   ),
-  Question(
-    id: 'stage93_q2',
-    englishText: 'A rabbit has long ___.',
-    englishAudio: 'audio/stage93/q2_en.mp3',
-    options: ['ears', 'ear', 'the ears', 'eares'],
-    correctAnswer: 0,
-    japaneseText: 'ウサギは長い耳を持っています。',
+  const Question(
+    id: 's93_l2', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Panda', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🐼',
+    choices: ['熊', 'パンダ', 'レッサーパンダ', 'クマ'], correctAnswer: 'パンダ', phonetic: '/ˈpændə/',
   ),
-  Question(
-    id: 'stage93_q3',
-    englishText: 'Do snakes have legs?',
-    englishAudio: 'audio/stage93/q3_en.mp3',
-    options: ['No, they don\'t.', 'No, they aren\'t.', 'No, they don\'t have.', 'No, they have not.'],
-    correctAnswer: 0,
-    japaneseText: 'ヘビは足を持っていますか？',
+  const Question(
+    id: 's93_l3', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Monkey', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🐵',
+    choices: ['ゴリラ', '猿', 'チンパンジー', 'テナガザル'], correctAnswer: '猿', phonetic: '/ˈmʌŋki/',
   ),
-  Question(
-    id: 'stage93_q4',
-    englishText: 'Dolphins are ___.',
-    englishAudio: 'audio/stage93/q4_en.mp3',
-    options: ['smart', 'smarts', 'smartly', 'smart animals'],
-    correctAnswer: 0,
-    japaneseText: 'イルカは賢いです。',
+  const Question(
+    id: 's93_l4', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Giraffe', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🦒',
+    choices: ['シマウマ', 'キリン', 'ヌー', 'インパラ'], correctAnswer: 'キリン', phonetic: '/dʒəˈræf/',
   ),
-  Question(
-    id: 'stage93_q5',
-    englishText: 'Which animal lives in the ocean?',
-    englishAudio: 'audio/stage93/q5_en.mp3',
-    options: ['whale', 'bear', 'wolf', 'deer'],
-    correctAnswer: 0,
-    japaneseText: 'どの動物が海に住んでいますか？',
+  const Question(
+    id: 's93_l5', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Penguin', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🐧',
+    choices: ['カモメ', 'ペンギン', 'フラミンゴ', 'オウム'], correctAnswer: 'ペンギン', phonetic: '/ˈpɛŋɡwɪn/',
   ),
 ];
 
 final stage94Questions = <Question>[
-  Question(
-    id: 'stage94_q1',
-    englishText: 'A cheetah is the fastest ___.',
-    englishAudio: 'audio/stage94/q1_en.mp3',
-    options: ['land animal', 'animal', 'animals', 'land animals'],
-    correctAnswer: 0,
-    japaneseText: 'チーターは最速の陸上動物です。',
+  const Question(
+    id: 's94_l1', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Butterfly', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🦋',
+    choices: ['トンボ', 'チョウチョウ', 'ハチ', 'バッタ'], correctAnswer: 'チョウチョウ', phonetic: '/ˈbʌtərflaɪ/',
   ),
-  Question(
-    id: 'stage94_q2',
-    englishText: 'Owls can see ___ the night.',
-    englishAudio: 'audio/stage94/q2_en.mp3',
-    options: ['at', 'in', 'on', 'during'],
-    correctAnswer: 0,
-    japaneseText: 'フクロウは夜に見ることができます。',
+  const Question(
+    id: 's94_l2', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Bee', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🐝',
+    choices: ['蜂', 'アリ', 'トンボ', 'クモ'], correctAnswer: '蜂', phonetic: '/biː/',
   ),
-  Question(
-    id: 'stage94_q3',
-    englishText: 'What is the king of animals?',
-    englishAudio: 'audio/stage94/q3_en.mp3',
-    options: ['lion', 'tiger', 'elephant', 'bear'],
-    correctAnswer: 0,
-    japaneseText: '動物の王様は何ですか？',
+  const Question(
+    id: 's94_l3', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Spider', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🕷️',
+    choices: ['蜂', 'アリ', 'クモ', 'ムカデ'], correctAnswer: 'クモ', phonetic: '/ˈspaɪdər/',
   ),
-  Question(
-    id: 'stage94_q4',
-    englishText: 'A kangaroo jumps very ___.',
-    englishAudio: 'audio/stage94/q4_en.mp3',
-    options: ['high', 'highs', 'higher', 'highest'],
-    correctAnswer: 0,
-    japaneseText: 'カンガルーは非常に高くジャンプします。',
+  const Question(
+    id: 's94_l4', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Snake', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🐍',
+    choices: ['トカゲ', 'ヘビ', 'ワニ', 'カメ'], correctAnswer: 'ヘビ', phonetic: '/sneɪk/',
   ),
-  Question(
-    id: 'stage94_q5',
-    englishText: 'Choose the reptile word.',
-    englishAudio: 'audio/stage94/q5_en.mp3',
-    options: ['lizard', 'rabbit', 'penguin', 'whale'],
-    correctAnswer: 0,
-    japaneseText: '爬虫類の言葉を選んでください。',
+  const Question(
+    id: 's94_l5', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Turtle', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🐢',
+    choices: ['カエル', 'カメ', 'ワニ', 'トカゲ'], correctAnswer: 'カメ', phonetic: '/ˈtɜːrtəl/',
   ),
 ];
 
 final stage95Questions = <Question>[
-  Question(
-    id: 'stage95_q1',
-    englishText: 'Butterflies are ___.',
-    englishAudio: 'audio/stage95/q1_en.mp3',
-    options: ['insects', 'insect', 'animals', 'bugs'],
-    correctAnswer: 0,
-    japaneseText: 'チョウチョウは昆虫です。',
+  const Question(
+    id: 's95_l1', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Dolphin', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🐬',
+    choices: ['イルカ', 'クジラ', 'オットセイ', 'アシカ'], correctAnswer: 'イルカ', phonetic: '/ˈdɑːlfən/',
   ),
-  Question(
-    id: 'stage95_q2',
-    englishText: 'A giraffe has a very long ___.',
-    englishAudio: 'audio/stage95/q2_en.mp3',
-    options: ['neck', 'legs', 'tail', 'head'],
-    correctAnswer: 0,
-    japaneseText: 'キリンは非常に長い首を持っています。',
+  const Question(
+    id: 's95_l2', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Whale', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🐋',
+    choices: ['イルカ', 'クジラ', 'シャチ', 'アザラシ'], correctAnswer: 'クジラ', phonetic: '/weɪl/',
   ),
-  Question(
-    id: 'stage95_q3',
-    englishText: 'Which animal can swim?',
-    englishAudio: 'audio/stage95/q3_en.mp3',
-    options: ['duck', 'lion', 'deer', 'monkey'],
-    correctAnswer: 0,
-    japaneseText: 'どの動物が泳げますか？',
+  const Question(
+    id: 's95_l3', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Shark', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🦈',
+    choices: ['マンタ', 'サメ', 'エイ', 'イルカ'], correctAnswer: 'サメ', phonetic: '/ʃɑːrk/',
   ),
-  Question(
-    id: 'stage95_q4',
-    englishText: 'A hedgehog has sharp ___.',
-    englishAudio: 'audio/stage95/q4_en.mp3',
-    options: ['spines', 'spine', 'needles', 'pines'],
-    correctAnswer: 0,
-    japaneseText: 'ハリネズミは鋭い棘を持っています。',
+  const Question(
+    id: 's95_l4', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Frog', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🐸',
+    choices: ['オタマジャクシ', 'カエル', 'トカゲ', 'サンショウウオ'], correctAnswer: 'カエル', phonetic: '/frɔːɡ/',
   ),
-  Question(
-    id: 'stage95_q5',
-    englishText: 'Do you like ___?',
-    englishAudio: 'audio/stage95/q5_en.mp3',
-    options: ['animals', 'animal', 'pets', 'pet'],
-    correctAnswer: 0,
-    japaneseText: '動物が好きですか？',
+  const Question(
+    id: 's95_l5', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Lizard', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🦎',
+    choices: ['ヘビ', 'トカゲ', 'カメ', 'イグアナ'], correctAnswer: 'トカゲ', phonetic: '/ˈlɪzərd/',
   ),
 ];
 
 final stage96Questions = <Question>[
-  Question(
-    id: 'stage96_q1',
-    englishText: 'Penguins live in ___.',
-    englishAudio: 'audio/stage96/q1_en.mp3',
-    options: ['Antarctica', 'Africa', 'Asia', 'America'],
-    correctAnswer: 0,
-    japaneseText: 'ペンギンは南極に住んでいます。',
+  const Question(
+    id: 's96_l1', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Pig', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🐷',
+    choices: ['牛', 'ブタ', 'ヒツジ', 'ヤギ'], correctAnswer: 'ブタ', phonetic: '/pɪɡ/',
   ),
-  Question(
-    id: 'stage96_q2',
-    englishText: 'A tortoise is very ___.',
-    englishAudio: 'audio/stage96/q2_en.mp3',
-    options: ['slow', 'fast', 'quick', 'active'],
-    correctAnswer: 0,
-    japaneseText: 'カメは非常に遅いです。',
+  const Question(
+    id: 's96_l2', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Sheep', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🐑',
+    choices: ['ヤギ', 'ヒツジ', 'ロバ', 'ウマ'], correctAnswer: 'ヒツジ', phonetic: '/ʃiːp/',
   ),
-  Question(
-    id: 'stage96_q3',
-    englishText: 'What color are zebras?',
-    englishAudio: 'audio/stage96/q3_en.mp3',
-    options: ['black and white', 'brown', 'orange', 'yellow'],
-    correctAnswer: 0,
-    japaneseText: 'シマウマの色は何ですか？',
+  const Question(
+    id: 's96_l3', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Goat', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🐐',
+    choices: ['ヒツジ', 'ヤギ', 'ロバ', '牛'], correctAnswer: 'ヤギ', phonetic: '/ɡoʊt/',
   ),
-  Question(
-    id: 'stage96_q4',
-    englishText: 'A bee makes ___.',
-    englishAudio: 'audio/stage96/q4_en.mp3',
-    options: ['honey', 'honeys', 'a honey', 'the honey'],
-    correctAnswer: 0,
-    japaneseText: '蜂は蜂蜜を作ります。',
+  const Question(
+    id: 's96_l4', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Duck', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🦆',
+    choices: ['ニワトリ', 'アヒル', 'ガチョウ', 'カモメ'], correctAnswer: 'アヒル', phonetic: '/dʌk/',
   ),
-  Question(
-    id: 'stage96_q5',
-    englishText: 'Choose the primate word.',
-    englishAudio: 'audio/stage96/q5_en.mp3',
-    options: ['monkey', 'lion', 'zebra', 'elephant'],
-    correctAnswer: 0,
-    japaneseText: '霊長類の言葉を選んでください。',
+  const Question(
+    id: 's96_l5', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Chicken', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🐔',
+    choices: ['アヒル', 'ニワトリ', 'ガチョウ', 'シチメンチョウ'], correctAnswer: 'ニワトリ', phonetic: '/ˈtʃɪkən/',
   ),
 ];
 
 final stage97Questions = <Question>[
-  Question(
-    id: 'stage97_q1',
-    englishText: 'Flamingos are ___.',
-    englishAudio: 'audio/stage97/q1_en.mp3',
-    options: ['pink', 'blue', 'green', 'yellow'],
-    correctAnswer: 0,
-    japaneseText: 'フラミンゴはピンク色です。',
+  const Question(
+    id: 's97_l1', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Wolf', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🐺',
+    choices: ['犬', '狼', 'キツネ', 'ハイエナ'], correctAnswer: '狼', phonetic: '/wʊlf/',
   ),
-  Question(
-    id: 'stage97_q2',
-    englishText: 'A hamster is a small ___.',
-    englishAudio: 'audio/stage97/q2_en.mp3',
-    options: ['rodent', 'pet', 'animal', 'mammal'],
-    correctAnswer: 0,
-    japaneseText: 'ハムスターは小さなげっ歯類です。',
+  const Question(
+    id: 's97_l2', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Fox', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🦊',
+    choices: ['狼', 'キツネ', 'ハイエナ', 'ジャッカル'], correctAnswer: 'キツネ', phonetic: '/fɑːks/',
   ),
-  Question(
-    id: 'stage97_q3',
-    englishText: 'Which animal is endangered?',
-    englishAudio: 'audio/stage97/q3_en.mp3',
-    options: ['panda', 'cat', 'dog', 'rabbit'],
-    correctAnswer: 0,
-    japaneseText: 'どの動物が絶滅危惧種ですか？',
+  const Question(
+    id: 's97_l3', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Deer', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🦌',
+    choices: ['シマウマ', 'インパラ', '鹿', 'エルク'], correctAnswer: '鹿', phonetic: '/dɪr/',
   ),
-  Question(
-    id: 'stage97_q4',
-    englishText: 'A peacock has beautiful ___.',
-    englishAudio: 'audio/stage97/q4_en.mp3',
-    options: ['feathers', 'feather', 'wings', 'tails'],
-    correctAnswer: 0,
-    japaneseText: 'クジャクは美しい羽毛を持っています。',
+  const Question(
+    id: 's97_l4', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Zebra', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🦓',
+    choices: ['ロバ', 'シマウマ', 'ウマ', 'ポニー'], correctAnswer: 'シマウマ', phonetic: '/ˈziːbrə/',
   ),
-  Question(
-    id: 'stage97_q5',
-    englishText: 'Do squirrels store ___?',
-    englishAudio: 'audio/stage97/q5_en.mp3',
-    options: ['acorns', 'acorn', 'nuts', 'nut'],
-    correctAnswer: 0,
-    japaneseText: 'リスはどんぐりを保存しますか？',
+  const Question(
+    id: 's97_l5', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Squirrel', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🐿️',
+    choices: ['リス', 'ネズミ', 'モグラ', 'ハリネズミ'], correctAnswer: 'リス', phonetic: '/ˈskwɪrəl/',
   ),
 ];
 
 final stage98Questions = <Question>[
-  Question(
-    id: 'stage98_q1',
-    englishText: '___ are called the ships of the desert.',
-    englishAudio: 'audio/stage98/q1_en.mp3',
-    options: ['Camels', 'Camel', 'Horses', 'Donkeys'],
-    correctAnswer: 0,
-    japaneseText: 'ラクダは砂漠の船と呼ばれています。',
+  const Question(
+    id: 's98_l1', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Hamster', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🐹',
+    choices: ['ハムスター', 'ネズミ', 'モルモット', 'ウサギ'], correctAnswer: 'ハムスター', phonetic: '/ˈhæmstər/',
   ),
-  Question(
-    id: 'stage98_q2',
-    englishText: 'A bat can fly ___ the night.',
-    englishAudio: 'audio/stage98/q2_en.mp3',
-    options: ['at', 'in', 'on', 'during'],
-    correctAnswer: 0,
-    japaneseText: 'コウモリは夜に飛べます。',
+  const Question(
+    id: 's98_l2', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Guinea pig', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🐹',
+    choices: ['ハムスター', 'モルモット', 'ウサギ', 'ネズミ'], correctAnswer: 'モルモット', phonetic: '/ˈɡɪni pɪɡ/',
   ),
-  Question(
-    id: 'stage98_q3',
-    englishText: 'What do salmon swim up?',
-    englishAudio: 'audio/stage98/q3_en.mp3',
-    options: ['rivers', 'river', 'streams', 'ocean'],
-    correctAnswer: 0,
-    japaneseText: 'サケは何を遡りますか？',
+  const Question(
+    id: 's98_l3', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Hedgehog', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🦔',
+    choices: ['ハリネズミ', 'リス', 'モグラ', 'アナグマ'], correctAnswer: 'ハリネズミ', phonetic: '/ˈhɛdʒhoɡ/',
   ),
-  Question(
-    id: 'stage98_q4',
-    englishText: 'A porcupine is covered with ___.',
-    englishAudio: 'audio/stage98/q4_en.mp3',
-    options: ['quills', 'quill', 'spines', 'spine'],
-    correctAnswer: 0,
-    japaneseText: 'ヤマアラシはトゲで覆われています。',
+  const Question(
+    id: 's98_l4', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Bat', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🦇',
+    choices: ['鳥', 'コウモリ', 'トンボ', '蜂'], correctAnswer: 'コウモリ', phonetic: '/bæt/',
   ),
-  Question(
-    id: 'stage98_q5',
-    englishText: 'Choose the desert animal word.',
-    englishAudio: 'audio/stage98/q5_en.mp3',
-    options: ['camel', 'penguin', 'dolphin', 'whale'],
-    correctAnswer: 0,
-    japaneseText: '砂漠の動物を選んでください。',
+  const Question(
+    id: 's98_l5', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Owl', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🦉',
+    choices: ['ワシ', 'フクロウ', 'タカ', 'トビ'], correctAnswer: 'フクロウ', phonetic: '/aʊl/',
   ),
 ];
 
 final stage99Questions = <Question>[
-  Question(
-    id: 'stage99_q1',
-    englishText: 'Kangaroos carry their babies in a ___.',
-    englishAudio: 'audio/stage99/q1_en.mp3',
-    options: ['pouch', 'pocket', 'bag', 'nest'],
-    correctAnswer: 0,
-    japaneseText: 'カンガルーは赤ちゃんを袋で運びます。',
+  const Question(
+    id: 's99_l1', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Camel', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🐪',
+    choices: ['ラクダ', 'トナカイ', 'シマウマ', 'ヌー'], correctAnswer: 'ラクダ', phonetic: '/ˈkæməl/',
   ),
-  Question(
-    id: 'stage99_q2',
-    englishText: 'A porcupine has many ___.',
-    englishAudio: 'audio/stage99/q2_en.mp3',
-    options: ['quills', 'quill', 'spines', 'spike'],
-    correctAnswer: 0,
-    japaneseText: 'ヤマアラシはたくさんのトゲを持っています。',
+  const Question(
+    id: 's99_l2', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Reindeer', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🦌',
+    choices: ['ラクダ', 'トナカイ', '鹿', 'ムース'], correctAnswer: 'トナカイ', phonetic: '/ˈreɪndɪr/',
   ),
-  Question(
-    id: 'stage99_q3',
-    englishText: 'Which bird cannot fly?',
-    englishAudio: 'audio/stage99/q3_en.mp3',
-    options: ['ostrich', 'eagle', 'sparrow', 'pigeon'],
-    correctAnswer: 0,
-    japaneseText: 'どの鳥が飛べませんか？',
+  const Question(
+    id: 's99_l3', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Kangaroo', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🦘',
+    choices: ['カンガルー', 'コアラ', 'ディンゴ', 'ワラビー'], correctAnswer: 'カンガルー', phonetic: '/ˌkæŋɡəˈruː/',
   ),
-  Question(
-    id: 'stage99_q4',
-    englishText: 'A wolf howls ___ night.',
-    englishAudio: 'audio/stage99/q4_en.mp3',
-    options: ['at', 'in', 'on', 'during'],
-    correctAnswer: 0,
-    japaneseText: 'オオカミは夜に遠吠えします。',
+  const Question(
+    id: 's99_l4', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Koala', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🐨',
+    choices: ['カンガルー', 'コアラ', 'オーストラリアンデビル', 'ワンバット'], correctAnswer: 'コアラ', phonetic: '/koʊˈɑːlə/',
   ),
-  Question(
-    id: 'stage99_q5',
-    englishText: 'My favorite animal is a ___.',
-    englishAudio: 'audio/stage99/q5_en.mp3',
-    options: ['dog', 'cat', 'horse', 'bird'],
-    correctAnswer: 0,
-    japaneseText: '好きな動物は犬です。',
+  const Question(
+    id: 's99_l5', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Sloth', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🦥',
+    choices: ['ナマケモノ', 'リス', 'モンキー', 'オランウータン'], correctAnswer: 'ナマケモノ', phonetic: '/sloʊθ/',
   ),
 ];
 
 final stage100Questions = <Question>[
-  Question(
-    id: 'stage100_q1',
-    englishText: 'Sloths are very ___.',
-    englishAudio: 'audio/stage100/q1_en.mp3',
-    options: ['slow', 'fast', 'quick', 'active'],
-    correctAnswer: 0,
-    japaneseText: 'ナマケモノは非常に遅いです。',
+  const Question(
+    id: 's100_l1', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Cheetah', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🐆',
+    choices: ['ジャガー', 'チーター', 'ヒョウ', 'ライオン'], correctAnswer: 'チーター', phonetic: '/ˈtʃiːtə/',
   ),
-  Question(
-    id: 'stage100_q2',
-    englishText: 'A koala eats ___.',
-    englishAudio: 'audio/stage100/q2_en.mp3',
-    options: ['eucalyptus', 'bamboo', 'leaves', 'grass'],
-    correctAnswer: 0,
-    japaneseText: 'コアラはユーカリを食べます。',
+  const Question(
+    id: 's100_l2', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Leopard', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🐆',
+    choices: ['チーター', 'ヒョウ', 'ジャガー', 'ライオン'], correctAnswer: 'ヒョウ', phonetic: '/ˈlɛpərd/',
   ),
-  Question(
-    id: 'stage100_q3',
-    englishText: 'What do hedgehogs hunt?',
-    englishAudio: 'audio/stage100/q3_en.mp3',
-    options: ['insects', 'insect', 'berries', 'worms'],
-    correctAnswer: 0,
-    japaneseText: 'ハリネズミは何を狩りますか？',
+  const Question(
+    id: 's100_l3', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Rhino', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🦏',
+    choices: ['サイ', 'カバ', '象', '水牛'], correctAnswer: 'サイ', phonetic: '/ˈraɪnoʊ/',
   ),
-  Question(
-    id: 'stage100_q4',
-    englishText: 'A hummingbird is very ___.',
-    englishAudio: 'audio/stage100/q4_en.mp3',
-    options: ['small', 'tiny', 'large', 'big'],
-    correctAnswer: 0,
-    japaneseText: 'ハチドリは非常に小さいです。',
+  const Question(
+    id: 's100_l4', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Hippo', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🦛',
+    choices: ['サイ', 'カバ', '象', 'ヌー'], correctAnswer: 'カバ', phonetic: '/ˈhɪpoʊ/',
   ),
-  Question(
-    id: 'stage100_q5',
-    englishText: 'Choose the correct animal fact.',
-    englishAudio: 'audio/stage100/q5_en.mp3',
-    options: ['Elephants have good memories.', 'Snakes have legs.', 'Fish fly.', 'Birds swim underwater.'],
-    correctAnswer: 0,
-    japaneseText: '正しい動物の事実を選んでください。',
+  const Question(
+    id: 's100_l5', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Peacock', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🦚',
+    choices: ['クジャク', 'ニワトリ', 'ダチョウ', 'フラミンゴ'], correctAnswer: 'クジャク', phonetic: '/ˈpiːkɑːk/',
   ),
 ];

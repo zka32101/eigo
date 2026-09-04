@@ -5,431 +5,281 @@ import '../models/question.dart';
 // ────────────────────────────────────────────────────────────────────────────
 
 final stage101Questions = <Question>[
-  Question(
-    id: 'stage101_q1',
-    englishText: 'What color is the sky?',
-    englishAudio: 'audio/stage101/q1_en.mp3',
-    options: ['blue', 'green', 'red', 'yellow'],
-    correctAnswer: 0,
-    japaneseText: '空の色は何ですか？',
+  const Question(
+    id: 's101_l1', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Blue', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🔵',
+    choices: ['赤', '青', '黄色', '緑'], correctAnswer: '青', phonetic: '/bluː/',
   ),
-  Question(
-    id: 'stage101_q2',
-    englishText: 'This is a ___.',
-    englishAudio: 'audio/stage101/q2_en.mp3',
-    options: ['circle', 'square', 'triangle', 'rectangle'],
-    correctAnswer: 0,
-    japaneseText: 'これは円です。',
+  const Question(
+    id: 's101_l2', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Red', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🔴',
+    choices: ['赤', '青', '黄色', 'ピンク'], correctAnswer: '赤', phonetic: '/rɛd/',
   ),
-  Question(
-    id: 'stage101_q3',
-    englishText: 'I like the color ___.',
-    englishAudio: 'audio/stage101/q3_en.mp3',
-    options: ['purple', 'purples', 'a purple', 'the purple'],
-    correctAnswer: 0,
-    japaneseText: '紫色が好きです。',
+  const Question(
+    id: 's101_l3', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Yellow', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🟡',
+    choices: ['黄色', 'オレンジ', '緑', '白'], correctAnswer: '黄色', phonetic: '/ˈjɛloʊ/',
   ),
-  Question(
-    id: 'stage101_q4',
-    englishText: 'Grass is ___.',
-    englishAudio: 'audio/stage101/q4_en.mp3',
-    options: ['green', 'yellow', 'brown', 'orange'],
-    correctAnswer: 0,
-    japaneseText: '草は緑です。',
+  const Question(
+    id: 's101_l4', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Green', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🟢',
+    choices: ['青', '緑', '黄色', 'ターコイズ'], correctAnswer: '緑', phonetic: '/ɡriːn/',
   ),
-  Question(
-    id: 'stage101_q5',
-    englishText: 'Choose a shape word.',
-    englishAudio: 'audio/stage101/q5_en.mp3',
-    options: ['oval', 'apple', 'grass', 'water'],
-    correctAnswer: 0,
-    japaneseText: '形の言葉を選んでください。',
+  const Question(
+    id: 's101_l5', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'White', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '⚪',
+    choices: ['黒', '白', 'グレー', 'ベージュ'], correctAnswer: '白', phonetic: '/waɪt/',
   ),
 ];
 
 final stage102Questions = <Question>[
-  Question(
-    id: 'stage102_q1',
-    englishText: 'A _____ has five sides.',
-    englishAudio: 'audio/stage102/q1_en.mp3',
-    options: ['pentagon', 'square', 'triangle', 'hexagon'],
-    correctAnswer: 0,
-    japaneseText: '五角形は5辺があります。',
+  const Question(
+    id: 's102_l1', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Black', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '⬛',
+    choices: ['黒', '白', 'グレー', '紫'], correctAnswer: '黒', phonetic: '/blæk/',
   ),
-  Question(
-    id: 'stage102_q2',
-    englishText: 'This apple is ___.',
-    englishAudio: 'audio/stage102/q2_en.mp3',
-    options: ['red', 'blue', 'yellow', 'green'],
-    correctAnswer: 0,
-    japaneseText: 'このリンゴは赤いです。',
+  const Question(
+    id: 's102_l2', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Orange', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🟠',
+    choices: ['赤', 'オレンジ', '黄色', 'ピンク'], correctAnswer: 'オレンジ', phonetic: '/ˈɔːrɪndʒ/',
   ),
-  Question(
-    id: 'stage102_q3',
-    englishText: 'What shape is a pizza?',
-    englishAudio: 'audio/stage102/q3_en.mp3',
-    options: ['circle', 'square', 'triangle', 'oval'],
-    correctAnswer: 0,
-    japaneseText: 'ピザはどんな形ですか？',
+  const Question(
+    id: 's102_l3', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Purple', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🟣',
+    choices: ['紫', 'ピンク', 'マゼンタ', 'バイオレット'], correctAnswer: '紫', phonetic: '/ˈpɜːrpəl/',
   ),
-  Question(
-    id: 'stage102_q4',
-    englishText: 'My backpack is ___.',
-    englishAudio: 'audio/stage102/q4_en.mp3',
-    options: ['black', 'blacks', 'a black', 'the black'],
-    correctAnswer: 0,
-    japaneseText: 'バックパックは黒いです。',
+  const Question(
+    id: 's102_l4', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Pink', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🌸',
+    choices: ['赤', 'オレンジ', 'ピンク', '紫'], correctAnswer: 'ピンク', phonetic: '/pɪŋk/',
   ),
-  Question(
-    id: 'stage102_q5',
-    englishText: 'Choose the color word.',
-    englishAudio: 'audio/stage102/q5_en.mp3',
-    options: ['pink', 'circle', 'square', 'big'],
-    correctAnswer: 0,
-    japaneseText: '色の言葉を選んでください。',
+  const Question(
+    id: 's102_l5', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Brown', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🟤',
+    choices: ['黒', '茶色', 'グレー', 'ベージュ'], correctAnswer: '茶色', phonetic: '/braʊn/',
   ),
 ];
 
 final stage103Questions = <Question>[
-  Question(
-    id: 'stage103_q1',
-    englishText: 'Snow is ___.',
-    englishAudio: 'audio/stage103/q1_en.mp3',
-    options: ['white', 'red', 'blue', 'black'],
-    correctAnswer: 0,
-    japaneseText: '雪は白いです。',
+  const Question(
+    id: 's103_l1', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Gray', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '⚫',
+    choices: ['黒', '白', 'グレー', '茶色'], correctAnswer: 'グレー', phonetic: '/ɡreɪ/',
   ),
-  Question(
-    id: 'stage103_q2',
-    englishText: 'A star has ___ points.',
-    englishAudio: 'audio/stage103/q2_en.mp3',
-    options: ['five', 'four', 'six', 'three'],
-    correctAnswer: 0,
-    japaneseText: '星は5つのポイントを持っています。',
+  const Question(
+    id: 's103_l2', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Circle', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '⭕',
+    choices: ['三角形', '円', '四角形', '星'], correctAnswer: '円', phonetic: '/ˈsɜːrkəl/',
   ),
-  Question(
-    id: 'stage103_q3',
-    englishText: 'What color is orange?',
-    englishAudio: 'audio/stage103/q3_en.mp3',
-    options: ['orange', 'red', 'yellow', 'brown'],
-    correctAnswer: 0,
-    japaneseText: 'オレンジ色は何ですか？',
+  const Question(
+    id: 's103_l3', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Square', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '⬜',
+    choices: ['三角形', '円', '四角形', '長方形'], correctAnswer: '四角形', phonetic: '/skwɛr/',
   ),
-  Question(
-    id: 'stage103_q4',
-    englishText: 'This rectangle is ___.',
-    englishAudio: 'audio/stage103/q4_en.mp3',
-    options: ['wide', 'long', 'thin', 'narrow'],
-    correctAnswer: 0,
-    japaneseText: 'この長方形は広いです。',
+  const Question(
+    id: 's103_l4', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Triangle', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '△',
+    choices: ['四角形', '三角形', '円', '長方形'], correctAnswer: '三角形', phonetic: '/ˈtraɪæŋɡəl/',
   ),
-  Question(
-    id: 'stage103_q5',
-    englishText: 'Choose the geometric shape word.',
-    englishAudio: 'audio/stage103/q5_en.mp3',
-    options: ['cube', 'red', 'big', 'small'],
-    correctAnswer: 0,
-    japaneseText: '幾何学的図形の言葉を選んでください。',
+  const Question(
+    id: 's103_l5', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Star', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '⭐',
+    choices: ['月', '星', '太陽', 'クラウド'], correctAnswer: '星', phonetic: '/stɑːr/',
   ),
 ];
 
 final stage104Questions = <Question>[
-  Question(
-    id: 'stage104_q1',
-    englishText: 'The sun is ___.',
-    englishAudio: 'audio/stage104/q1_en.mp3',
-    options: ['yellow', 'blue', 'green', 'white'],
-    correctAnswer: 0,
-    japaneseText: '太陽は黄色いです。',
+  const Question(
+    id: 's104_l1', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Rectangle', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '▭',
+    choices: ['四角形', '長方形', '三角形', '円'], correctAnswer: '長方形', phonetic: '/ˈrɛktæŋɡəl/',
   ),
-  Question(
-    id: 'stage104_q2',
-    englishText: 'A _____ has four sides.',
-    englishAudio: 'audio/stage104/q2_en.mp3',
-    options: ['square', 'circle', 'triangle', 'pentagon'],
-    correctAnswer: 0,
-    japaneseText: '正方形は4辺があります。',
+  const Question(
+    id: 's104_l2', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Heart', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '❤️',
+    choices: ['星', '心臓', 'ダイヤモンド', 'クローバー'], correctAnswer: '心臓', phonetic: '/hɑːrt/',
   ),
-  Question(
-    id: 'stage104_q3',
-    englishText: 'I like orange and ___.',
-    englishAudio: 'audio/stage104/q3_en.mp3',
-    options: ['yellow', 'yellows', 'a yellow', 'the yellow'],
-    correctAnswer: 0,
-    japaneseText: 'オレンジと黄色が好きです。',
+  const Question(
+    id: 's104_l3', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Diamond', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '♦️',
+    choices: ['心臓', 'ダイヤモンド', 'クローバー', 'スペード'], correctAnswer: 'ダイヤモンド', phonetic: '/ˈdaɪəmənd/',
   ),
-  Question(
-    id: 'stage104_q4',
-    englishText: 'This triangle has ___ vertices.',
-    englishAudio: 'audio/stage104/q4_en.mp3',
-    options: ['three', 'four', 'five', 'six'],
-    correctAnswer: 0,
-    japaneseText: 'この三角形は3つの頂点があります。',
+  const Question(
+    id: 's104_l4', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Pentagon', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '⬠',
+    choices: ['六角形', '五角形', '四角形', '三角形'], correctAnswer: '五角形', phonetic: '/ˈpɛntəɡɑːn/',
   ),
-  Question(
-    id: 'stage104_q5',
-    englishText: 'Choose the matching color pair.',
-    englishAudio: 'audio/stage104/q5_en.mp3',
-    options: ['blue and red', 'circle and square', 'big and small', 'one and two'],
-    correctAnswer: 0,
-    japaneseText: '色のペアを選んでください。',
+  const Question(
+    id: 's104_l5', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Hexagon', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '⬡',
+    choices: ['五角形', '六角形', '八角形', '四角形'], correctAnswer: '六角形', phonetic: '/ˈhɛksəɡɑːn/',
   ),
 ];
 
 final stage105Questions = <Question>[
-  Question(
-    id: 'stage105_q1',
-    englishText: 'Blood is ___.',
-    englishAudio: 'audio/stage105/q1_en.mp3',
-    options: ['red', 'blue', 'yellow', 'green'],
-    correctAnswer: 0,
-    japaneseText: '血は赤いです。',
+  const Question(
+    id: 's105_l1', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Big', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '📏',
+    choices: ['大きい', '小さい', '長い', '短い'], correctAnswer: '大きい', phonetic: '/bɪɡ/',
   ),
-  Question(
-    id: 'stage105_q2',
-    englishText: 'A _____ is a 3D circle.',
-    englishAudio: 'audio/stage105/q2_en.mp3',
-    options: ['sphere', 'cube', 'cylinder', 'pyramid'],
-    correctAnswer: 0,
-    japaneseText: '球体は立体的な円です。',
+  const Question(
+    id: 's105_l2', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Small', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '📎',
+    choices: ['大きい', '小さい', '太い', 'ほっそい'], correctAnswer: '小さい', phonetic: '/smɔːl/',
   ),
-  Question(
-    id: 'stage105_q3',
-    englishText: 'What color is chocolate?',
-    englishAudio: 'audio/stage105/q3_en.mp3',
-    options: ['brown', 'red', 'black', 'yellow'],
-    correctAnswer: 0,
-    japaneseText: 'チョコレートの色は何ですか？',
+  const Question(
+    id: 's105_l3', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Thick', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '📚',
+    choices: ['薄い', '太い', '長い', '短い'], correctAnswer: '太い', phonetic: '/θɪk/',
   ),
-  Question(
-    id: 'stage105_q4',
-    englishText: 'This shape is ___.',
-    englishAudio: 'audio/stage105/q4_en.mp3',
-    options: ['symmetrical', 'asymmetrical', 'curved', 'straight'],
-    correctAnswer: 0,
-    japaneseText: 'この形は対称的です。',
+  const Question(
+    id: 's105_l4', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Thin', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '📄',
+    choices: ['太い', 'ほっそい', '厚い', '広い'], correctAnswer: 'ほっそい', phonetic: '/θɪn/',
   ),
-  Question(
-    id: 'stage105_q5',
-    englishText: 'Which shape rolls easily?',
-    englishAudio: 'audio/stage105/q5_en.mp3',
-    options: ['sphere', 'cube', 'pyramid', 'rectangular prism'],
-    correctAnswer: 0,
-    japaneseText: 'どの形が簡単に転がりますか？',
+  const Question(
+    id: 's105_l5', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Long', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '📏',
+    choices: ['短い', '長い', '太い', '小さい'], correctAnswer: '長い', phonetic: '/lɔːŋ/',
   ),
 ];
 
 final stage106Questions = <Question>[
-  Question(
-    id: 'stage106_q1',
-    englishText: 'Gray is between black and ___.',
-    englishAudio: 'audio/stage106/q1_en.mp3',
-    options: ['white', 'red', 'blue', 'yellow'],
-    correctAnswer: 0,
-    japaneseText: '灰色は黒と白の間です。',
+  const Question(
+    id: 's106_l1', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Short', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '📏',
+    choices: ['長い', '短い', '低い', '高い'], correctAnswer: '短い', phonetic: '/ʃɔːrt/',
   ),
-  Question(
-    id: 'stage106_q2',
-    englishText: 'A _____ has no corners.',
-    englishAudio: 'audio/stage106/q2_en.mp3',
-    options: ['circle', 'square', 'triangle', 'rectangle'],
-    correctAnswer: 0,
-    japaneseText: '円には角がありません。',
+  const Question(
+    id: 's106_l2', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Tall', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '📐',
+    choices: ['低い', '高い', '短い', '太い'], correctAnswer: '高い', phonetic: '/tɔːl/',
   ),
-  Question(
-    id: 'stage106_q3',
-    englishText: 'I see many _____ shapes.',
-    englishAudio: 'audio/stage106/q3_en.mp3',
-    options: ['geometric', 'geometrics', 'geometry', 'geometrical'],
-    correctAnswer: 0,
-    japaneseText: '幾何学的な形をたくさん見ます。',
+  const Question(
+    id: 's106_l3', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Wide', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '◻️',
+    choices: ['狭い', '広い', '短い', '長い'], correctAnswer: '広い', phonetic: '/waɪd/',
   ),
-  Question(
-    id: 'stage106_q4',
-    englishText: 'Navy blue is a dark ___.',
-    englishAudio: 'audio/stage106/q4_en.mp3',
-    options: ['blue', 'color', 'shade', 'tone'],
-    correctAnswer: 0,
-    japaneseText: '紺は濃い青です。',
+  const Question(
+    id: 's106_l4', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Narrow', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '▯',
+    choices: ['広い', '狭い', '太い', 'ほっそい'], correctAnswer: '狭い', phonetic: '/ˈnæroʊ/',
   ),
-  Question(
-    id: 'stage106_q5',
-    englishText: 'Choose a shape that has vertices.',
-    englishAudio: 'audio/stage106/q5_en.mp3',
-    options: ['square', 'circle', 'oval', 'sphere'],
-    correctAnswer: 0,
-    japaneseText: '頂点を持つ形を選んでください。',
+  const Question(
+    id: 's106_l5', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Round', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '⭕',
+    choices: ['四角い', '丸い', '三角い', 'ぎざぎざ'], correctAnswer: '丸い', phonetic: '/raʊnd/',
   ),
 ];
 
 final stage107Questions = <Question>[
-  Question(
-    id: 'stage107_q1',
-    englishText: 'Silver is a ___ color.',
-    englishAudio: 'audio/stage107/q1_en.mp3',
-    options: ['metallic', 'shiny', 'bright', 'light'],
-    correctAnswer: 0,
-    japaneseText: '銀は金属色です。',
+  const Question(
+    id: 's107_l1', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Straight', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '➖',
+    choices: ['曲がった', 'まっすぐ', 'ぎざぎざ', 'らせん状'], correctAnswer: 'まっすぐ', phonetic: '/streɪt/',
   ),
-  Question(
-    id: 'stage107_q2',
-    englishText: 'A _____ has six faces.',
-    englishAudio: 'audio/stage107/q2_en.mp3',
-    options: ['cube', 'sphere', 'pyramid', 'cylinder'],
-    correctAnswer: 0,
-    japaneseText: '立方体は6つの面を持っています。',
+  const Question(
+    id: 's107_l2', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Curved', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '➰',
+    choices: ['まっすぐ', '曲がった', 'ぎざぎざ', '角ばった'], correctAnswer: '曲がった', phonetic: '/kɜːrvd/',
   ),
-  Question(
-    id: 'stage107_q3',
-    englishText: 'Lime is a bright ___ color.',
-    englishAudio: 'audio/stage107/q3_en.mp3',
-    options: ['green', 'blue', 'yellow', 'red'],
-    correctAnswer: 0,
-    japaneseText: 'ライムは明るい緑です。',
+  const Question(
+    id: 's107_l3', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Flat', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '▭',
+    choices: ['立体的', 'でこぼこ', '平らな', 'うねうねした'], correctAnswer: '平らな', phonetic: '/flæt/',
   ),
-  Question(
-    id: 'stage107_q4',
-    englishText: 'This polygon has ___ sides.',
-    englishAudio: 'audio/stage107/q4_en.mp3',
-    options: ['six', 'three', 'four', 'five'],
-    correctAnswer: 0,
-    japaneseText: 'このポリゴンは6辺を持っています。',
+  const Question(
+    id: 's107_l4', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Rough', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🪨',
+    choices: ['なめらかな', 'ざらざら', '滑らかな', 'つるつるした'], correctAnswer: 'ざらざら', phonetic: '/rʌf/',
   ),
-  Question(
-    id: 'stage107_q5',
-    englishText: 'Which shape has parallel sides?',
-    englishAudio: 'audio/stage107/q5_en.mp3',
-    options: ['rectangle', 'triangle', 'circle', 'pentagon'],
-    correctAnswer: 0,
-    japaneseText: '平行な辺を持つ形を選んでください。',
+  const Question(
+    id: 's107_l5', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Smooth', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '💎',
+    choices: ['ざらざら', 'なめらかな', 'でこぼこ', 'ぎざぎざ'], correctAnswer: 'なめらかな', phonetic: '/smuːð/',
   ),
 ];
 
 final stage108Questions = <Question>[
-  Question(
-    id: 'stage108_q1',
-    englishText: 'Gold is a warm ___ color.',
-    englishAudio: 'audio/stage108/q1_en.mp3',
-    options: ['yellow', 'orange', 'red', 'brown'],
-    correctAnswer: 0,
-    japaneseText: 'ゴールドは暖かい黄色です。',
+  const Question(
+    id: 's108_l1', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Sharp', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🔪',
+    choices: ['丸い', '鋭い', '太い', 'もたもたした'], correctAnswer: '鋭い', phonetic: '/ʃɑːrp/',
   ),
-  Question(
-    id: 'stage108_q2',
-    englishText: 'A _____ is a curved 3D shape.',
-    englishAudio: 'audio/stage108/q2_en.mp3',
-    options: ['cylinder', 'pyramid', 'prism', 'cube'],
-    correctAnswer: 0,
-    japaneseText: '円柱は曲線の立体図形です。',
+  const Question(
+    id: 's108_l2', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Dull', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '☁️',
+    choices: ['輝く', 'くすんだ', '鮮やかな', '淡い'], correctAnswer: 'くすんだ', phonetic: '/dʌl/',
   ),
-  Question(
-    id: 'stage108_q3',
-    englishText: 'Turquoise is blue and ___.',
-    englishAudio: 'audio/stage108/q3_en.mp3',
-    options: ['green', 'yellow', 'purple', 'red'],
-    correctAnswer: 0,
-    japaneseText: 'ターコイズは青と緑です。',
+  const Question(
+    id: 's108_l3', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Bright', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '⭐',
+    choices: ['暗い', '明るい', 'くすんだ', '淡い'], correctAnswer: '明るい', phonetic: '/braɪt/',
   ),
-  Question(
-    id: 'stage108_q4',
-    englishText: 'The angles in a triangle add up to ___ degrees.',
-    englishAudio: 'audio/stage108/q4_en.mp3',
-    options: ['180', '90', '360', '270'],
-    correctAnswer: 0,
-    japaneseText: '三角形の角度の合計は180度です。',
+  const Question(
+    id: 's108_l4', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Dark', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🌙',
+    choices: ['明るい', '暗い', 'くすんだ', '淡い'], correctAnswer: '暗い', phonetic: '/dɑːrk/',
   ),
-  Question(
-    id: 'stage108_q5',
-    englishText: 'What shape has curved edges?',
-    englishAudio: 'audio/stage108/q5_en.mp3',
-    options: ['circle', 'square', 'triangle', 'rectangle'],
-    correctAnswer: 0,
-    japaneseText: '曲線のある形を選んでください。',
+  const Question(
+    id: 's108_l5', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Light', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '💡',
+    choices: ['暗い', '軽い', '重い', '淡い'], correctAnswer: '軽い', phonetic: '/laɪt/',
   ),
 ];
 
 final stage109Questions = <Question>[
-  Question(
-    id: 'stage109_q1',
-    englishText: 'Magenta is between red and ___.',
-    englishAudio: 'audio/stage109/q1_en.mp3',
-    options: ['blue', 'yellow', 'green', 'orange'],
-    correctAnswer: 0,
-    japaneseText: 'マゼンタは赤と紫の間です。',
+  const Question(
+    id: 's109_l1', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Heavy', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '⚖️',
+    choices: ['軽い', '重い', 'かさばる', '小さい'], correctAnswer: '重い', phonetic: '/ˈhɛvi/',
   ),
-  Question(
-    id: 'stage109_q2',
-    englishText: 'A _____ has 8 vertices and 12 edges.',
-    englishAudio: 'audio/stage109/q2_en.mp3',
-    options: ['cube', 'sphere', 'pyramid', 'prism'],
-    correctAnswer: 0,
-    japaneseText: '立方体は8つの頂点と12の辺を持っています。',
+  const Question(
+    id: 's109_l2', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Transparent', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '💎',
+    choices: ['透明な', '不透明な', '曇った', '白濁した'], correctAnswer: '透明な', phonetic: '/trænsˈpɛrənt/',
   ),
-  Question(
-    id: 'stage109_q3',
-    englishText: 'This cloth is ___.',
-    englishAudio: 'audio/stage109/q3_en.mp3',
-    options: ['indigo', 'pink', 'beige', 'coral'],
-    correctAnswer: 0,
-    japaneseText: 'この布は紺青です。',
+  const Question(
+    id: 's109_l3', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Opaque', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🪵',
+    choices: ['透明な', '不透明な', 'つやつやした', 'でこぼこ'], correctAnswer: '不透明な', phonetic: '/oʊˈpeɪk/',
   ),
-  Question(
-    id: 'stage109_q4',
-    englishText: 'A cone tapers to a ___.',
-    englishAudio: 'audio/stage109/q4_en.mp3',
-    options: ['point', 'base', 'circle', 'line'],
-    correctAnswer: 0,
-    japaneseText: '円錐は先端に先細ります。',
+  const Question(
+    id: 's109_l4', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Shiny', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '✨',
+    choices: ['くすんだ', 'つやつやした', 'ざらざら', 'なめらかな'], correctAnswer: 'つやつやした', phonetic: '/ˈʃaɪni/',
   ),
-  Question(
-    id: 'stage109_q5',
-    englishText: 'Which color is warm?',
-    englishAudio: 'audio/stage109/q5_en.mp3',
-    options: ['orange', 'blue', 'green', 'purple'],
-    correctAnswer: 0,
-    japaneseText: 'どの色が暖かいですか？',
+  const Question(
+    id: 's109_l5', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Matte', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '📦',
+    choices: ['つやつやした', 'つや消しの', '光沢のある', 'きらきらした'], correctAnswer: 'つや消しの', phonetic: '/mæt/',
   ),
 ];
 
 final stage110Questions = <Question>[
-  Question(
-    id: 'stage110_q1',
-    englishText: 'Rainbow colors are red, orange, yellow, green, blue, indigo, and ___.',
-    englishAudio: 'audio/stage110/q1_en.mp3',
-    options: ['violet', 'purple', 'pink', 'magenta'],
-    correctAnswer: 0,
-    japaneseText: '虹の色は赤、オレンジ、黄、緑、青、藍、紫です。',
+  const Question(
+    id: 's110_l1', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Rainbow', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🌈',
+    choices: ['日没', '虹', '空', '雲'], correctAnswer: '虹', phonetic: '/ˈreɪnboʊ/',
   ),
-  Question(
-    id: 'stage110_q2',
-    englishText: 'A _____ has circular bases.',
-    englishAudio: 'audio/stage110/q2_en.mp3',
-    options: ['cylinder', 'cube', 'pyramid', 'prism'],
-    correctAnswer: 0,
-    japaneseText: '円柱は円形の底面を持っています。',
+  const Question(
+    id: 's110_l2', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Pattern', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🎨',
+    choices: ['色', '形', 'パターン', 'デザイン'], correctAnswer: 'パターン', phonetic: '/ˈpætərn/',
   ),
-  Question(
-    id: 'stage110_q3',
-    englishText: 'Chartreuse is between yellow and ___.',
-    englishAudio: 'audio/stage110/q3_en.mp3',
-    options: ['green', 'blue', 'red', 'orange'],
-    correctAnswer: 0,
-    japaneseText: 'シャルトリューズは黄色と緑の間です。',
+  const Question(
+    id: 's110_l3', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Stripe', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🟦',
+    choices: ['ドット', 'しま', '格子', 'プリント'], correctAnswer: 'しま', phonetic: '/straɪp/',
   ),
-  Question(
-    id: 'stage110_q4',
-    englishText: 'Congruent shapes are ___.',
-    englishAudio: 'audio/stage110/q4_en.mp3',
-    options: ['identical', 'same size', 'same shape', 'equal'],
-    correctAnswer: 0,
-    japaneseText: '合同な図形は同一です。',
+  const Question(
+    id: 's110_l4', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Polka dot', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '⚫',
+    choices: ['しま', 'ドット', '格子', 'チェック'], correctAnswer: 'ドット', phonetic: '/ˈpoʊlkə dɑːt/',
   ),
-  Question(
-    id: 'stage110_q5',
-    englishText: 'My favorite shape and color are ___ and ___.',
-    englishAudio: 'audio/stage110/q5_en.mp3',
-    options: ['circle, blue', 'circles, blue', 'circle, blues', 'circles, blues'],
-    correctAnswer: 0,
-    japaneseText: '好きな形と色は円と青です。',
+  const Question(
+    id: 's110_l5', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Checkered', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '📋',
+    choices: ['ドット', 'しま', 'チェック', 'プリント'], correctAnswer: 'チェック', phonetic: '/ˈtʃɛkərd/',
   ),
 ];

@@ -1,436 +1,285 @@
 import '../models/question.dart';
 
 // ────────────────────────────────────────────────────────────────────────────
-// Stage 81-90: 食べ物（拡張10ステージ）
+// Stage 81-90: 食べ物（拡張10ステージ）- 既存ステージの質問を再利用
 // ────────────────────────────────────────────────────────────────────────────
 
 final stage81Questions = <Question>[
-  Question(
-    id: 'stage81_q1',
-    englishText: 'What is this food?',
-    englishAudio: 'audio/stage81/q1_en.mp3',
-    options: ['Rice', 'Bread', 'Pasta', 'Potato'],
-    correctAnswer: 0,
-    japaneseText: 'これは何ですか？',
-    wordExplanations: {'Rice': 'お米', 'Bread': 'パン'},
+  const Question(
+    id: 's81_l1', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Rice', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🍚',
+    choices: ['お米', 'パン', 'パスタ', 'じゃがいも'], correctAnswer: 'お米', phonetic: '/raɪs/',
   ),
-  Question(
-    id: 'stage81_q2',
-    englishText: 'I like ___.',
-    englishAudio: 'audio/stage81/q2_en.mp3',
-    options: ['apples', 'apple', 'an apple', 'the apple'],
-    correctAnswer: 0,
-    japaneseText: '私は＿＿が好きです。',
+  const Question(
+    id: 's81_l2', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Eggs', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🥚',
+    choices: ['肉', '卵', '魚', 'チーズ'], correctAnswer: '卵', phonetic: '/ɛɡz/',
   ),
-  Question(
-    id: 'stage81_q3',
-    englishText: 'Do you like milk?',
-    englishAudio: 'audio/stage81/q3_en.mp3',
-    options: ['Yes, I do.', 'Yes, I like.', 'Yes, I am.', 'Yes, I have.'],
-    correctAnswer: 0,
-    japaneseText: 'ミルク好きですか？',
+  const Question(
+    id: 's81_l3', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Bread', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🍞',
+    choices: ['パスタ', 'パン', 'お米', 'ジャム'], correctAnswer: 'パン', phonetic: '/brɛd/',
   ),
-  Question(
-    id: 'stage81_q4',
-    englishText: 'This is a ___.',
-    englishAudio: 'audio/stage81/q4_en.mp3',
-    options: ['banana', 'bananana', 'bananna', 'bannana'],
-    correctAnswer: 0,
-    japaneseText: 'これはバナナです。',
+  const Question(
+    id: 's81_l4', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Milk', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🥛',
+    choices: ['水', 'ジュース', 'ミルク', 'ココア'], correctAnswer: 'ミルク', phonetic: '/mɪlk/',
   ),
-  Question(
-    id: 'stage81_q5',
-    englishText: 'Choose the food word.',
-    englishAudio: 'audio/stage81/q5_en.mp3',
-    options: ['chicken', 'picture', 'table', 'window'],
-    correctAnswer: 0,
-    japaneseText: '食べ物の言葉を選んでください。',
+  const Question(
+    id: 's81_l5', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Chicken', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🍗',
+    choices: ['豚肉', '牛肉', '鶏肉', '羊肉'], correctAnswer: '鶏肉', phonetic: '/ˈtʃɪkən/',
   ),
 ];
 
 final stage82Questions = <Question>[
-  Question(
-    id: 'stage82_q1',
-    englishText: 'What do you want to eat?',
-    englishAudio: 'audio/stage82/q1_en.mp3',
-    options: ['I want to eat pizza.', 'I want pizza eat.', 'I eat to want pizza.', 'Pizza want I eat.'],
-    correctAnswer: 0,
-    japaneseText: '何を食べたいですか？',
+  const Question(
+    id: 's82_l1', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Pizza', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🍕',
+    choices: ['ピザ', 'ハンバーガー', 'カレー', 'スシ'], correctAnswer: 'ピザ', phonetic: '/ˈpiːtsə/',
   ),
-  Question(
-    id: 'stage82_q2',
-    englishText: 'I eat ___ for breakfast.',
-    englishAudio: 'audio/stage82/q2_en.mp3',
-    options: ['eggs', 'egg', 'egges', 'egs'],
-    correctAnswer: 0,
-    japaneseText: '朝食に卵を食べます。',
+  const Question(
+    id: 's82_l2', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Apple', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🍎',
+    choices: ['ミカン', 'バナナ', 'リンゴ', 'ぶどう'], correctAnswer: 'リンゴ', phonetic: '/ˈæpəl/',
   ),
-  Question(
-    id: 'stage82_q3',
-    englishText: 'This is sweet. It is ___.',
-    englishAudio: 'audio/stage82/q3_en.mp3',
-    options: ['cake', 'fish', 'soup', 'salt'],
-    correctAnswer: 0,
-    japaneseText: 'これは甘いです。それはケーキです。',
+  const Question(
+    id: 's82_l3', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Orange', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🍊',
+    choices: ['リンゴ', 'ミカン', 'グレープフルーツ', 'レモン'], correctAnswer: 'ミカン', phonetic: '/ˈɔːrɪndʒ/',
   ),
-  Question(
-    id: 'stage82_q4',
-    englishText: 'Choose the correct pronunciation.',
-    englishAudio: 'audio/stage82/q4_en.mp3',
-    options: ['or-inj', 'or-anj', 'a-ranj', 'o-rang'],
-    correctAnswer: 1,
-    japaneseText: 'オレンジの発音を選んでください。',
+  const Question(
+    id: 's82_l4', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Banana', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🍌',
+    choices: ['ぶどう', 'バナナ', 'スイカ', 'パイナップル'], correctAnswer: 'バナナ', phonetic: '/bəˈnænə/',
   ),
-  Question(
-    id: 'stage82_q5',
-    englishText: 'Do you eat vegetables?',
-    englishAudio: 'audio/stage82/q5_en.mp3',
-    options: ['Yes, I do.', 'Yes, I eat.', 'Yes, I am.', 'Yes, I have.'],
-    correctAnswer: 0,
-    japaneseText: '野菜を食べますか？',
+  const Question(
+    id: 's82_l5', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Soup', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🍲',
+    choices: ['スープ', 'カレー', 'シチュー', 'みそ汁'], correctAnswer: 'スープ', phonetic: '/suːp/',
   ),
 ];
 
 final stage83Questions = <Question>[
-  Question(
-    id: 'stage83_q1',
-    englishText: '___ is delicious.',
-    englishAudio: 'audio/stage83/q1_en.mp3',
-    options: ['Chocolate', 'Chololate', 'Chocklate', 'Choclete'],
-    correctAnswer: 0,
-    japaneseText: 'チョコレートはおいしいです。',
+  const Question(
+    id: 's83_l1', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Chocolate', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🍫',
+    choices: ['アイスクリーム', 'チョコレート', 'キャンディ', 'クッキー'], correctAnswer: 'チョコレート', phonetic: '/ˈtʃɔːklət/',
   ),
-  Question(
-    id: 'stage83_q2',
-    englishText: 'What is your favorite food?',
-    englishAudio: 'audio/stage83/q2_en.mp3',
-    options: ['My favorite food is hamburger.', 'I favorite food is hamburger.', 'My food favorite hamburger.', 'Hamburger my favorite is.'],
-    correctAnswer: 0,
-    japaneseText: '好きな食べ物は何ですか？',
+  const Question(
+    id: 's83_l2', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Candy', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🍭',
+    choices: ['チョコ', 'ガム', 'キャンディ', 'チューイングガム'], correctAnswer: 'キャンディ', phonetic: '/ˈkændi/',
   ),
-  Question(
-    id: 'stage83_q3',
-    englishText: 'I drink ___ every day.',
-    englishAudio: 'audio/stage83/q3_en.mp3',
-    options: ['water', 'waters', 'a water', 'the water'],
-    correctAnswer: 0,
-    japaneseText: '毎日水を飲みます。',
+  const Question(
+    id: 's83_l3', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Ice cream', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🍦',
+    choices: ['ケーキ', 'プリン', 'アイスクリーム', 'ヨーグルト'], correctAnswer: 'アイスクリーム', phonetic: '/ˈaɪs ˌkriːm/',
   ),
-  Question(
-    id: 'stage83_q4',
-    englishText: 'This is a hot ___.',
-    englishAudio: 'audio/stage83/q4_en.mp3',
-    options: ['chocolate', 'salad', 'ice cream', 'sushi'],
-    correctAnswer: 0,
-    japaneseText: 'これはホットチョコレートです。',
+  const Question(
+    id: 's83_l4', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Cake', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🎂',
+    choices: ['ケーキ', 'ドーナツ', 'クッキー', 'パイ'], correctAnswer: 'ケーキ', phonetic: '/keɪk/',
   ),
-  Question(
-    id: 'stage83_q5',
-    englishText: 'Which is a snack?',
-    englishAudio: 'audio/stage83/q5_en.mp3',
-    options: ['cookie', 'fish', 'chicken', 'soup'],
-    correctAnswer: 0,
-    japaneseText: 'どれがスナックですか？',
+  const Question(
+    id: 's83_l5', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Cookie', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🍪',
+    choices: ['ケーキ', 'クッキー', 'ドーナツ', 'パイ'], correctAnswer: 'クッキー', phonetic: '/ˈkʊki/',
   ),
 ];
 
 final stage84Questions = <Question>[
-  Question(
-    id: 'stage84_q1',
-    englishText: 'Would you like some ___?',
-    englishAudio: 'audio/stage84/q1_en.mp3',
-    options: ['tea', 'teas', 'a tea', 'the tea'],
-    correctAnswer: 0,
-    japaneseText: 'お茶をください。',
+  const Question(
+    id: 's84_l1', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Tea', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '☕',
+    choices: ['コーヒー', 'お茶', 'ジュース', 'ココア'], correctAnswer: 'お茶', phonetic: '/tiː/',
   ),
-  Question(
-    id: 'stage84_q2',
-    englishText: 'I have ___ in my lunch box.',
-    englishAudio: 'audio/stage84/q2_en.mp3',
-    options: ['rice', 'rices', 'a rice', 'the rice'],
-    correctAnswer: 0,
-    japaneseText: 'お弁当にご飯が入っています。',
+  const Question(
+    id: 's84_l2', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Coffee', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '☕',
+    choices: ['紅茶', 'コーヒー', 'ココア', 'ジュース'], correctAnswer: 'コーヒー', phonetic: '/ˈkɔːfi/',
   ),
-  Question(
-    id: 'stage84_q3',
-    englishText: 'This is ___. It is sour.',
-    englishAudio: 'audio/stage84/q3_en.mp3',
-    options: ['lemon', 'honey', 'sugar', 'butter'],
-    correctAnswer: 0,
-    japaneseText: 'これはレモンです。酸っぱいです。',
+  const Question(
+    id: 's84_l3', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Water', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '💧',
+    choices: ['ミルク', 'ジュース', '水', 'お茶'], correctAnswer: '水', phonetic: '/ˈwɔːtər/',
   ),
-  Question(
-    id: 'stage84_q4',
-    englishText: 'Can you cook ___?',
-    englishAudio: 'audio/stage84/q4_en.mp3',
-    options: ['soup', 'soups', 'a soup', 'the soup'],
-    correctAnswer: 0,
-    japaneseText: 'スープを作れますか？',
+  const Question(
+    id: 's84_l4', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Juice', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🧃',
+    choices: ['ジュース', 'ソーダ', 'ミルク', 'ココア'], correctAnswer: 'ジュース', phonetic: '/dʒuːs/',
   ),
-  Question(
-    id: 'stage84_q5',
-    englishText: 'Choose the drink word.',
-    englishAudio: 'audio/stage84/q5_en.mp3',
-    options: ['juice', 'plate', 'fork', 'spoon'],
-    correctAnswer: 0,
-    japaneseText: '飲み物の言葉を選んでください。',
+  const Question(
+    id: 's84_l5', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Soda', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🥤',
+    choices: ['ジュース', 'ソーダ', 'ビール', 'ワイン'], correctAnswer: 'ソーダ', phonetic: '/ˈsoʊdə/',
   ),
 ];
 
 final stage85Questions = <Question>[
-  Question(
-    id: 'stage85_q1',
-    englishText: 'I eat sushi ___ a month.',
-    englishAudio: 'audio/stage85/q1_en.mp3',
-    options: ['once', 'one', 'first', 'single'],
-    correctAnswer: 0,
-    japaneseText: '月に一度お寿司を食べます。',
+  const Question(
+    id: 's85_l1', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Fish', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🐟',
+    choices: ['肉', '魚', 'エビ', 'カニ'], correctAnswer: '魚', phonetic: '/fɪʃ/',
   ),
-  Question(
-    id: 'stage85_q2',
-    englishText: 'Cheese is ___.',
-    englishAudio: 'audio/stage85/q2_en.mp3',
-    options: ['yellow', 'green', 'red', 'blue'],
-    correctAnswer: 0,
-    japaneseText: 'チーズは黄色いです。',
+  const Question(
+    id: 's85_l2', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Shrimp', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🦐',
+    choices: ['カニ', 'エビ', 'イカ', 'タコ'], correctAnswer: 'エビ', phonetic: '/ʃrɪmp/',
   ),
-  Question(
-    id: 'stage85_q3',
-    englishText: 'Do you like spicy food?',
-    englishAudio: 'audio/stage85/q3_en.mp3',
-    options: ['No, I don\'t.', 'No, I don\'t like.', 'No, I don\'t eat.', 'No, I don\'t have.'],
-    correctAnswer: 0,
-    japaneseText: '辛い食べ物が好きですか？',
+  const Question(
+    id: 's85_l3', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Sushi', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🍣',
+    choices: ['てんぷら', '寿司', 'そば', 'ラーメン'], correctAnswer: '寿司', phonetic: '/ˈsuːʃi/',
   ),
-  Question(
-    id: 'stage85_q4',
-    englishText: 'This is ___. It is yellow and sweet.',
-    englishAudio: 'audio/stage85/q4_en.mp3',
-    options: ['corn', 'apple', 'grape', 'carrot'],
-    correctAnswer: 0,
-    japaneseText: 'これはトウモロコシです。黄色くて甘いです。',
+  const Question(
+    id: 's85_l4', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Noodles', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🍜',
+    choices: ['ご飯', '麺', 'パン', 'スープ'], correctAnswer: '麺', phonetic: '/ˈnuːdəlz/',
   ),
-  Question(
-    id: 'stage85_q5',
-    englishText: 'Which food is healthy?',
-    englishAudio: 'audio/stage85/q5_en.mp3',
-    options: ['salad', 'candy', 'soda', 'ice cream'],
-    correctAnswer: 0,
-    japaneseText: 'どの食べ物が健康的ですか？',
+  const Question(
+    id: 's85_l5', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Salad', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🥗',
+    choices: ['スープ', 'サラダ', 'スチュー', 'カレー'], correctAnswer: 'サラダ', phonetic: '/ˈsæləd/',
   ),
 ];
 
 final stage86Questions = <Question>[
-  Question(
-    id: 'stage86_q1',
-    englishText: 'I like ___ more than ___.',
-    englishAudio: 'audio/stage86/q1_en.mp3',
-    options: ['apples, oranges', 'apples, orange', 'apple, oranges', 'apple, orange'],
-    correctAnswer: 0,
-    japaneseText: 'りんごはオレンジより好きです。',
+  const Question(
+    id: 's86_l1', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Meat', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🥩',
+    choices: ['魚', '肉', '野菜', 'チーズ'], correctAnswer: '肉', phonetic: '/miːt/',
   ),
-  Question(
-    id: 'stage86_q2',
-    englishText: 'What does she eat for lunch?',
-    englishAudio: 'audio/stage86/q2_en.mp3',
-    options: ['She eats noodles.', 'She eat noodles.', 'She eats noodle.', 'Noodles eats she.'],
-    correctAnswer: 0,
-    japaneseText: '彼女は昼食に何を食べていますか？',
+  const Question(
+    id: 's86_l2', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Cheese', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🧀',
+    choices: ['バター', 'チーズ', 'クリーム', 'ヨーグルト'], correctAnswer: 'チーズ', phonetic: '/tʃiːz/',
   ),
-  Question(
-    id: 'stage86_q3',
-    englishText: 'This is a ___ and ___.',
-    englishAudio: 'audio/stage86/q3_en.mp3',
-    options: ['knife, fork', 'knife, forks', 'knives, fork', 'knives, forks'],
-    correctAnswer: 0,
-    japaneseText: 'これはナイフとフォークです。',
+  const Question(
+    id: 's86_l3', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Butter', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🧈',
+    choices: ['油', 'バター', 'クリーム', 'マーガリン'], correctAnswer: 'バター', phonetic: '/ˈbʌtər/',
   ),
-  Question(
-    id: 'stage86_q4',
-    englishText: 'Choose the seafood word.',
-    englishAudio: 'audio/stage86/q4_en.mp3',
-    options: ['shrimp', 'beef', 'pork', 'chicken'],
-    correctAnswer: 0,
-    japaneseText: '海の幸の言葉を選んでください。',
+  const Question(
+    id: 's86_l4', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Vegetable', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🥕',
+    choices: ['果物', '野菜', '肉', '穀物'], correctAnswer: '野菜', phonetic: '/ˈvɛdʒtəbəl/',
   ),
-  Question(
-    id: 'stage86_q5',
-    englishText: 'I had coffee ___ breakfast.',
-    englishAudio: 'audio/stage86/q5_en.mp3',
-    options: ['for', 'at', 'in', 'on'],
-    correctAnswer: 0,
-    japaneseText: '朝食にコーヒーを飲みました。',
+  const Question(
+    id: 's86_l5', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Fruit', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🍓',
+    choices: ['野菜', '果物', '花', '木'], correctAnswer: '果物', phonetic: '/fruːt/',
   ),
 ];
 
 final stage87Questions = <Question>[
-  Question(
-    id: 'stage87_q1',
-    englishText: 'Mushroom is ___.',
-    englishAudio: 'audio/stage87/q1_en.mp3',
-    options: ['brown', 'red', 'yellow', 'white'],
-    correctAnswer: 0,
-    japaneseText: 'キノコは茶色いです。',
+  const Question(
+    id: 's87_l1', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Corn', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🌽',
+    choices: ['にんじん', 'とうもろこし', 'キャベツ', 'ブロッコリー'], correctAnswer: 'とうもろこし', phonetic: '/kɔːrn/',
   ),
-  Question(
-    id: 'stage87_q2',
-    englishText: 'Do you prefer meat or ___?',
-    englishAudio: 'audio/stage87/q2_en.mp3',
-    options: ['fish', 'fishes', 'a fish', 'the fish'],
-    correctAnswer: 0,
-    japaneseText: 'お肉と魚どちらが好きですか？',
+  const Question(
+    id: 's87_l2', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Carrot', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🥕',
+    choices: ['ジャガイモ', 'にんじん', 'たまねぎ', 'トマト'], correctAnswer: 'にんじん', phonetic: '/ˈkærət/',
   ),
-  Question(
-    id: 'stage87_q3',
-    englishText: 'I usually eat ___ at noon.',
-    englishAudio: 'audio/stage87/q3_en.mp3',
-    options: ['lunch', 'breakfasts', 'dinner', 'snack'],
-    correctAnswer: 0,
-    japaneseText: '正午は通常昼食を食べます。',
+  const Question(
+    id: 's87_l3', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Tomato', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🍅',
+    choices: ['キュウリ', 'ピーマン', 'トマト', 'ナス'], correctAnswer: 'トマト', phonetic: '/təˈmeɪtoʊ/',
   ),
-  Question(
-    id: 'stage87_q4',
-    englishText: 'This is called ___.',
-    englishAudio: 'audio/stage87/q4_en.mp3',
-    options: ['sushi', 'sushy', 'suushi', 'susshi'],
-    correctAnswer: 0,
-    japaneseText: 'これはお寿司と呼ばれています。',
+  const Question(
+    id: 's87_l4', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Potato', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🥔',
+    choices: ['にんじん', 'ジャガイモ', 'たまねぎ', 'とうもろこし'], correctAnswer: 'ジャガイモ', phonetic: '/pəˈteɪtoʊ/',
   ),
-  Question(
-    id: 'stage87_q5',
-    englishText: 'Choose the vegetable word.',
-    englishAudio: 'audio/stage87/q5_en.mp3',
-    options: ['carrot', 'coconut', 'peach', 'grape'],
-    correctAnswer: 0,
-    japaneseText: '野菜の言葉を選んでください。',
+  const Question(
+    id: 's87_l5', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Broccoli', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🥦',
+    choices: ['キャベツ', 'ブロッコリー', 'ほうれん草', 'レタス'], correctAnswer: 'ブロッコリー', phonetic: '/ˈbrɑːkəli/',
   ),
 ];
 
 final stage88Questions = <Question>[
-  Question(
-    id: 'stage88_q1',
-    englishText: 'Salt makes food ___.',
-    englishAudio: 'audio/stage88/q1_en.mp3',
-    options: ['salty', 'salt', 'salted', 'salting'],
-    correctAnswer: 0,
-    japaneseText: '塩は食べ物を塩辛くします。',
+  const Question(
+    id: 's88_l1', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Pineapple', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🍍',
+    choices: ['パイナップル', 'メロン', 'スイカ', 'マンゴー'], correctAnswer: 'パイナップル', phonetic: '/ˈpaɪnæpəl/',
   ),
-  Question(
-    id: 'stage88_q2',
-    englishText: 'Would you like ___ or sweet?',
-    englishAudio: 'audio/stage88/q2_en.mp3',
-    options: ['spicy', 'spice', 'spices', 'spicier'],
-    correctAnswer: 0,
-    japaneseText: '辛いのか甘いのかが好きですか？',
+  const Question(
+    id: 's88_l2', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Watermelon', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🍉',
+    choices: ['メロン', 'スイカ', 'ぶどう', 'マンゴー'], correctAnswer: 'スイカ', phonetic: '/ˈwɔːtərˌmɛlən/',
   ),
-  Question(
-    id: 'stage88_q3',
-    englishText: 'This recipe needs ___.',
-    englishAudio: 'audio/stage88/q3_en.mp3',
-    options: ['butter', 'butters', 'a butter', 'the butter'],
-    correctAnswer: 0,
-    japaneseText: 'このレシピはバターが必要です。',
+  const Question(
+    id: 's88_l3', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Grape', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🍇',
+    choices: ['いちご', 'ぶどう', 'プラム', 'ブルーベリー'], correctAnswer: 'ぶどう', phonetic: '/ɡreɪp/',
   ),
-  Question(
-    id: 'stage88_q4',
-    englishText: 'Choose the right spelling.',
-    englishAudio: 'audio/stage88/q4_en.mp3',
-    options: ['pineapple', 'pinnapple', 'pineapel', 'pinapple'],
-    correctAnswer: 0,
-    japaneseText: 'パイナップルの正しい綴りを選んでください。',
+  const Question(
+    id: 's88_l4', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Strawberry', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🍓',
+    choices: ['ブルーベリー', 'いちご', 'ラズベリー', 'クランベリー'], correctAnswer: 'いちご', phonetic: '/ˈstrɔːbɛri/',
   ),
-  Question(
-    id: 'stage88_q5',
-    englishText: 'I rarely eat ___.',
-    englishAudio: 'audio/stage88/q5_en.mp3',
-    options: ['meat', 'meats', 'a meat', 'the meat'],
-    correctAnswer: 0,
-    japaneseText: 'めったに肉を食べません。',
+  const Question(
+    id: 's88_l5', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Mango', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🥭',
+    choices: ['パパイヤ', 'マンゴー', 'ココナッツ', 'バナナ'], correctAnswer: 'マンゴー', phonetic: '/ˈmæŋɡoʊ/',
   ),
 ];
 
 final stage89Questions = <Question>[
-  Question(
-    id: 'stage89_q1',
-    englishText: 'Strawberry is ___.',
-    englishAudio: 'audio/stage89/q1_en.mp3',
-    options: ['red', 'green', 'yellow', 'blue'],
-    correctAnswer: 0,
-    japaneseText: 'イチゴは赤いです。',
+  const Question(
+    id: 's89_l1', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Honey', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🍯',
+    choices: ['砂糖', 'はちみつ', 'ジャム', 'シロップ'], correctAnswer: 'はちみつ', phonetic: '/ˈhʌni/',
   ),
-  Question(
-    id: 'stage89_q2',
-    englishText: 'I had ___ fruit juice today.',
-    englishAudio: 'audio/stage89/q2_en.mp3',
-    options: ['orange', 'oranges', 'an orange', 'the orange'],
-    correctAnswer: 0,
-    japaneseText: '今日オレンジジュースを飲みました。',
+  const Question(
+    id: 's89_l2', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Sugar', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🍬',
+    choices: ['塩', '砂糖', '砂', 'スパイス'], correctAnswer: '砂糖', phonetic: '/ˈʃʊɡər/',
   ),
-  Question(
-    id: 'stage89_q3',
-    englishText: 'Do you cook ___?',
-    englishAudio: 'audio/stage89/q3_en.mp3',
-    options: ['Yes, I do.', 'Yes, I cook.', 'Yes, I am.', 'Yes, I have.'],
-    correctAnswer: 0,
-    japaneseText: '料理をしますか？',
+  const Question(
+    id: 's89_l3', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Salt', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🧂',
+    choices: ['砂糖', '塩', 'こしょう', 'スパイス'], correctAnswer: '塩', phonetic: '/sɔːlt/',
   ),
-  Question(
-    id: 'stage89_q4',
-    englishText: 'This is made of ___.',
-    englishAudio: 'audio/stage89/q4_en.mp3',
-    options: ['sugar', 'sugars', 'a sugar', 'the sugar'],
-    correctAnswer: 0,
-    japaneseText: 'これは砂糖でできています。',
+  const Question(
+    id: 's89_l4', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Oil', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🫒',
+    choices: ['水', '油', 'バター', 'クリーム'], correctAnswer: '油', phonetic: '/ɔɪl/',
   ),
-  Question(
-    id: 'stage89_q5',
-    englishText: 'Choose a side dish word.',
-    englishAudio: 'audio/stage89/q5_en.mp3',
-    options: ['rice', 'fork', 'plate', 'cup'],
-    correctAnswer: 0,
-    japaneseText: 'おかずの言葉を選んでください。',
+  const Question(
+    id: 's89_l5', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Flour', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🌾',
+    choices: ['砂糖', '小麦粉', '塩', 'デンプン'], correctAnswer: '小麦粉', phonetic: '/ˈflaʊər/',
   ),
 ];
 
 final stage90Questions = <Question>[
-  Question(
-    id: 'stage90_q1',
-    englishText: 'Olive oil is ___.',
-    englishAudio: 'audio/stage90/q1_en.mp3',
-    options: ['green', 'red', 'yellow', 'brown'],
-    correctAnswer: 0,
-    japaneseText: 'オリーブオイルは緑色です。',
+  const Question(
+    id: 's90_l1', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Egg', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🥚',
+    choices: ['肉', '卵', '牛乳', 'チーズ'], correctAnswer: '卵', phonetic: '/ɛɡ/',
   ),
-  Question(
-    id: 'stage90_q2',
-    englishText: 'I grow ___ in my garden.',
-    englishAudio: 'audio/stage90/q2_en.mp3',
-    options: ['tomatoes', 'tomatos', 'tomato', 'a tomato'],
-    correctAnswer: 0,
-    japaneseText: '庭でトマトを育てています。',
+  const Question(
+    id: 's90_l2', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Jam', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🍓',
+    choices: ['はちみつ', 'ジャム', 'マーマレード', 'ペースト'], correctAnswer: 'ジャム', phonetic: '/dʒæm/',
   ),
-  Question(
-    id: 'stage90_q3',
-    englishText: 'This dessert is made of ___.',
-    englishAudio: 'audio/stage90/q3_en.mp3',
-    options: ['flour', 'flours', 'a flour', 'the flour'],
-    correctAnswer: 0,
-    japaneseText: 'このデザートは小麦粉でできています。',
+  const Question(
+    id: 's90_l3', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Peanut', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🥜',
+    choices: ['クルミ', 'ピーナッツ', 'アーモンド', 'ココナッツ'], correctAnswer: 'ピーナッツ', phonetic: '/ˈpiːnʌt/',
   ),
-  Question(
-    id: 'stage90_q4',
-    englishText: 'Choose the correct pronunciation.',
-    englishAudio: 'audio/stage90/q4_en.mp3',
-    options: ['nut', 'not', 'noot', 'naut'],
-    correctAnswer: 0,
-    japaneseText: 'ナッツの正しい発音を選んでください。',
+  const Question(
+    id: 's90_l4', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Nut', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🥜',
+    choices: ['シード', 'ナッツ', 'ベリー', 'フルーツ'], correctAnswer: 'ナッツ', phonetic: '/nʌt/',
   ),
-  Question(
-    id: 'stage90_q5',
-    englishText: 'My favorite ___ is pizza.',
-    englishAudio: 'audio/stage90/q5_en.mp3',
-    options: ['food', 'foods', 'a food', 'the food'],
-    correctAnswer: 0,
-    japaneseText: '好きな食べ物はピザです。',
+  const Question(
+    id: 's90_l5', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
+    text: 'Yogurt', textJa: '次の英語を聞いて、正しい意味を選ぼう', imageEmoji: '🥛',
+    choices: ['チーズ', 'バター', 'ヨーグルト', 'アイスクリーム'], correctAnswer: 'ヨーグルト', phonetic: '/ˈjoʊɡərt/',
   ),
 ];
