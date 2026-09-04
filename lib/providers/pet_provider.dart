@@ -3,16 +3,21 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/pet_model.dart';
 import '../models/user_profile.dart';
 
-/// ペット情報 Provider（Firestore から読み込み）
+/// ペット情報 Provider（Firestore から読み込み、エラー時は null）
 final petProvider = FutureProvider.family<PetModel?, String>((ref, userId) async {
-  final firestore = FirebaseFirestore.instance;
-  final docSnapshot = await firestore.collection('users').doc(userId).collection('pet').doc('data').get();
+  try {
+    final firestore = FirebaseFirestore.instance;
+    final docSnapshot = await firestore.collection('users').doc(userId).collection('pet').doc('data').get();
 
-  if (!docSnapshot.exists) {
+    if (!docSnapshot.exists) {
+      return null;
+    }
+
+    return PetModel.fromJson(docSnapshot.data() as Map<String, dynamic>);
+  } catch (e) {
+    // Firebase 未初期化 or パーミッションエラー → null を返す
     return null;
   }
-
-  return PetModel.fromJson(docSnapshot.data() as Map<String, dynamic>);
 });
 
 /// ペット操作用 StateNotifier
@@ -34,31 +39,39 @@ class PetNotifier extends StateNotifier<PetModel?> {
       createdAt: now,
     );
 
-    await _firestore
-        .collection('users')
-        .doc(userId)
-        .collection('pet')
-        .doc('data')
-        .set(newPet.toJson());
+    try {
+      await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('pet')
+          .doc('data')
+          .set(newPet.toJson());
+    } catch (e) {
+      // Firebase 未初期化 or パーミッションエラー → ローカルのみで管理
+    }
 
     state = newPet;
   }
 
   /// Firestore からペット情報を再読み込み
   Future<void> refreshPet() async {
-    final docSnapshot = await _firestore
-        .collection('users')
-        .doc(userId)
-        .collection('pet')
-        .doc('data')
-        .get();
+    try {
+      final docSnapshot = await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('pet')
+          .doc('data')
+          .get();
 
-    if (docSnapshot.exists) {
-      final pet = PetModel.fromJson(docSnapshot.data() as Map<String, dynamic>);
+      if (docSnapshot.exists) {
+        final pet = PetModel.fromJson(docSnapshot.data() as Map<String, dynamic>);
 
-      // 時間経過をシミュレート
-      final simulatedPet = pet.simulateTimePass();
-      state = simulatedPet;
+        // 時間経過をシミュレート
+        final simulatedPet = pet.simulateTimePass();
+        state = simulatedPet;
+      }
+    } catch (e) {
+      // Firebase 未初期化時は何もしない
     }
   }
 
@@ -86,12 +99,16 @@ class PetNotifier extends StateNotifier<PetModel?> {
     }
 
     // Firestore に保存
-    await _firestore
-        .collection('users')
-        .doc(userId)
-        .collection('pet')
-        .doc('data')
-        .update(updatedPet.toJson());
+    try {
+      await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('pet')
+          .doc('data')
+          .update(updatedPet.toJson());
+    } catch (e) {
+      // Firebase 未初期化時もローカル状態は更新
+    }
 
     state = updatedPet;
     return coinsEarned;

@@ -11,7 +11,7 @@ import 'screens/onboarding_screen.dart';
 import 'screens/parent_dashboard_screen.dart';
 import 'screens/privacy_policy_screen.dart';
 import 'screens/result_screen.dart';
-// import 'screens/settings_screen.dart'; // TODO: Fix encoding issue
+import 'screens/settings_screen.dart';
 import 'screens/splash_screen.dart';
 import 'screens/stage_select_screen.dart';
 import 'screens/ranking_screen.dart';
@@ -176,6 +176,7 @@ class _RootShellState extends ConsumerState<RootShell> {
     HomeScreen(),
     StageSelectScreen(),
     ParentDashboardScreen(),
+    SettingsScreen(),
   ];
 
   @override
@@ -199,6 +200,7 @@ class _RootShellState extends ConsumerState<RootShell> {
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'ホーム'),
           BottomNavigationBarItem(icon: Icon(Icons.menu_book), label: 'ステージ'),
           BottomNavigationBarItem(icon: Icon(Icons.family_restroom), label: '親'),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'せってい'),
         ],
       ),
     );
