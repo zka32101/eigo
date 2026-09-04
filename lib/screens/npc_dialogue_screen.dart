@@ -1,337 +1,469 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:eigo/models/dialogue_template_model.dart';
-import 'package:eigo/models/npc_extended_model.dart';
-import 'package:eigo/providers/dialogue_context_provider.dart';
-import 'package:eigo/providers/npc_provider.dart';
-import 'package:eigo/providers/dialogue_template_provider.dart';
-import 'package:eigo/services/dialogue_engine_service.dart';
-import 'package:eigo/services/response_validation_service.dart';
-import 'package:eigo/services/response_scoring_service.dart';
-import 'package:eigo/services/response_quality_evaluator_service.dart';
-import 'package:eigo/widgets/npc_character_display_widget.dart';
-import 'package:eigo/widgets/conversation_dialogue_box_widget.dart';
-import 'package:eigo/widgets/dialogue_input_interface_widget.dart';
-import 'package:eigo/widgets/interaction_result_widget.dart';
+import 'package:eigo/models/npc_dialogue_model.dart';
+import 'package:eigo/models/npc_behavior_model.dart';
+import 'package:eigo/models/npc_event_model.dart';
+import 'package:eigo/services/npc_dialogue_service.dart';
+import 'package:eigo/services/npc_behavior_service.dart';
+import 'package:eigo/services/npc_event_service.dart';
+import 'package:eigo/providers/npc_dialogue_provider.dart';
+import 'package:eigo/providers/npc_behavior_provider.dart';
+import 'package:eigo/widgets/dialogue_option_widget.dart';
+import 'package:eigo/widgets/npc_mood_indicator.dart';
 
-/// NPC Dialogue Screen
-/// Full-screen dialogue interaction with an NPC in the game world
+/// NPC との対話スクリーン
 class NPCDialogueScreen extends ConsumerStatefulWidget {
   final String npcId;
-  final String? initialTopic;
-  final VoidCallback? onDialogueComplete;
+  final String npcName;
+  final String npcAvatarPath;
 
   const NPCDialogueScreen({
-    Key? key,
     required this.npcId,
-    this.initialTopic,
-    this.onDialogueComplete,
-  }) : super(key: key);
+    required this.npcName,
+    required this.npcAvatarPath,
+  });
 
   @override
-  ConsumerState<NPCDialogueScreen> createState() =>
-      _NPCDialogueScreenState();
+  ConsumerState<NPCDialogueScreen> createState() => _NPCDialogueScreenState();
 }
 
 class _NPCDialogueScreenState extends ConsumerState<NPCDialogueScreen> {
-  late ScrollController _scrollController;
-  bool _showingResult = false;
-  int? _lastScore;
-  int? _lastXpEarned;
-  int? _lastCoinsEarned;
-  String? _lastFeedback;
-  Map<String, double>? _lastQualityBreakdown;
+  late NPCDialogueService _dialogueService;
+  late NPCBehaviorService _behaviorService;
+  late NPCEventService _eventService;
 
   @override
   void initState() {
     super.initState();
-    _scrollController = ScrollController();
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
+    _dialogueService = NPCDialogueService.getInstance();
+    _behaviorService = NPCBehaviorService.getInstance();
+    _eventService = NPCEventService.getInstance();
   }
 
   @override
   Widget build(BuildContext context) {
-    final npcAsync = ref.watch(npcByIdProvider(widget.npcId));
-    final dialogueContext = ref.watch(dialogueContextProvider);
-    final templates = ref.watch(
-      dialogueTemplatesByNpcProvider(widget.npcId),
-    );
+    // 現在の対話セッション
+    final sessionAsync = ref.watch(dialogueSessionProvider(widget.npcId));
 
-    return npcAsync.when(
-      data: (npc) {
-        if (npc == null) {
-          return Scaffold(
-            appBar: AppBar(title: const Text('NPC Not Found')),
-            body: Center(
-              child: Text('NPC ${widget.npcId} not found'),
-            ),
-          );
-        }
+    // NPC の行動状態
+    final behaviorAsync =
+        ref.watch(npcBehaviorStateProvider(widget.npcId));
 
-        return Scaffold(
-          appBar: _buildAppBar(npc),
-          body: _showingResult
-              ? _buildResultView()
-              : _buildDialogueView(context, npc, templates),
-          backgroundColor: Colors.grey.shade50,
-        );
-      },
-      loading: () => const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.npcName),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.black87,
       ),
-      error: (error, stack) => Scaffold(
-        appBar: AppBar(title: const Text('Error')),
-        body: Center(child: Text('Error: $error')),
-      ),
-    );
-  }
-
-  /// Build app bar with NPC info
-  PreferredSizeWidget _buildAppBar(NPCExtended npc) {
-    return AppBar(
-      title: Text(npc.npcId),
-      elevation: 0,
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () => Navigator.of(context).pop(),
+      body: sessionAsync.when(
+        data: (session) => behaviorAsync.when(
+          data: (behavior) => _buildDialogueContent(
+            context,
+            session,
+            behavior,
+          ),
+          loading: () => const Center(
+            child: CircularProgressIndicator(),
+          ),
+          error: (err, stack) => Center(
+            child: Text('Error: $err'),
+          ),
         ),
-      ],
+        loading: () => const Center(
+          child: CircularProgressIndicator(),
+        ),
+        error: (err, stack) => Center(
+          child: Text('Error: $err'),
+        ),
+      ),
     );
   }
 
-  /// Build main dialogue view
-  Widget _buildDialogueView(
+  Widget _buildDialogueContent(
     BuildContext context,
-    NPCExtended npc,
-    AsyncValue<List<DialogueTemplate>> templates,
+    DialogueSession session,
+    NPCBehaviorState behavior,
   ) {
     return Column(
       children: [
-        // NPC Character Display
-        CompactNPCCharacterWidget(npcId: widget.npcId),
-        const Divider(height: 1),
+        // NPC 情報ヘッダー
+        _buildNPCHeader(behavior),
 
-        // Dialogue History
+        // 対話コンテンツ
         Expanded(
-          child: templates.when(
-            data: (templateList) {
-              return ConversationDialogueBoxWidget(
-                npcName: npc.npcId,
-                scrollController: _scrollController,
-                showTimestamps: true,
-                showTranslations: false,
-              );
-            },
-            loading: () => const Center(
-              child: CircularProgressIndicator(),
-            ),
-            error: (error, stack) => Center(
-              child: Text('Error loading templates: $error'),
-            ),
-          ),
+          child: session.isActive
+              ? _buildActiveDialogue(context, session, behavior)
+              : _buildInactiveDialogue(context),
         ),
 
-        // Input Interface
-        DialogueInputInterfaceWidget(
-          onSubmit: (input) => _handleUserInput(context, npc, input),
-          minCharacters: 2,
-          maxCharacters: 500,
-          showCharacterCount: true,
-          enableVoiceInput: false,
-        ),
+        // 対話オプション
+        if (session.isActive)
+          _buildDialogueOptions(context, session, behavior),
       ],
     );
   }
 
-  /// Build result view
-  Widget _buildResultView() {
-    return InteractionResultWidget(
-      score: _lastScore ?? 0,
-      xpEarned: _lastXpEarned ?? 0,
-      coinsEarned: _lastCoinsEarned ?? 0,
-      feedback: _lastFeedback ?? 'Interaction complete!',
-      qualityBreakdown: _lastQualityBreakdown ?? {},
-      nextSuggestion: 'Continue the conversation or explore the town.',
-      onClose: _handleResultClose,
-    );
-  }
+  Widget _buildNPCHeader(NPCBehaviorState behavior) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.blue.withOpacity(0.1),
+            Colors.purple.withOpacity(0.1),
+          ],
+        ),
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(12),
+          bottomRight: Radius.circular(12),
+        ),
+      ),
+      child: Row(
+        children: [
+          // NPC アバター
+          CircleAvatar(
+            radius: 40,
+            backgroundImage: AssetImage(widget.npcAvatarPath),
+            onBackgroundImageError: (_, __) {},
+          ),
+          const SizedBox(width: 16),
 
-  /// Handle user input submission
-  Future<void> _handleUserInput(
-    BuildContext context,
-    NPCExtended npc,
-    String userInput,
-  ) async {
-    try {
-      // Update dialogue context with player input
-      ref.read(dialogueContextProvider.notifier).setPlayerInput(userInput);
+          // NPC 情報
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.npcName,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 4),
 
-      // Validate response
-      final templates = await ref.read(
-        dialogueTemplatesByNpcProvider(widget.npcId).future,
-      );
+                // ムード指標
+                NPCMoodIndicator(mood: behavior.currentMood),
+                const SizedBox(height: 8),
 
-      if (templates.isEmpty) {
-        _showErrorDialog(context, 'No dialogue templates available');
-        return;
-      }
-
-      // Select best template
-      final dialogueEngine = DialogueEngineService.getInstance();
-      final selectedTemplate = dialogueEngine.selectBestTemplate(
-        templates: templates,
-        npc: npc,
-        userInput: userInput,
-        currentPhase: ConversationPhase.main,
-        preferredDifficulty: DialogueDifficulty.intermediate,
-      );
-
-      if (selectedTemplate == null) {
-        _showErrorDialog(context, 'Could not select dialogue template');
-        return;
-      }
-
-      // Validate user response
-      final validator = ResponseValidationService.getInstance();
-      final validationResults = validator.validateResponse(
-        response: userInput,
-        template: selectedTemplate,
-        npc: npc,
-      );
-
-      // Score response
-      final scorer = ResponseScoringService.getInstance();
-      final score = scorer.scoreResponse(
-        response: userInput,
-        validationResults: validationResults,
-        npc: npc,
-        userInput: userInput,
-      );
-
-      // Evaluate quality
-      final evaluator = ResponseQualityEvaluatorService.getInstance();
-      final qualityScore = evaluator.evaluateResponseQuality(
-        response: userInput,
-        template: selectedTemplate,
-        npc: npc,
-      );
-
-      // Generate feedback
-      final feedback = scorer.generateFeedback(
-        score: score,
-        response: userInput,
-        validationResults: validationResults,
-        npc: npc,
-      );
-
-      // Build quality breakdown
-      final qualityBreakdown = <String, double>{
-        'Relevance': evaluator._evaluateRelevance(userInput, selectedTemplate, npc),
-        'Naturalness': evaluator._evaluateNaturalness(userInput),
-        'Grammar': evaluator._evaluateGrammar(userInput),
-        'Topic Alignment':
-            evaluator._evaluateTopicAlignment(userInput, selectedTemplate),
-        'Character Consistency':
-            evaluator._evaluateCharacterConsistency(userInput, npc),
-      };
-
-      // Calculate rewards (placeholder)
-      final xpEarned = (score ~/ 10) + 10;
-      final coinsEarned = (score ~/ 20) + 5;
-
-      // Display results
-      _lastScore = score;
-      _lastXpEarned = xpEarned;
-      _lastCoinsEarned = coinsEarned;
-      _lastFeedback = feedback;
-      _lastQualityBreakdown = qualityBreakdown;
-
-      setState(() {
-        _showingResult = true;
-      });
-
-      // Scroll to bottom
-      await Future.delayed(const Duration(milliseconds: 100));
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
-    } catch (e) {
-      _showErrorDialog(context, 'Error processing response: $e');
-    }
-  }
-
-  /// Handle result close
-  void _handleResultClose() {
-    setState(() {
-      _showingResult = false;
-      _lastScore = null;
-      _lastXpEarned = null;
-      _lastCoinsEarned = null;
-      _lastFeedback = null;
-      _lastQualityBreakdown = null;
-    });
-  }
-
-  /// Show error dialog
-  void _showErrorDialog(BuildContext context, String message) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Error'),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
+                // 親密度表示
+                Row(
+                  children: [
+                    const Icon(Icons.favorite, color: Colors.red, size: 16),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Affection: ${behavior.currentAffection}',
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ],
       ),
     );
   }
-}
 
-/// NPC Dialogue Modal
-/// Compact modal for quick NPC interactions
-class NPCDialogueModal extends ConsumerWidget {
-  final String npcId;
-  final VoidCallback? onComplete;
+  Widget _buildActiveDialogue(
+    BuildContext context,
+    DialogueSession session,
+    NPCBehaviorState behavior,
+  ) {
+    final currentNode = session.currentNode;
+    if (currentNode == null) {
+      return const Center(
+        child: Text('No dialogue node found'),
+      );
+    }
 
-  const NPCDialogueModal({
-    Key? key,
-    required this.npcId,
-    this.onComplete,
-  }) : super(key: key);
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // NPC テキスト表示
+          _buildNPCDialogueBox(currentNode, behavior),
+          const SizedBox(height: 24),
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Dialog(
-      child: NPCDialogueScreen(
-        npcId: npcId,
-        onDialogueComplete: onComplete ?? () => Navigator.of(context).pop(),
+          // 前の選択肢の結果表示
+          if (session.selectedOptions.isNotEmpty)
+            _buildPreviousInteraction(session),
+        ],
       ),
     );
   }
-}
 
-/// Helper function to show NPC dialogue modal
-Future<void> showNPCDialogueModal(
-  BuildContext context, {
-  required String npcId,
-  VoidCallback? onComplete,
-}) async {
-  return showDialog(
-    context: context,
-    builder: (context) => NPCDialogueModal(
-      npcId: npcId,
-      onComplete: onComplete,
-    ),
-  );
+  Widget _buildNPCDialogueBox(
+    DialogueNode node,
+    NPCBehaviorState behavior,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.grey[100],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Colors.grey[300]!,
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 絵文字とテキスト
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (node.emoticon != null)
+                Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: Text(
+                    node.emoticon!,
+                    style: const TextStyle(fontSize: 32),
+                  ),
+                ),
+              Expanded(
+                child: Text(
+                  node.npcText,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    height: 1.6,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPreviousInteraction(DialogueSession session) {
+    final lastSelected = session.selectedOptions.last;
+    final affectionChange = lastSelected.affectionChange;
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: affectionChange > 0
+            ? Colors.green.withOpacity(0.1)
+            : affectionChange < 0
+                ? Colors.red.withOpacity(0.1)
+                : Colors.grey.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            affectionChange > 0
+                ? Icons.trending_up
+                : affectionChange < 0
+                    ? Icons.trending_down
+                    : Icons.remove,
+            color: affectionChange > 0
+                ? Colors.green
+                : affectionChange < 0
+                    ? Colors.red
+                    : Colors.grey,
+            size: 16,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              'Your choice: "${lastSelected.text}"',
+              style: const TextStyle(
+                fontSize: 12,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ),
+          if (affectionChange != 0)
+            Text(
+              '${affectionChange > 0 ? '+' : ''}$affectionChange',
+              style: TextStyle(
+                fontSize: 12,
+                color: affectionChange > 0 ? Colors.green : Colors.red,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInactiveDialogue(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(
+            Icons.chat_bubble_outline,
+            size: 64,
+            color: Colors.grey,
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'No active dialogue',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey,
+            ),
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton.icon(
+            onPressed: () {
+              final notifier = ref.read(dialogueSessionProvider(widget.npcId).notifier);
+              _startDialogue(notifier);
+            },
+            icon: const Icon(Icons.chat),
+            label: const Text('Start Conversation'),
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24,
+                vertical: 12,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDialogueOptions(
+    BuildContext context,
+    DialogueSession session,
+    NPCBehaviorState behavior,
+  ) {
+    final currentNode = session.currentNode;
+    if (currentNode == null || currentNode.options.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.all(16),
+        child: SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: () {
+              final notifier =
+                  ref.read(dialogueSessionProvider(widget.npcId).notifier);
+              _endDialogue(notifier);
+              Navigator.pop(context);
+            },
+            child: const Text('End Conversation'),
+          ),
+        ),
+      );
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        border: Border(
+          top: BorderSide(
+            color: Colors.grey[300]!,
+            width: 1,
+          ),
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Padding(
+            padding: EdgeInsets.only(bottom: 12),
+            child: Text(
+              'How do you respond?',
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          ...currentNode.options.map((option) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: DialogueOptionWidget(
+                option: option,
+                onSelected: () {
+                  final notifier = ref.read(
+                    dialogueSessionProvider(widget.npcId).notifier,
+                  );
+                  _selectOption(notifier, option, behavior);
+                },
+              ),
+            );
+          }).toList(),
+        ],
+      ),
+    );
+  }
+
+  void _startDialogue(DialogueSessionNotifier notifier) {
+    notifier.startDialogue(widget.npcId);
+  }
+
+  void _selectOption(
+    DialogueSessionNotifier notifier,
+    DialogueOption option,
+    NPCBehaviorState behavior,
+  ) {
+    notifier.selectOption(option);
+
+    // イベントトリガーの確認
+    if (option.eventId != null) {
+      final event = _eventService.getEvent(option.eventId!);
+      if (event != null) {
+        _eventService.processEvent(event.eventId);
+        _showEventNotification(event);
+      }
+    }
+
+    // 少し遅延してから次の対話ノードに進む
+    Future.delayed(const Duration(milliseconds: 500), () {
+      notifier.continueDialogue();
+    });
+  }
+
+  void _endDialogue(DialogueSessionNotifier notifier) {
+    notifier.endDialogue();
+  }
+
+  void _showEventNotification(NPCEvent event) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.star, color: Colors.white, size: 20),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    event.title,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
+                  if (event.reward != null && event.reward!.affectionBonus > 0)
+                    Text(
+                      '+${event.reward!.affectionBonus} affection',
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: Colors.green.shade700,
+        duration: const Duration(seconds: 3),
+      ),
+    );
+  }
 }
