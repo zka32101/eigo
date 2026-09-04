@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+﻿import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/progress_provider.dart';
 import '../providers/purchase_provider.dart';
@@ -369,16 +370,11 @@ class _NotificationCard extends StatelessWidget {
             title: const Text('豈取律繝ｪ繝槭う繝ｳ繝繝ｼ'),
             subtitle: const Text('豈取律縺ｮ蟄ｦ鄙偵ｒ騾夂衍縺ｧ繧ｵ繝昴・繝・),
             value: settings.notificationEnabled,
-            onChanged: (v) async {
+            onChanged: (v) {
               if (v) {
-                final notif = NotificationService();
-                await notif.init();
-                final granted = await notif.requestPermission();
-                if (granted && context.mounted) {
-                  await ref.read(settingsProvider.notifier).setNotificationEnabled(true);
-                }
+                unawaited(_handleNotificationEnabled(context, ref));
               } else {
-                await ref.read(settingsProvider.notifier).setNotificationEnabled(false);
+                unawaited(ref.read(settingsProvider.notifier).setNotificationEnabled(false));
               }
             },
             activeThumbColor: kAccentOrange,
@@ -408,6 +404,15 @@ class _NotificationCard extends StatelessWidget {
     );
     if (time != null) {
       await ref.read(settingsProvider.notifier).setReminderTime(time.hour, time.minute);
+    }
+  }
+
+  Future<void> _handleNotificationEnabled(BuildContext context, WidgetRef ref) async {
+    final notif = NotificationService();
+    await notif.init();
+    final granted = await notif.requestPermission();
+    if (granted && context.mounted) {
+      await ref.read(settingsProvider.notifier).setNotificationEnabled(true);
     }
   }
 }
@@ -488,16 +493,16 @@ class _MorningEnglishCard extends StatelessWidget {
             title: const Text('譛晁恭隱樣夂衍'),
             subtitle: const Text('豈取悃繝ｩ繝ｳ繝繝縺ｪ闍ｱ隱槭ヵ繝ｬ繝ｼ繧ｺ繧帝夂衍'),
             value: morningNotification.isEnabled,
-            onChanged: (v) async {
+            onChanged: (v) {
               if (v) {
-                await ref.read(morningNotificationStateProvider.notifier)
+                unawaited(ref.read(morningNotificationStateProvider.notifier)
                     .enableMorningNotification(
                   morningNotification.hour,
                   morningNotification.minute,
-                );
+                ));
               } else {
-                await ref.read(morningNotificationStateProvider.notifier)
-                    .disableMorningNotification();
+                unawaited(ref.read(morningNotificationStateProvider.notifier)
+                    .disableMorningNotification());
               }
             },
             activeThumbColor: kAccentOrange,

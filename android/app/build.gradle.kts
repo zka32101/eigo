@@ -23,7 +23,7 @@ android {
 
     defaultConfig {
         applicationId = "com.petitworks.eigo_kore"
-        minSdk = flutter.minSdkVersion
+        minSdk = 21  // flutter_local_notifications 対応
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
