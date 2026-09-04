@@ -1,5 +1,5 @@
 name: eigo_kore
-description: "英語コレ！- リスニング・スピーキング特化の小学生英語学習アプリ"
+description: "小学コレ！英語 - リスニング・スピーキング特化の小学生英語学習アプリ。毎日使える大切な表現を学びます。"
 publish_to: 'none'
 
 version: 3.1.0+1
@@ -56,4 +56,5 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/icons/
     - assets/pets/

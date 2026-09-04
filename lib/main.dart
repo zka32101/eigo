@@ -81,7 +81,7 @@ class EigoKoreApp extends ConsumerWidget {
     final hasProfiles = profiles.isNotEmpty && currentUserId != null;
 
     return MaterialApp(
-      title: '英語コレ！',
+      title: '小学コレ！英語',
       theme: buildAppTheme(),
       darkTheme: buildDarkAppTheme(),
       debugShowCheckedModeBanner: false,
