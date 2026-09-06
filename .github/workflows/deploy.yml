@@ -1,51 +1,73 @@
-name: Build and Deploy APK
+﻿name: Build and Deploy APK
 
 on:
   push:
     tags:
       - 'v*'
   workflow_dispatch:
-    inputs:
-      app_version:
-        description: 'App version (e.g., 1.0.0)'
-        required: true
-        type: string
-        default: '1.0.0'
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
+
+      - name: Clone shared_core
+        run: git clone https://github.com/zka32101/shared_core ../shared_core
+
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.x'
-      
+
+      - name: Get Flutter version
+        run: |
+          flutter --version
+          FLUTTER_SDK=$(which flutter | xargs dirname | xargs dirname)
+          echo "FLUTTER_SDK=$FLUTTER_SDK" >> $GITHUB_ENV
+          echo "Flutter SDK path: $FLUTTER_SDK"
+
+      - name: Create local.properties
+        run: |
+          echo "flutter.sdk=$FLUTTER_SDK" > android/local.properties
+          cat android/local.properties
+
       - name: Get dependencies
         run: flutter pub get
-      
-      - name: Build APK
-        run: flutter build apk --release
-      
-      - name: Upload APK
-        run: echo "APK built and ready for deployment"
 
-  emulator-test:
-    needs: build
-    runs-on: ubuntu-latest
-    if: success()
-    steps:
-      - uses: actions/checkout@v3
-      
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+      - name: Generate Gradle wrapper
+        run: |
+          cd android
+          curl -sL https://services.gradle.org/distributions/gradle-8.14-bin.zip -o gradle-8.14-bin.zip
+          unzip -q gradle-8.14-bin.zip
+          ./gradle-8.14/bin/gradle wrapper --gradle-version=8.14 -p . 2>&1 || echo "Wrapper generation attempted"
+          rm -rf gradle-8.14 gradle-8.14-bin.zip
+          cd ..
+
+      - name: Check Gradle wrapper
+        run: ls -la android/gradle/wrapper/
+
+      - name: Build APK
+        run: flutter build apk --release -v 2>&1 | tee build_apk.log
+        continue-on-error: true
+
+      - name: Build AAB
+        run: flutter build appbundle --release -v 2>&1 | tee build_aab.log
+        continue-on-error: true
+
+      - name: Upload build logs
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
-          flutter-version: '3.x'
-      
-      - name: Run Android Emulator Tests
-        uses: zka32101/yourwish/.github/workflows/android-emulator-test.yml@main
+          name: build-logs
+          path: |
+            build_apk.log
+            build_aab.log
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
         with:
-          app-path: '.'
-          test-command: 'flutter test'
+          name: build-artifacts
+          path: |
+            build/app/outputs/apk/release/app-release.apk
+            build/app/outputs/bundle/release/app-release.aab

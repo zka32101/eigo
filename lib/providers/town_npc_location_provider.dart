@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:eigo/models/npc_location_model.dart';
-import 'package:eigo/models/english_town_model.dart';
-import 'package:eigo/services/town_npc_location_service.dart';
-import 'package:eigo/providers/english_town_provider.dart';
+import 'package:eigo_kore/models/npc_location_model.dart';
+import 'package:eigo_kore/models/english_town_model.dart';
+import 'package:eigo_kore/services/town_npc_location_service.dart';
+import 'package:eigo_kore/providers/english_town_provider.dart';
 
 /// NPC位置管理サービスプロバイダー
 final townNPCLocationServiceProvider =

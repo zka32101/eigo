@@ -1,6 +1,6 @@
-import 'package:eigo/models/dialogue_template_model.dart';
-import 'package:eigo/models/npc_extended_model.dart';
-import 'package:eigo/services/prompt_engineering_service.dart';
+import 'package:eigo_kore/models/dialogue_template_model.dart';
+import 'package:eigo_kore/models/npc_extended_model.dart';
+import 'package:eigo_kore/services/prompt_engineering_service.dart';
 
 /// Claude API統合ダイアログサービス（シングルトンパターン）
 /// Claude APIを使用して動的なNPC応答を生成

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:eigo/models/npc_dialogue_model.dart';
+import 'package:eigo_kore/models/npc_dialogue_model.dart';
 
 /// 対話オプションウィジェット
 class DialogueOptionWidget extends StatelessWidget {

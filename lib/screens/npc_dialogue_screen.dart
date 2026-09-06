@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:eigo/models/npc_dialogue_model.dart';
-import 'package:eigo/models/npc_behavior_model.dart';
-import 'package:eigo/models/npc_event_model.dart';
-import 'package:eigo/services/npc_dialogue_service.dart';
-import 'package:eigo/services/npc_behavior_service.dart';
-import 'package:eigo/services/npc_event_service.dart';
-import 'package:eigo/providers/npc_dialogue_provider.dart';
-import 'package:eigo/providers/npc_behavior_provider.dart';
-import 'package:eigo/widgets/dialogue_option_widget.dart';
-import 'package:eigo/widgets/npc_mood_indicator.dart';
+import 'package:eigo_kore/models/npc_dialogue_model.dart';
+import 'package:eigo_kore/models/npc_behavior_model.dart';
+import 'package:eigo_kore/models/npc_event_model.dart';
+import 'package:eigo_kore/services/npc_dialogue_service.dart';
+import 'package:eigo_kore/services/npc_behavior_service.dart';
+import 'package:eigo_kore/services/npc_event_service.dart';
+import 'package:eigo_kore/providers/npc_dialogue_provider.dart';
+import 'package:eigo_kore/providers/npc_behavior_provider.dart';
+import 'package:eigo_kore/widgets/dialogue_option_widget.dart';
+import 'package:eigo_kore/widgets/npc_mood_indicator.dart';
 
 /// NPC との対話スクリーン
 class NPCDialogueScreen extends ConsumerStatefulWidget {

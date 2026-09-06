@@ -1,4 +1,4 @@
-import 'package:eigo/models/npc_relationship_model.dart';
+import 'package:eigo_kore/models/npc_relationship_model.dart';
 
 /// NPC関係管理サービス
 class NPCRelationshipService {

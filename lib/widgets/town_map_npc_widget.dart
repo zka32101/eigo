@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:eigo/models/npc_location_model.dart';
-import 'package:eigo/providers/town_npc_location_provider.dart';
+import 'package:eigo_kore/models/npc_location_model.dart';
+import 'package:eigo_kore/providers/town_npc_location_provider.dart';
 
 /// タウンマップNPC表示ウィジェット
 class TownMapNPCWidget extends ConsumerStatefulWidget {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:eigo/models/npc_event_model.dart';
-import 'package:eigo/providers/npc_event_provider.dart';
+import 'package:eigo_kore/models/npc_event_model.dart';
+import 'package:eigo_kore/providers/npc_event_provider.dart';
 
 /// NPC イベント通知スクリーン
 class NPCEventNotificationScreen extends ConsumerWidget {

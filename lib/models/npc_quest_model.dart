@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:eigo/models/npc_event_model.dart';
+import 'package:eigo_kore/models/npc_event_model.dart';
 
 part 'npc_quest_model.g.dart';
 

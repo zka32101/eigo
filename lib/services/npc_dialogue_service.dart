@@ -1,6 +1,6 @@
-import 'package:eigo/models/npc_dialogue_model.dart';
-import 'package:eigo/models/npc_behavior_model.dart';
-import 'package:eigo/services/npc_behavior_service.dart';
+import 'package:eigo_kore/models/npc_dialogue_model.dart';
+import 'package:eigo_kore/models/npc_behavior_model.dart';
+import 'package:eigo_kore/services/npc_behavior_service.dart';
 
 /// NPC 対話管理サービス
 class NPCDialogueService {

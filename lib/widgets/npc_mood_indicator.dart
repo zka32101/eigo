@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:eigo/models/npc_behavior_model.dart';
+import 'package:eigo_kore/models/npc_behavior_model.dart';
 
 /// NPC ムード指標ウィジェット
 class NPCMoodIndicator extends StatelessWidget {

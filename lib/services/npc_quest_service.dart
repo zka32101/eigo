@@ -1,5 +1,5 @@
-import 'package:eigo/models/npc_quest_model.dart';
-import 'package:eigo/models/npc_event_model.dart';
+import 'package:eigo_kore/models/npc_quest_model.dart';
+import 'package:eigo_kore/models/npc_event_model.dart';
 
 /// NPC クエスト管理サービス
 class NPCQuestService {

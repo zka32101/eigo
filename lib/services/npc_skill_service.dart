@@ -1,4 +1,4 @@
-import 'package:eigo/models/npc_skill_model.dart';
+import 'package:eigo_kore/models/npc_skill_model.dart';
 
 /// NPC スキル教えるサービス
 class NPCSkillService {

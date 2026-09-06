@@ -1,7 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:eigo/models/npc_behavior_model.dart';
-import 'package:eigo/models/npc_dialogue_model.dart';
-import 'package:eigo/models/npc_event_model.dart';
+import 'package:eigo_kore/models/npc_behavior_model.dart';
+import 'package:eigo_kore/models/npc_dialogue_model.dart';
+import 'package:eigo_kore/models/npc_event_model.dart';
 
 part 'npc_save_model.g.dart';
 

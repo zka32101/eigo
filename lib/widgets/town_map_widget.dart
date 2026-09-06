@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:eigo/models/english_town_model.dart';
-import 'package:eigo/design_system/design_system.dart';
+import 'package:eigo_kore/models/english_town_model.dart';
+import 'package:eigo_kore/design_system/design_system.dart';
 
 /// タウンマップ用のCustomPainter
 class TownMapPainter extends CustomPainter {
