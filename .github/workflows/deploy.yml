@@ -20,7 +20,14 @@ jobs:
       - name: Get Flutter version
         run: |
           flutter --version
-          echo "FLUTTER_SDK=$(which flutter | xargs dirname | xargs dirname)" >> $GITHUB_ENV
+          FLUTTER_SDK=$(which flutter | xargs dirname | xargs dirname)
+          echo "FLUTTER_SDK=$FLUTTER_SDK" >> $GITHUB_ENV
+          echo "Flutter SDK path: $FLUTTER_SDK"
+
+      - name: Create local.properties
+        run: |
+          echo "flutter.sdk=$FLUTTER_SDK" > android/local.properties
+          cat android/local.properties
 
       - name: Get dependencies
         run: flutter pub get
