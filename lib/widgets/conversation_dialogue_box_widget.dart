@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:eigo/models/dialogue_template_model.dart';
-import 'package:eigo/providers/dialogue_context_provider.dart';
+import 'package:eigo_kore/models/dialogue_template_model.dart';
+import 'package:eigo_kore/providers/dialogue_context_provider.dart';
 
 /// 会話ダイアログボックスウィジェット
 /// NPC とプレイヤー間の会話メッセージを表示

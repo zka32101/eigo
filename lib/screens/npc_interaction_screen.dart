@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:eigo/providers/npc_provider.dart';
-import 'package:eigo/providers/npc_relationship_provider.dart';
-import 'package:eigo/screens/npc_dialogue_screen.dart';
-import 'package:eigo/widgets/npc_character_display_widget.dart';
+import 'package:eigo_kore/providers/npc_provider.dart';
+import 'package:eigo_kore/providers/npc_relationship_provider.dart';
+import 'package:eigo_kore/screens/npc_dialogue_screen.dart';
+import 'package:eigo_kore/widgets/npc_character_display_widget.dart';
 
 /// NPC Interaction Screen
 /// Shows list of NPCs available for dialogue interactions

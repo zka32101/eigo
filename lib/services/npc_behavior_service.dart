@@ -1,4 +1,4 @@
-import 'package:eigo/models/npc_behavior_model.dart';
+import 'package:eigo_kore/models/npc_behavior_model.dart';
 
 /// NPC行動・性格管理サービス
 class NPCBehaviorService {

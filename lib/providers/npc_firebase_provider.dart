@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:eigo/services/npc_firebase_service.dart';
+import 'package:eigo_kore/services/npc_firebase_service.dart';
 
 /// ==================== NPC FIREBASE SERVICE PROVIDER ====================
 

@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:eigo/models/npc_schedule_model.dart';
-import 'package:eigo/services/npc_schedule_service.dart';
+import 'package:eigo_kore/models/npc_schedule_model.dart';
+import 'package:eigo_kore/services/npc_schedule_service.dart';
 
 /// NPC スケジュール管理プロバイダー
 final npcScheduleServiceProvider = Provider<NPCScheduleService>((ref) {

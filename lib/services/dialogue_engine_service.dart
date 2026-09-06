@@ -1,6 +1,6 @@
-import 'package:eigo/models/dialogue_template_model.dart';
-import 'package:eigo/models/npc_extended_model.dart';
-import 'package:eigo/models/interaction_history_model.dart';
+import 'package:eigo_kore/models/dialogue_template_model.dart';
+import 'package:eigo_kore/models/npc_extended_model.dart';
+import 'package:eigo_kore/models/interaction_history_model.dart';
 
 /// ダイアログエンジンサービス（シングルトンパターン）
 /// テンプレート選択、コンテキスト構築、応答生成の調整を管理

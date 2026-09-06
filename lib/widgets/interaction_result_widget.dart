@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:eigo/providers/dialogue_context_provider.dart';
+import 'package:eigo_kore/providers/dialogue_context_provider.dart';
 
 /// インタラクション結果ウィジェット
 /// ダイアログ終了後の結果（スコア、XP、コイン、フィードバック）を表示

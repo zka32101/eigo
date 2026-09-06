@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:eigo/models/npc_event_model.dart';
-import 'package:eigo/services/npc_event_service.dart';
-import 'package:eigo/providers/npc_behavior_provider.dart';
+import 'package:eigo_kore/models/npc_event_model.dart';
+import 'package:eigo_kore/services/npc_event_service.dart';
+import 'package:eigo_kore/providers/npc_behavior_provider.dart';
 
 final npcEventServiceProvider = Provider((ref) {
   return NPCEventService.getInstance();

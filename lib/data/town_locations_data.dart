@@ -1,4 +1,4 @@
-import 'package:eigo/models/english_town_model.dart';
+import 'package:eigo_kore/models/english_town_model.dart';
 
 /// タウンロケーション初期化データ
 class TownLocationsData {

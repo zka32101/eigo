@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:eigo/models/english_town_model.dart';
-import 'package:eigo/design_system/design_system.dart';
+import 'package:eigo_kore/models/english_town_model.dart';
+import 'package:eigo_kore/design_system/design_system.dart';
 
 /// ロケーション詳細カード
 class LocationCardWidget extends StatelessWidget {

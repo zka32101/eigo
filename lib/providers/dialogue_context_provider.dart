@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:eigo/models/dialogue_template_model.dart';
+import 'package:eigo_kore/models/dialogue_template_model.dart';
 
 /// ==================== DIALOGUE CONTEXT STATE ====================
 

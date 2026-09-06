@@ -1,4 +1,4 @@
-import 'package:eigo/models/npc_schedule_model.dart';
+import 'package:eigo_kore/models/npc_schedule_model.dart';
 
 /// NPC スケジュール管理サービス
 class NPCScheduleService {

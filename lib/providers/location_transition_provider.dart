@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:eigo/models/english_town_model.dart';
+import 'package:eigo_kore/models/english_town_model.dart';
 
 /// ロケーション遷移状態を管理するStateNotifier
 class LocationTransitionNotifier
