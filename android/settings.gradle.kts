@@ -6,17 +6,20 @@ pluginManagement {
             if (localPropertiesFile.exists()) {
                 localPropertiesFile.inputStream().use { properties.load(it) }
             }
-            val flutterSdkPath = properties.getProperty("flutter.sdk")
-                ?: System.getenv("FLUTTER_SDK")
-                ?: System.getenv("FLUTTER_ROOT")
-                ?: run {
-                    // Last resort: try to find flutter in PATH
-                    System.getenv("PATH")?.split(":")?.find { path ->
-                        java.io.File("$path/flutter").exists()
-                    }?.let { "$it/flutter" }
-                }
-            require(flutterSdkPath != null) { "flutter.sdk not found in local.properties, FLUTTER_SDK, or FLUTTER_ROOT environment variables" }
-            flutterSdkPath
+
+            var sdkPath = properties.getProperty("flutter.sdk")
+            if (sdkPath == null) {
+                sdkPath = System.getenv("FLUTTER_SDK")
+            }
+            if (sdkPath == null) {
+                sdkPath = System.getenv("FLUTTER_ROOT")
+            }
+
+            if (sdkPath == null) {
+                throw GradleException("flutter.sdk not set in local.properties or FLUTTER_SDK/FLUTTER_ROOT environment variable")
+            }
+
+            sdkPath
         }
 
     includeBuild("$flutterSdkPath/packages/flutter_tools/gradle")

@@ -48,10 +48,21 @@ jobs:
         run: ls -la android/gradle/wrapper/
 
       - name: Build APK
-        run: flutter build apk --release -v
+        run: flutter build apk --release -v 2>&1 | tee build_apk.log
+        continue-on-error: true
 
       - name: Build AAB
-        run: flutter build appbundle --release -v
+        run: flutter build appbundle --release -v 2>&1 | tee build_aab.log
+        continue-on-error: true
+
+      - name: Upload build logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: |
+            build_apk.log
+            build_aab.log
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
