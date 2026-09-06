@@ -4,23 +4,38 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.x'
-      
+
+      - name: Get Flutter version
+        run: flutter --version
+
       - name: Get dependencies
         run: flutter pub get
-      
+
+      - name: Check Gradle wrapper
+        run: ls -la android/gradle/wrapper/
+
       - name: Build APK
-        run: flutter build apk --release
-      
-      - name: Upload APK
-        run: echo "APK built and ready for deployment"
+        run: flutter build apk --release -v
+
+      - name: Build AAB
+        run: flutter build appbundle --release -v
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            build/app/outputs/apk/release/app-release.apk
+            build/app/outputs/bundle/release/app-release.aab
