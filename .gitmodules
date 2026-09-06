@@ -1,0 +1,3 @@
+[submodule "packages/shared_core"]
+	path = packages/shared_core
+	url = https://github.com/zka32101/shared_core.git

@@ -11,7 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   shared_core:
-    path: ../shared_core
+    path: packages/shared_core
   cupertino_icons: ^1.0.8
   flutter_riverpod: ^2.6.1
   shared_preferences: ^2.3.0

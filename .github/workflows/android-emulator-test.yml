@@ -1,0 +1,78 @@
+name: Android Emulator Test
+
+on:
+  workflow_call:
+    inputs:
+      test_command:
+        description: 'Command to run tests'
+        required: true
+        type: string
+      emulator_api_level:
+        description: 'Android API level for emulator'
+        required: false
+        type: string
+        default: '31'
+      emulator_arch:
+        description: 'Emulator architecture (x86 or arm64-v8a)'
+        required: false
+        type: string
+        default: 'x86'
+
+jobs:
+  android-emulator-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Accept Android licenses
+        run: |
+          yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses || true
+
+      - name: Create Android emulator
+        run: |
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install \
+            "system-images;android-${{ inputs.emulator_api_level }};google_apis;${{ inputs.emulator_arch }}"
+          echo "no" | $ANDROID_HOME/tools/bin/avdmanager create avd \
+            -n test_emulator \
+            -k "system-images;android-${{ inputs.emulator_api_level }};google_apis;${{ inputs.emulator_arch }}" \
+            -b ${{ inputs.emulator_arch }}
+
+      - name: Launch Android emulator
+        run: |
+          $ANDROID_HOME/emulator/emulator \
+            -avd test_emulator \
+            -no-snapshot \
+            -no-window \
+            -no-audio \
+            -accel on &
+          adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done'
+
+      - name: Run setup script
+        run: |
+          chmod +x scripts/setup-android-emulator.sh
+          bash scripts/setup-android-emulator.sh
+
+      - name: Run tests
+        run: ${{ inputs.test_command }}
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-emulator-test-results
+          path: |
+            build/outputs/
+            coverage/
+          retention-days: 7
