@@ -1,9 +1,16 @@
-﻿name: Build and Deploy APK
+name: Build and Deploy APK
 
 on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
+    inputs:
+      app_version:
+        description: 'App version (e.g., 1.0.0)'
+        required: true
+        type: string
+        default: '1.0.0'
 
 jobs:
   build:
