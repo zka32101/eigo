@@ -18,10 +18,21 @@ jobs:
           flutter-version: '3.x'
 
       - name: Get Flutter version
-        run: flutter --version
+        run: |
+          flutter --version
+          echo "FLUTTER_SDK=$(which flutter | xargs dirname | xargs dirname)" >> $GITHUB_ENV
 
       - name: Get dependencies
         run: flutter pub get
+
+      - name: Generate Gradle wrapper
+        run: |
+          cd android
+          curl -sL https://services.gradle.org/distributions/gradle-8.14-bin.zip -o gradle-8.14-bin.zip
+          unzip -q gradle-8.14-bin.zip
+          ./gradle-8.14/bin/gradle wrapper --gradle-version=8.14 -p . 2>&1 || echo "Wrapper generation attempted"
+          rm -rf gradle-8.14 gradle-8.14-bin.zip
+          cd ..
 
       - name: Check Gradle wrapper
         run: ls -la android/gradle/wrapper/
