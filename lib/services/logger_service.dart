@@ -12,22 +12,22 @@ class LoggerService {
   static const String _tagPrefix = '[Eigo]';
 
   /// Log a debug message
-  static void debug(String message, {String? tag}) {
+  void debug(String message, {String? tag}) {
     _log(LogLevel.debug, message, tag);
   }
 
   /// Log an info message
-  static void info(String message, {String? tag}) {
+  void info(String message, {String? tag}) {
     _log(LogLevel.info, message, tag);
   }
 
   /// Log a warning message
-  static void warning(String message, {String? tag}) {
+  void warning(String message, {String? tag}) {
     _log(LogLevel.warning, message, tag);
   }
 
   /// Log an error message with optional exception
-  static void error(String message, {String? tag, dynamic exception, StackTrace? stackTrace}) {
+  void error(String message, {String? tag, dynamic exception, StackTrace? stackTrace}) {
     _log(LogLevel.error, message, tag);
     if (exception != null) {
       debugPrint('$_tagPrefix Exception: $exception');
