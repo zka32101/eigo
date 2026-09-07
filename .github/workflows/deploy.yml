@@ -37,16 +37,6 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      - name: Setup Gradle wrapper
-        run: |
-          cd android
-          if [ ! -f gradlew ]; then
-            # Generate wrapper if it doesn't exist
-            gradle wrapper --gradle-version=8.14
-          fi
-          chmod +x gradlew
-          cd ..
-
       - name: Setup signing keystore
         run: |
           if [ -n "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" ]; then
