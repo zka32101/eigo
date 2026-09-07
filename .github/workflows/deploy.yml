@@ -61,31 +61,15 @@ jobs:
 
       - name: Build APK
         run: |
-          if [ "$KEYSTORE_CONFIGURED" = "true" ]; then
-            flutter build apk --release -v \
-              --release-build-signing-keystore-path=android/release.keystore \
-              --release-build-signing-keystore-password=${{ secrets.RELEASE_KEYSTORE_PASSWORD }} \
-              --release-build-signing-key-alias=${{ secrets.RELEASE_KEY_ALIAS }} \
-              --release-build-signing-key-password=${{ secrets.RELEASE_KEY_PASSWORD }} \
-              2>&1 | tee build_apk.log
-          else
-            flutter build apk --release -v 2>&1 | tee build_apk.log
-          fi
-        continue-on-error: true
+          set -o pipefail
+          flutter build apk --release -v 2>&1 | tee build_apk.log
+          exit ${PIPESTATUS[0]}
 
       - name: Build AAB
         run: |
-          if [ "$KEYSTORE_CONFIGURED" = "true" ]; then
-            flutter build appbundle --release -v \
-              --release-build-signing-keystore-path=android/release.keystore \
-              --release-build-signing-keystore-password=${{ secrets.RELEASE_KEYSTORE_PASSWORD }} \
-              --release-build-signing-key-alias=${{ secrets.RELEASE_KEY_ALIAS }} \
-              --release-build-signing-key-password=${{ secrets.RELEASE_KEY_PASSWORD }} \
-              2>&1 | tee build_aab.log
-          else
-            flutter build appbundle --release -v 2>&1 | tee build_aab.log
-          fi
-        continue-on-error: true
+          set -o pipefail
+          flutter build appbundle --release -v 2>&1 | tee build_aab.log
+          exit ${PIPESTATUS[0]}
 
       - name: Upload build logs
         if: always()
