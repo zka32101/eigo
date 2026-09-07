@@ -37,17 +37,15 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      - name: Generate Gradle wrapper
+      - name: Setup Gradle wrapper
         run: |
           cd android
-          curl -sL https://services.gradle.org/distributions/gradle-8.14-bin.zip -o gradle-8.14-bin.zip
-          unzip -q gradle-8.14-bin.zip
-          ./gradle-8.14/bin/gradle wrapper --gradle-version=8.14 -p . 2>&1 || echo "Wrapper generation attempted"
-          rm -rf gradle-8.14 gradle-8.14-bin.zip
+          if [ ! -f gradlew ]; then
+            # Generate wrapper if it doesn't exist
+            gradle wrapper --gradle-version=8.14
+          fi
+          chmod +x gradlew
           cd ..
-
-      - name: Check Gradle wrapper
-        run: ls -la android/gradle/wrapper/
 
       - name: Setup signing keystore
         run: |
