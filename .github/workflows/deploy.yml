@@ -117,6 +117,7 @@ jobs:
 
       - name: Upload to Google Drive
         if: always()
+        continue-on-error: true
         env:
           GOOGLE_DRIVE_SERVICE_ACCOUNT_KEY: ${{ secrets.GOOGLE_DRIVE_SERVICE_ACCOUNT_KEY }}
           GOOGLE_DRIVE_FOLDER_ID: ${{ secrets.GOOGLE_DRIVE_FOLDER_ID || '1kqPMiEnGtF7sRNiYsds9_9YvuPsT1Rfu' }}
