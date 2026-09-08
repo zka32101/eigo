@@ -105,6 +105,8 @@ class Notification {
         return NotificationType.levelUp;
       case 'streakMilestone':
         return NotificationType.streakMilestone;
+      case 'challengeStarting':
+        return NotificationType.challengeStarting;
       default:
         return NotificationType.message;
     }
@@ -118,4 +120,5 @@ enum NotificationType {
   achievement,
   levelUp,
   streakMilestone,
+  challengeStarting,
 }

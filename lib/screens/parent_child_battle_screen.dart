@@ -571,7 +571,7 @@ class _BattleResultDisplay extends StatelessWidget {
             if (isTie)
               Column(
                 children: [
-                  const Text('=', style: TextStyle(fontSize: AppTypography.displayMedium.fontSize)),
+                  Text('=', style: TextStyle(fontSize: AppTypography.displayMedium.fontSize)),
                   AppSpacing.verticalSpacerMd,
                   const Chip(
                     label: Text('同点'),
