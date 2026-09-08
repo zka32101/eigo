@@ -108,6 +108,9 @@ class NotificationItem extends StatelessWidget {
       case NotificationType.streakMilestone:
         icon = Icons.flame_free;
         color = Colors.red;
+      case NotificationType.challengeStarting:
+        icon = Icons.lightning_bolt;
+        color = Colors.yellow;
     }
 
     return Container(
