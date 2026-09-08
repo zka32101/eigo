@@ -409,20 +409,32 @@ class _NotificationCard extends StatelessWidget {
 
   String _getTypeLabel(NotificationType type) {
     switch (type) {
-      case NotificationType.dailyReminder:
-        return '📚 リマインダー';
-      case NotificationType.streakMaintenance:
-        return '🔥 ストリーク';
-      case NotificationType.achievement:
+      case NotificationType.challengeStarting:
+        return '🚀 チャレンジ開始';
+      case NotificationType.challengeEnding:
+        return '⏳ チャレンジ終了';
+      case NotificationType.challengeCompleted:
+        return '✅ チャレンジ完了';
+      case NotificationType.achievementUnlocked:
         return '🏆 アチーブメント';
       case NotificationType.levelUp:
         return '📈 レベルアップ';
-      case NotificationType.friendRequest:
-        return '👥 フレンド';
-      case NotificationType.promotionalOffer:
-        return '💰 キャンペーン';
-      case NotificationType.systemMessage:
-        return '📢 システム';
+      case NotificationType.streakMilestone:
+        return '🔥 ストリーク';
+      case NotificationType.dailyQuestReminder:
+        return '📚 クエストリマインダー';
+      case NotificationType.petEvolved:
+        return '✨ ペット進化';
+      case NotificationType.videoRecommended:
+        return '🎥 おすすめ動画';
+      case NotificationType.friendChallengeInvite:
+        return '👥 チャレンジ招待';
+      case NotificationType.friendChallengeCompleted:
+        return '👥 フレンド完了';
+      case NotificationType.shopItemNew:
+        return '💰 新商品';
+      case NotificationType.custom:
+        return '📢 カスタム';
     }
   }
 
