@@ -84,7 +84,6 @@ final recordConversationProvider = FutureProvider.family<void, ({
   int xpEarned,
   int coinsEarned,
   int responseScore,
-  ConversationDifficulty difficulty,
 })>((ref, params) async {
   final firebase = ref.watch(englishTownFirebaseServiceProvider);
   await firebase.recordConversation(
@@ -93,7 +92,6 @@ final recordConversationProvider = FutureProvider.family<void, ({
     xpEarned: params.xpEarned,
     coinsEarned: params.coinsEarned,
     responseScore: params.responseScore,
-    difficulty: params.difficulty,
   );
 });
 

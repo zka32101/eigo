@@ -133,7 +133,6 @@ class EnglishTownFirebaseService {
     required int xpEarned,
     required int coinsEarned,
     required int responseScore,
-    required ConversationDifficulty difficulty,
   }) async {
     if (!isAvailable || userId == null) return;
 
@@ -287,7 +286,7 @@ class EnglishTownFirebaseService {
           .count()
           .get();
 
-      return snap.count + 1;
+      return (snap.count ?? 0) + 1;
     } catch (e) {
       print('Error fetching user rank: $e');
       return null;

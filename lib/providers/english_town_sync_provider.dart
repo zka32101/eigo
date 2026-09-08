@@ -60,7 +60,6 @@ Future<void> recordConversationToCloud(
   required int xpEarned,
   required int coinsEarned,
   required int responseScore,
-  required ConversationDifficulty difficulty,
 }) async {
   final firebaseAvailable = ref.read(cloudSyncAvailableProvider);
 
@@ -72,7 +71,6 @@ Future<void> recordConversationToCloud(
     xpEarned: xpEarned,
     coinsEarned: coinsEarned,
     responseScore: responseScore,
-    difficulty: difficulty,
   )).future);
 }
 
