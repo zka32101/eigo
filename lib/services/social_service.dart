@@ -23,7 +23,7 @@ class SocialService {
       }
       return null;
     } catch (e) {
-      _logger.error('Failed to get user profile: $e', 'SocialService');
+      _logger.error('Failed to get user profile: $e', tag: 'SocialService');
       rethrow;
     }
   }
@@ -37,7 +37,7 @@ class SocialService {
           .set(profile.toJson());
       _logger.info('User profile updated: $userId', 'SocialService');
     } catch (e) {
-      _logger.error('Failed to update user profile: $e', 'SocialService');
+      _logger.error('Failed to update user profile: $e', tag: 'SocialService');
       rethrow;
     }
   }
@@ -73,7 +73,7 @@ class SocialService {
         'SocialService',
       );
     } catch (e) {
-      _logger.error('Failed to send friend request: $e', 'SocialService');
+      _logger.error('Failed to send friend request: $e', tag: 'SocialService');
       rethrow;
     }
   }
@@ -94,7 +94,7 @@ class SocialService {
         'SocialService',
       );
     } catch (e) {
-      _logger.error('Failed to accept friend request: $e', 'SocialService');
+      _logger.error('Failed to accept friend request: $e', tag: 'SocialService');
       rethrow;
     }
   }
@@ -108,7 +108,7 @@ class SocialService {
         'SocialService',
       );
     } catch (e) {
-      _logger.error('Failed to decline friend request: $e', 'SocialService');
+      _logger.error('Failed to decline friend request: $e', tag: 'SocialService');
       rethrow;
     }
   }
@@ -139,7 +139,7 @@ class SocialService {
 
       _logger.info('Friend removed: $userId, $friendId', 'SocialService');
     } catch (e) {
-      _logger.error('Failed to remove friend: $e', 'SocialService');
+      _logger.error('Failed to remove friend: $e', tag: 'SocialService');
       rethrow;
     }
   }
@@ -158,7 +158,7 @@ class SocialService {
           .map((doc) => Friend.fromJson(doc.data()))
           .toList();
     } catch (e) {
-      _logger.error('Failed to get user friends: $e', 'SocialService');
+      _logger.error('Failed to get user friends: $e', tag: 'SocialService');
       rethrow;
     }
   }
@@ -179,7 +179,7 @@ class SocialService {
     } catch (e) {
       _logger.error(
         'Failed to get pending friend requests: $e',
-        'SocialService',
+        tag: 'SocialService',
       );
       rethrow;
     }
@@ -198,7 +198,7 @@ class SocialService {
 
       return snapshot.docs.isNotEmpty;
     } catch (e) {
-      _logger.error('Failed to check friend status: $e', 'SocialService');
+      _logger.error('Failed to check friend status: $e', tag: 'SocialService');
       rethrow;
     }
   }
@@ -244,7 +244,7 @@ class SocialService {
       );
       return activity;
     } catch (e) {
-      _logger.error('Failed to record activity: $e', 'SocialService');
+      _logger.error('Failed to record activity: $e', tag: 'SocialService');
       rethrow;
     }
   }
@@ -264,7 +264,7 @@ class SocialService {
           .map((doc) => Activity.fromJson(doc.data()))
           .toList();
     } catch (e) {
-      _logger.error('Failed to get user activities: $e', 'SocialService');
+      _logger.error('Failed to get user activities: $e', tag: 'SocialService');
       rethrow;
     }
   }
@@ -291,7 +291,7 @@ class SocialService {
           .map((doc) => Activity.fromJson(doc.data()))
           .toList();
     } catch (e) {
-      _logger.error('Failed to get friend feed: $e', 'SocialService');
+      _logger.error('Failed to get friend feed: $e', tag: 'SocialService');
       rethrow;
     }
   }
@@ -329,7 +329,7 @@ class SocialService {
             : DateTime.now(),
       );
     } catch (e) {
-      _logger.error('Failed to get social stats: $e', 'SocialService');
+      _logger.error('Failed to get social stats: $e', tag: 'SocialService');
       rethrow;
     }
   }
@@ -348,7 +348,7 @@ class SocialService {
           .map((doc) => UserProfile.fromJson(doc.data()))
           .toList();
     } catch (e) {
-      _logger.error('Failed to search users: $e', 'SocialService');
+      _logger.error('Failed to search users: $e', tag: 'SocialService');
       rethrow;
     }
   }
@@ -384,7 +384,7 @@ class SocialService {
         topSkillComparison: skill1 == skill2 ? skill1 : '$skill1 vs $skill2',
       );
     } catch (e) {
-      _logger.error('Failed to compare users: $e', 'SocialService');
+      _logger.error('Failed to compare users: $e', tag: 'SocialService');
       rethrow;
     }
   }
@@ -400,7 +400,7 @@ class SocialService {
             'lastActiveAt': DateTime.now(),
           });
     } catch (e) {
-      _logger.error('Failed to update online status: $e', 'SocialService');
+      _logger.error('Failed to update online status: $e', tag: 'SocialService');
       // Don't rethrow as this is not critical
     }
   }

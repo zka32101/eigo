@@ -31,7 +31,7 @@ class UserProfileService {
 
       return UserProfile.fromJson(doc.data() as Map<String, dynamic>);
     } catch (e) {
-      _logger.error('Failed to fetch user profile', e);
+      _logger.error('Failed to fetch user profile', exception: e);
       return null;
     }
   }
@@ -45,7 +45,7 @@ class UserProfileService {
           .update({'bio': bio});
       return true;
     } catch (e) {
-      _logger.error('Failed to update bio', e);
+      _logger.error('Failed to update bio', exception: e);
       return false;
     }
   }
@@ -59,7 +59,7 @@ class UserProfileService {
           .update({'title': title});
       return true;
     } catch (e) {
-      _logger.error('Failed to update title', e);
+      _logger.error('Failed to update title', exception: e);
       return false;
     }
   }
@@ -76,7 +76,7 @@ class UserProfileService {
       });
       return true;
     } catch (e) {
-      _logger.error('Failed to update online status', e);
+      _logger.error('Failed to update online status', exception: e);
       return false;
     }
   }
@@ -106,7 +106,7 @@ class UserProfileService {
 
       return true;
     } catch (e) {
-      _logger.error('Failed to add XP', e);
+      _logger.error('Failed to add XP', exception: e);
       return false;
     }
   }
@@ -122,7 +122,7 @@ class UserProfileService {
       });
       return true;
     } catch (e) {
-      _logger.error('Failed to increment friend count', e);
+      _logger.error('Failed to increment friend count', exception: e);
       return false;
     }
   }
@@ -138,7 +138,7 @@ class UserProfileService {
       });
       return true;
     } catch (e) {
-      _logger.error('Failed to decrement friend count', e);
+      _logger.error('Failed to decrement friend count', exception: e);
       return false;
     }
   }
@@ -154,7 +154,7 @@ class UserProfileService {
       });
       return true;
     } catch (e) {
-      _logger.error('Failed to increment follower count', e);
+      _logger.error('Failed to increment follower count', exception: e);
       return false;
     }
   }
@@ -170,7 +170,7 @@ class UserProfileService {
       });
       return true;
     } catch (e) {
-      _logger.error('Failed to decrement follower count', e);
+      _logger.error('Failed to decrement follower count', exception: e);
       return false;
     }
   }
@@ -186,7 +186,7 @@ class UserProfileService {
       });
       return true;
     } catch (e) {
-      _logger.error('Failed to increment following count', e);
+      _logger.error('Failed to increment following count', exception: e);
       return false;
     }
   }
@@ -202,7 +202,7 @@ class UserProfileService {
       });
       return true;
     } catch (e) {
-      _logger.error('Failed to decrement following count', e);
+      _logger.error('Failed to decrement following count', exception: e);
       return false;
     }
   }
@@ -218,7 +218,7 @@ class UserProfileService {
       });
       return true;
     } catch (e) {
-      _logger.error('Failed to update top achievements', e);
+      _logger.error('Failed to update top achievements', exception: e);
       return false;
     }
   }
@@ -249,7 +249,7 @@ class UserProfileService {
           .update(updates);
       return true;
     } catch (e) {
-      _logger.error('Failed to update privacy settings', e);
+      _logger.error('Failed to update privacy settings', exception: e);
       return false;
     }
   }
@@ -268,7 +268,7 @@ class UserProfileService {
           .map((doc) => UserProfile.fromJson(doc.data() as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      _logger.error('Failed to search users', e);
+      _logger.error('Failed to search users', exception: e);
       return [];
     }
   }
@@ -287,7 +287,7 @@ class UserProfileService {
           .map((doc) => UserProfile.fromJson(doc.data() as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      _logger.error('Failed to fetch users by level', e);
+      _logger.error('Failed to fetch users by level', exception: e);
       return [];
     }
   }
@@ -306,7 +306,7 @@ class UserProfileService {
           .map((doc) => UserProfile.fromJson(doc.data() as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      _logger.error('Failed to fetch top social users', e);
+      _logger.error('Failed to fetch top social users', exception: e);
       return [];
     }
   }
@@ -322,7 +322,7 @@ class UserProfileService {
       });
       return true;
     } catch (e) {
-      _logger.error('Failed to update last seen', e);
+      _logger.error('Failed to update last seen', exception: e);
       return false;
     }
   }

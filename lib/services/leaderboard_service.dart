@@ -50,7 +50,7 @@ class LeaderboardService {
 
       return entries;
     } catch (e) {
-      _logger.error('Failed to fetch global leaderboard', e);
+      _logger.error('Failed to fetch global leaderboard', exception: e);
       return [];
     }
   }
@@ -91,7 +91,7 @@ class LeaderboardService {
 
       return entries;
     } catch (e) {
-      _logger.error('Failed to fetch level leaderboard', e);
+      _logger.error('Failed to fetch level leaderboard', exception: e);
       return [];
     }
   }
@@ -135,7 +135,7 @@ class LeaderboardService {
 
       return entries;
     } catch (e) {
-      _logger.error('Failed to fetch weekly leaderboard', e);
+      _logger.error('Failed to fetch weekly leaderboard', exception: e);
       return [];
     }
   }
@@ -186,7 +186,7 @@ class LeaderboardService {
 
       return entries;
     } catch (e) {
-      _logger.error('Failed to fetch friends leaderboard', e);
+      _logger.error('Failed to fetch friends leaderboard', exception: e);
       return [];
     }
   }
@@ -222,7 +222,7 @@ class LeaderboardService {
         averageAccuracy: userData['averageAccuracy'] as int? ?? 0,
       );
     } catch (e) {
-      _logger.error('Failed to fetch user rank', e);
+      _logger.error('Failed to fetch user rank', exception: e);
       return null;
     }
   }
@@ -262,7 +262,7 @@ class LeaderboardService {
         return entries;
       });
     } catch (e) {
-      _logger.error('Failed to stream global leaderboard', e);
+      _logger.error('Failed to stream global leaderboard', exception: e);
       return Stream.value([]);
     }
   }
@@ -284,7 +284,7 @@ class LeaderboardService {
 
       return true;
     } catch (e) {
-      _logger.error('Failed to update user score', e);
+      _logger.error('Failed to update user score', exception: e);
       return false;
     }
   }

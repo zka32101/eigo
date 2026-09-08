@@ -27,7 +27,7 @@ class PurchaseService {
           .map((doc) => Product.fromJson(doc.data()))
           .toList();
     } catch (e) {
-      _logger.error('Failed to get products: $e', 'PurchaseService');
+      _logger.error('Failed to get products: $e', tag: 'PurchaseService');
       rethrow;
     }
   }
@@ -46,7 +46,7 @@ class PurchaseService {
           .map((doc) => Product.fromJson(doc.data()))
           .toList();
     } catch (e) {
-      _logger.error('Failed to get products by type: $e', 'PurchaseService');
+      _logger.error('Failed to get products by type: $e', tag: 'PurchaseService');
       rethrow;
     }
   }
@@ -64,7 +64,7 @@ class PurchaseService {
           .map((doc) => SubscriptionPlan.fromJson(doc.data()))
           .toList();
     } catch (e) {
-      _logger.error('Failed to get subscription plans: $e', 'PurchaseService');
+      _logger.error('Failed to get subscription plans: $e', tag: 'PurchaseService');
       rethrow;
     }
   }
@@ -87,7 +87,7 @@ class PurchaseService {
       }
       return packages;
     } catch (e) {
-      _logger.error('Failed to get featured packages: $e', 'PurchaseService');
+      _logger.error('Failed to get featured packages: $e', tag: 'PurchaseService');
       rethrow;
     }
   }
@@ -148,7 +148,7 @@ class PurchaseService {
       );
       return purchase;
     } catch (e) {
-      _logger.error('Failed to create purchase: $e', 'PurchaseService');
+      _logger.error('Failed to create purchase: $e', tag: 'PurchaseService');
       rethrow;
     }
   }
@@ -168,7 +168,7 @@ class PurchaseService {
     } catch (e) {
       _logger.error(
         'Failed to get user purchases: $e',
-        'PurchaseService',
+        tag: 'PurchaseService',
       );
       rethrow;
     }
@@ -184,7 +184,7 @@ class PurchaseService {
     } catch (e) {
       _logger.error(
         'Failed to get active subscriptions: $e',
-        'PurchaseService',
+        tag: 'PurchaseService',
       );
       rethrow;
     }
@@ -198,7 +198,7 @@ class PurchaseService {
     } catch (e) {
       _logger.error(
         'Failed to check product ownership: $e',
-        'PurchaseService',
+        tag: 'PurchaseService',
       );
       rethrow;
     }
@@ -231,7 +231,7 @@ class PurchaseService {
     } catch (e) {
       _logger.error(
         'Failed to restore purchases: $e',
-        'PurchaseService',
+        tag: 'PurchaseService',
       );
       rethrow;
     }
@@ -277,7 +277,7 @@ class PurchaseService {
     } catch (e) {
       _logger.error(
         'Failed to get purchase history: $e',
-        'PurchaseService',
+        tag: 'PurchaseService',
       );
       rethrow;
     }
@@ -291,7 +291,7 @@ class PurchaseService {
     } catch (e) {
       _logger.error(
         'Failed to get user account value: $e',
-        'PurchaseService',
+        tag: 'PurchaseService',
       );
       rethrow;
     }
@@ -308,7 +308,7 @@ class PurchaseService {
       );
       return true;
     } catch (e) {
-      _logger.error('Failed to verify receipt: $e', 'PurchaseService');
+      _logger.error('Failed to verify receipt: $e', tag: 'PurchaseService');
       rethrow;
     }
   }
@@ -331,7 +331,7 @@ class PurchaseService {
     } catch (e) {
       _logger.error(
         'Failed to cancel subscription: $e',
-        'PurchaseService',
+        tag: 'PurchaseService',
       );
       rethrow;
     }
@@ -383,7 +383,7 @@ class PurchaseService {
     } catch (e) {
       _logger.error(
         'Failed to apply promo code: $e',
-        'PurchaseService',
+        tag: 'PurchaseService',
       );
       rethrow;
     }

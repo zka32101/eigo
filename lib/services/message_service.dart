@@ -60,7 +60,7 @@ class MessageService {
 
       return message.copyWith(status: MessageStatus.sent);
     } catch (e) {
-      _logger.error('Error sending message', e);
+      _logger.error('Error sending message', exception: e);
       rethrow;
     }
   }
@@ -85,7 +85,7 @@ class MessageService {
           .reversed
           .toList();
     } catch (e) {
-      _logger.error('Error fetching messages', e);
+      _logger.error('Error fetching messages', exception: e);
       return [];
     }
   }
@@ -102,7 +102,7 @@ class MessageService {
 
       return Conversation.fromJson(snapshot.data() as Map<String, dynamic>);
     } catch (e) {
-      _logger.error('Error fetching conversation', e);
+      _logger.error('Error fetching conversation', exception: e);
       rethrow;
     }
   }
@@ -152,7 +152,7 @@ class MessageService {
 
       return conversation;
     } catch (e) {
-      _logger.error('Error creating direct message', e);
+      _logger.error('Error creating direct message', exception: e);
       rethrow;
     }
   }
@@ -171,7 +171,7 @@ class MessageService {
           .map((doc) => Conversation.fromJson(doc.data()))
           .toList();
     } catch (e) {
-      _logger.error('Error fetching conversations', e);
+      _logger.error('Error fetching conversations', exception: e);
       return [];
     }
   }
@@ -203,7 +203,7 @@ class MessageService {
           .doc(conversationId)
           .update({'unreadCount': 0});
     } catch (e) {
-      _logger.error('Error marking messages as read', e);
+      _logger.error('Error marking messages as read', exception: e);
     }
   }
 
@@ -225,7 +225,7 @@ class MessageService {
           .map((doc) => Message.fromJson(doc.data()))
           .toList();
     } catch (e) {
-      _logger.error('Error searching messages', e);
+      _logger.error('Error searching messages', exception: e);
       return [];
     }
   }
@@ -243,7 +243,7 @@ class MessageService {
           .doc(messageId)
           .update({'isDeleted': true, 'content': '[削除されたメッセージ]'});
     } catch (e) {
-      _logger.error('Error deleting message', e);
+      _logger.error('Error deleting message', exception: e);
       rethrow;
     }
   }
@@ -265,7 +265,7 @@ class MessageService {
         'editedAt': DateTime.now(),
       });
     } catch (e) {
-      _logger.error('Error editing message', e);
+      _logger.error('Error editing message', exception: e);
       rethrow;
     }
   }
@@ -281,7 +281,7 @@ class MessageService {
           .doc(conversationId)
           .update({'isMuted': isMuted});
     } catch (e) {
-      _logger.error('Error toggling mute', e);
+      _logger.error('Error toggling mute', exception: e);
       rethrow;
     }
   }
@@ -297,7 +297,7 @@ class MessageService {
           .doc(conversationId)
           .update({'isArchived': isArchived});
     } catch (e) {
-      _logger.error('Error toggling archive', e);
+      _logger.error('Error toggling archive', exception: e);
       rethrow;
     }
   }
@@ -318,7 +318,7 @@ class MessageService {
 
       return MessagingStats.fromJson(snapshot.data() as Map<String, dynamic>);
     } catch (e) {
-      _logger.error('Error fetching messaging stats', e);
+      _logger.error('Error fetching messaging stats', exception: e);
       return _createDefaultStats(userId);
     }
   }
@@ -341,7 +341,7 @@ class MessageService {
           .map((doc) => Message.fromJson(doc.data()))
           .toList();
     } catch (e) {
-      _logger.error('Error fetching message thread', e);
+      _logger.error('Error fetching message thread', exception: e);
       return [];
     }
   }

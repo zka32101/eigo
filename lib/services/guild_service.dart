@@ -61,7 +61,7 @@ class GuildService {
 
       return guildId;
     } catch (e) {
-      _logger.error('Failed to create guild', e);
+      _logger.error('Failed to create guild', exception: e);
       return null;
     }
   }
@@ -94,7 +94,7 @@ class GuildService {
 
       return true;
     } catch (e) {
-      _logger.error('Failed to join guild', e);
+      _logger.error('Failed to join guild', exception: e);
       return false;
     }
   }
@@ -120,7 +120,7 @@ class GuildService {
 
       return true;
     } catch (e) {
-      _logger.error('Failed to leave guild', e);
+      _logger.error('Failed to leave guild', exception: e);
       return false;
     }
   }
@@ -137,7 +137,7 @@ class GuildService {
           .map((doc) => Guild.fromJson(doc.data() as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      _logger.error('Failed to fetch user guilds', e);
+      _logger.error('Failed to fetch user guilds', exception: e);
       return [];
     }
   }
@@ -150,7 +150,7 @@ class GuildService {
 
       return Guild.fromJson(doc.data() as Map<String, dynamic>);
     } catch (e) {
-      _logger.error('Failed to fetch guild', e);
+      _logger.error('Failed to fetch guild', exception: e);
       return null;
     }
   }
@@ -169,7 +169,7 @@ class GuildService {
           .map((doc) => GuildMember.fromJson(doc.data() as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      _logger.error('Failed to fetch guild members', e);
+      _logger.error('Failed to fetch guild members', exception: e);
       return [];
     }
   }
@@ -191,7 +191,7 @@ class GuildService {
 
       return true;
     } catch (e) {
-      _logger.error('Failed to update guild', e);
+      _logger.error('Failed to update guild', exception: e);
       return false;
     }
   }
@@ -230,7 +230,7 @@ class GuildService {
 
       return true;
     } catch (e) {
-      _logger.error('Failed to update member contribution', e);
+      _logger.error('Failed to update member contribution', exception: e);
       return false;
     }
   }
@@ -253,7 +253,7 @@ class GuildService {
 
       return true;
     } catch (e) {
-      _logger.error('Failed to change member role', e);
+      _logger.error('Failed to change member role', exception: e);
       return false;
     }
   }
@@ -274,7 +274,7 @@ class GuildService {
 
       return true;
     } catch (e) {
-      _logger.error('Failed to remove guild member', e);
+      _logger.error('Failed to remove guild member', exception: e);
       return false;
     }
   }
@@ -293,7 +293,7 @@ class GuildService {
           .map((doc) => Guild.fromJson(doc.data() as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      _logger.error('Failed to fetch public guilds', e);
+      _logger.error('Failed to fetch public guilds', exception: e);
       return [];
     }
   }
@@ -312,7 +312,7 @@ class GuildService {
           .where((guild) => guild.name.toLowerCase().contains(query.toLowerCase()))
           .toList();
     } catch (e) {
-      _logger.error('Failed to search guilds', e);
+      _logger.error('Failed to search guilds', exception: e);
       return [];
     }
   }
@@ -330,7 +330,7 @@ class GuildService {
               .map((doc) => GuildMember.fromJson(doc.data() as Map<String, dynamic>))
               .toList());
     } catch (e) {
-      _logger.error('Failed to stream guild members', e);
+      _logger.error('Failed to stream guild members', exception: e);
       return Stream.value([]);
     }
   }

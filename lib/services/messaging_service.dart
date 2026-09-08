@@ -47,7 +47,7 @@ class MessagingService {
 
       return true;
     } catch (e) {
-      _logger.error('Failed to send message', e);
+      _logger.error('Failed to send message', exception: e);
       return false;
     }
   }
@@ -75,7 +75,7 @@ class MessagingService {
       // Reverse to get chronological order (oldest first)
       return messages.reversed.toList();
     } catch (e) {
-      _logger.error('Failed to fetch conversation messages', e);
+      _logger.error('Failed to fetch conversation messages', exception: e);
       return [];
     }
   }
@@ -93,7 +93,7 @@ class MessagingService {
 
       return true;
     } catch (e) {
-      _logger.error('Failed to mark message as read', e);
+      _logger.error('Failed to mark message as read', exception: e);
       return false;
     }
   }
@@ -123,7 +123,7 @@ class MessagingService {
       await batch.commit();
       return true;
     } catch (e) {
-      _logger.error('Failed to mark conversation as read', e);
+      _logger.error('Failed to mark conversation as read', exception: e);
       return false;
     }
   }
@@ -138,7 +138,7 @@ class MessagingService {
 
       return true;
     } catch (e) {
-      _logger.error('Failed to delete message', e);
+      _logger.error('Failed to delete message', exception: e);
       return false;
     }
   }
@@ -221,7 +221,7 @@ class MessagingService {
 
       return conversations;
     } catch (e) {
-      _logger.error('Failed to fetch conversation list', e);
+      _logger.error('Failed to fetch conversation list', exception: e);
       return [];
     }
   }
@@ -238,7 +238,7 @@ class MessagingService {
 
       return snapshot.count ?? 0;
     } catch (e) {
-      _logger.error('Failed to fetch unread message count', e);
+      _logger.error('Failed to fetch unread message count', exception: e);
       return 0;
     }
   }
@@ -258,7 +258,7 @@ class MessagingService {
 
       return snapshot.count ?? 0;
     } catch (e) {
-      _logger.error('Failed to fetch unread conversation count', e);
+      _logger.error('Failed to fetch unread conversation count', exception: e);
       return 0;
     }
   }
@@ -287,7 +287,7 @@ class MessagingService {
           .where((msg) => msg.content.toLowerCase().contains(query.toLowerCase()))
           .toList();
     } catch (e) {
-      _logger.error('Failed to search messages', e);
+      _logger.error('Failed to search messages', exception: e);
       return [];
     }
   }
@@ -315,7 +315,7 @@ class MessagingService {
               .map((doc) => Message.fromJson(doc.data() as Map<String, dynamic>))
               .toList());
     } catch (e) {
-      _logger.error('Failed to stream conversation messages', e);
+      _logger.error('Failed to stream conversation messages', exception: e);
       return Stream.value([]);
     }
   }

@@ -51,7 +51,7 @@ class NotificationService {
 
       return true;
     } catch (e) {
-      _logger.error('Failed to send notification', e);
+      _logger.error('Failed to send notification', exception: e);
       return false;
     }
   }
@@ -79,7 +79,7 @@ class NotificationService {
           .map((doc) => Notification.fromJson(doc.data() as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      _logger.error('Failed to fetch notifications', e);
+      _logger.error('Failed to fetch notifications', exception: e);
       return [];
     }
   }
@@ -97,7 +97,7 @@ class NotificationService {
 
       return true;
     } catch (e) {
-      _logger.error('Failed to mark notification as read', e);
+      _logger.error('Failed to mark notification as read', exception: e);
       return false;
     }
   }
@@ -125,7 +125,7 @@ class NotificationService {
       await batch.commit();
       return true;
     } catch (e) {
-      _logger.error('Failed to mark all notifications as read', e);
+      _logger.error('Failed to mark all notifications as read', exception: e);
       return false;
     }
   }
@@ -140,7 +140,7 @@ class NotificationService {
 
       return true;
     } catch (e) {
-      _logger.error('Failed to delete notification', e);
+      _logger.error('Failed to delete notification', exception: e);
       return false;
     }
   }
@@ -157,7 +157,7 @@ class NotificationService {
 
       return snapshot.count ?? 0;
     } catch (e) {
-      _logger.error('Failed to fetch unread count', e);
+      _logger.error('Failed to fetch unread count', exception: e);
       return 0;
     }
   }
@@ -175,7 +175,7 @@ class NotificationService {
               .map((doc) => Notification.fromJson(doc.data() as Map<String, dynamic>))
               .toList());
     } catch (e) {
-      _logger.error('Failed to stream notifications', e);
+      _logger.error('Failed to stream notifications', exception: e);
       return Stream.value([]);
     }
   }
@@ -198,7 +198,7 @@ class NotificationService {
       await batch.commit();
       return true;
     } catch (e) {
-      _logger.error('Failed to delete read notifications', e);
+      _logger.error('Failed to delete read notifications', exception: e);
       return false;
     }
   }

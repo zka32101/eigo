@@ -25,7 +25,7 @@ class ChallengeService {
       await docRef.set(newChallenge.toJson());
       return newChallenge;
     } catch (e) {
-      _logger.error('Error creating challenge', e);
+      _logger.error('Error creating challenge', exception: e);
       throw Exception('チャレンジの作成に失敗しました');
     }
   }
@@ -44,7 +44,7 @@ class ChallengeService {
 
       return SocialChallenge.fromJson(snapshot.data() as Map<String, dynamic>);
     } catch (e) {
-      _logger.error('Error fetching challenge', e);
+      _logger.error('Error fetching challenge', exception: e);
       rethrow;
     }
   }
@@ -64,7 +64,7 @@ class ChallengeService {
           .map((doc) => SocialChallenge.fromJson(doc.data()))
           .toList();
     } catch (e) {
-      _logger.error('Error fetching active challenges', e);
+      _logger.error('Error fetching active challenges', exception: e);
       return [];
     }
   }
@@ -82,7 +82,7 @@ class ChallengeService {
           .map((doc) => SocialChallenge.fromJson(doc.data()))
           .toList();
     } catch (e) {
-      _logger.error('Error fetching user challenges', e);
+      _logger.error('Error fetching user challenges', exception: e);
       return [];
     }
   }
@@ -100,7 +100,7 @@ class ChallengeService {
           .map((doc) => SocialChallenge.fromJson(doc.data()))
           .toList();
     } catch (e) {
-      _logger.error('Error fetching joined challenges', e);
+      _logger.error('Error fetching joined challenges', exception: e);
       return [];
     }
   }
@@ -123,7 +123,7 @@ class ChallengeService {
           .map((doc) => SocialChallenge.fromJson(doc.data()))
           .toList();
     } catch (e) {
-      _logger.error('Error fetching challenges by type', e);
+      _logger.error('Error fetching challenges by type', exception: e);
       return [];
     }
   }
@@ -180,7 +180,7 @@ class ChallengeService {
 
       return participation;
     } catch (e) {
-      _logger.error('Error joining challenge', e);
+      _logger.error('Error joining challenge', exception: e);
       rethrow;
     }
   }
@@ -199,7 +199,7 @@ class ChallengeService {
         'participants.$userId': newScore,
       });
     } catch (e) {
-      _logger.error('Error updating participant score', e);
+      _logger.error('Error updating participant score', exception: e);
       rethrow;
     }
   }
@@ -268,7 +268,7 @@ class ChallengeService {
 
       return result;
     } catch (e) {
-      _logger.error('Error completing challenge', e);
+      _logger.error('Error completing challenge', exception: e);
       rethrow;
     }
   }
@@ -312,7 +312,7 @@ class ChallengeService {
         'invitedUserIds': FieldValue.arrayUnion(userIds),
       });
     } catch (e) {
-      _logger.error('Error inviting users', e);
+      _logger.error('Error inviting users', exception: e);
       rethrow;
     }
   }
@@ -332,7 +332,7 @@ class ChallengeService {
           .map((doc) => ChallengeInvitation.fromJson(doc.data()))
           .toList();
     } catch (e) {
-      _logger.error('Error fetching invitations', e);
+      _logger.error('Error fetching invitations', exception: e);
       return [];
     }
   }
@@ -356,7 +356,7 @@ class ChallengeService {
           .doc(invitationId)
           .update({'accepted': true, 'respondedAt': DateTime.now()});
     } catch (e) {
-      _logger.error('Error accepting invitation', e);
+      _logger.error('Error accepting invitation', exception: e);
       rethrow;
     }
   }
@@ -377,7 +377,7 @@ class ChallengeService {
 
       return ChallengeStats.fromJson(snapshot.data() as Map<String, dynamic>);
     } catch (e) {
-      _logger.error('Error fetching challenge stats', e);
+      _logger.error('Error fetching challenge stats', exception: e);
       return _createDefaultStats(userId);
     }
   }
@@ -400,7 +400,7 @@ class ChallengeService {
           .map((doc) => SocialChallenge.fromJson(doc.data()))
           .toList();
     } catch (e) {
-      _logger.error('Error searching challenges', e);
+      _logger.error('Error searching challenges', exception: e);
       return [];
     }
   }

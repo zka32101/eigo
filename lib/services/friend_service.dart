@@ -60,7 +60,7 @@ class FriendService {
 
       return true;
     } catch (e) {
-      _logger.error('Failed to send friend request', e);
+      _logger.error('Failed to send friend request', exception: e);
       return false;
     }
   }
@@ -136,7 +136,7 @@ class FriendService {
 
       return true;
     } catch (e) {
-      _logger.error('Failed to accept friend request', e);
+      _logger.error('Failed to accept friend request', exception: e);
       return false;
     }
   }
@@ -150,7 +150,7 @@ class FriendService {
           .update({'status': 'declined'});
       return true;
     } catch (e) {
-      _logger.error('Failed to decline friend request', e);
+      _logger.error('Failed to decline friend request', exception: e);
       return false;
     }
   }
@@ -188,7 +188,7 @@ class FriendService {
 
       return true;
     } catch (e) {
-      _logger.error('Failed to remove friend', e);
+      _logger.error('Failed to remove friend', exception: e);
       return false;
     }
   }
@@ -208,7 +208,7 @@ class FriendService {
           .map((doc) => FriendRequest.fromJson(doc.data() as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      _logger.error('Failed to fetch received friend requests', e);
+      _logger.error('Failed to fetch received friend requests', exception: e);
       return [];
     }
   }
@@ -228,7 +228,7 @@ class FriendService {
           .map((doc) => FriendRequest.fromJson(doc.data() as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      _logger.error('Failed to fetch sent friend requests', e);
+      _logger.error('Failed to fetch sent friend requests', exception: e);
       return [];
     }
   }
@@ -247,7 +247,7 @@ class FriendService {
           .map((doc) => Friend.fromJson(doc.data() as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      _logger.error('Failed to fetch friend list', e);
+      _logger.error('Failed to fetch friend list', exception: e);
       return [];
     }
   }
@@ -291,7 +291,7 @@ class FriendService {
 
       return true;
     } catch (e) {
-      _logger.error('Failed to block user', e);
+      _logger.error('Failed to block user', exception: e);
       return false;
     }
   }
@@ -308,7 +308,7 @@ class FriendService {
 
       return true;
     } catch (e) {
-      _logger.error('Failed to unblock user', e);
+      _logger.error('Failed to unblock user', exception: e);
       return false;
     }
   }
@@ -324,7 +324,7 @@ class FriendService {
 
       return snapshot.docs.map((doc) => doc.id).toList();
     } catch (e) {
-      _logger.error('Failed to fetch blocked users', e);
+      _logger.error('Failed to fetch blocked users', exception: e);
       return [];
     }
   }
@@ -372,7 +372,7 @@ class FriendService {
           .toList()
           .sublist(0, (10).clamp(0, snapshot.docs.length)); // Return top 10
     } catch (e) {
-      _logger.error('Failed to fetch friend suggestions', e);
+      _logger.error('Failed to fetch friend suggestions', exception: e);
       return [];
     }
   }
@@ -387,7 +387,7 @@ class FriendService {
 
       return true;
     } catch (e) {
-      _logger.error('Failed to cancel friend request', e);
+      _logger.error('Failed to cancel friend request', exception: e);
       return false;
     }
   }
