@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/notification.dart';
+import '../models/notification_model.dart';
 import '../design_system/design_system.dart';
 
 class NotificationItem extends StatelessWidget {
@@ -90,27 +90,45 @@ class NotificationItem extends StatelessWidget {
     Color color;
 
     switch (notification.type) {
-      case NotificationType.friendRequest:
-        icon = Icons.person_add;
-        color = Colors.blue;
-      case NotificationType.friendAccepted:
+      case NotificationType.challengeStarting:
+        icon = Icons.lightning_bolt;
+        color = Colors.yellow;
+      case NotificationType.challengeEnding:
+        icon = Icons.flag;
+        color = Colors.orange;
+      case NotificationType.challengeCompleted:
         icon = Icons.check_circle;
         color = Colors.green;
-      case NotificationType.message:
-        icon = Icons.mail;
-        color = Colors.purple;
-      case NotificationType.achievement:
+      case NotificationType.achievementUnlocked:
         icon = Icons.emoji_events;
         color = Colors.amber;
       case NotificationType.levelUp:
         icon = Icons.trending_up;
-        color = Colors.orange;
+        color = Colors.cyan;
       case NotificationType.streakMilestone:
         icon = Icons.flame_free;
         color = Colors.red;
-      case NotificationType.challengeStarting:
-        icon = Icons.lightning_bolt;
-        color = Colors.yellow;
+      case NotificationType.petEvolved:
+        icon = Icons.pets;
+        color = Colors.pink;
+      case NotificationType.videoRecommended:
+        icon = Icons.video_library;
+        color = Colors.purple;
+      case NotificationType.friendChallengeInvite:
+        icon = Icons.person_add;
+        color = Colors.blue;
+      case NotificationType.friendChallengeCompleted:
+        icon = Icons.group;
+        color = Colors.teal;
+      case NotificationType.dailyQuestReminder:
+        icon = Icons.schedule;
+        color = Colors.indigo;
+      case NotificationType.shopItemNew:
+        icon = Icons.shopping_bag;
+        color = Colors.deepOrange;
+      case NotificationType.custom:
+        icon = Icons.notifications;
+        color = Colors.grey;
     }
 
     return Container(
