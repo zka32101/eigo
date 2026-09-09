@@ -313,7 +313,7 @@ class _QuickActions extends StatelessWidget {
             children: [
               _QuickBtn('🏆 ランキング', AppColors.accentOrange, '/leaderboard'),
               AppSpacing.horizontalSpacerXs,
-              const Expanded(child: SizedBox.shrink()),
+              _QuickBtn('🎭 キャラ\n図鑑', AppColors.accentPink, '/character-collection'),
               AppSpacing.horizontalSpacerXs,
               const Expanded(child: SizedBox.shrink()),
             ],

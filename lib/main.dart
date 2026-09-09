@@ -7,6 +7,7 @@ import 'models/stage.dart';
 import 'models/challenge_model.dart';
 import 'models/video_model.dart';
 import 'models/pet_model.dart';
+import 'providers/character_provider.dart';
 import 'providers/purchase_provider.dart';
 import 'providers/settings_provider.dart';
 import 'screens/badge_screen.dart';
@@ -105,7 +106,11 @@ Future<void> main() async {
 
   // 保存済みコイン残高を読み込んでから起動（未読み込みのままだと0のみで
   // 上書きされ、既存残高が消失するため必須）
-  final container = ProviderContainer();
+  final container = ProviderContainer(
+    overrides: [
+      characterStateProvider.overrideWith(CharacterNotifier.new),
+    ],
+  );
   await container.read(coinProvider.notifier).load();
 
   // バグ報告・改善要望フォームの送信ハンドラを登録（Firestore `feedback` コレクションへ書き込み）
