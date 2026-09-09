@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_core/shared_core.dart';
 import '../models/english_town_model.dart';
 import '../providers/english_town_provider.dart';
 import '../theme/app_theme.dart';
@@ -702,9 +703,11 @@ class _EnglishTownScreenState extends ConsumerState<EnglishTownScreen>
                     child: const Text('キャンセル'),
                   ),
                   TextButton(
-                    onPressed: () {
+                    onPressed: () async {
                       Navigator.pop(context);
-                      ScaffoldMessenger.of(context).showSnackBar(
+                      final passedGate = await requireParentalGate(this.context);
+                      if (!passedGate || !mounted) return;
+                      ScaffoldMessenger.of(this.context).showSnackBar(
                         const SnackBar(content: Text('データをリセットしました')),
                       );
                     },

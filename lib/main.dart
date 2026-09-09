@@ -339,7 +339,13 @@ class _RootShellState extends ConsumerState<RootShell> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _tab,
-        onTap: (i) => setState(() => _tab = i),
+        onTap: (i) async {
+          if (i == 2) {
+            final passedGate = await requireParentalGate(context);
+            if (!passedGate || !mounted) return;
+          }
+          setState(() => _tab = i);
+        },
         type: BottomNavigationBarType.fixed,
         selectedItemColor: AppColors.primary,
         unselectedItemColor: AppColors.textMuted,
