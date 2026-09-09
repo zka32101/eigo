@@ -81,9 +81,12 @@ import 'screens/chat_screen.dart';
 import 'services/notification_service.dart';
 import 'services/ad_service.dart';
 import 'services/firebase_service.dart';
+import 'services/eigo_matchmaking_service.dart';
 import 'providers/morning_notification_provider.dart';
 import 'providers/coin_provider.dart';
 import 'providers/user_profile_provider.dart';
+import 'screens/multiplayer_matchmaker_screen.dart';
+import 'screens/multiplayer_leaderboard_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -106,9 +109,13 @@ Future<void> main() async {
 
   // 保存済みコイン残高を読み込んでから起動（未読み込みのままだと0のみで
   // 上書きされ、既存残高が消失するため必須）
+  final matchmakingService = EigoMatchmakingService();
   final container = ProviderContainer(
     overrides: [
       characterStateProvider.overrideWith(CharacterNotifier.new),
+      // リアルタイム対戦（マルチプレイ）: Firestore実装（eigo_ プレフィックス）を注入
+      matchmakingHandlersProvider.overrideWithValue(matchmakingService.matchmakingHandlers),
+      matchHandlersProvider.overrideWithValue(matchmakingService.matchHandlers),
     ],
   );
   await container.read(coinProvider.notifier).load();
@@ -195,6 +202,8 @@ class EigoKoreApp extends ConsumerWidget {
         '/challenges': (context) => const ChallengeHubScreen(), // Social challenges
         '/challenge-hub': (context) => const ChallengeHubScreen(),
         '/friend-challenges': (context) => const FriendChallengeScreen(),
+        '/multiplayer': (context) => const MultiplayerMatchmakerScreen(),
+        '/multiplayer-leaderboard': (context) => const MultiplayerLeaderboardScreen(),
         '/video-gallery': (context) => const VideoGalleryScreen(),
         '/pet-adoption': (context) => const PetAdoptionScreen(),
         '/pet-status': (context) => const PetStatusScreen(),

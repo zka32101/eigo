@@ -303,7 +303,7 @@ class _QuickActions extends StatelessWidget {
             children: [
               _SocialQuickBtn('📊 アクティビティ', AppColors.accentPurple),
               AppSpacing.horizontalSpacerXs,
-              const Expanded(child: SizedBox.shrink()),
+              _QuickBtn('⚔️ 対戦', AppColors.accentRed, '/multiplayer'),
               AppSpacing.horizontalSpacerXs,
               const Expanded(child: SizedBox.shrink()),
             ],
