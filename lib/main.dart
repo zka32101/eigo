@@ -2,6 +2,7 @@ import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_core/shared_core.dart';
 import 'models/stage.dart';
 import 'models/challenge_model.dart';
 import 'models/video_model.dart';
@@ -107,6 +108,13 @@ Future<void> main() async {
   final container = ProviderContainer();
   await container.read(coinProvider.notifier).load();
 
+  // バグ報告・改善要望フォームの送信ハンドラを登録（Firestore `feedback` コレクションへ書き込み）
+  container.read(feedbackProvider.notifier).setSubmitHandler(
+        (report) => FirebaseService().submitFeedback(report),
+      );
+  // 未送信キューの再送信を試みる
+  await container.read(feedbackProvider.notifier).retryPendingReports();
+
   runApp(UncontrolledProviderScope(container: container, child: const EigoKoreApp()));
 }
 
@@ -156,6 +164,7 @@ class EigoKoreApp extends ConsumerWidget {
         '/ai-freetalk': (context) => const AiFreetalkScreen(),
         '/vocabulary': (context) => const VocabularyScreen(),
         '/study-guide': (context) => const ExplanationMenuScreen(),
+        '/feedback': (context) => const FeedbackFormPage(appName: 'eigo_kore', appVersion: '3.1.0'),
         '/pet': (context) => const PetScreen(),
         '/pet-breeding': (context) => const PetBreedingScreen(),
         '/teacher-mode': (context) => const TeacherModeScreen(),
