@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:shared_core/shared_core.dart';
 import '../firebase_options.dart';
 
 /// Firebase/Firestore ラッパー。
@@ -150,6 +151,17 @@ class FirebaseService {
     } catch (_) {
       return [];
     }
+  }
+
+  /// バグ報告・改善要望を Firestore の `feedback` コレクションに書き込む。
+  /// shared_core の FeedbackNotifier.setSubmitHandler() に注入して使う。
+  /// 未初期化時は例外を投げ、呼び出し元（FeedbackNotifier）にローカルキューへの
+  /// 退避・再送信を委ねる。
+  Future<void> submitFeedback(FeedbackReport report) async {
+    if (!_available || _db == null) {
+      throw StateError('Firebase is not available');
+    }
+    await _db!.collection('feedback').doc(report.id).set(report.toJson());
   }
 
   String _weekKey() {

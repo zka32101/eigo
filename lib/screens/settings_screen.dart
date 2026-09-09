@@ -98,6 +98,13 @@ class SettingsScreen extends ConsumerWidget {
             onTap: () => Navigator.of(context).pushNamed('/privacy'),
           ),
           _SettingsTile(
+            icon: Icons.feedback,
+            color: AppColors.textMuted,
+            label: 'バグ報告・ご意見',
+            subtitle: '不具合や改善要望を送る',
+            onTap: () => Navigator.of(context).pushNamed('/feedback'),
+          ),
+          _SettingsTile(
             icon: Icons.info,
             color: AppColors.textMuted,
             label: '繧｢繝励Μ縺ｫ縺､縺・※',
