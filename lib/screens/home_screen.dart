@@ -265,7 +265,7 @@ class _QuickActions extends StatelessWidget {
               AppSpacing.horizontalSpacerXs,
               _QuickBtn('🧑‍🏫 先生\nごっこ', AppColors.readingColor, '/teacher-mode'),
               AppSpacing.horizontalSpacerXs,
-              const Expanded(child: SizedBox.shrink()),
+              _QuickBtn('📚 学ぶ', AppColors.primary, '/study-guide'),
             ],
           ),
           AppSpacing.verticalSpacerXs,

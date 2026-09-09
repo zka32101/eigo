@@ -11,6 +11,7 @@ import 'providers/settings_provider.dart';
 import 'screens/badge_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/lesson_screen.dart';
+import 'screens/explanation_menu_screen.dart';
 import 'screens/onboarding_screen.dart';
 import 'screens/parent_dashboard_screen.dart';
 import 'screens/privacy_policy_screen.dart';
@@ -154,6 +155,7 @@ class EigoKoreApp extends ConsumerWidget {
         '/profile-select': (context) => const ProfileSelectScreen(),
         '/ai-freetalk': (context) => const AiFreetalkScreen(),
         '/vocabulary': (context) => const VocabularyScreen(),
+        '/study-guide': (context) => const ExplanationMenuScreen(),
         '/pet': (context) => const PetScreen(),
         '/pet-breeding': (context) => const PetBreedingScreen(),
         '/teacher-mode': (context) => const TeacherModeScreen(),
