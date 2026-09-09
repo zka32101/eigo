@@ -83,6 +83,14 @@ enum NPCProfession {
   const NPCProfession(this.japanese, this.english);
 }
 
+/// 会話の難易度
+enum ConversationDifficulty {
+  easy,
+  medium,
+  hard,
+  expert,
+}
+
 /// NPC（ノンプレイヤーキャラクター）
 @JsonSerializable()
 class NPC {
