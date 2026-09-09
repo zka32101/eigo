@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_core/shared_core.dart' hide UserProfile;
 import '../models/user_profile.dart';
 import '../providers/user_profile_provider.dart';
 import '../design_system/design_system.dart';
@@ -257,7 +258,11 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
               child: OutlinedButton.icon(
                 icon: const Icon(Icons.delete_outline),
                 label: const Text('このプロフィールを削除'),
-                onPressed: () => _showDeleteConfirmation(),
+                onPressed: () async {
+                  final passedGate = await requireParentalGate(context);
+                  if (!passedGate || !mounted) return;
+                  _showDeleteConfirmation();
+                },
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.error,
                   side: const BorderSide(color: AppColors.error),

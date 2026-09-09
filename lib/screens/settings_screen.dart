@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_core/shared_core.dart'
+    hide progressProvider, ProgressNotifier, LearningProgress;
 import '../providers/progress_provider.dart';
 import '../providers/purchase_provider.dart';
 import '../providers/settings_provider.dart';
@@ -79,7 +81,11 @@ class SettingsScreen extends ConsumerWidget {
             color: AppColors.accentGreen,
             label: '親向けダッシュボード',
             subtitle: '学習詳細・スピーキング分析',
-            onTap: () => Navigator.of(context).pushNamed('/parent'),
+            onTap: () async {
+              final passedGate = await requireParentalGate(context);
+              if (!passedGate || !context.mounted) return;
+              Navigator.of(context).pushNamed('/parent');
+            },
           ),
           _SettingsTile(
             icon: Icons.emoji_events,

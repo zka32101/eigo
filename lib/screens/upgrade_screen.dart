@@ -1,6 +1,7 @@
 import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_core/shared_core.dart';
 import '../providers/purchase_provider.dart';
 
 enum PlanType { lite, pro, plus, premium }
@@ -354,6 +355,8 @@ class _SubscribeButton extends ConsumerWidget {
           ElevatedButton(
             onPressed: () async {
               Navigator.pop(ctx);
+              final passedGate = await requireParentalGate(context);
+              if (!passedGate || !context.mounted) return;
               await ref.read(purchaseProvider.notifier).purchase(_productId(plan));
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
