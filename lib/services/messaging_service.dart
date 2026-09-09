@@ -14,7 +14,6 @@ class MessagingService {
   MessagingService._internal();
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final LoggerService _logger = LoggerService();
 
   /// Send a message from sender to receiver
   Future<bool> sendMessage(
@@ -47,7 +46,7 @@ class MessagingService {
 
       return true;
     } catch (e) {
-      _logger.error('Failed to send message', exception: e);
+      LoggerService.error('Failed to send message', exception: e);
       return false;
     }
   }
@@ -75,7 +74,7 @@ class MessagingService {
       // Reverse to get chronological order (oldest first)
       return messages.reversed.toList();
     } catch (e) {
-      _logger.error('Failed to fetch conversation messages', exception: e);
+      LoggerService.error('Failed to fetch conversation messages', exception: e);
       return [];
     }
   }
@@ -93,7 +92,7 @@ class MessagingService {
 
       return true;
     } catch (e) {
-      _logger.error('Failed to mark message as read', exception: e);
+      LoggerService.error('Failed to mark message as read', exception: e);
       return false;
     }
   }
@@ -123,7 +122,7 @@ class MessagingService {
       await batch.commit();
       return true;
     } catch (e) {
-      _logger.error('Failed to mark conversation as read', exception: e);
+      LoggerService.error('Failed to mark conversation as read', exception: e);
       return false;
     }
   }
@@ -138,7 +137,7 @@ class MessagingService {
 
       return true;
     } catch (e) {
-      _logger.error('Failed to delete message', exception: e);
+      LoggerService.error('Failed to delete message', exception: e);
       return false;
     }
   }
@@ -221,7 +220,7 @@ class MessagingService {
 
       return conversations;
     } catch (e) {
-      _logger.error('Failed to fetch conversation list', exception: e);
+      LoggerService.error('Failed to fetch conversation list', exception: e);
       return [];
     }
   }
@@ -238,7 +237,7 @@ class MessagingService {
 
       return snapshot.count ?? 0;
     } catch (e) {
-      _logger.error('Failed to fetch unread message count', exception: e);
+      LoggerService.error('Failed to fetch unread message count', exception: e);
       return 0;
     }
   }
@@ -258,7 +257,7 @@ class MessagingService {
 
       return snapshot.count ?? 0;
     } catch (e) {
-      _logger.error('Failed to fetch unread conversation count', exception: e);
+      LoggerService.error('Failed to fetch unread conversation count', exception: e);
       return 0;
     }
   }
@@ -287,7 +286,7 @@ class MessagingService {
           .where((msg) => msg.content.toLowerCase().contains(query.toLowerCase()))
           .toList();
     } catch (e) {
-      _logger.error('Failed to search messages', exception: e);
+      LoggerService.error('Failed to search messages', exception: e);
       return [];
     }
   }
@@ -315,7 +314,7 @@ class MessagingService {
               .map((doc) => Message.fromJson(doc.data() as Map<String, dynamic>))
               .toList());
     } catch (e) {
-      _logger.error('Failed to stream conversation messages', exception: e);
+      LoggerService.error('Failed to stream conversation messages', exception: e);
       return Stream.value([]);
     }
   }

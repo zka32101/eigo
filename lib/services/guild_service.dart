@@ -14,7 +14,6 @@ class GuildService {
   GuildService._internal();
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final LoggerService _logger = LoggerService();
 
   /// Create a new guild
   Future<String?> createGuild(
@@ -61,7 +60,7 @@ class GuildService {
 
       return guildId;
     } catch (e) {
-      _logger.error('Failed to create guild', exception: e);
+      LoggerService.error('Failed to create guild', exception: e);
       return null;
     }
   }
@@ -94,7 +93,7 @@ class GuildService {
 
       return true;
     } catch (e) {
-      _logger.error('Failed to join guild', exception: e);
+      LoggerService.error('Failed to join guild', exception: e);
       return false;
     }
   }
@@ -120,7 +119,7 @@ class GuildService {
 
       return true;
     } catch (e) {
-      _logger.error('Failed to leave guild', exception: e);
+      LoggerService.error('Failed to leave guild', exception: e);
       return false;
     }
   }
@@ -137,7 +136,7 @@ class GuildService {
           .map((doc) => Guild.fromJson(doc.data() as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      _logger.error('Failed to fetch user guilds', exception: e);
+      LoggerService.error('Failed to fetch user guilds', exception: e);
       return [];
     }
   }
@@ -150,7 +149,7 @@ class GuildService {
 
       return Guild.fromJson(doc.data() as Map<String, dynamic>);
     } catch (e) {
-      _logger.error('Failed to fetch guild', exception: e);
+      LoggerService.error('Failed to fetch guild', exception: e);
       return null;
     }
   }
@@ -169,7 +168,7 @@ class GuildService {
           .map((doc) => GuildMember.fromJson(doc.data() as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      _logger.error('Failed to fetch guild members', exception: e);
+      LoggerService.error('Failed to fetch guild members', exception: e);
       return [];
     }
   }
@@ -191,7 +190,7 @@ class GuildService {
 
       return true;
     } catch (e) {
-      _logger.error('Failed to update guild', exception: e);
+      LoggerService.error('Failed to update guild', exception: e);
       return false;
     }
   }
@@ -230,7 +229,7 @@ class GuildService {
 
       return true;
     } catch (e) {
-      _logger.error('Failed to update member contribution', exception: e);
+      LoggerService.error('Failed to update member contribution', exception: e);
       return false;
     }
   }
@@ -253,7 +252,7 @@ class GuildService {
 
       return true;
     } catch (e) {
-      _logger.error('Failed to change member role', exception: e);
+      LoggerService.error('Failed to change member role', exception: e);
       return false;
     }
   }
@@ -274,7 +273,7 @@ class GuildService {
 
       return true;
     } catch (e) {
-      _logger.error('Failed to remove guild member', exception: e);
+      LoggerService.error('Failed to remove guild member', exception: e);
       return false;
     }
   }
@@ -293,7 +292,7 @@ class GuildService {
           .map((doc) => Guild.fromJson(doc.data() as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      _logger.error('Failed to fetch public guilds', exception: e);
+      LoggerService.error('Failed to fetch public guilds', exception: e);
       return [];
     }
   }
@@ -312,7 +311,7 @@ class GuildService {
           .where((guild) => guild.name.toLowerCase().contains(query.toLowerCase()))
           .toList();
     } catch (e) {
-      _logger.error('Failed to search guilds', exception: e);
+      LoggerService.error('Failed to search guilds', exception: e);
       return [];
     }
   }
@@ -330,7 +329,7 @@ class GuildService {
               .map((doc) => GuildMember.fromJson(doc.data() as Map<String, dynamic>))
               .toList());
     } catch (e) {
-      _logger.error('Failed to stream guild members', exception: e);
+      LoggerService.error('Failed to stream guild members', exception: e);
       return Stream.value([]);
     }
   }

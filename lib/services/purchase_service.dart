@@ -12,7 +12,6 @@ class PurchaseService {
   PurchaseService._internal();
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final LoggerService _logger = LoggerService();
 
   // Get all available products
   Future<List<Product>> getAvailableProducts() async {
@@ -27,7 +26,7 @@ class PurchaseService {
           .map((doc) => Product.fromJson(doc.data()))
           .toList();
     } catch (e) {
-      _logger.error('Failed to get products: $e', tag: 'PurchaseService');
+      LoggerService.error('Failed to get products: $e', tag: 'PurchaseService');
       rethrow;
     }
   }
@@ -46,7 +45,7 @@ class PurchaseService {
           .map((doc) => Product.fromJson(doc.data()))
           .toList();
     } catch (e) {
-      _logger.error('Failed to get products by type: $e', tag: 'PurchaseService');
+      LoggerService.error('Failed to get products by type: $e', tag: 'PurchaseService');
       rethrow;
     }
   }
@@ -64,7 +63,7 @@ class PurchaseService {
           .map((doc) => SubscriptionPlan.fromJson(doc.data()))
           .toList();
     } catch (e) {
-      _logger.error('Failed to get subscription plans: $e', tag: 'PurchaseService');
+      LoggerService.error('Failed to get subscription plans: $e', tag: 'PurchaseService');
       rethrow;
     }
   }
@@ -87,7 +86,7 @@ class PurchaseService {
       }
       return packages;
     } catch (e) {
-      _logger.error('Failed to get featured packages: $e', tag: 'PurchaseService');
+      LoggerService.error('Failed to get featured packages: $e', tag: 'PurchaseService');
       rethrow;
     }
   }
@@ -142,13 +141,13 @@ class PurchaseService {
           .doc(txnId)
           .set(transaction.toJson());
 
-      _logger.info(
+      LoggerService.info(
         'Purchase created for user $userId: $purchaseId',
         'PurchaseService',
       );
       return purchase;
     } catch (e) {
-      _logger.error('Failed to create purchase: $e', tag: 'PurchaseService');
+      LoggerService.error('Failed to create purchase: $e', tag: 'PurchaseService');
       rethrow;
     }
   }
@@ -166,7 +165,7 @@ class PurchaseService {
           .map((doc) => Purchase.fromJson(doc.data()))
           .toList();
     } catch (e) {
-      _logger.error(
+      LoggerService.error(
         'Failed to get user purchases: $e',
         tag: 'PurchaseService',
       );
@@ -182,7 +181,7 @@ class PurchaseService {
           .where((p) => p.isSubscriptionActive && !p.isExpired)
           .toList();
     } catch (e) {
-      _logger.error(
+      LoggerService.error(
         'Failed to get active subscriptions: $e',
         tag: 'PurchaseService',
       );
@@ -196,7 +195,7 @@ class PurchaseService {
       final purchases = await getUserPurchases(userId);
       return purchases.any((p) => p.productId == productId && p.isValid);
     } catch (e) {
-      _logger.error(
+      LoggerService.error(
         'Failed to check product ownership: $e',
         tag: 'PurchaseService',
       );
@@ -223,13 +222,13 @@ class PurchaseService {
         }
       }
 
-      _logger.info(
+      LoggerService.info(
         'Purchases restored for user $userId',
         'PurchaseService',
       );
       return purchases;
     } catch (e) {
-      _logger.error(
+      LoggerService.error(
         'Failed to restore purchases: $e',
         tag: 'PurchaseService',
       );
@@ -275,7 +274,7 @@ class PurchaseService {
         purchasedProductIds: purchasedProductIds.toList(),
       );
     } catch (e) {
-      _logger.error(
+      LoggerService.error(
         'Failed to get purchase history: $e',
         tag: 'PurchaseService',
       );
@@ -289,7 +288,7 @@ class PurchaseService {
       final history = await getPurchaseHistory(userId);
       return history.totalSpent;
     } catch (e) {
-      _logger.error(
+      LoggerService.error(
         'Failed to get user account value: $e',
         tag: 'PurchaseService',
       );
@@ -302,13 +301,13 @@ class PurchaseService {
     try {
       // In production, this would call RevenueCat API or your backend
       // For now, this is a placeholder
-      _logger.info(
+      LoggerService.info(
         'Receipt verification for platform: $platform',
         'PurchaseService',
       );
       return true;
     } catch (e) {
-      _logger.error('Failed to verify receipt: $e', tag: 'PurchaseService');
+      LoggerService.error('Failed to verify receipt: $e', tag: 'PurchaseService');
       rethrow;
     }
   }
@@ -324,12 +323,12 @@ class PurchaseService {
             'status': 'cancelled',
           });
 
-      _logger.info(
+      LoggerService.info(
         'Subscription cancelled: $purchaseId',
         'PurchaseService',
       );
     } catch (e) {
-      _logger.error(
+      LoggerService.error(
         'Failed to cancel subscription: $e',
         tag: 'PurchaseService',
       );
@@ -381,7 +380,7 @@ class PurchaseService {
 
       return finalPrice;
     } catch (e) {
-      _logger.error(
+      LoggerService.error(
         'Failed to apply promo code: $e',
         tag: 'PurchaseService',
       );

@@ -12,7 +12,6 @@ class SocialService {
   SocialService._internal();
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final LoggerService _logger = LoggerService();
 
   // Get user profile
   Future<UserProfile?> getUserProfile(String userId) async {
@@ -23,7 +22,7 @@ class SocialService {
       }
       return null;
     } catch (e) {
-      _logger.error('Failed to get user profile: $e', tag: 'SocialService');
+      LoggerService.error('Failed to get user profile: $e', tag: 'SocialService');
       rethrow;
     }
   }
@@ -35,9 +34,9 @@ class SocialService {
           .collection('userProfiles')
           .doc(userId)
           .set(profile.toJson());
-      _logger.info('User profile updated: $userId', 'SocialService');
+      LoggerService.info('User profile updated: $userId', 'SocialService');
     } catch (e) {
-      _logger.error('Failed to update user profile: $e', tag: 'SocialService');
+      LoggerService.error('Failed to update user profile: $e', tag: 'SocialService');
       rethrow;
     }
   }
@@ -68,12 +67,12 @@ class SocialService {
         isShared: false,
       );
 
-      _logger.info(
+      LoggerService.info(
         'Friend request sent from $userId to $friendId',
         'SocialService',
       );
     } catch (e) {
-      _logger.error('Failed to send friend request: $e', tag: 'SocialService');
+      LoggerService.error('Failed to send friend request: $e', tag: 'SocialService');
       rethrow;
     }
   }
@@ -89,12 +88,12 @@ class SocialService {
             'acceptedAt': DateTime.now(),
           });
 
-      _logger.info(
+      LoggerService.info(
         'Friend request accepted: $friendRequestId',
         'SocialService',
       );
     } catch (e) {
-      _logger.error('Failed to accept friend request: $e', tag: 'SocialService');
+      LoggerService.error('Failed to accept friend request: $e', tag: 'SocialService');
       rethrow;
     }
   }
@@ -103,12 +102,12 @@ class SocialService {
   Future<void> declineFriendRequest(String friendRequestId) async {
     try {
       await _firestore.collection('friends').doc(friendRequestId).delete();
-      _logger.info(
+      LoggerService.info(
         'Friend request declined: $friendRequestId',
         'SocialService',
       );
     } catch (e) {
-      _logger.error('Failed to decline friend request: $e', tag: 'SocialService');
+      LoggerService.error('Failed to decline friend request: $e', tag: 'SocialService');
       rethrow;
     }
   }
@@ -137,9 +136,9 @@ class SocialService {
         await doc.reference.delete();
       }
 
-      _logger.info('Friend removed: $userId, $friendId', 'SocialService');
+      LoggerService.info('Friend removed: $userId, $friendId', 'SocialService');
     } catch (e) {
-      _logger.error('Failed to remove friend: $e', tag: 'SocialService');
+      LoggerService.error('Failed to remove friend: $e', tag: 'SocialService');
       rethrow;
     }
   }
@@ -158,7 +157,7 @@ class SocialService {
           .map((doc) => Friend.fromJson(doc.data()))
           .toList();
     } catch (e) {
-      _logger.error('Failed to get user friends: $e', tag: 'SocialService');
+      LoggerService.error('Failed to get user friends: $e', tag: 'SocialService');
       rethrow;
     }
   }
@@ -177,7 +176,7 @@ class SocialService {
           .map((doc) => Friend.fromJson(doc.data()))
           .toList();
     } catch (e) {
-      _logger.error(
+      LoggerService.error(
         'Failed to get pending friend requests: $e',
         tag: 'SocialService',
       );
@@ -198,7 +197,7 @@ class SocialService {
 
       return snapshot.docs.isNotEmpty;
     } catch (e) {
-      _logger.error('Failed to check friend status: $e', tag: 'SocialService');
+      LoggerService.error('Failed to check friend status: $e', tag: 'SocialService');
       rethrow;
     }
   }
@@ -238,13 +237,13 @@ class SocialService {
           .doc(activityId)
           .set(activity.toJson());
 
-      _logger.info(
+      LoggerService.info(
         'Activity recorded for user $userId: $activityId',
         'SocialService',
       );
       return activity;
     } catch (e) {
-      _logger.error('Failed to record activity: $e', tag: 'SocialService');
+      LoggerService.error('Failed to record activity: $e', tag: 'SocialService');
       rethrow;
     }
   }
@@ -264,7 +263,7 @@ class SocialService {
           .map((doc) => Activity.fromJson(doc.data()))
           .toList();
     } catch (e) {
-      _logger.error('Failed to get user activities: $e', tag: 'SocialService');
+      LoggerService.error('Failed to get user activities: $e', tag: 'SocialService');
       rethrow;
     }
   }
@@ -291,7 +290,7 @@ class SocialService {
           .map((doc) => Activity.fromJson(doc.data()))
           .toList();
     } catch (e) {
-      _logger.error('Failed to get friend feed: $e', tag: 'SocialService');
+      LoggerService.error('Failed to get friend feed: $e', tag: 'SocialService');
       rethrow;
     }
   }
@@ -329,7 +328,7 @@ class SocialService {
             : DateTime.now(),
       );
     } catch (e) {
-      _logger.error('Failed to get social stats: $e', tag: 'SocialService');
+      LoggerService.error('Failed to get social stats: $e', tag: 'SocialService');
       rethrow;
     }
   }
@@ -348,7 +347,7 @@ class SocialService {
           .map((doc) => UserProfile.fromJson(doc.data()))
           .toList();
     } catch (e) {
-      _logger.error('Failed to search users: $e', tag: 'SocialService');
+      LoggerService.error('Failed to search users: $e', tag: 'SocialService');
       rethrow;
     }
   }
@@ -384,7 +383,7 @@ class SocialService {
         topSkillComparison: skill1 == skill2 ? skill1 : '$skill1 vs $skill2',
       );
     } catch (e) {
-      _logger.error('Failed to compare users: $e', tag: 'SocialService');
+      LoggerService.error('Failed to compare users: $e', tag: 'SocialService');
       rethrow;
     }
   }
@@ -400,7 +399,7 @@ class SocialService {
             'lastActiveAt': DateTime.now(),
           });
     } catch (e) {
-      _logger.error('Failed to update online status: $e', tag: 'SocialService');
+      LoggerService.error('Failed to update online status: $e', tag: 'SocialService');
       // Don't rethrow as this is not critical
     }
   }

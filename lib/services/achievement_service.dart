@@ -14,7 +14,6 @@ class AchievementService {
   AchievementService._internal();
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final LoggerService _logger = LoggerService();
 
   /// Create a new achievement (admin only)
   Future<String?> createAchievement(
@@ -42,7 +41,7 @@ class AchievementService {
 
       return achievementId;
     } catch (e) {
-      _logger.error('Failed to create achievement', exception: e);
+      LoggerService.error('Failed to create achievement', exception: e);
       return null;
     }
   }
@@ -71,7 +70,7 @@ class AchievementService {
 
       return badgeId;
     } catch (e) {
-      _logger.error('Failed to create badge', exception: e);
+      LoggerService.error('Failed to create badge', exception: e);
       return null;
     }
   }
@@ -120,7 +119,7 @@ class AchievementService {
 
       return true;
     } catch (e) {
-      _logger.error('Failed to unlock achievement', exception: e);
+      LoggerService.error('Failed to unlock achievement', exception: e);
       return false;
     }
   }
@@ -144,7 +143,7 @@ class AchievementService {
 
       return true;
     } catch (e) {
-      _logger.error('Failed to update achievement progress', exception: e);
+      LoggerService.error('Failed to update achievement progress', exception: e);
       return false;
     }
   }
@@ -183,7 +182,7 @@ class AchievementService {
 
       return true;
     } catch (e) {
-      _logger.error('Failed to award badge', exception: e);
+      LoggerService.error('Failed to award badge', exception: e);
       return false;
     }
   }
@@ -219,7 +218,7 @@ class AchievementService {
 
       return true;
     } catch (e) {
-      _logger.error('Failed to equip badge', exception: e);
+      LoggerService.error('Failed to equip badge', exception: e);
       return false;
     }
   }
@@ -236,7 +235,7 @@ class AchievementService {
           .map((doc) => Achievement.fromJson(doc.data() as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      _logger.error('Failed to fetch achievements', exception: e);
+      LoggerService.error('Failed to fetch achievements', exception: e);
       return [];
     }
   }
@@ -275,7 +274,7 @@ class AchievementService {
 
       return results;
     } catch (e) {
-      _logger.error('Failed to fetch user achievements', exception: e);
+      LoggerService.error('Failed to fetch user achievements', exception: e);
       return [];
     }
   }
@@ -292,7 +291,7 @@ class AchievementService {
           .map((doc) => Badge.fromJson(doc.data() as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      _logger.error('Failed to fetch badges', exception: e);
+      LoggerService.error('Failed to fetch badges', exception: e);
       return [];
     }
   }
@@ -329,7 +328,7 @@ class AchievementService {
 
       return results;
     } catch (e) {
-      _logger.error('Failed to fetch user badges', exception: e);
+      LoggerService.error('Failed to fetch user badges', exception: e);
       return [];
     }
   }
@@ -349,7 +348,7 @@ class AchievementService {
           .map((doc) => Achievement.fromJson(doc.data() as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      _logger.error('Failed to fetch achievements by category', exception: e);
+      LoggerService.error('Failed to fetch achievements by category', exception: e);
       return [];
     }
   }
@@ -367,7 +366,7 @@ class AchievementService {
           .map((doc) => Badge.fromJson(doc.data() as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      _logger.error('Failed to fetch badges by rarity', exception: e);
+      LoggerService.error('Failed to fetch badges by rarity', exception: e);
       return [];
     }
   }
@@ -407,7 +406,7 @@ class AchievementService {
         return results;
       });
     } catch (e) {
-      _logger.error('Failed to stream user achievements', exception: e);
+      LoggerService.error('Failed to stream user achievements', exception: e);
       return Stream.value([]);
     }
   }

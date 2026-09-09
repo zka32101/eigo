@@ -14,7 +14,6 @@ class LeaderboardService {
   LeaderboardService._internal();
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final LoggerService _logger = LoggerService();
 
   /// Get global leaderboard (top users by score)
   Future<List<LeaderboardEntry>> getGlobalLeaderboard({
@@ -50,7 +49,7 @@ class LeaderboardService {
 
       return entries;
     } catch (e) {
-      _logger.error('Failed to fetch global leaderboard', exception: e);
+      LoggerService.error('Failed to fetch global leaderboard', exception: e);
       return [];
     }
   }
@@ -91,7 +90,7 @@ class LeaderboardService {
 
       return entries;
     } catch (e) {
-      _logger.error('Failed to fetch level leaderboard', exception: e);
+      LoggerService.error('Failed to fetch level leaderboard', exception: e);
       return [];
     }
   }
@@ -135,7 +134,7 @@ class LeaderboardService {
 
       return entries;
     } catch (e) {
-      _logger.error('Failed to fetch weekly leaderboard', exception: e);
+      LoggerService.error('Failed to fetch weekly leaderboard', exception: e);
       return [];
     }
   }
@@ -186,7 +185,7 @@ class LeaderboardService {
 
       return entries;
     } catch (e) {
-      _logger.error('Failed to fetch friends leaderboard', exception: e);
+      LoggerService.error('Failed to fetch friends leaderboard', exception: e);
       return [];
     }
   }
@@ -222,7 +221,7 @@ class LeaderboardService {
         averageAccuracy: userData['averageAccuracy'] as int? ?? 0,
       );
     } catch (e) {
-      _logger.error('Failed to fetch user rank', exception: e);
+      LoggerService.error('Failed to fetch user rank', exception: e);
       return null;
     }
   }
@@ -262,7 +261,7 @@ class LeaderboardService {
         return entries;
       });
     } catch (e) {
-      _logger.error('Failed to stream global leaderboard', exception: e);
+      LoggerService.error('Failed to stream global leaderboard', exception: e);
       return Stream.value([]);
     }
   }
@@ -284,7 +283,7 @@ class LeaderboardService {
 
       return true;
     } catch (e) {
-      _logger.error('Failed to update user score', exception: e);
+      LoggerService.error('Failed to update user score', exception: e);
       return false;
     }
   }
