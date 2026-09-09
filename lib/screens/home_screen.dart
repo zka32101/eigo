@@ -17,6 +17,8 @@ import '../widgets/xp_bar.dart';
 import '../widgets/home_screen_cards.dart';
 import '../providers/user_profile_provider.dart';
 import 'profile_edit_screen.dart';
+import 'package:cross_promo_kit/cross_promo_kit.dart'
+    show CrossPromoSection;
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -191,6 +193,13 @@ class HomeScreen extends ConsumerWidget {
           SliverToBoxAdapter(child: _ImprovedSkillBreakdown(progress: progress)),
           if (badges.earnedBadges.isNotEmpty)
             SliverToBoxAdapter(child: _RecentBadges(badges: badges)),
+          // クロスプロモーション（他アプリ紹介）
+          SliverToBoxAdapter(
+            child: CrossPromoSection(
+              currentAppId: 'com.example.eigo_kore',
+              currentCategory: '小学コレ',
+            ),
+          ),
           SliverToBoxAdapter(child: SizedBox(height: AppSpacing.xxl)),
         ],
       ),

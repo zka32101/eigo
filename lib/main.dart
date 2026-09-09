@@ -90,6 +90,8 @@ import 'providers/coin_provider.dart';
 import 'providers/user_profile_provider.dart';
 import 'screens/multiplayer_matchmaker_screen.dart';
 import 'screens/multiplayer_leaderboard_screen.dart';
+import 'package:cross_promo_kit/cross_promo_kit.dart'
+    show CrossPromoService;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -106,6 +108,13 @@ Future<void> main() async {
 
   // Firebase初期化（未設定時はgraceful fallbackでローカルのみ動作）
   await FirebaseService().init();
+
+  // クロスプロモーション初期化
+  try {
+    await CrossPromoService.init();
+  } catch (e) {
+    // エラーでも起動は継続
+  }
 
   // AdMob初期化
   await AdService().initialize();
