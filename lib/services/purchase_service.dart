@@ -1,4 +1,7 @@
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
+import '../config/revenuecat_config.dart';
 import '../models/purchase_model.dart';
 import 'logger_service.dart';
 
@@ -12,6 +15,121 @@ class PurchaseService {
   PurchaseService._internal();
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  // ─── RevenueCat（サブスクリプション課金） ──────────────────────
+  //
+  // 上の Firestore ベースのメソッド群は products/purchasePackages コレクションを
+  // 使った独自のカタログ・購入履歴管理（コイン購入・プロモコード等）用。
+  // 実際のストア課金（サブスクリプションプラン）は RevenueCat SDK を介して行う。
+
+  static bool _rcInitialized = false;
+  static final StreamController<CustomerInfo> _customerInfoController =
+      StreamController<CustomerInfo>.broadcast();
+
+  /// RevenueCat SDK が初期化済みかどうか
+  static bool get isRevenueCatReady => _rcInitialized;
+
+  /// RevenueCat SDK を初期化する。
+  ///
+  /// APIキーが未設定（プレースホルダーのまま）の場合は何もせずスキップし、
+  /// アプリはRevenueCatなしで（ローカル/フリープランのみで）動作を続ける。
+  /// これにより本番キーが無いこの開発環境でもクラッシュしない。
+  static Future<void> initializeRevenueCat() async {
+    if (_rcInitialized) return;
+    if (!RevenueCatConfig.isConfigured) {
+      LoggerService.info(
+        'RevenueCat APIキーが未設定のため初期化をスキップします（プレースホルダー検出）',
+        tag: 'PurchaseService',
+      );
+      return;
+    }
+    try {
+      await Purchases.setLogLevel(LogLevel.warn);
+      final config = PurchasesConfiguration(RevenueCatConfig.apiKey);
+      await Purchases.configure(config);
+      _rcInitialized = true;
+
+      Purchases.addCustomerInfoUpdateListener((info) {
+        if (!_customerInfoController.isClosed) {
+          _customerInfoController.add(info);
+        }
+      });
+
+      LoggerService.info('RevenueCat初期化完了', tag: 'PurchaseService');
+    } catch (e) {
+      LoggerService.error('RevenueCat初期化に失敗しました: $e', tag: 'PurchaseService');
+    }
+  }
+
+  /// Firebase匿名UIDなど、アプリ側のユーザーIDとRevenueCatユーザーを紐付ける。
+  /// サポート対応・分析のために推奨（必須ではない）。
+  Future<void> linkRevenueCatUser(String appUserId) async {
+    if (!_rcInitialized) return;
+    try {
+      await Purchases.logIn(appUserId);
+    } catch (e) {
+      LoggerService.error('RevenueCatユーザー紐付けに失敗しました: $e', tag: 'PurchaseService');
+    }
+  }
+
+  /// カスタマー情報（エンタイトルメント含む）の更新ストリーム
+  Stream<CustomerInfo> get customerInfoStream => _customerInfoController.stream;
+
+  /// 現在のカスタマー情報を取得（未初期化時は null）
+  Future<CustomerInfo?> getCustomerInfo() async {
+    if (!_rcInitialized) return null;
+    try {
+      return await Purchases.getCustomerInfo();
+    } catch (e) {
+      LoggerService.error('カスタマー情報の取得に失敗しました: $e', tag: 'PurchaseService');
+      return null;
+    }
+  }
+
+  /// 購入可能なオファリング（プラン・パッケージ一覧）を取得
+  Future<Offerings?> getOfferings() async {
+    if (!_rcInitialized) return null;
+    try {
+      return await Purchases.getOfferings();
+    } catch (e) {
+      LoggerService.error('オファリングの取得に失敗しました: $e', tag: 'PurchaseService');
+      return null;
+    }
+  }
+
+  /// 指定したストア商品IDに対応する [Package] をオファリングから探す
+  Future<Package?> findPackageByProductId(String productId) async {
+    final offerings = await getOfferings();
+    if (offerings == null) return null;
+    for (final offering in offerings.all.values) {
+      for (final pkg in offering.availablePackages) {
+        if (pkg.storeProduct.identifier == productId) {
+          return pkg;
+        }
+      }
+    }
+    return null;
+  }
+
+  /// パッケージを購入する。
+  /// [PurchasesErrorCode.purchaseCancelledError] はユーザーキャンセルなので
+  /// 呼び出し側でキャッチしてハンドリングすること。
+  Future<CustomerInfo> purchasePackage(Package package) async {
+    if (!_rcInitialized) {
+      throw StateError('RevenueCatが初期化されていません（APIキー未設定）');
+    }
+    return Purchases.purchasePackage(package);
+  }
+
+  /// 過去の購入を復元する
+  Future<CustomerInfo> restoreRevenueCatPurchases() async {
+    if (!_rcInitialized) {
+      throw StateError('RevenueCatが初期化されていません（APIキー未設定）');
+    }
+    return Purchases.restorePurchases();
+  }
+
+  // ─── Firestore ベースのカタログ・購入履歴管理 ───────────────────
 
   // Get all available products
   Future<List<Product>> getAvailableProducts() async {
@@ -297,13 +415,22 @@ class PurchaseService {
   }
 
   // Verify receipt
+  //
+  // NOTE: レシート検証自体はRevenueCat SDKが購入・復元時に自動的に行うため
+  // クライアント側でこのメソッドを個別に呼ぶ必要は基本的にない
+  // （`purchasePackage` / `restoreRevenueCatPurchases` が返す [CustomerInfo] の
+  // エンタイトルメント状態が既に検証済みの結果）。
+  //
+  // ここに残しているのは、Firestore上の独自購入履歴（コイン購入等）に対する
+  // レガシー用途のプレースホルダー。サーバー側でのRevenueCat Webhook検証
+  // （購入・更新・解約イベントをCloud Functionsで受信しFirestoreに反映する等）は
+  // 別タスクとして今後対応する（社内参考実装として想定していたsocial_quiz_appには
+  // 実際にはCloud Functions側のRevenueCat/購入連携は未実装だったため、ゼロから設計する）。
   Future<bool> verifyReceipt(String receiptData, String platform) async {
     try {
-      // In production, this would call RevenueCat API or your backend
-      // For now, this is a placeholder
       LoggerService.info(
         'Receipt verification for platform: $platform',
-        'PurchaseService',
+        tag: 'PurchaseService',
       );
       return true;
     } catch (e) {
