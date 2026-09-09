@@ -357,14 +357,22 @@ class _SubscribeButton extends ConsumerWidget {
               Navigator.pop(ctx);
               final passedGate = await requireParentalGate(context);
               if (!passedGate || !context.mounted) return;
-              await ref.read(purchaseProvider.notifier).purchase(_productId(plan));
-              if (context.mounted) {
+              final success = await ref.read(purchaseProvider.notifier).purchase(_productId(plan));
+              if (!context.mounted) return;
+              if (success) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text('${_planName(plan)} プランへようこそ！'),
                     backgroundColor: _planColor(plan),
                   ),
                 );
+              } else {
+                final errorMessage = ref.read(purchaseProvider).errorMessage;
+                if (errorMessage != null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(errorMessage), backgroundColor: AppColors.error),
+                  );
+                }
               }
             },
             child: const Text('申し込む'),

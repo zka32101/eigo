@@ -1,4 +1,7 @@
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
+import '../config/revenuecat_config.dart';
 import '../models/purchase_model.dart';
 import '../services/purchase_service.dart';
 
@@ -234,47 +237,125 @@ final applyPromoCodeActionProvider =
   },
 );
 
-// Legacy purchase notifier (for backward compatibility)
+/// RevenueCatのエンタイトルメント状態をアプリのプラン管理に橋渡しする notifier。
+///
+/// プラン判定はローカルの状態フラグではなく、RevenueCatから取得した
+/// [CustomerInfo.entitlements] を唯一の情報源（source of truth）として行う。
 class PurchaseNotifier extends StateNotifier<PurchaseState> {
   PurchaseNotifier() : super(const PurchaseState()) {
     _init();
   }
 
   final _service = PurchaseService();
+  StreamSubscription<CustomerInfo>? _customerInfoSub;
 
   Future<void> _init() async {
     state = state.copyWith(isLoading: true);
-    // Initialize legacy behavior if needed
-    state = state.copyWith(
-      activePlan: PurchasePlan.free,
-      isLoading: false,
-    );
+    try {
+      // main.dart で既に初期化されている想定だが、未初期化なら念のため試みる
+      // （APIキー未設定なら内部でスキップされ何も起きない）。
+      await PurchaseService.initializeRevenueCat();
+      await _refreshFromCustomerInfo();
+      _customerInfoSub = _service.customerInfoStream.listen(_applyCustomerInfo);
+    } catch (_) {
+      // RevenueCat未設定・オフライン等 → フリープランのまま動作を継続
+    } finally {
+      state = state.copyWith(isLoading: false);
+    }
   }
 
-  Future<void> purchase(String productId) async {
+  Future<void> _refreshFromCustomerInfo() async {
+    final info = await _service.getCustomerInfo();
+    if (info != null) _applyCustomerInfo(info);
+  }
+
+  void _applyCustomerInfo(CustomerInfo info) {
+    final activeEntitlements = info.entitlements.active.keys.toSet();
+    state = state.copyWith(activePlan: _planFromEntitlements(activeEntitlements));
+  }
+
+  PurchasePlan _planFromEntitlements(Set<String> active) {
+    if (active.contains(RevenueCatConfig.entitlementPremium)) return PurchasePlan.premium;
+    if (active.contains(RevenueCatConfig.entitlementPlus)) return PurchasePlan.plus;
+    if (active.contains(RevenueCatConfig.entitlementPro)) return PurchasePlan.pro;
+    if (active.contains(RevenueCatConfig.entitlementLite)) return PurchasePlan.lite;
+    return PurchasePlan.free;
+  }
+
+  /// ストア商品ID（例: `eigo_kore_pro_monthly`）に対応するRevenueCatパッケージを
+  /// 購入する。成功したら true、ユーザーキャンセルまたはエラー時は false を返す。
+  Future<bool> purchase(String productId) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
     try {
-      // Legacy purchase handling
+      if (!PurchaseService.isRevenueCatReady) {
+        state = state.copyWith(
+          isLoading: false,
+          errorMessage: '課金機能が現在利用できません（設定未完了）。しばらくしてから再度お試しください。',
+        );
+        return false;
+      }
+
+      final package = await _service.findPackageByProductId(productId);
+      if (package == null) {
+        state = state.copyWith(
+          isLoading: false,
+          errorMessage: 'この商品は現在購入できません。時間をおいて再度お試しください。',
+        );
+        return false;
+      }
+
+      final info = await _service.purchasePackage(package);
+      _applyCustomerInfo(info);
       state = state.copyWith(isLoading: false);
+      return true;
+    } on PurchasesErrorCode catch (e) {
+      if (e == PurchasesErrorCode.purchaseCancelledError) {
+        // ユーザーによるキャンセル。エラー扱いにしない。
+        state = state.copyWith(isLoading: false);
+        return false;
+      }
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: '購入処理に失敗しました。再度お試しください。',
+      );
+      return false;
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
         errorMessage: '購入処理に失敗しました。再度お試しください。',
       );
+      return false;
     }
   }
 
-  Future<void> restore() async {
+  /// 過去の購入を復元する。成功したら true を返す。
+  Future<bool> restore() async {
     state = state.copyWith(isLoading: true, errorMessage: null);
     try {
-      // Legacy restore handling
-      state = state.copyWith(
-        activePlan: PurchasePlan.free,
-        isLoading: false,
-      );
-    } catch (e) {
+      if (!PurchaseService.isRevenueCatReady) {
+        state = state.copyWith(
+          isLoading: false,
+          errorMessage: '課金機能が現在利用できません（設定未完了）。',
+        );
+        return false;
+      }
+      final info = await _service.restoreRevenueCatPurchases();
+      _applyCustomerInfo(info);
       state = state.copyWith(isLoading: false);
+      return true;
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: '復元に失敗しました。再度お試しください。',
+      );
+      return false;
     }
+  }
+
+  @override
+  void dispose() {
+    _customerInfoSub?.cancel();
+    super.dispose();
   }
 }
 

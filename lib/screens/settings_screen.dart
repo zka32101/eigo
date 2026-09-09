@@ -68,10 +68,19 @@ class SettingsScreen extends ConsumerWidget {
             label: '購入を復元',
             subtitle: '以前の購入を復元します',
             onTap: () async {
-              await ref.read(purchaseProvider.notifier).restore();
-              if (context.mounted) {
+              final success = await ref.read(purchaseProvider.notifier).restore();
+              if (!context.mounted) return;
+              if (success) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('購入を復元しました')),
+                );
+              } else {
+                final errorMessage = ref.read(purchaseProvider).errorMessage;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(errorMessage ?? '復元できる購入が見つかりませんでした'),
+                    backgroundColor: AppColors.error,
+                  ),
                 );
               }
             },

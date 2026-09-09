@@ -115,6 +115,69 @@ flutter run
 1. **Firebase** - `google-services.json` (Android) と `GoogleService-Info.plist` (iOS) を設定
 2. **Gemini API** - アプリ設定からAPIキーを入力
 3. **Claude API** (オプション) - フォールバック用にAPIキーを入力
+4. **RevenueCat**（課金・プラン管理、下記「課金（RevenueCat）」参照）
+
+## 💳 課金（RevenueCat）
+
+サブスクリプションプラン（Lite / Pro / Plus / Premium）の購入・復元・エンタイトルメント判定は
+[RevenueCat](https://www.revenuecat.com/) SDK（`purchases_flutter`）経由で行う。
+
+### セットアップ手順
+
+1. RevenueCat ダッシュボード（<https://app.revenuecat.com/>）でプロジェクトを作成し、
+   App Store Connect / Google Play Console と連携する
+2. 各ストアでプラン別のサブスクリプション商品を作成し、商品IDを以下と一致させる
+   （`lib/config/revenuecat_config.dart` 参照）:
+   - `eigo_kore_lite_monthly`
+   - `eigo_kore_pro_monthly`
+   - `eigo_kore_plus_monthly`
+   - `eigo_kore_premium_monthly`
+3. RevenueCat ダッシュボードでエンタイトルメントを作成し、上記商品を紐付ける
+   （エンタイトルメントID: `lite` / `pro` / `plus` / `premium`）
+4. RevenueCat ダッシュボードで Offering（デフォルト）に各パッケージを追加する
+5. RevenueCat の Project settings から Public API Key（Apple用・Google用）を取得する
+6. ビルド・実行時に `--dart-define` でAPIキーを渡す:
+
+   ```bash
+   # デバッグ実行
+   flutter run \
+     --dart-define=REVENUECAT_GOOGLE_KEY=goog_xxxxxxxxxxxxxxxxxxxx
+
+   # Android リリースビルド
+   flutter build apk --release \
+     --dart-define=REVENUECAT_GOOGLE_KEY=goog_xxxxxxxxxxxxxxxxxxxx
+
+   # iOS リリースビルド
+   flutter build ios --release \
+     --dart-define=REVENUECAT_APPLE_KEY=appl_xxxxxxxxxxxxxxxxxxxx
+   ```
+
+   APIキーはリポジトリにコミットしないこと。`--dart-define-from-file` で
+   `.env.json`（`.gitignore` 済み）から読み込む運用でもよい。
+
+### 動作の仕組み
+
+- APIキーが未設定（プレースホルダーのまま）の場合、RevenueCatの初期化は
+  自動的にスキップされ、アプリはフリープランとしてローカル動作を継続する
+  （クラッシュしない）
+- `lib/services/purchase_service.dart` が RevenueCat SDK のラッパー
+  （初期化・オファリング取得・購入・復元）
+- `lib/providers/purchase_provider.dart` の `PurchaseNotifier` が
+  `CustomerInfo.entitlements.active` を購読し、アクティブなエンタイトルメントから
+  現在のプラン（`PurchasePlan`）を判定する。プラン判定はローカルの保存状態ではなく
+  常に RevenueCat のエンタイトルメント状態を情報源とする
+- `lib/screens/upgrade_screen.dart` でプランを選択すると、対応するストア商品IDから
+  RevenueCatの `Package` を検索して `Purchases.purchasePackage()` を呼び出す
+
+### 未対応（今後の課題）
+
+- **サーバー側検証（Cloud Functions連携）**: 現状はクライアントSDKでの
+  購入・復元・エンタイトルメント確認まで。RevenueCatのWebhookをCloud Functionsで
+  受信してFirestoreに購読状態を同期する仕組みは別タスクとして今後対応する
+  （調査時点で参考にする想定だった `social_quiz_app` にも、実際にはこの
+  サーバー側連携はまだ実装されていなかったため、ゼロから設計・実装が必要）
+- 実際のAPIキー・商品ID・エンタイトルメントがこの開発環境には存在しないため、
+  ここでの変更は構文レベルのレビューのみで、実機・実ストアでの動作確認は未実施
 
 ## 🎮 使用方法
 

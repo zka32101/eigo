@@ -83,6 +83,7 @@ import 'screens/chat_screen.dart';
 import 'services/notification_service.dart';
 import 'services/ad_service.dart';
 import 'services/firebase_service.dart';
+import 'services/purchase_service.dart';
 import 'services/eigo_matchmaking_service.dart';
 import 'providers/morning_notification_provider.dart';
 import 'providers/coin_provider.dart';
@@ -108,6 +109,14 @@ Future<void> main() async {
 
   // AdMob初期化
   await AdService().initialize();
+
+  // RevenueCat初期化（APIキー未設定時はgraceful skipし、フリープランで動作継続）
+  await PurchaseService.initializeRevenueCat();
+  final fbUserId = FirebaseService().userId;
+  if (fbUserId != null) {
+    // FirebaseのユーザーIDとRevenueCatユーザーを紐付け（サポート・分析用途）
+    await PurchaseService().linkRevenueCatUser(fbUserId);
+  }
 
   // 保存済みコイン残高を読み込んでから起動（未読み込みのままだと0のみで
   // 上書きされ、既存残高が消失するため必須）
