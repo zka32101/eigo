@@ -49,7 +49,6 @@ import 'screens/character_collection_screen.dart';
 import 'screens/ad_settings_screen.dart';
 import 'screens/promotion_screen.dart';
 import 'screens/profile_management_screen.dart';
-import 'screens/leaderboard_screen.dart';
 import 'screens/friends_screen.dart';
 import 'screens/analytics_screen.dart';
 import 'screens/notification_management_screen.dart';
@@ -74,7 +73,6 @@ import 'screens/pet_interaction_screen.dart';
 import 'screens/pet_evolution_screen.dart';
 import 'screens/user_profile_screen.dart';
 import 'screens/activity_feed_screen.dart';
-import 'screens/leaderboard_screen.dart';
 import 'screens/conversation_list_screen.dart';
 import 'screens/chat_screen.dart';
 import 'services/notification_service.dart';
@@ -174,7 +172,6 @@ class EigoKoreApp extends ConsumerWidget {
         '/ad-settings': (context) => const AdSettingsScreen(),
         '/promotions': (context) => const PromotionScreen(),
         '/profile-management': (context) => const ProfileManagementScreen(),
-        '/leaderboard': (context) => const LeaderboardScreen(),
         '/friends': (context) => const FriendsScreen(),
         '/analytics': (context) => const AnalyticsScreen(),
         '/notifications': (context) => const NotificationManagementScreen(),
@@ -195,7 +192,6 @@ class EigoKoreApp extends ConsumerWidget {
         '/pet-status': (context) => const PetStatusScreen(),
         '/pet-interaction': (context) => const PetInteractionScreen(),
         '/activity-feed': (context) => const ActivityFeedScreen(),
-        '/leaderboard': (context) => const LeaderboardScreen(),
         '/conversations': (context) => const ConversationListScreen(),
       },
       onGenerateRoute: (settings) {

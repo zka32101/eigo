@@ -311,7 +311,7 @@ class _QuickActions extends StatelessWidget {
           AppSpacing.verticalSpacerXs,
           Row(
             children: [
-              _QuickBtn('🏆 ランキング', AppColors.accentOrange, '/leaderboard'),
+              _QuickBtn('🏆 ランキング', AppColors.accentOrange, '/ranking'),
               AppSpacing.horizontalSpacerXs,
               const Expanded(child: SizedBox.shrink()),
               AppSpacing.horizontalSpacerXs,
