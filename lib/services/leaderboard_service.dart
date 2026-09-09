@@ -15,6 +15,16 @@ class LeaderboardService {
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  /// プライバシー設定（showNameInRanking）に応じて表示名を解決する。
+  /// showNameInRanking が false（デフォルト）の場合は実名を出さず、
+  /// ranking_screen.dart の匿名化パターンに合わせて「ユーザー #XXXX」を返す。
+  String _resolveDisplayName(Map<String, dynamic> data, String userId) {
+    final actualName = data['name'] as String? ?? 'Unknown';
+    final showNameInRanking = data['showNameInRanking'] as bool? ?? false;
+    if (showNameInRanking) return actualName;
+    return 'ユーザー #${userId.hashCode.abs() % 10000}';
+  }
+
   /// Get global leaderboard (top users by score)
   Future<List<LeaderboardEntry>> getGlobalLeaderboard({
     int limit = 100,
@@ -33,7 +43,7 @@ class LeaderboardService {
         final data = doc.data() as Map<String, dynamic>;
         entries.add(LeaderboardEntry(
           userId: doc.id,
-          userName: data['name'] as String? ?? 'Unknown',
+          userName: _resolveDisplayName(data, doc.id),
           userAvatar: data['avatar'] as String? ?? '?',
           rank: rank++,
           score: data['score'] as int? ?? 0,
@@ -74,7 +84,7 @@ class LeaderboardService {
         final data = doc.data() as Map<String, dynamic>;
         entries.add(LeaderboardEntry(
           userId: doc.id,
-          userName: data['name'] as String? ?? 'Unknown',
+          userName: _resolveDisplayName(data, doc.id),
           userAvatar: data['avatar'] as String? ?? '?',
           rank: rank++,
           score: data['score'] as int? ?? 0,
@@ -118,7 +128,7 @@ class LeaderboardService {
         final data = doc.data() as Map<String, dynamic>;
         entries.add(LeaderboardEntry(
           userId: doc.id,
-          userName: data['name'] as String? ?? 'Unknown',
+          userName: _resolveDisplayName(data, doc.id),
           userAvatar: data['avatar'] as String? ?? '?',
           rank: rank++,
           score: data['score'] as int? ?? 0,
@@ -169,7 +179,7 @@ class LeaderboardService {
         final data = doc.data() as Map<String, dynamic>;
         entries.add(LeaderboardEntry(
           userId: doc.id,
-          userName: data['name'] as String? ?? 'Unknown',
+          userName: _resolveDisplayName(data, doc.id),
           userAvatar: data['avatar'] as String? ?? '?',
           rank: rank++,
           score: data['score'] as int? ?? 0,
@@ -208,7 +218,7 @@ class LeaderboardService {
 
       return LeaderboardEntry(
         userId: userId,
-        userName: userData['name'] as String? ?? 'Unknown',
+        userName: _resolveDisplayName(userData, userId),
         userAvatar: userData['avatar'] as String? ?? '?',
         rank: rank,
         score: userScore,
@@ -244,7 +254,7 @@ class LeaderboardService {
           final data = doc.data() as Map<String, dynamic>;
           entries.add(LeaderboardEntry(
             userId: doc.id,
-            userName: data['name'] as String? ?? 'Unknown',
+            userName: _resolveDisplayName(data, doc.id),
             userAvatar: data['avatar'] as String? ?? '?',
             rank: rank++,
             score: data['score'] as int? ?? 0,
