@@ -22,54 +22,54 @@ class SettingsScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('笞呻ｸ・縺帙▲縺ｦ縺・),
+        title: const Text('設定'),
         backgroundColor: AppColors.primary,
       ),
       body: ListView(
         padding: AppSpacing.allPaddingLg,
         children: [
-          // 繝励Λ繝ｳ繝舌ャ繧ｸ
+          // プランバッジ
           _PlanBadgeCard(purchase: purchase),
           AppSpacing.verticalSpacerMd,
 
-          // 蟄舌←繧ゅ・蜷榊燕
+          // 子どもの名前
           _ChildNameCard(settings: settings, ref: ref),
           AppSpacing.verticalSpacerMd,
 
-          _SectionHeader('蟄ｦ鄙定ｨｭ螳・),
+          _SectionHeader('学習設定'),
           _SoundToggle(settings: settings, ref: ref),
           _TTSSpeedCard(settings: settings, ref: ref),
           _AutoPlayToggle(settings: settings, ref: ref),
           _PhoneticToggle(settings: settings, ref: ref),
 
           AppSpacing.verticalSpacerMd,
-          _SectionHeader('騾夂衍險ｭ螳・),
+          _SectionHeader('通知設定'),
           _NotificationCard(settings: settings, ref: ref),
           _MorningEnglishCard(morningNotification: morningNotification, ref: ref),
 
           AppSpacing.verticalSpacerMd,
-          _SectionHeader('AI 繧ｭ繝ｼ險ｭ螳・),
+          _SectionHeader('AI キー設定'),
           _ApiKeysCard(apiKeys: apiKeys, ref: ref),
 
           AppSpacing.verticalSpacerMd,
-          _SectionHeader('繧｢繧ｫ繧ｦ繝ｳ繝・),
+          _SectionHeader('アカウント'),
           _SettingsTile(
             icon: Icons.star,
             color: AppColors.accentOrange,
-            label: '繝励Λ繝ｳ繧偵い繝・・繧ｰ繝ｬ繝ｼ繝・,
+            label: 'プランをアップグレード',
             subtitle: purchase.planDisplayName,
             onTap: () => Navigator.of(context).pushNamed('/upgrade'),
           ),
           _SettingsTile(
             icon: Icons.restore,
             color: AppColors.primary,
-            label: '雉ｼ蜈･繧貞ｾｩ蜈・,
-            subtitle: '莉･蜑阪・雉ｼ蜈･繧貞ｾｩ蜈・＠縺ｾ縺・,
+            label: '購入を復元',
+            subtitle: '以前の購入を復元します',
             onTap: () async {
               await ref.read(purchaseProvider.notifier).restore();
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('雉ｼ蜈･繧貞ｾｩ蜈・＠縺ｾ縺励◆')),
+                  const SnackBar(content: Text('購入を復元しました')),
                 );
               }
             },
@@ -77,24 +77,24 @@ class SettingsScreen extends ConsumerWidget {
           _SettingsTile(
             icon: Icons.bar_chart,
             color: AppColors.accentGreen,
-            label: '隕ｪ蜷代￠繝繝・す繝･繝懊・繝・,
-            subtitle: '蟄ｦ鄙定ｩｳ邏ｰ繝ｻ繧ｹ繝斐・繧ｭ繝ｳ繧ｰ蛻・梵',
+            label: '親向けダッシュボード',
+            subtitle: '学習詳細・スピーキング分析',
             onTap: () => Navigator.of(context).pushNamed('/parent'),
           ),
           _SettingsTile(
             icon: Icons.emoji_events,
             color: AppColors.accentOrange,
-            label: '繝舌ャ繧ｸ荳隕ｧ',
-            subtitle: '${progress.clearedStages.length}繧ｹ繝・・繧ｸ繧ｯ繝ｪ繧｢貂医∩',
+            label: 'バッジ一覧',
+            subtitle: '${progress.clearedStages.length}ステージクリア済み',
             onTap: () => Navigator.of(context).pushNamed('/badges'),
           ),
 
           AppSpacing.verticalSpacerMd,
-          _SectionHeader('縺昴・莉・),
+          _SectionHeader('その他'),
           _SettingsTile(
             icon: Icons.privacy_tip,
             color: AppColors.textMuted,
-            label: '繝励Λ繧､繝舌す繝ｼ繝昴Μ繧ｷ繝ｼ',
+            label: 'プライバシーポリシー',
             onTap: () => Navigator.of(context).pushNamed('/privacy'),
           ),
           _SettingsTile(
@@ -107,13 +107,13 @@ class SettingsScreen extends ConsumerWidget {
           _SettingsTile(
             icon: Icons.info,
             color: AppColors.textMuted,
-            label: '繧｢繝励Μ縺ｫ縺､縺・※',
-            subtitle: '繝舌・繧ｸ繝ｧ繝ｳ 1.1.0',
+            label: 'アプリについて',
+            subtitle: 'バージョン 1.1.0',
             onTap: () => showAboutDialog(
               context: context,
-              applicationName: '闍ｱ隱槭さ繝ｬ・・,
+              applicationName: '英語コレ！',
               applicationVersion: '1.1.0',
-              applicationLegalese: 'ﾂｩ 2026 ',
+              applicationLegalese: '© 2026 ',
             ),
           ),
 
@@ -124,7 +124,7 @@ class SettingsScreen extends ConsumerWidget {
   }
 }
 
-// 笏笏笏 Plan Badge 笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏
+// ─── Plan Badge ───────────────────────────────────────────
 
 class _PlanBadgeCard extends StatelessWidget {
   final PurchaseState purchase;
@@ -146,7 +146,7 @@ class _PlanBadgeCard extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
               child: Text(
-                isFree ? '・' : '箝・,
+                isFree ? '🆓' : '👑',
                 style: TextStyle(fontSize: AppTypography.displaySmall.fontSize),
               ),
             ),
@@ -156,12 +156,12 @@ class _PlanBadgeCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '迴ｾ蝨ｨ縺ｮ繝励Λ繝ｳ: ${purchase.planDisplayName}',
+                    '現在のプラン: ${purchase.planDisplayName}',
                     style: AppTypography.labelLarge,
                   ),
                   if (isFree)
                     const Text(
-                      '2騾ｱ髢鍋┌譁吶〒Pro繧偵♀隧ｦ縺励￥縺縺輔＞・・,
+                      '2週間無料でProをお試しください！',
                       style: AppTypography.bodySmall.copyWith(color: AppColors.accentOrange),
                     ),
                 ],
@@ -174,7 +174,7 @@ class _PlanBadgeCard extends StatelessWidget {
                   backgroundColor: AppColors.accentOrange,
                   padding: EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
                 ),
-                child: const Text('隧ｦ縺・),
+                child: const Text('試す'),
               ),
           ],
         ),
@@ -183,7 +183,7 @@ class _PlanBadgeCard extends StatelessWidget {
   }
 }
 
-// 笏笏笏 Child Name 笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏
+// ─── Child Name ───────────────────────────────────────────
 
 class _ChildNameCard extends StatelessWidget {
   final AppSettings settings;
@@ -195,9 +195,9 @@ class _ChildNameCard extends StatelessWidget {
     return Card(
       child: ListTile(
         leading: const Icon(Icons.child_care, color: AppColors.primary),
-        title: const Text('蟄舌←繧ゅ・蜷榊燕'),
+        title: const Text('子どもの名前'),
         subtitle: Text(
-          settings.childName.isEmpty ? '譛ｪ險ｭ螳夲ｼ医ち繝・・縺励※險ｭ螳夲ｼ・ : settings.childName,
+          settings.childName.isEmpty ? '未設定（タップして設定）' : settings.childName,
           style: TextStyle(color: settings.childName.isEmpty ? AppColors.textMuted : AppColors.textPrimary),
         ),
         trailing: const Icon(Icons.edit, color: AppColors.textMuted, size: 18),
@@ -211,23 +211,23 @@ class _ChildNameCard extends StatelessWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('蟄舌←繧ゅ・蜷榊燕繧定ｨｭ螳・),
+        title: const Text('子どもの名前を設定'),
         content: TextField(
           controller: ctrl,
           decoration: const InputDecoration(
-            hintText: '萓・ 縺溘ｍ縺・,
+            hintText: '例: たろう',
             border: OutlineInputBorder(),
           ),
           autofocus: true,
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('繧ｭ繝｣繝ｳ繧ｻ繝ｫ')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('キャンセル')),
           ElevatedButton(
             onPressed: () {
               ref.read(settingsProvider.notifier).setChildName(ctrl.text.trim());
               Navigator.pop(ctx);
             },
-            child: const Text('菫晏ｭ・),
+            child: const Text('保存'),
           ),
         ],
       ),
@@ -235,7 +235,7 @@ class _ChildNameCard extends StatelessWidget {
   }
 }
 
-// 笏笏笏 Sound Toggle 笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏
+// ─── Sound Toggle ───────────────────────────────────────────
 
 class _SoundToggle extends StatelessWidget {
   final AppSettings settings;
@@ -251,8 +251,8 @@ class _SoundToggle extends StatelessWidget {
           settings.soundEnabled ? Icons.volume_up : Icons.volume_off,
           color: AppColors.primary,
         ),
-        title: const Text('繧ｵ繧ｦ繝ｳ繝・),
-        subtitle: const Text('蜉ｹ譫憺浹縺ｨTTS繧呈怏蜉ｹ縺ｫ縺吶ｋ'),
+        title: const Text('サウンド'),
+        subtitle: const Text('効果音とTTSを有効にする'),
         value: settings.soundEnabled,
         onChanged: (v) => ref.read(settingsProvider.notifier).setSoundEnabled(v),
         activeThumbColor: AppColors.primary,
@@ -261,7 +261,7 @@ class _SoundToggle extends StatelessWidget {
   }
 }
 
-// 笏笏笏 TTS Speed 笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏
+// ─── TTS Speed ───────────────────────────────────────────
 
 class _TTSSpeedCard extends StatelessWidget {
   final AppSettings settings;
@@ -281,10 +281,10 @@ class _TTSSpeedCard extends StatelessWidget {
               children: [
                 const Icon(Icons.speed, color: AppColors.primary),
                 AppSpacing.horizontalSpacerSm,
-                Text('TTS逋ｺ髻ｳ騾溷ｺｦ', style: AppTypography.labelLarge),
+                Text('TTS発音速度', style: AppTypography.labelLarge),
                 const Spacer(),
                 Text(
-                  settings.ttsSpeed < 0.4 ? '繧・▲縺上ｊ' : settings.ttsSpeed > 0.7 ? '騾溘＞' : '譎ｮ騾・,
+                  settings.ttsSpeed < 0.4 ? 'ゆっくり' : settings.ttsSpeed > 0.7 ? '速い' : '普通',
                   style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
                 ),
               ],
@@ -301,8 +301,8 @@ class _TTSSpeedCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: const [
-                Text('繧・▲縺上ｊ', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
-                Text('騾溘＞', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
+                Text('ゆっくり', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
+                Text('速い', style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
               ],
             ),
           ],
@@ -312,7 +312,7 @@ class _TTSSpeedCard extends StatelessWidget {
   }
 }
 
-// 笏笏笏 Auto Play Toggle 笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏
+// ─── Auto Play Toggle ───────────────────────────────────────────
 
 class _AutoPlayToggle extends StatelessWidget {
   final AppSettings settings;
@@ -325,8 +325,8 @@ class _AutoPlayToggle extends StatelessWidget {
       margin: EdgeInsets.only(bottom: AppSpacing.xs),
       child: SwitchListTile(
         secondary: const Icon(Icons.play_circle, color: AppColors.listeningColor),
-        title: const Text('繝ｪ繧ｹ繝九Φ繧ｰ閾ｪ蜍募・逕・),
-        subtitle: const Text('蝠城｡後′蟋九∪縺｣縺溘ｉ閾ｪ蜍輔〒闍ｱ隱槭ｒ蜀咲函'),
+        title: const Text('リスニング自動再生'),
+        subtitle: const Text('問題が始まったら自動で英語を再生'),
         value: settings.autoPlayListening,
         onChanged: (v) => ref.read(settingsProvider.notifier).setAutoPlayListening(v),
         activeThumbColor: AppColors.listeningColor,
@@ -335,7 +335,7 @@ class _AutoPlayToggle extends StatelessWidget {
   }
 }
 
-// 笏笏笏 Phonetic Toggle 笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏
+// ─── Phonetic Toggle ───────────────────────────────────────────
 
 class _PhoneticToggle extends StatelessWidget {
   final AppSettings settings;
@@ -348,8 +348,8 @@ class _PhoneticToggle extends StatelessWidget {
       margin: EdgeInsets.only(bottom: AppSpacing.xs),
       child: SwitchListTile(
         secondary: const Icon(Icons.text_fields, color: AppColors.accentPurple),
-        title: const Text('逋ｺ髻ｳ險伜捷繧定｡ｨ遉ｺ'),
-        subtitle: const Text('IPA 逋ｺ髻ｳ險伜捷繧貞撫鬘後き繝ｼ繝峨↓陦ｨ遉ｺ'),
+        title: const Text('発音記号を表示'),
+        subtitle: const Text('IPA 発音記号を問題カードに表示'),
         value: settings.showPhonetics,
         onChanged: (v) => ref.read(settingsProvider.notifier).setShowPhonetics(v),
         activeThumbColor: AppColors.accentPurple,
@@ -358,7 +358,7 @@ class _PhoneticToggle extends StatelessWidget {
   }
 }
 
-// 笏笏笏 Notification Card 笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏
+// ─── Notification Card ───────────────────────────────────────────
 
 class _NotificationCard extends StatelessWidget {
   final AppSettings settings;
@@ -373,8 +373,8 @@ class _NotificationCard extends StatelessWidget {
         children: [
           SwitchListTile(
             secondary: const Icon(Icons.notifications, color: AppColors.accentOrange),
-            title: const Text('豈取律繝ｪ繝槭う繝ｳ繝繝ｼ'),
-            subtitle: const Text('豈取律縺ｮ蟄ｦ鄙偵ｒ騾夂衍縺ｧ繧ｵ繝昴・繝・),
+            title: const Text('毎日リマインダー'),
+            subtitle: const Text('毎日の学習を通知でサポート'),
             value: settings.notificationEnabled,
             onChanged: (v) async {
               if (v) {
@@ -394,7 +394,7 @@ class _NotificationCard extends StatelessWidget {
             ListTile(
               leading: const SizedBox(width: 24),
               title: Text(
-                '繝ｪ繝槭う繝ｳ繝繝ｼ譎ょ綾: ${settings.reminderTimeLabel}',
+                'リマインダー時刻: ${settings.reminderTimeLabel}',
                 style: AppTypography.bodySmall,
               ),
               trailing: const Icon(Icons.access_time, color: AppColors.textMuted),
@@ -419,7 +419,7 @@ class _NotificationCard extends StatelessWidget {
   }
 }
 
-// 笏笏笏 Helpers 笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏
+// ─── Helpers ───────────────────────────────────────────
 
 class _SectionHeader extends StatelessWidget {
   final String title;
@@ -474,7 +474,7 @@ class _SettingsTile extends StatelessWidget {
   }
 }
 
-// 笏笏笏 Morning English Card 笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏
+// ─── Morning English Card ───────────────────────────────────────────
 
 class _MorningEnglishCard extends StatelessWidget {
   final MorningNotificationState morningNotification;
@@ -492,8 +492,8 @@ class _MorningEnglishCard extends StatelessWidget {
         children: [
           SwitchListTile(
             secondary: const Icon(Icons.wb_sunny, color: AppColors.accentOrange),
-            title: const Text('譛晁恭隱樣夂衍'),
-            subtitle: const Text('豈取悃繝ｩ繝ｳ繝繝縺ｪ闍ｱ隱槭ヵ繝ｬ繝ｼ繧ｺ繧帝夂衍'),
+            title: const Text('朝英語通知'),
+            subtitle: const Text('毎朝ランダムな英語フレーズを通知'),
             value: morningNotification.isEnabled,
             onChanged: (v) async {
               if (v) {
@@ -514,7 +514,7 @@ class _MorningEnglishCard extends StatelessWidget {
             ListTile(
               leading: const SizedBox(width: 24),
               title: Text(
-                '騾夂衍譎ょ綾: ${morningNotification.timeLabel}',
+                '通知時刻: ${morningNotification.timeLabel}',
                 style: AppTypography.bodySmall,
               ),
               trailing: const Icon(Icons.access_time, color: AppColors.textMuted),
@@ -526,7 +526,7 @@ class _MorningEnglishCard extends StatelessWidget {
                 width: double.infinity,
                 child: OutlinedButton.icon(
                   icon: const Icon(Icons.notifications),
-                  label: const Text('繝・せ繝磯夂衍繧帝∽ｿ｡'),
+                  label: const Text('テスト通知を送信'),
                   onPressed: () async {
                     await ref
                         .read(morningNotificationStateProvider.notifier)
@@ -534,7 +534,7 @@ class _MorningEnglishCard extends StatelessWidget {
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('繝・せ繝磯夂衍繧帝∽ｿ｡縺励∪縺励◆'),
+                          content: Text('テスト通知を送信しました'),
                           duration: Duration(seconds: 2),
                         ),
                       );
@@ -578,7 +578,7 @@ class _MorningEnglishCard extends StatelessWidget {
   }
 }
 
-// 笏笏笏 API Keys Card 笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏
+// ─── API Keys Card ───────────────────────────────────────────
 
 class _ApiKeysCard extends StatelessWidget {
   final AiApiKeys apiKeys;
@@ -593,9 +593,9 @@ class _ApiKeysCard extends StatelessWidget {
         children: [
           ListTile(
             leading: const Icon(Icons.api, color: AppColors.primary),
-            title: const Text('Gemini API 繧ｭ繝ｼ'),
+            title: const Text('Gemini API キー'),
             subtitle: Text(
-              apiKeys.hasGeminiKey ? '笨・險ｭ螳壽ｸ医∩' : '譛ｪ險ｭ螳・,
+              apiKeys.hasGeminiKey ? '✅ 設定済み' : '未設定',
               style: TextStyle(
                 color: apiKeys.hasGeminiKey ? AppColors.accentGreen : AppColors.textMuted,
                 fontSize: AppTypography.bodySmall.fontSize,
@@ -607,9 +607,9 @@ class _ApiKeysCard extends StatelessWidget {
           const Divider(height: 1),
           ListTile(
             leading: const Icon(Icons.api, color: AppColors.accentPurple),
-            title: const Text('Claude API 繧ｭ繝ｼ'),
+            title: const Text('Claude API キー'),
             subtitle: Text(
-              apiKeys.hasClaudeKey ? '笨・險ｭ螳壽ｸ医∩ (繝輔か繝ｼ繝ｫ繝舌ャ繧ｯ)' : '譛ｪ險ｭ螳・,
+              apiKeys.hasClaudeKey ? '✅ 設定済み (フォールバック)' : '未設定',
               style: TextStyle(
                 color: apiKeys.hasClaudeKey ? AppColors.accentGreen : AppColors.textMuted,
                 fontSize: AppTypography.bodySmall.fontSize,
@@ -628,22 +628,22 @@ class _ApiKeysCard extends StatelessWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('$provider API 繧ｭ繝ｼ'),
+        title: Text('$provider API キー'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               provider == 'Gemini'
-                  ? 'Google AI Studio (https://aistudio.google.com) 縺九ｉ蜿門ｾ励＠縺溘く繝ｼ繧貞・蜉帙＠縺ｦ縺上□縺輔＞'
-                  : 'Anthropic 繧ｳ繝ｳ繧ｽ繝ｼ繝ｫ縺九ｉ蜿門ｾ励＠縺溘く繝ｼ繧貞・蜉帙＠縺ｦ縺上□縺輔＞',
+                  ? 'Google AI Studio (https://aistudio.google.com) からキーを取得して入力してください'
+                  : 'Anthropic コンソールからキーを取得して入力してください',
               style: TextStyle(fontSize: AppTypography.bodySmall.fontSize, color: AppColors.textMuted),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: ctrl,
               decoration: const InputDecoration(
-                hintText: 'API 繧ｭ繝ｼ繧貞・蜉・,
+                hintText: 'API キーを入力',
                 border: OutlineInputBorder(),
                 isCollapsed: true,
                 contentPadding: EdgeInsets.all(10),
@@ -665,9 +665,9 @@ class _ApiKeysCard extends StatelessWidget {
                 }
                 Navigator.pop(ctx);
               },
-              child: Text('蜑企勁', style: AppTypography.bodySmall.copyWith(color: AppColors.error)),
+              child: Text('削除', style: AppTypography.bodySmall.copyWith(color: AppColors.error)),
             ),
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('繧ｭ繝｣繝ｳ繧ｻ繝ｫ')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('キャンセル')),
           ElevatedButton(
             onPressed: () {
               if (provider == 'Gemini') {
@@ -677,14 +677,13 @@ class _ApiKeysCard extends StatelessWidget {
               }
               Navigator.pop(ctx);
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('$provider 繧ｭ繝ｼ繧剃ｿ晏ｭ倥＠縺ｾ縺励◆')),
+                SnackBar(content: Text('$provider キーを保存しました')),
               );
             },
-            child: const Text('菫晏ｭ・),
+            child: const Text('保存'),
           ),
         ],
       ),
     );
   }
 }
-
