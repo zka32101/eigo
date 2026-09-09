@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_core/shared_core.dart';
 import '../providers/purchase_provider.dart';
+import 'paywall_screen.dart';
 
 enum PlanType { lite, pro, plus, premium }
 
@@ -28,6 +29,9 @@ class _UpgradeScreenState extends ConsumerState<UpgradeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // クイック購入ボタン（シンプルな購入画面へのショートカット）
+            _QuickPurchaseButton(),
+            AppSpacing.verticalSpacerLg,
             _HeroSection(),
             AppSpacing.verticalSpacerLg,
             _ComparisonHeader(),
@@ -495,6 +499,56 @@ class _Disclaimer extends StatelessWidget {
       '現在の期間が終了する24時間前までに解約しない限り、自動的に更新されます。\n'
       'いつでも設定からキャンセルできます。',
       style: AppTypography.bodySmall.copyWith(fontSize: 11, color: AppColors.textMuted, height: 1.5),
+    );
+  }
+}
+
+class _QuickPurchaseButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [AppColors.accentGreen, Color(0xFF66BB6A)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const PaywallScreen(),
+              ),
+            );
+          },
+          borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
+          child: Padding(
+            padding: EdgeInsets.all(AppSpacing.md),
+            child: Column(
+              children: [
+                Text(
+                  '🚀 Pro プランをすぐに始める',
+                  style: AppTypography.headlineSmall.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textWhite,
+                  ),
+                ),
+                AppSpacing.verticalSpacerXs,
+                Text(
+                  '月額¥120 • シンプルな購入画面へ',
+                  style: AppTypography.bodySmall.copyWith(
+                    color: AppColors.textWhite.withOpacity(0.9),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
