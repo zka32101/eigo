@@ -2,7 +2,9 @@ import '../design_system/design_system.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_core/shared_core.dart';
 import '../providers/progress_provider.dart';
+import '../providers/screen_time_provider.dart';
 import '../providers/speaking_history_provider.dart';
 import '../widgets/skill_progress_bar.dart';
 import '../widgets/speaking_score_ring.dart';
@@ -43,6 +45,8 @@ class ParentDashboardScreen extends ConsumerWidget {
             _AIAdviceCard(progress: progress, history: history),
             AppSpacing.verticalSpacerMd,
             _ParentActionCard(progress: progress),
+            AppSpacing.verticalSpacerMd,
+            const _ScreenTimeCard(),
             AppSpacing.verticalSpacerXxl,
           ],
         ),
@@ -490,6 +494,53 @@ class _ParentActionCard extends StatelessWidget {
             _ActionItem('ステージ1をクリアする', progress.clearedStages.contains('stage_1')),
             _ActionItem('ステージ3をクリアする', progress.clearedStages.contains('stage_3')),
             _ActionItem('親子で英語のあいさつを練習', progress.streakDays >= 7),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ─── Screen Time ────────────────────────────────────────────────────────────
+
+/// 利用時間制限（スクリーンタイム管理）セクション。
+///
+/// 現在の設定状況を表示し、変更は `requireParentalGate` を通してから
+/// [ScreenTimeSettingsScreen] へ遷移する（デフォルトは「制限なし」）。
+class _ScreenTimeCard extends ConsumerWidget {
+  const _ScreenTimeCard();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final screenTime = ref.watch(screenTimeProvider);
+    final settings = screenTime.settings;
+    final statusText = settings.enabled
+        ? '1日 ${settings.dailyLimitMinutes ?? 0}分まで（今日 ${screenTime.usage.usedMinutes}分利用）'
+        : '制限なし';
+
+    return Card(
+      child: Padding(
+        padding: AppSpacing.allPaddingMd,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('⏰ 利用時間制限',
+                style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+            AppSpacing.verticalSpacerXs,
+            Text(statusText, style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted)),
+            AppSpacing.verticalSpacerSm,
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton.icon(
+                icon: const Icon(Icons.settings, size: 18),
+                label: const Text('設定を変更'),
+                onPressed: () async {
+                  final passedGate = await requireParentalGate(context);
+                  if (!passedGate || !context.mounted) return;
+                  Navigator.of(context).pushNamed('/screen-time-settings');
+                },
+              ),
+            ),
           ],
         ),
       ),

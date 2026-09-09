@@ -9,6 +9,7 @@ import 'models/video_model.dart';
 import 'models/pet_model.dart';
 import 'providers/character_provider.dart';
 import 'providers/purchase_provider.dart';
+import 'providers/screen_time_provider.dart';
 import 'providers/settings_provider.dart';
 import 'screens/badge_screen.dart';
 import 'screens/home_screen.dart';
@@ -16,6 +17,7 @@ import 'screens/lesson_screen.dart';
 import 'screens/explanation_menu_screen.dart';
 import 'screens/onboarding_screen.dart';
 import 'screens/parent_dashboard_screen.dart';
+import 'screens/screen_time_settings_screen.dart';
 import 'screens/privacy_policy_screen.dart';
 import 'screens/result_screen.dart';
 import 'screens/settings_screen.dart';
@@ -113,6 +115,7 @@ Future<void> main() async {
   final container = ProviderContainer(
     overrides: [
       characterStateProvider.overrideWith(CharacterNotifier.new),
+      screenTimeProvider.overrideWith(ScreenTimeNotifier.new),
       // リアルタイム対戦（マルチプレイ）: Firestore実装（eigo_ プレフィックス）を注入
       matchmakingHandlersProvider.overrideWithValue(matchmakingService.matchmakingHandlers),
       matchHandlersProvider.overrideWithValue(matchmakingService.matchHandlers),
@@ -158,6 +161,7 @@ class EigoKoreApp extends ConsumerWidget {
         '/settings': (context) => const SettingsScreen(),
         '/badges': (context) => const BadgeScreen(),
         '/parent': (context) => const ParentDashboardScreen(),
+        '/screen-time-settings': (context) => const ScreenTimeSettingsScreen(),
         '/privacy': (context) => const PrivacyPolicyScreen(),
         '/upgrade': (context) => const UpgradeScreen(),
         '/test-prep': (context) => const TestPrepScreen(),
@@ -332,6 +336,14 @@ class _RootShellState extends ConsumerState<RootShell> {
 
   @override
   Widget build(BuildContext context) {
+    final notifier = ref.read(screenTimeProvider.notifier);
+    final limitReached = ref.watch(
+      screenTimeProvider.select((_) => notifier.isLimitReached),
+    );
+    if (limitReached) {
+      return const ScreenTimeLimitReachedWidget(primaryColor: AppColors.primary);
+    }
+
     return Scaffold(
       body: IndexedStack(
         index: _tab,
