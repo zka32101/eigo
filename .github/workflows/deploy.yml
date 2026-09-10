@@ -1,16 +1,34 @@
-﻿name: Build and Deploy APK
+name: Build and Deploy APK
 
 on:
   push:
     tags:
       - 'v*'
   workflow_dispatch:
+    inputs:
+      auto_tag:
+        description: 'Auto-create version tag'
+        required: false
+        default: 'true'
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      build_success: ${{ steps.build_status.outputs.success }}
+      app_version: ${{ steps.get_version.outputs.version }}
+
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Get app version
+        id: get_version
+        run: |
+          VERSION=$(grep "version:" pubspec.yaml | head -1 | sed 's/version: //g')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "App Version: $VERSION"
 
       - name: Clone shared_core
         run: |
@@ -21,6 +39,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.x'
+          cache: true
 
       - name: Get Flutter version
         run: |
@@ -35,7 +54,9 @@ jobs:
           cat android/local.properties
 
       - name: Get dependencies
-        run: flutter pub get
+        run: |
+          flutter pub get
+          flutter pub cache repair
 
       - name: Setup signing keystore
         run: |
@@ -48,16 +69,31 @@ jobs:
           fi
 
       - name: Build APK
+        id: build_apk
+        continue-on-error: true
         run: |
           set -o pipefail
           flutter build apk --release -v 2>&1 | tee build_apk.log
           exit ${PIPESTATUS[0]}
 
       - name: Build AAB
+        id: build_aab
+        continue-on-error: true
         run: |
           set -o pipefail
           flutter build appbundle --release -v 2>&1 | tee build_aab.log
           exit ${PIPESTATUS[0]}
+
+      - name: Set build status
+        id: build_status
+        run: |
+          if [ "${{ steps.build_apk.outcome }}" = "success" ] && [ "${{ steps.build_aab.outcome }}" = "success" ]; then
+            echo "success=true" >> $GITHUB_OUTPUT
+            echo "✅ Build succeeded"
+          else
+            echo "success=false" >> $GITHUB_OUTPUT
+            echo "❌ Build failed"
+          fi
 
       - name: Upload build logs
         if: always()
@@ -67,14 +103,23 @@ jobs:
           path: |
             build_apk.log
             build_aab.log
+          retention-days: 30
 
-      - name: Upload artifacts
+      - name: Upload APK artifact
+        if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: build-artifacts
-          path: |
-            build/app/outputs/apk/release/app-release.apk
-            build/app/outputs/bundle/release/app-release.aab
+          name: apk-release
+          path: build/app/outputs/apk/release/app-release.apk
+          retention-days: 90
+
+      - name: Upload AAB artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: aab-release
+          path: build/app/outputs/bundle/release/app-release.aab
+          retention-days: 90
 
       - name: Setup Python for Google Drive upload
         if: always()
@@ -88,9 +133,48 @@ jobs:
           pip install google-auth google-auth-httplib2 google-api-python-client
 
       - name: Upload to Google Drive
-        if: always()
+        if: always() && success()
         continue-on-error: true
         env:
           GOOGLE_DRIVE_SERVICE_ACCOUNT_KEY: ${{ secrets.GOOGLE_DRIVE_SERVICE_ACCOUNT_KEY }}
           GOOGLE_DRIVE_FOLDER_ID: ${{ secrets.GOOGLE_DRIVE_FOLDER_ID || '1kqPMiEnGtF7sRNiYsds9_9YvuPsT1Rfu' }}
         run: python scripts/upload_to_drive.py
+
+  create_release:
+    needs: build
+    if: success() && startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            artifacts/apk-release/*
+            artifacts/aab-release/*
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  notify:
+    needs: build
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build status notification
+        run: |
+          if [ "${{ needs.build.outputs.build_success }}" = "true" ]; then
+            echo "✅ Build v${{ needs.build.outputs.app_version }} succeeded!"
+            echo "📦 Artifacts: APK and AAB ready for deployment"
+          else
+            echo "❌ Build v${{ needs.build.outputs.app_version }} failed!"
+            echo "⚠️ Check logs for details"
+          fi
