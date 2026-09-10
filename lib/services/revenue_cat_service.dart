@@ -7,7 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show PlatformException;
 import 'package:purchases_flutter/purchases_flutter.dart';
 
-import '../config/constants.dart';
+import '../config/revenuecat_config.dart';
 
 class RevenueCatService {
   static final RevenueCatService _instance = RevenueCatService._internal();
@@ -31,7 +31,7 @@ class RevenueCatService {
     try {
       // Set API key
       await Purchases.configure(
-        PurchasesConfiguration(AppConstants.revenueCatApiKey),
+        PurchasesConfiguration(RevenueCatConfig.apiKey),
       );
 
       _isInitialized = true;
