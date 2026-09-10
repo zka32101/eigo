@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_core/shared_core.dart' hide lessonProvider;
 import 'package:shared_core/shared_core.dart'
-    show badgeProvider, unifiedBadges, BadgeNotifier;
+    show badgeProvider, unifiedBadges, BadgeNotifier, rankingProvider, friendProvider;
 
 import '../design_system/design_system.dart';
 import 'models/challenge_model.dart';
@@ -96,6 +96,8 @@ import 'services/eigo_matchmaking_service.dart';
 import 'services/firebase_service.dart';
 import 'services/notification_service.dart';
 import 'services/purchase_service.dart';
+import 'services/firestore_ranking_service.dart';
+import 'services/firestore_friend_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -161,6 +163,17 @@ Future<void> main() async {
 
   // バッジシステム初期化: 統一バッジを主題タグで初期化
   container.read(badgeProvider.notifier).setBadgeDefinitions(unifiedBadges, subject: 'eigo');
+
+  // Firestore ランキング・フレンド サービスの初期化
+  final rankingService = FirestoreRankingService();
+  final friendService = FirestoreFriendService();
+
+  // Handler を shared_core provider に注入
+  container.read(rankingProvider.notifier).setFetchHandler(rankingService.fetchRankings);
+  container.read(friendProvider.notifier)
+    ..setFetchHandler(friendService.fetchFriends)
+    ..setAddFriendHandler(friendService.addFriend)
+    ..setRemoveFriendHandler(friendService.removeFriend);
 
   runApp(UncontrolledProviderScope(container: container, child: const EigoKoreApp()));
 }
