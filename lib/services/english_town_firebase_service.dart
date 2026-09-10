@@ -64,8 +64,6 @@ class EnglishTownFirebaseService {
         'visitedLocationIds': progress.visitedLocationIds.toList(),
         'unlockedAchievements': progress.unlockedAchievements.toList(),
         'npcConversationCounts': progress.npcConversationCounts,
-        'currentTimeOfDay': progress.currentTimeOfDay.toString(),
-        'currentWeather': progress.currentWeather.toString(),
         'lastSyncedAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
     } catch (e) {
@@ -179,7 +177,6 @@ class EnglishTownFirebaseService {
         'xpEarned': xpEarned,
         'coinsEarned': coinsEarned,
         'responseScore': responseScore,
-        'difficulty': difficulty.toString(),
         'timestamp': FieldValue.serverTimestamp(),
       });
     } catch (e) {
