@@ -2,7 +2,7 @@ import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_core/shared_core.dart';
+import 'package:shared_core/shared_core.dart' hide lessonProvider;
 import 'models/stage.dart';
 import 'models/challenge_model.dart';
 import 'models/video_model.dart';
@@ -10,6 +10,7 @@ import 'models/pet_model.dart';
 import 'providers/character_provider.dart';
 import 'providers/purchase_provider.dart';
 import 'providers/screen_time_provider.dart';
+import 'providers/lesson_provider.dart' show LessonNotifier, lessonProvider;
 import 'providers/settings_provider.dart';
 import 'screens/badge_screen.dart';
 import 'screens/home_screen.dart';
@@ -134,6 +135,7 @@ Future<void> main() async {
     overrides: [
       characterStateProvider.overrideWith(CharacterNotifier.new),
       screenTimeProvider.overrideWith(ScreenTimeNotifier.new),
+      lessonProvider.overrideWith(LessonNotifier.new),
       // リアルタイム対戦（マルチプレイ）: Firestore実装（eigo_ プレフィックス）を注入
       matchmakingHandlersProvider.overrideWithValue(matchmakingService.matchmakingHandlers),
       matchHandlersProvider.overrideWithValue(matchmakingService.matchHandlers),
