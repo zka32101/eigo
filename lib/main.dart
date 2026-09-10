@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_core/shared_core.dart' hide lessonProvider;
+import 'package:shared_core/shared_core.dart'
+    show badgeProvider, unifiedBadges, BadgeNotifier;
 import 'models/stage.dart';
 import 'models/challenge_model.dart';
 import 'models/video_model.dart';
@@ -149,6 +151,9 @@ Future<void> main() async {
       );
   // 未送信キューの再送信を試みる
   await container.read(feedbackProvider.notifier).retryPendingReports();
+
+  // バッジシステム初期化: 統一バッジを主題タグで初期化
+  container.read(badgeProvider.notifier).setBadgeDefinitions(unifiedBadges, subject: 'eigo');
 
   runApp(UncontrolledProviderScope(container: container, child: const EigoKoreApp()));
 }
