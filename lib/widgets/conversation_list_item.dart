@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../models/message.dart';
-import '../design_system/design_system.dart';
 
-/// List item widget for displaying a conversation in the conversation list
+import '../design_system/design_system.dart';
+import '../models/message.dart';
+
 class ConversationListItem extends StatelessWidget {
   final Conversation conversation;
   final VoidCallback? onTap;

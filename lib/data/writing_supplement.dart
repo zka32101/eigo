@@ -1,9 +1,5 @@
 import '../models/question.dart';
 
-// ライティング問題補完 - Stage 3-40 (各2問)
-// stage_data.dart で [...stageXXQuestions, ...stageXXWriting] として結合
-
-// Stage 3: Colors
 final stage3Writing = <Question>[
   const Question(id: 's3_w1', type: QuestionType.writing, difficulty: DifficultyLevel.beginner,
     text: 'あか', textJa: '日本語を英語にしよう',

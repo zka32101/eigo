@@ -1,9 +1,8 @@
-import 'package:eigo_kore/models/npc_extended_model.dart';
 import 'package:eigo_kore/models/dialogue_template_model.dart';
+import 'package:eigo_kore/models/npc_extended_model.dart';
 import 'package:eigo_kore/models/npc_location_model.dart';
 import 'package:eigo_kore/services/dialogue_engine_service.dart';
 
-/// タウンマップNPCダイアログ統合サービス
 class TownNPCDialogueIntegrationService {
   static final TownNPCDialogueIntegrationService _instance =
       TownNPCDialogueIntegrationService._internal();

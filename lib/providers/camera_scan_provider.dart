@@ -1,10 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
+
 import '../models/camera_scan_model.dart';
 import '../services/logger_service.dart';
 
-/// My Dictionary - all scanned vocabulary items
 final myDictionaryProvider = StateNotifierProvider<MyDictionaryNotifier, List<ScannedVocabulary>>((ref) {
   return MyDictionaryNotifier();
 });

@@ -1,12 +1,5 @@
 import 'package:shared_core/shared_core.dart';
 
-/// 英語コレ！キャラクター図鑑データ。
-///
-/// 旧 `characterCatalog`（lib/models/character_model.dart、独自実装）の
-/// 8体のデザイン・世界観を踏襲しつつ、shared_core の [BaseCharacter] 形式
-/// （tier / unlockAt / subject / backstory / stampPhrases）に作り直したもの。
-/// unlockAt はクリアステージ数（全80ステージ）を基準に、4Tier×2体で
-/// 均等に配置している。
 const List<BaseCharacter> kEigoCharacters = [
   // ─── Tier 1（入門） ────────────────────────────────────────────────────
 

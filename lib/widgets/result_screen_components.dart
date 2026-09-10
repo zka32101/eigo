@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../models/badge_model.dart';
 import '../models/stage.dart';
 import '../theme/app_theme.dart';
@@ -6,10 +7,6 @@ import '../theme/component_styles.dart';
 import '../theme/sizes.dart';
 import '../theme/spacing.dart';
 import '../theme/typography.dart';
-
-/// 結果画面用の改善されたコンポーネント
-
-// ─── 結果ヘッダー（改善版） ───
 
 class ImprovedResultHeader extends StatelessWidget {
   final bool isPassed;

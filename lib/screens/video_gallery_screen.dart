@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/video_model.dart';
-import '../providers/video_provider.dart';
-import '../providers/user_profile_provider.dart';
+
 import '../design_system/design_system.dart';
+import '../models/video_model.dart';
+import '../providers/user_profile_provider.dart';
+import '../providers/video_provider.dart';
 import 'video_player_screen.dart';
 
-/// 発音動画ギャラリー画面
 class VideoGalleryScreen extends ConsumerStatefulWidget {
   const VideoGalleryScreen({Key? key}) : super(key: key);
 

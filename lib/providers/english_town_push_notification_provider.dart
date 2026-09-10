@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../services/english_town_push_notification_service.dart';
+
 import '../services/english_town_firebase_service.dart';
+import '../services/english_town_push_notification_service.dart';
 import 'english_town_firebase_provider.dart';
 
-/// Push notification service instance
 final pushNotificationServiceProvider =
     Provider<EnglishTownPushNotificationService>((ref) {
   return EnglishTownPushNotificationService();

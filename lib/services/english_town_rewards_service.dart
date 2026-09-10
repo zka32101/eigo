@@ -1,6 +1,5 @@
 import '../models/english_town_model.dart';
 
-/// Reward calculation and milestone tracking for English-Only Town
 class EnglishTownRewardsService {
   /// Calculate XP reward based on difficulty and response quality
   ///

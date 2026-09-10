@@ -1,10 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_core/shared_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
+
 import '../models/badge_model.dart';
-import 'progress_provider.dart';
 import '../services/logger_service.dart';
+import 'progress_provider.dart';
 
 class BadgeState {
   final List<EarnedBadge> earnedBadges;

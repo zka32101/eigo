@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../models/challenge_model.dart';
 import '../services/challenge_service.dart';
 
-// Service provider
 final challengeServiceProvider = Provider((ref) {
   return ChallengeService();
 });

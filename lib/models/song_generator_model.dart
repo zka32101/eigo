@@ -2,7 +2,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'song_generator_model.g.dart';
 
-/// 童謡メロディのテンプレート
 enum TraditionalMelody {
   twinkleTwinkleLittleStar(
     '🌟 きらきら星',

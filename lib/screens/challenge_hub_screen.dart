@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../design_system/design_system.dart';
 import '../models/challenge_model.dart';
 import '../providers/challenge_provider.dart';
-import '../design_system/design_system.dart';
 import '../widgets/challenge_card.dart';
 
 class ChallengeHubScreen extends ConsumerStatefulWidget {

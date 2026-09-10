@@ -1,10 +1,11 @@
-import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+
 import '../data/stage_data.dart';
-import '../providers/pronunciation_provider.dart';
+import '../design_system/design_system.dart';
 import '../models/stage.dart';
+import '../providers/pronunciation_provider.dart';
 
 class PronunciationCheckScreen extends ConsumerStatefulWidget {
   final Stage stage;

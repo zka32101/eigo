@@ -1,8 +1,7 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:eigo_kore/models/npc_relationship_model.dart';
 import 'package:eigo_kore/services/npc_relationship_service.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// NPC関係管理サービスプロバイダー
 final npcRelationshipServiceProvider =
     Provider<NPCRelationshipService>((ref) {
   return NPCRelationshipService.getInstance();

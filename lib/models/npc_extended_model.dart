@@ -2,7 +2,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'npc_extended_model.g.dart';
 
-/// NPC性格特性
 enum NPCPersonalityTrait {
   friendly('親友的', 'Friendly', '😊'),
   serious('真面目', 'Serious', '😐'),

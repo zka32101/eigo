@@ -1,14 +1,11 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../models/english_town_model.dart';
-import 'english_town_provider.dart';
 import 'english_town_firebase_provider.dart';
 import 'english_town_polish_provider.dart';
+import 'english_town_provider.dart';
 
-/// ==================== AUTO-SYNC PROVIDERS ====================
-
-/// Auto-sync progress to cloud whenever it changes
-/// This provider watches the local progress and syncs to Firebase
 final autoSyncProgressProvider = FutureProvider<void>((ref) async {
   final progress = ref.watch(townProgressProvider);
   final firebaseAvailable = ref.watch(cloudSyncAvailableProvider);

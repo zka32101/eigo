@@ -1,13 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// eigo-kore アプリケーション全体で使用するカラーパレット
-/// Material Design 3 に準拠した統一された色定義
-///
-/// 使用例:
-/// ```dart
-/// Text('Hello', style: TextStyle(color: AppColors.textPrimary))
-/// Container(color: AppColors.surfaceLight)
-/// ```
 class AppColors {
   // ===== プライマリーカラー =====
 

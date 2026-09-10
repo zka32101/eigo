@@ -2,7 +2,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'parent_child_battle_model.g.dart';
 
-/// Parent-child duo battle mode
 @JsonSerializable()
 class ParentChildBattle {
   final String battleId;

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/friend_request.dart';
-import '../design_system/design_system.dart';
 
-/// Card widget for displaying a friend request
-/// Shows sender info and accept/decline actions
+import '../design_system/design_system.dart';
+import '../models/friend_request.dart';
+
 class FriendRequestCard extends ConsumerWidget {
   final FriendRequest request;
   final VoidCallback? onAccept;

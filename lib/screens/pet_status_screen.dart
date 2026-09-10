@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/pet_model.dart';
+
 import '../design_system/design_system.dart';
+import '../models/pet_model.dart';
 import '../providers/pet_provider.dart';
 import '../providers/user_profile_provider.dart';
 import 'pet_interaction_screen.dart';
 
-/// ペットステータス画面
 class PetStatusScreen extends ConsumerWidget {
   const PetStatusScreen({Key? key}) : super(key: key);
 

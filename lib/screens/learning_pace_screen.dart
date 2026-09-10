@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../design_system/design_system.dart';
 import '../models/learning_pace_model.dart';
 import '../providers/learning_pace_provider.dart';
-import '../design_system/design_system.dart';
 
 class LearningPaceScreen extends ConsumerWidget {
   const LearningPaceScreen({super.key});

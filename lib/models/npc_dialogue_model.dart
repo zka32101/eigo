@@ -1,9 +1,8 @@
-import 'package:json_annotation/json_annotation.dart';
 import 'package:eigo_kore/models/npc_behavior_model.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 part 'npc_dialogue_model.g.dart';
 
-/// 対話タイプ
 enum DialogueType {
   greeting('挨拶', 'Greeting'),
   farewell('別れ', 'Farewell'),

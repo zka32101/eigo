@@ -1,8 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:uuid/uuid.dart';
+
 import '../models/conversation_message.dart';
 import '../services/claude_api_service.dart';
 import '../services/gemini_service.dart';
-import 'package:uuid/uuid.dart';
 
 final claudeConversationProvider = StateNotifierProvider<
     ClaudeConversationNotifier,

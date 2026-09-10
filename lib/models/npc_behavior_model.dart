@@ -2,7 +2,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'npc_behavior_model.g.dart';
 
-/// NPC性格タイプ
 enum PersonalityType {
   cheerful('陽気', 'Cheerful'),
   calm('冷静', 'Calm'),

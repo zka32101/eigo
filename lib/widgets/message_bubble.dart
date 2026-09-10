@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import '../models/message.dart';
-import '../design_system/design_system.dart';
 
-/// Widget for displaying a single message in a conversation
-/// Shows different styling for sent vs received messages
+import '../design_system/design_system.dart';
+import '../models/message.dart';
+
 class MessageBubble extends StatelessWidget {
   final Message message;
   final bool isSent; // true if current user sent this message

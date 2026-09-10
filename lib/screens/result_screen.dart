@@ -1,13 +1,14 @@
-import '../design_system/design_system.dart';
 import 'package:confetti/confetti.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../design_system/design_system.dart';
 import '../models/badge_model.dart';
 import '../models/stage.dart';
 import '../providers/level_provider.dart';
-import '../widgets/xp_bar.dart';
 import '../widgets/result_screen_components.dart';
+import '../widgets/xp_bar.dart';
 
 class ResultScreen extends ConsumerStatefulWidget {
   final Map<String, dynamic> args;

@@ -1,7 +1,5 @@
 import 'package:eigo_kore/models/dialogue_template_model.dart';
 
-/// 応答検証サービス（シングルトンパターン）
-/// ユーザー応答が評価基準を満たしているかを検証
 class ResponseValidationService {
   static final ResponseValidationService _instance =
       ResponseValidationService._internal();

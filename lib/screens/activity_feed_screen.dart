@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../design_system/design_system.dart';
 import '../models/social_model.dart';
 import '../providers/social_provider.dart';
-import '../design_system/design_system.dart';
 import '../widgets/activity_card.dart';
 
 class ActivityFeedScreen extends ConsumerStatefulWidget {

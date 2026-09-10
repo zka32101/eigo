@@ -1,9 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:eigo_kore/models/npc_relationship_model.dart';
 import 'package:eigo_kore/providers/npc_relationship_provider.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// NPC関係表示ウィジェット
 class NPCRelationshipWidget extends ConsumerWidget {
   final String npcId;
   final String npcName;

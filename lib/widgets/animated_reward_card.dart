@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+
+import '../design_system/design_system.dart';
 import '../models/english_town_advanced.dart';
 import '../services/english_town_animation_service.dart';
-import '../design_system/design_system.dart';
 
-/// Animated reward card widget for XP and coin display
 class AnimatedRewardCard extends StatefulWidget {
   final String emoji;
   final String label;

@@ -1,11 +1,12 @@
 import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
+
 import '../config/revenuecat_config.dart';
 import '../models/purchase_model.dart';
 import '../services/purchase_service.dart';
 
-// Subscription plan enum (legacy support)
 enum PurchasePlan {
   free,
   lite,

@@ -1,10 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../models/admin_dashboard_model.dart';
 import '../services/admin_dashboard_service.dart';
 
-// ===== Service Provider =====
-
-/// Admin dashboard service provider
 final adminDashboardServiceProvider =
     Provider<AdminDashboardService>((ref) {
   return AdminDashboardService();

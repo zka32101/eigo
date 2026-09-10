@@ -1,10 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../models/friend_request.dart';
 import '../models/user_profile.dart';
 import 'logger_service.dart';
 
-/// Service for managing friend relationships and requests
-/// Phase 14 Part 2: Friend System
 class FriendService {
   static final FriendService _instance = FriendService._internal();
 

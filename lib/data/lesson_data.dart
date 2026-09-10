@@ -1,10 +1,5 @@
 import 'package:shared_core/shared_core.dart';
 
-/// 英語コレ「学ぶ（解説メニュー）」記事一覧
-///
-/// LessonMenuPage / LessonDetailPage（shared_core）から参照される。
-/// アプリの性質上、本文は日本語の解説文。英単語自体にふりがなマークアップは使わず、
-/// 説明文中の漢字に読みやすさのため適度にふりがなを付ける程度に留める。
 const List<LessonContent> kLessons = [
   LessonContent(
     id: 'lesson_alphabet',

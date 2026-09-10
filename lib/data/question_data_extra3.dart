@@ -1,7 +1,5 @@
 import '../models/question.dart';
 
-// ─── Stage 21: Phrases 1（よく使うフレーズ） ──────────────────────────────
-
 final stage21Questions = <Question>[
   const Question(id: 's21_l1', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,
     text: 'Can I have this?', textJa: '何を言っているか選ぼう', imageEmoji: '🙋',

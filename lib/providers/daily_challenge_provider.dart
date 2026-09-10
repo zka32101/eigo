@@ -1,10 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
+
 import '../models/daily_challenge_model.dart';
 import '../services/logger_service.dart';
 
-/// Mock database of daily challenges (180+ phrases)
 final _challengeDatabase = [
   DailyChallenge(
     challengeId: '2026-09-01',

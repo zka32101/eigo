@@ -1,10 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
+
 import '../models/passport_model.dart';
 import '../providers/user_profile_provider.dart';
 
-/// パスポートプロフィールProvider（ユーザーの統合プロフィール）
 final passportProfileProvider =
     StateNotifierProvider<PassportProfileNotifier, AsyncValue<PassportProfile?>>((ref) {
   return PassportProfileNotifier(ref);

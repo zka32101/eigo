@@ -1,11 +1,12 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
-import 'dart:async';
+
 import '../models/teacher_mode_model.dart';
 import '../services/logger_service.dart';
 
-/// Teacher Modeプロバイダー：現在のセッション管理
 final teacherModeSessionProvider =
     StateNotifierProvider<TeacherModeSessionNotifier, TeacherModeSession?>((ref) {
   return TeacherModeSessionNotifier();

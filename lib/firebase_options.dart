@@ -1,9 +1,3 @@
-// このファイルは firebase_core の初期化に必要です。
-// 実際の google-services.json を追加した後、
-// `flutterfire configure` コマンドで上書きしてください。
-//
-// 現在は Firebase 未設定のため、初期化は graceful fallback で処理されます。
-
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform;
 

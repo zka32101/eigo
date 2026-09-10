@@ -1,6 +1,7 @@
-import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../design_system/design_system.dart';
 import '../widgets/educational_illustrations.dart';
 
 class OnboardingScreen extends StatefulWidget {

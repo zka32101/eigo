@@ -1,10 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
+
 import '../models/parent_child_battle_model.dart';
 import '../services/logger_service.dart';
 
-/// Current parent-child battle session
 final currentParentChildBattleProvider = StateNotifierProvider<ParentChildBattleNotifier, ParentChildBattle?>((ref) {
   return ParentChildBattleNotifier();
 });

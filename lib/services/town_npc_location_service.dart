@@ -1,7 +1,6 @@
-import 'package:eigo_kore/models/npc_location_model.dart';
 import 'package:eigo_kore/models/english_town_model.dart';
+import 'package:eigo_kore/models/npc_location_model.dart';
 
-/// NPCの位置管理サービス
 class TownNPCLocationService {
   static final TownNPCLocationService _instance =
       TownNPCLocationService._internal();

@@ -1,6 +1,5 @@
 import '../models/analytics_model.dart';
 
-/// Service for tracking and aggregating player analytics
 class EnglishTownAnalyticsService {
   static final EnglishTownAnalyticsService _instance =
       EnglishTownAnalyticsService._internal();

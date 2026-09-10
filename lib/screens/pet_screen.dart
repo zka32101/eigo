@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../design_system/design_system.dart';
 import '../models/pet_model.dart';
 import '../providers/pet_provider.dart';
 import '../providers/user_profile_provider.dart';
-import '../design_system/design_system.dart';
 
 class PetScreen extends ConsumerStatefulWidget {
   const PetScreen({Key? key}) : super(key: key);

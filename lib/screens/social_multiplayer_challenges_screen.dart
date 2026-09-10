@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../design_system/design_system.dart';
 import '../models/english_town_social_model.dart';
 import '../providers/english_town_social_provider.dart';
 
-/// Multiplayer challenges screen
 class SocialMultiplayerChallengesScreen extends ConsumerWidget {
   const SocialMultiplayerChallengesScreen({super.key});
 

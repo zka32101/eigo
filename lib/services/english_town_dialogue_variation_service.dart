@@ -1,8 +1,7 @@
-import '../models/english_town_model.dart';
 import '../models/english_town_advanced.dart';
+import '../models/english_town_model.dart';
 import '../providers/english_town_polish_provider.dart';
 
-/// Service for generating contextual dialogue variations
 class EnglishTownDialogueVariationService {
   /// Get greeting based on multiple contextual factors
   static String getContextualGreeting({

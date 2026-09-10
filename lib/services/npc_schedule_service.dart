@@ -1,6 +1,5 @@
 import 'package:eigo_kore/models/npc_schedule_model.dart';
 
-/// NPC スケジュール管理サービス
 class NPCScheduleService {
   static final NPCScheduleService _instance =
       NPCScheduleService._internal();

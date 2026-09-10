@@ -1,9 +1,8 @@
-import 'package:json_annotation/json_annotation.dart';
 import 'package:eigo_kore/models/npc_event_model.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 part 'npc_quest_model.g.dart';
 
-/// クエストステータス
 enum QuestStatus {
   available('利用可能', 'Available'),
   accepted('受け入れ', 'Accepted'),

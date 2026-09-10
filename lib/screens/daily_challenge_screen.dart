@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../design_system/design_system.dart';
 import '../models/daily_challenge_model.dart';
 import '../providers/daily_challenge_provider.dart';
-import '../design_system/design_system.dart';
 
 class DailyChallengeScreen extends ConsumerWidget {
   const DailyChallengeScreen({super.key});

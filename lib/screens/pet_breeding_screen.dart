@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../design_system/design_system.dart';
 import '../models/pet_model.dart';
 import '../providers/pet_provider.dart';
-import '../design_system/design_system.dart';
 
 class PetBreedingScreen extends ConsumerStatefulWidget {
   const PetBreedingScreen({super.key});

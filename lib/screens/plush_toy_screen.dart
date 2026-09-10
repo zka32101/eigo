@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../design_system/design_system.dart';
 import '../models/plush_toy_model.dart';
 import '../providers/plush_toy_provider.dart';
 import '../providers/user_profile_provider.dart';
-import '../design_system/design_system.dart';
 
 class PlushToyScreen extends ConsumerStatefulWidget {
   const PlushToyScreen({Key? key}) : super(key: key);

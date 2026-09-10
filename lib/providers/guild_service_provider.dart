@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../models/guild.dart';
 import '../services/guild_service.dart';
 
-/// Singleton provider for GuildService
 final guildServiceProvider = Provider<GuildService>((ref) {
   return GuildService();
 });

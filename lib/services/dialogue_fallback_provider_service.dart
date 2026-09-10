@@ -1,8 +1,6 @@
 import 'package:eigo_kore/models/dialogue_template_model.dart';
 import 'package:eigo_kore/models/npc_extended_model.dart';
 
-/// ダイアログフォールバック提供サービス（シングルトンパターン）
-/// Claude APIが利用できない場合のフォールバック応答を提供
 class DialogueFallbackProviderService {
   static final DialogueFallbackProviderService _instance =
       DialogueFallbackProviderService._internal();

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../design_system/design_system.dart';
 import '../models/notification_model.dart';
 import '../providers/notification_provider.dart';
 import '../providers/user_profile_provider.dart';
-import '../design_system/design_system.dart';
 
 class NotificationSettingsScreen extends ConsumerWidget {
   const NotificationSettingsScreen({Key? key}) : super(key: key);

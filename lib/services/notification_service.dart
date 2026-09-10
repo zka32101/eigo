@@ -1,9 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../models/notification.dart';
 import 'logger_service.dart';
 
-/// Service for managing user notifications
-/// Phase 14 Part 4: Notifications System
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
 

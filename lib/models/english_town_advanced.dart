@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
+
 import 'english_town_model.dart';
 
-/// Advanced features for English-Only Town Phase 5
-
-/// NPC mood variations affect dialogue tone and response
 enum NPCMoodState {
   happy,      // More encouraging, generous rewards
   neutral,    // Standard dialogue

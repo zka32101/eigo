@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/guild.dart';
-import '../providers/guild_service_provider.dart';
-import '../providers/auth_provider.dart';
+
 import '../design_system/design_system.dart';
+import '../models/guild.dart';
+import '../providers/auth_provider.dart';
+import '../providers/guild_service_provider.dart';
 import '../widgets/guild_card.dart';
 import '../widgets/guild_member_item.dart';
 
-/// Screen for managing guilds
 class GuildsScreen extends ConsumerStatefulWidget {
   const GuildsScreen({Key? key}) : super(key: key);
 

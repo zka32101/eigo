@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../services/secure_storage_service.dart';
 
 const _geminiKeyName = 'eigo_kore_gemini_api_key';

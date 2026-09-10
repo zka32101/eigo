@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/pet_model.dart';
+
 import '../design_system/design_system.dart';
+import '../models/pet_model.dart';
 import '../providers/pet_provider.dart';
 
-/// ペットケア・インタラクション画面
 class PetInteractionScreen extends ConsumerStatefulWidget {
   final Pet pet;
 

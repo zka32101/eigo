@@ -1,7 +1,5 @@
 import '../models/question.dart';
 
-// ─── Stage 6: School（学校） ──────────────────────────────────────────────
-
 final stage6Questions = <Question>[
   // リスニング (7問)
   const Question(

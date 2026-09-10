@@ -1,6 +1,5 @@
 import '../models/english_town_social_model.dart';
 
-/// Service for managing social features (friends, challenges, activities)
 class EnglishTownSocialService {
   static final EnglishTownSocialService _instance =
       EnglishTownSocialService._internal();

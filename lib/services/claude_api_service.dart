@@ -1,7 +1,9 @@
-import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../models/conversation_message.dart';
+
+import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
+
+import '../models/conversation_message.dart';
 
 class ClaudeApiService {
   static const String _baseUrl = 'https://api.anthropic.com/v1';

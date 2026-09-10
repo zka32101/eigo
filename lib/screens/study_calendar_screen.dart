@@ -1,6 +1,7 @@
-import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../design_system/design_system.dart';
 import '../providers/level_provider.dart';
 import '../providers/speaking_history_provider.dart';
 import '../widgets/xp_bar.dart';

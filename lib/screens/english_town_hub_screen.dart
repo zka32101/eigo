@@ -1,26 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../design_system/design_system.dart';
 import '../models/english_town_model.dart';
 import '../providers/english_town_provider.dart';
-import '../design_system/design_system.dart';
-import 'english_town_conversation_screen.dart';
-import 'english_town_analytics_screen.dart';
-import 'english_town_settings_screen.dart';
-import 'english_town_leaderboard_screen.dart';
-import 'english_town_leaderboard_realtime_screen.dart';
-import 'english_town_notifications_screen.dart';
-import 'english_town_activity_feed_screen.dart';
 import '../widgets/notification_bell_widget.dart';
+import 'english_town_activity_feed_screen.dart';
+import 'english_town_analytics_screen.dart';
+import 'english_town_conversation_screen.dart';
+import 'english_town_leaderboard_realtime_screen.dart';
+import 'english_town_leaderboard_screen.dart';
+import 'english_town_notifications_screen.dart';
+import 'english_town_settings_screen.dart';
 
-/// English-Only Town Hub Screen
-///
-/// Main screen for the 2D exploration mini-game.
-/// Features:
-/// - Town map visualization with locations
-/// - Location selection
-/// - NPC directory
-/// - Progress tracking
-/// - Daily challenges display
 class EnglishTownHubScreen extends ConsumerStatefulWidget {
   const EnglishTownHubScreen({Key? key}) : super(key: key);
 

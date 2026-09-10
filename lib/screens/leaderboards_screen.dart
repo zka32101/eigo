@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/leaderboard.dart';
-import '../providers/leaderboard_service_provider.dart';
-import '../providers/auth_provider.dart';
+
 import '../design_system/design_system.dart';
+import '../models/leaderboard.dart';
+import '../providers/auth_provider.dart';
+import '../providers/leaderboard_service_provider.dart';
 import '../widgets/leaderboard_entry_item.dart';
 
-/// Screen for displaying various leaderboards
 class LeaderboardsScreen extends ConsumerStatefulWidget {
   const LeaderboardsScreen({Key? key}) : super(key: key);
 

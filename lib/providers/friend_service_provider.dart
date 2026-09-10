@@ -1,10 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../models/friend_request.dart';
 import '../models/user_profile.dart';
 import '../services/friend_service.dart';
 import 'user_profile_service_provider.dart';
 
-/// Singleton provider for FriendService
 final friendServiceProvider = Provider<FriendService>((ref) {
   return FriendService();
 });

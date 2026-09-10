@@ -1,7 +1,9 @@
-import '../design_system/design_system.dart';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'dart:convert';
+
+import '../design_system/design_system.dart';
 import '../models/user_profile.dart';
 import '../providers/user_profile_provider.dart';
 

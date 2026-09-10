@@ -2,7 +2,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'npc_relationship_model.g.dart';
 
-/// NPC関係ステータス
 enum RelationshipStatus {
   stranger('見知らぬ人', 'Stranger'),
   acquaintance('知人', 'Acquaintance'),

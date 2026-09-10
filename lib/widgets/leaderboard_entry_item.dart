@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../models/leaderboard.dart';
-import '../design_system/design_system.dart';
 
-/// Widget for displaying a leaderboard entry
+import '../design_system/design_system.dart';
+import '../models/leaderboard.dart';
+
 class LeaderboardEntryItem extends StatelessWidget {
   final LeaderboardEntry entry;
   final bool isCurrentUser;

@@ -1,6 +1,7 @@
-import '../design_system/design_system.dart';
-import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
+
+import '../design_system/design_system.dart';
 import '../models/analytics_model.dart';
 
 class MonthlyChartWidget extends StatelessWidget {

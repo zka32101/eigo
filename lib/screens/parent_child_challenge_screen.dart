@@ -1,13 +1,14 @@
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../data/stage_data.dart';
+import '../design_system/design_system.dart';
 import '../models/question.dart';
 import '../providers/coin_provider.dart';
 import '../providers/progress_provider.dart';
 import '../services/speech_service.dart';
 import '../services/tts_service.dart';
-import '../design_system/design_system.dart';
 import '../widgets/speaking_score_ring.dart';
 
 class ParentChildChallengeScreen extends ConsumerStatefulWidget {

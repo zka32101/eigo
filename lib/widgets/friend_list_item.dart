@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import '../models/friend_request.dart';
-import '../design_system/design_system.dart';
 
-/// List item widget for displaying a friend
-/// Shows friend info with optional action buttons
+import '../design_system/design_system.dart';
+import '../models/friend_request.dart';
+
 class FriendListItem extends StatelessWidget {
   final Friend friend;
   final VoidCallback? onTap;

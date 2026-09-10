@@ -1,22 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/english_town_model.dart';
+
+import '../design_system/design_system.dart';
 import '../models/english_town_advanced.dart';
+import '../models/english_town_model.dart';
+import '../providers/english_town_notification_provider.dart';
+import '../providers/english_town_polish_provider.dart';
 import '../providers/english_town_provider.dart';
 import '../providers/english_town_rewards_provider.dart';
-import '../providers/english_town_polish_provider.dart';
-import '../providers/english_town_notification_provider.dart';
-import '../design_system/design_system.dart';
 import '../widgets/animated_reward_card.dart';
 
-/// English-Only Town Reward Screen
-///
-/// Displays rewards earned from a conversation:
-/// - XP earned
-/// - Coins earned
-/// - Achievements unlocked
-/// - Milestones reached
-/// - Next unlock information
 class EnglishTownRewardScreen extends ConsumerWidget {
   final int xpEarned;
   final int coinsEarned;

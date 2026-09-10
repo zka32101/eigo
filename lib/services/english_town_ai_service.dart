@@ -1,11 +1,12 @@
-import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../models/english_town_model.dart';
-import '../models/english_town_advanced.dart';
+
+import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
+
+import '../models/english_town_advanced.dart';
+import '../models/english_town_model.dart';
 import 'english_town_dialogue_variation_service.dart';
 
-/// Response from AI dialogue generation
 class NPCDialogueResponse {
   final String id;
   final String npcMessage;

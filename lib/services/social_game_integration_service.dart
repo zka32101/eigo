@@ -1,10 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../models/english_town_social_model.dart';
 import '../providers/english_town_social_provider.dart';
-import 'english_town_social_service.dart';
 import 'english_town_engagement_notifier_service.dart';
+import 'english_town_social_service.dart';
 
-/// Service to integrate social features with core game mechanics
 class SocialGameIntegrationService {
   static final SocialGameIntegrationService _instance =
       SocialGameIntegrationService._internal();

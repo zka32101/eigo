@@ -1,9 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../models/guild.dart';
 import 'logger_service.dart';
 
-/// Service for managing guilds and guild membership
-/// Phase 15 Part 2: Guilds/Teams System
 class GuildService {
   static final GuildService _instance = GuildService._internal();
 

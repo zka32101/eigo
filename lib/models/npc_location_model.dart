@@ -2,7 +2,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'npc_location_model.g.dart';
 
-/// NPC地点座標
 @JsonSerializable()
 class NPCCoordinate {
   /// X座標（0.0-1.0の相対位置）

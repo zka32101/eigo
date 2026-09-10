@@ -1,8 +1,9 @@
-import '../design_system/design_system.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_core/shared_core.dart';
+
+import '../design_system/design_system.dart';
 import '../providers/progress_provider.dart';
 import '../providers/screen_time_provider.dart';
 import '../providers/speaking_history_provider.dart';

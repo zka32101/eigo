@@ -1,6 +1,5 @@
 import 'package:eigo_kore/models/english_town_model.dart';
 
-/// タウンロケーション初期化データ
 class TownLocationsData {
   /// 全ロケーションリストを取得
   static List<Location> getAllLocations() {

@@ -1,22 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/english_town_model.dart';
+
+import '../design_system/design_system.dart';
 import '../models/english_town_advanced.dart';
+import '../models/english_town_model.dart';
+import '../providers/english_town_polish_provider.dart';
 import '../providers/english_town_provider.dart';
 import '../providers/english_town_rewards_provider.dart';
-import '../providers/english_town_polish_provider.dart';
-import '../design_system/design_system.dart';
 
-/// Engagement Analytics Screen
-///
-/// Displays comprehensive analytics about player engagement including:
-/// - Engagement score (0-100)
-/// - Total playtime and sessions
-/// - NPC preferences and interaction counts
-/// - Location visit patterns
-/// - Difficulty progression
-/// - Response accuracy
-/// - Conversation streak
 class EnglishTownAnalyticsScreen extends ConsumerWidget {
   const EnglishTownAnalyticsScreen({Key? key}) : super(key: key);
 

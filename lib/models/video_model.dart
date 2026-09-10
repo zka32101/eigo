@@ -2,7 +2,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'video_model.g.dart';
 
-/// Pronunciation video model
 @JsonSerializable()
 class PronunciationVideo {
   final String id;

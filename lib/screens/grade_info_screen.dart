@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Display user's grade information and promotion status
 class GradeInfoScreen extends ConsumerWidget {
   final String userId;
 

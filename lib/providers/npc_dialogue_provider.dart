@@ -1,8 +1,8 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:eigo_kore/models/npc_dialogue_model.dart';
 import 'package:eigo_kore/models/npc_behavior_model.dart';
-import 'package:eigo_kore/services/npc_dialogue_service.dart';
+import 'package:eigo_kore/models/npc_dialogue_model.dart';
 import 'package:eigo_kore/providers/npc_behavior_provider.dart';
+import 'package:eigo_kore/services/npc_dialogue_service.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final npcDialogueServiceProvider = Provider((ref) {
   return NPCDialogueService.getInstance();

@@ -1,8 +1,8 @@
-import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_core/shared_core.dart' as sc;
 
-// Legacy theme constants - maintained for backward compatibility but prefer AppColors
+import '../design_system/design_system.dart';
+
 const kPrimaryDark = Color(0xFF1558B0);
 const kAccentPurple = Color(0xFF7B1FA2);
 

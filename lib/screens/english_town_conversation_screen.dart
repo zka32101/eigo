@@ -1,21 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/english_town_model.dart';
+
+import '../design_system/design_system.dart';
 import '../models/english_town_advanced.dart';
+import '../models/english_town_model.dart';
+import '../providers/english_town_polish_provider.dart';
 import '../providers/english_town_provider.dart';
 import '../providers/english_town_rewards_provider.dart';
-import '../providers/english_town_polish_provider.dart';
-import '../design_system/design_system.dart';
 
-/// English-Only Town Conversation Screen
-///
-/// Displays interactive conversation with an NPC in the town.
-/// Features:
-/// - NPC dialogue display with character info
-/// - Player input (text/speech-to-text)
-/// - Response evaluation and scoring
-/// - Conversation history
-/// - Rewards display
 class EnglishTownConversationScreen extends ConsumerStatefulWidget {
   final String npcId;
   final String locationId;

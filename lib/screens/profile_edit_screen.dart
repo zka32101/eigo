@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_core/shared_core.dart' hide UserProfile;
+
+import '../design_system/design_system.dart';
 import '../models/user_profile.dart';
 import '../providers/user_profile_provider.dart';
-import '../design_system/design_system.dart';
 
 class ProfileEditScreen extends ConsumerStatefulWidget {
   final UserProfile profile;

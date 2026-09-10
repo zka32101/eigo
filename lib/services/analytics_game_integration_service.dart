@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../models/analytics_model.dart';
 import '../providers/analytics_provider.dart';
 import 'english_town_analytics_service.dart';
 
-/// Service to integrate analytics tracking with core game mechanics
 class AnalyticsGameIntegrationService {
   static final AnalyticsGameIntegrationService _instance =
       AnalyticsGameIntegrationService._internal();

@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../models/message.dart';
 import '../services/messaging_service.dart';
 
-/// Singleton provider for MessagingService
 final messagingServiceProvider = Provider<MessagingService>((ref) {
   return MessagingService();
 });

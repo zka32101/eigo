@@ -1,8 +1,7 @@
 import 'dart:io' show Platform;
+
 import '../models/ad_model.dart';
 
-/// Google Mobile Ads Service (Stub - AdMob integration disabled for build compatibility)
-/// AdMobの初期化と広告の読み込み・表示を管理
 class AdService {
   static final AdService _instance = AdService._internal();
 

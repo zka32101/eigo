@@ -2,7 +2,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'dialogue_template_model.g.dart';
 
-/// ダイアログ難易度
 enum DialogueDifficulty {
   beginner('初級', 'Beginner', 1),
   intermediate('中級', 'Intermediate', 2),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+
 import '../models/english_town_advanced.dart';
 
-/// Animation service for English-Only Town UI enhancements
 class EnglishTownAnimationService {
   /// Get reward animation config with customizable timings
   static RewardAnimationConfig getRewardAnimationConfig({

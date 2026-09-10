@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../design_system/design_system.dart';
 import '../models/english_town_social_model.dart';
 import '../providers/english_town_social_provider.dart';
 
-/// Friend profile screen with stats comparison and actions
 class SocialFriendProfileScreen extends ConsumerWidget {
   final String friendId;
 

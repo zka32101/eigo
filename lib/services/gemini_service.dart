@@ -1,6 +1,7 @@
 import 'package:google_generative_ai/google_generative_ai.dart';
-import '../models/conversation_message.dart';
 import 'package:uuid/uuid.dart';
+
+import '../models/conversation_message.dart';
 
 class GeminiService {
   final String _apiKey;

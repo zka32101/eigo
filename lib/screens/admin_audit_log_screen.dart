@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../providers/admin_dashboard_provider.dart';
 
-/// Admin audit log viewer
 class AdminAuditLogScreen extends ConsumerWidget {
   const AdminAuditLogScreen({Key? key}) : super(key: key);
 

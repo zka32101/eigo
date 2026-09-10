@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_core/shared_core.dart';
+
 import '../design_system/design_system.dart';
 import '../providers/user_profile_provider.dart';
 import 'multiplayer_quiz_screen.dart';
 
-/// マッチング待機画面。[MatchmakingSearchWidget]（shared_core）で
-/// 検索中アニメーションを表示し、マッチが成立したら対戦画面へ遷移する。
 class MultiplayerSearchScreen extends ConsumerStatefulWidget {
   final String userId;
   final String displayName;

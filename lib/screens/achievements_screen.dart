@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../design_system/design_system.dart';
 import '../models/achievement.dart';
 import '../providers/achievement_service_provider.dart';
 import '../providers/auth_provider.dart';
-import '../design_system/design_system.dart';
 import '../widgets/achievement_item.dart';
 
-/// Screen for displaying achievements and badges
 class AchievementsScreen extends ConsumerStatefulWidget {
   const AchievementsScreen({Key? key}) : super(key: key);
 

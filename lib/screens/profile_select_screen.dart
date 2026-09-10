@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../providers/user_profile_provider.dart';
-import '../models/user_profile.dart';
-import '../models/avatar_model.dart';
+
 import '../design_system/design_system.dart';
+import '../models/avatar_model.dart';
+import '../models/user_profile.dart';
+import '../providers/user_profile_provider.dart';
 
 class ProfileSelectScreen extends ConsumerStatefulWidget {
   const ProfileSelectScreen({super.key});

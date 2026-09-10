@@ -1,10 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../models/leaderboard.dart';
 import '../models/leaderboard_model.dart' as ranking_model;
 import 'logger_service.dart';
 
-/// Service for managing leaderboards and rankings
-/// Phase 15 Part 1: Leaderboards System
 class LeaderboardService {
   static final LeaderboardService _instance = LeaderboardService._internal();
 

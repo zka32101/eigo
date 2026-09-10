@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:path_provider/path_provider.dart';
-import 'package:eigo_kore/models/npc_save_model.dart';
+
 import 'package:eigo_kore/models/npc_behavior_model.dart';
+import 'package:eigo_kore/models/npc_save_model.dart';
+import 'package:path_provider/path_provider.dart';
 
 const String _gameVersion = '1.0.0';
 const int _maxSaveSlots = 3;

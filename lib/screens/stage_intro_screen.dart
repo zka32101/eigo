@@ -1,7 +1,8 @@
-import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+
 import '../data/stage_intro_data.dart';
+import '../design_system/design_system.dart';
 import '../models/stage.dart';
 import '../widgets/educational_illustrations.dart';
 

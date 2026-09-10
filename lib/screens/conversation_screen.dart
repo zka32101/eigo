@@ -1,6 +1,7 @@
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../data/conversation_data.dart';
 import '../design_system/design_system.dart';
 import '../providers/coin_provider.dart';

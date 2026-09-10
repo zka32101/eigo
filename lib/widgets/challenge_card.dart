@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../models/challenge_model.dart';
+
 import '../design_system/design_system.dart';
+import '../models/challenge_model.dart';
 
 class ChallengeCard extends StatelessWidget {
   final SocialChallenge challenge;

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// eigo-kore アプリケーション全体で使用するタイポグラフィー定義
-/// Material Design 3 に準拠した統一されたテキストスタイル
 class AppTypography {
   // ===== 見出し =====
 

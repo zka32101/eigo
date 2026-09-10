@@ -1,24 +1,25 @@
+import 'package:cross_promo_kit/cross_promo_kit.dart'
+    show CrossPromoSection;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../data/stage_data.dart';
+import '../design_system/design_system.dart';
 import '../models/stage.dart';
 import '../providers/badge_provider.dart';
 import '../providers/coin_provider.dart';
 import '../providers/level_provider.dart';
 import '../providers/progress_provider.dart';
 import '../providers/study_time_provider.dart';
+import '../providers/user_profile_provider.dart';
 import '../providers/weakness_provider.dart';
-import '../design_system/design_system.dart';
+import '../widgets/home_screen_cards.dart';
 import '../widgets/streak_badge.dart';
 import '../widgets/streak_card.dart';
 import '../widgets/study_time_card.dart';
 import '../widgets/weekly_ranking_card.dart';
 import '../widgets/xp_bar.dart';
-import '../widgets/home_screen_cards.dart';
-import '../providers/user_profile_provider.dart';
 import 'profile_edit_screen.dart';
-import 'package:cross_promo_kit/cross_promo_kit.dart'
-    show CrossPromoSection;
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});

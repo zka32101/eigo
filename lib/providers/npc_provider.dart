@@ -1,10 +1,7 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:eigo_kore/models/npc_extended_model.dart';
 import 'package:eigo_kore/providers/npc_firebase_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// ==================== NPC EXTENDED DATA STATE ====================
-
-/// NPC拡張データを管理するStateNotifier
 class NPCsNotifier extends StateNotifier<List<NPCExtended>> {
   NPCsNotifier(this._firebaseService) : super([]) {
     _initializeNPCs();

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../design_system/design_system.dart';
 import '../models/notification.dart';
 import '../providers/notification_service_provider.dart';
 import '../widgets/notification_item.dart';
-import '../design_system/design_system.dart';
 
 class NotificationsScreen extends ConsumerWidget {
   final String currentUserId;

@@ -1,12 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// Service for Firebase Cloud Messaging (FCM) integration
-///
-/// This service handles:
-/// - FCM token management
-/// - Push notification reception
-/// - Notification display and handling
-/// - Background message processing
 class EnglishTownFCMService {
   static final EnglishTownFCMService _instance =
       EnglishTownFCMService._internal();

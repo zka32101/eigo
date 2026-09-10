@@ -1,9 +1,8 @@
-import 'package:json_annotation/json_annotation.dart';
 import 'package:eigo_kore/models/npc_behavior_model.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 part 'npc_event_model.g.dart';
 
-/// イベントタイプ
 enum EventType {
   dialogue_triggered('対話トリガー', 'Dialogue Triggered'),
   relationship_milestone('関係マイルストーン', 'Relationship Milestone'),

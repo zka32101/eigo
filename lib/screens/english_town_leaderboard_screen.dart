@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../providers/english_town_firebase_provider.dart';
-import '../design_system/design_system.dart';
 
-/// English-Only Town Global Leaderboard Screen
-///
-/// Displays global rankings of all players by XP earned
+import '../design_system/design_system.dart';
+import '../providers/english_town_firebase_provider.dart';
+
 class EnglishTownLeaderboardScreen extends ConsumerWidget {
   const EnglishTownLeaderboardScreen({Key? key}) : super(key: key);
 

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/pet_model.dart';
-import '../design_system/design_system.dart';
 
-/// ペット進化画面
+import '../design_system/design_system.dart';
+import '../models/pet_model.dart';
+
 class PetEvolutionScreen extends ConsumerStatefulWidget {
   final Pet currentPet;
   final Pet evolvedPet;

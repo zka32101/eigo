@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../services/english_town_fcm_service.dart';
 
-/// Firebase Cloud Messaging service instance
 final fcmServiceProvider = Provider<EnglishTownFCMService>((ref) {
   return EnglishTownFCMService();
 });

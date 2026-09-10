@@ -2,6 +2,7 @@ import '../models/question.dart'; // DifficultyLevelのため
 
 class VocabWord {
   final String english;
+
   final String japanese;
   final String emoji;
   final String category;

@@ -1,10 +1,7 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:eigo_kore/models/dialogue_template_model.dart';
 import 'package:eigo_kore/providers/npc_firebase_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// ==================== DIALOGUE TEMPLATES STATE ====================
-
-/// ダイアログテンプレートを管理するStateNotifier
 class DialogueTemplatesNotifier extends StateNotifier<List<DialogueTemplate>> {
   DialogueTemplatesNotifier(this._firebaseService) : super([]) {
     _initializeTemplates();

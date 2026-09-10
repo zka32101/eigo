@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/video_model.dart';
-import '../services/video_service.dart';
-import '../services/logger_service.dart';
 
-/// Video Service instance provider
+import '../models/video_model.dart';
+import '../services/logger_service.dart';
+import '../services/video_service.dart';
+
 final videoServiceProvider = Provider((ref) {
   return VideoService();
 });
