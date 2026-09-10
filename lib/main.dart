@@ -136,6 +136,12 @@ Future<void> main() async {
   final container = ProviderContainer(
     overrides: [
       characterStateProvider.overrideWith(CharacterNotifier.new),
+      // 統一バッジシステム（Phase 4.1）: 英語コレ用バッジを主題タグで初期化
+      badgeProvider.overrideWith((ref) {
+        final notifier = BadgeNotifier();
+        notifier.setBadgeDefinitions(unifiedBadges, subject: 'eigo');
+        return notifier;
+      }),
       screenTimeProvider.overrideWith(ScreenTimeNotifier.new),
       lessonProvider.overrideWith(LessonNotifier.new),
       // リアルタイム対戦（マルチプレイ）: Firestore実装（eigo_ プレフィックス）を注入
