@@ -2,7 +2,7 @@ import 'package:cross_promo_kit/cross_promo_kit.dart'
     show CrossPromoSection;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_core/shared_core.dart' show FriendsListPage;
+import 'package:shared_core/shared_core.dart' show FriendsListPage, DailyMissionPage;
 
 import '../data/stage_data.dart';
 import '../design_system/design_system.dart';
@@ -149,6 +149,23 @@ class HomeScreen extends ConsumerWidget {
                                   ],
                                 ),
                               ],
+                            ),
+                          ),
+                          Builder(
+                            builder: (ctx) => IconButton(
+                              icon: Icon(Icons.assignment, color: AppColors.textWhite.withOpacity(0.7), size: 20),
+                              onPressed: () {
+                                Navigator.of(ctx).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => DailyMissionPage(
+                                      primaryColor: AppColors.primary,
+                                      appTitle: '英語コレ！',
+                                      filterSubject: 'english',
+                                    ),
+                                  ),
+                                );
+                              },
+                              tooltip: 'デイリーミッション',
                             ),
                           ),
                           Builder(
