@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_core/shared_core.dart';
+
 import '../design_system/design_system.dart';
 import '../models/user_profile.dart';
 import '../providers/user_profile_provider.dart';
-import 'multiplayer_search_screen.dart';
 import 'multiplayer_leaderboard_screen.dart';
+import 'multiplayer_search_screen.dart';
 
-/// リアルタイム対戦（マルチプレイ）のトップ画面。
-///
-/// 自分のレーティング・対戦成績・最近の対戦履歴を表示し、
-/// 「対戦相手を探す」でマッチング待機画面（[MultiplayerSearchScreen]）へ進む。
-/// 既存の非同期「フレンドチャレンジ」機能とは別の導線（置き換えではなく追加）。
 class MultiplayerMatchmakerScreen extends ConsumerWidget {
   const MultiplayerMatchmakerScreen({super.key});
 

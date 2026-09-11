@@ -2,7 +2,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'interaction_history_model.g.dart';
 
-/// インタラクションレコード（個別の会話ターン）
 @JsonSerializable()
 class InteractionRecord {
   /// レコードID

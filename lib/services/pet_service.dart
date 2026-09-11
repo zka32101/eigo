@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../models/pet_model.dart';
 import 'logger_service.dart';
 
-/// Service for managing pet operations
 class PetService {
   static final PetService _instance = PetService._internal();
 

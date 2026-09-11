@@ -1,8 +1,6 @@
 import 'package:eigo_kore/models/dialogue_template_model.dart';
 import 'package:eigo_kore/models/npc_extended_model.dart';
 
-/// プロンプトエンジニアリングサービス（シングルトンパターン）
-/// Claude API用の効果的なプロンプトを構築
 class PromptEngineeringService {
   static final PromptEngineeringService _instance =
       PromptEngineeringService._internal();

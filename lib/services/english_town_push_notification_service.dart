@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// Push notification payload structure
 class PushNotificationPayload {
   final String notificationId;
   final String title;

@@ -1,5 +1,6 @@
-import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
+
+import '../design_system/design_system.dart';
 
 void showCoinNotification(BuildContext context, int amount) {
   ScaffoldMessenger.of(context).showSnackBar(

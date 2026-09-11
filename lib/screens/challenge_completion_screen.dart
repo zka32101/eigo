@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../design_system/design_system.dart';
 import '../models/challenge_model.dart';
 import '../providers/challenge_provider.dart';
 import '../providers/user_profile_provider.dart';
-import '../design_system/design_system.dart';
 
-/// チャレンジ完了画面
 class ChallengeCompletionScreen extends ConsumerStatefulWidget {
   final String challengeId;
   final String userId;

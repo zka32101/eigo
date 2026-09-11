@@ -1,7 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:eigo_kore/models/npc_dialogue_model.dart';
+import 'package:flutter/material.dart';
 
-/// 対話オプションウィジェット
 class DialogueOptionWidget extends StatelessWidget {
   final DialogueOption option;
   final VoidCallback onSelected;

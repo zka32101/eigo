@@ -1,11 +1,5 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-/// SecureStorageService
-///
-/// Manages secure storage of sensitive data like authentication tokens,
-/// API keys, and user credentials using platform-native secure storage:
-/// - iOS: Keychain
-/// - Android: Keystore
 class SecureStorageService {
   static const FlutterSecureStorage _storage = FlutterSecureStorage();
 

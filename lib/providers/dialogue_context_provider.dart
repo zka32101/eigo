@@ -1,9 +1,6 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:eigo_kore/models/dialogue_template_model.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// ==================== DIALOGUE CONTEXT STATE ====================
-
-/// 現在のダイアログコンテキストを管理するStateNotifier
 class DialogueContextNotifier extends StateNotifier<DialogueContext?> {
   DialogueContextNotifier() : super(null);
 

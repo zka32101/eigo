@@ -1,7 +1,5 @@
 import '../models/question.dart';
 
-// ─── Stage 1: Greetings（あいさつ） ────────────────────────────────────────
-
 final stage1Questions = <Question>[
   // リスニング (7問 = 35%)
   const Question(

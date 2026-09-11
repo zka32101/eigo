@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../models/message_model.dart';
 import '../services/message_service.dart';
 
-// Service provider
 final messageServiceProvider = Provider((ref) {
   return MessageService();
 });

@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../services/english_town_notification_service.dart';
-import '../providers/english_town_notification_provider.dart';
-import '../providers/english_town_activity_feed_provider.dart';
 
-/// Service that triggers notifications and activities based on game events
+import '../providers/english_town_activity_feed_provider.dart';
+import '../providers/english_town_notification_provider.dart';
+import '../services/english_town_notification_service.dart';
+
 class EnglishTownEngagementNotifierService {
   static final EnglishTownEngagementNotifierService _instance =
       EnglishTownEngagementNotifierService._internal();

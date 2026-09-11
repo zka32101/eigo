@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../models/guild.dart';
-import '../design_system/design_system.dart';
 
-/// Widget for displaying a guild member
+import '../design_system/design_system.dart';
+import '../models/guild.dart';
+
 class GuildMemberItem extends StatelessWidget {
   final GuildMember member;
   final bool isLeader;

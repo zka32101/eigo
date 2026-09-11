@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../design_system/design_system.dart';
 import '../models/message.dart';
 import '../models/user_profile.dart';
 import '../providers/messaging_service_provider.dart';
 import '../providers/user_profile_service_provider.dart';
-import '../widgets/message_bubble.dart';
 import '../widgets/conversation_list_item.dart';
-import '../design_system/design_system.dart';
+import '../widgets/message_bubble.dart';
 
-/// Main messaging screen with conversation list and chat view
-/// Phase 14 Part 3: Messaging System
 class MessagingScreen extends ConsumerStatefulWidget {
   final String currentUserId;
 

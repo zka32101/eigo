@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../models/analytics_model.dart';
 import '../services/english_town_analytics_service.dart';
 
-/// Analytics service provider
 final analyticsServiceProvider = Provider<EnglishTownAnalyticsService>((ref) {
   return EnglishTownAnalyticsService();
 });

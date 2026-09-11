@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../models/leaderboard_model.dart';
+
 import '../design_system/design_system.dart';
+import '../models/leaderboard_model.dart';
 
 class LeaderboardEntryCard extends StatelessWidget {
   final LeaderboardEntry entry;

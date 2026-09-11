@@ -1,10 +1,11 @@
-import '../design_system/design_system.dart';
 import 'package:confetti/confetti.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../data/stage_data.dart';
+import '../design_system/design_system.dart';
 import '../models/question.dart';
 import '../services/speech_service.dart';
 import '../services/tts_service.dart';

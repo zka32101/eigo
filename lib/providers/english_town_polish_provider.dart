@@ -1,11 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/english_town_model.dart';
+
 import '../models/english_town_advanced.dart';
+import '../models/english_town_model.dart';
 import '../providers/english_town_provider.dart';
 
-/// ==================== POLISH & OPTIMIZATION (Phase 5) ====================
-
-/// NPC mood state for current session
 final npcMoodProvider = StateProvider<NPCMoodState>((ref) {
   // Initialize with random mood for variety
   final hour = DateTime.now().hour;

@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 
-/// Analytics event types tracked throughout the game
 enum AnalyticsEventType {
   // Conversation events
   conversationStarted,

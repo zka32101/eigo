@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../models/admin_dashboard_model.dart';
 import '../providers/admin_dashboard_provider.dart';
 
-/// Admin feature flags management screen
 class AdminFeatureFlagsScreen extends ConsumerWidget {
   const AdminFeatureFlagsScreen({Key? key}) : super(key: key);
 

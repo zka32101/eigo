@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/user_profile.dart';
-import '../design_system/design_system.dart';
 
-/// User profile card widget
-/// Displays user info, stats, and social metrics
+import '../design_system/design_system.dart';
+import '../models/user_profile.dart';
+
 class UserProfileCard extends ConsumerWidget {
   final UserProfile profile;
   final VoidCallback? onEditProfile;

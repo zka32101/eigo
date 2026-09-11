@@ -2,7 +2,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'npc_skill_model.g.dart';
 
-/// スキルカテゴリ
 enum SkillCategory {
   language('言語', 'Language'),
   combat('戦闘', 'Combat'),

@@ -1,9 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../models/user_profile.dart';
 import 'logger_service.dart';
 
-/// Service for managing user profiles and social features
-/// Phase 14 Part 1: Enhanced User Profile System
 class UserProfileService {
   static final UserProfileService _instance = UserProfileService._internal();
 

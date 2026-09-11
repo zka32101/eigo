@@ -1,7 +1,8 @@
-import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../design_system/design_system.dart';
 import '../models/promotion_model.dart';
 import '../providers/promotion_provider.dart';
 

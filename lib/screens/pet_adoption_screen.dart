@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/pet_model.dart';
-import '../design_system/design_system.dart';
-import '../providers/user_profile_provider.dart';
-import '../providers/pet_provider.dart';
 
-/// ペット選択・採用画面
+import '../design_system/design_system.dart';
+import '../models/pet_model.dart';
+import '../providers/pet_provider.dart';
+import '../providers/user_profile_provider.dart';
+
 class PetAdoptionScreen extends ConsumerWidget {
   const PetAdoptionScreen({Key? key}) : super(key: key);
 

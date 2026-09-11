@@ -1,9 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../models/achievement.dart';
 import 'logger_service.dart';
 
-/// Service for managing achievements and badges
-/// Phase 15 Part 3: Achievements & Badges System
 class AchievementService {
   static final AchievementService _instance = AchievementService._internal();
 

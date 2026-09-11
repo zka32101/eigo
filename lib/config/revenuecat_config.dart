@@ -1,23 +1,5 @@
 import 'dart:io';
 
-/// RevenueCat 関連の設定値を集約するクラス。
-///
-/// APIキーはリポジトリに含めず、ビルド時の `--dart-define` で注入する。
-/// この開発環境には本番のRevenueCat APIキーが存在しないため、
-/// デフォルト値は明示的なプレースホルダーになっている
-/// （[isConfigured] が false の間、RevenueCatの初期化はスキップされ、
-/// アプリはローカル動作にフォールバックする）。
-///
-/// 本番ビルド時の指定例:
-/// ```bash
-/// flutter build apk --release \
-///   --dart-define=REVENUECAT_GOOGLE_KEY=goog_xxxxxxxxxxxxxxxxxxxx
-///
-/// flutter build ios --release \
-///   --dart-define=REVENUECAT_APPLE_KEY=appl_xxxxxxxxxxxxxxxxxxxx
-/// ```
-///
-/// `flutter run` でのデバッグ時も同様に `--dart-define` で渡せる。
 class RevenueCatConfig {
   RevenueCatConfig._();
 

@@ -1,17 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// レベル・XP システム
-///
-/// XP 獲得源:
-///   レッスン完了       : 50 XP + 正解率ボーナス最大50XP
-///   スピーキング練習   : 5 XP/問
-///   テスト対策完了     : 30 XP + 正解率ボーナス
-///   7日連続            : 100 XP ボーナス
-///   バッジ獲得         : 20 XP/個
-///
-/// レベル閾値: (level-1)^2 * 100 XP
-///   Lv1→2:  100 XP   Lv2→3:  400 XP   Lv3→4:  900 XP   Lv10→11: 10000 XP
 class LevelState {
   final int totalXp;
   final int level;

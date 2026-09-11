@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../models/guild.dart';
-import '../design_system/design_system.dart';
 
-/// Widget for displaying a guild card
+import '../design_system/design_system.dart';
+import '../models/guild.dart';
+
 class GuildCard extends StatelessWidget {
   final Guild guild;
   final VoidCallback? onTap;

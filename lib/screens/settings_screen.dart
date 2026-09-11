@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_core/shared_core.dart'
     hide progressProvider, ProgressNotifier, LearningProgress;
+
+import '../design_system/design_system.dart';
+import '../providers/ai_api_key_provider.dart';
+import '../providers/morning_notification_provider.dart';
 import '../providers/progress_provider.dart';
 import '../providers/purchase_provider.dart';
 import '../providers/settings_provider.dart';
-import '../providers/ai_api_key_provider.dart';
-import '../providers/morning_notification_provider.dart';
-import '../services/purchase_service.dart';
 import '../services/notification_service.dart';
-import '../design_system/design_system.dart';
+import '../services/purchase_service.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});

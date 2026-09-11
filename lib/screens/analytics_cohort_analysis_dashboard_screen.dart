@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../models/analytics_model.dart';
 import '../providers/analytics_provider.dart';
 
-/// Cohort analysis dashboard showing retention and progression
 class AnalyticsCohortAnalysisDashboardScreen extends ConsumerStatefulWidget {
   const AnalyticsCohortAnalysisDashboardScreen({Key? key}) : super(key: key);
 

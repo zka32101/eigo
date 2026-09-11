@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../design_system/design_system.dart';
 import '../providers/english_town_firebase_provider.dart';
 import '../providers/english_town_notification_provider.dart';
-import '../design_system/design_system.dart';
 
-/// Real-time leaderboard with live rank updates
 class EnglishTownLeaderboardRealtimeScreen extends ConsumerStatefulWidget {
   const EnglishTownLeaderboardRealtimeScreen({Key? key}) : super(key: key);
 

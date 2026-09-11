@@ -1,9 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../models/message.dart';
 import 'logger_service.dart';
 
-/// Service for managing direct messages between users
-/// Phase 14 Part 3: Messaging System
 class MessagingService {
   static final MessagingService _instance = MessagingService._internal();
 

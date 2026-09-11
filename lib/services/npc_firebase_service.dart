@@ -1,10 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:eigo_kore/models/npc_extended_model.dart';
-import 'package:eigo_kore/models/interaction_history_model.dart';
 import 'package:eigo_kore/models/dialogue_template_model.dart';
+import 'package:eigo_kore/models/interaction_history_model.dart';
+import 'package:eigo_kore/models/npc_extended_model.dart';
 
-/// NPC Firebase サービス（シングルトンパターン）
-/// NPC データ、関係、テンプレートの永続化を管理
 class NPCFirebaseService {
   static final NPCFirebaseService _instance = NPCFirebaseService._internal();
 

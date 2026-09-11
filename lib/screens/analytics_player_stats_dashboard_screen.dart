@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../models/analytics_model.dart';
 import '../providers/analytics_provider.dart';
 
-/// Player stats dashboard showing individual analytics metrics
 class AnalyticsPlayerStatsDashboardScreen extends ConsumerWidget {
   final String userId;
 

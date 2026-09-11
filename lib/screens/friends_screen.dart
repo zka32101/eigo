@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../design_system/design_system.dart';
 import '../models/friend_request.dart';
 import '../models/user_profile.dart';
 import '../providers/friend_service_provider.dart';
 import '../providers/user_profile_service_provider.dart';
-import '../widgets/friend_request_card.dart';
 import '../widgets/friend_list_item.dart';
-import '../design_system/design_system.dart';
+import '../widgets/friend_request_card.dart';
 
-/// Friends management screen with tabs for requests, friends, suggestions, blocked
-/// Phase 14 Part 2: Friend System
 class FriendsScreen extends ConsumerStatefulWidget {
   final String currentUserId;
 

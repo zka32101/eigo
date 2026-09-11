@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../models/video_model.dart';
 import 'logger_service.dart';
 
-/// Service for managing pronunciation videos and learning progress
 class VideoService {
   static final VideoService _instance = VideoService._internal();
 

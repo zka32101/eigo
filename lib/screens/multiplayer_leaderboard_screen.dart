@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_core/shared_core.dart';
+
 import '../design_system/design_system.dart';
 import '../providers/user_profile_provider.dart';
 
-/// 対戦（マルチプレイ）レーティングのリーダーボード画面。
 class MultiplayerLeaderboardScreen extends ConsumerWidget {
   const MultiplayerLeaderboardScreen({super.key});
 

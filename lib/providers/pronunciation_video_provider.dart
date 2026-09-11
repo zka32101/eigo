@@ -1,12 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
+
 import '../models/pronunciation_video_model.dart';
 import '../services/logger_service.dart';
 
-// === Providers ===
-
-/// アクティブな記録（30日未経過）
 final activeRecordsProvider =
     StateNotifierProvider<ActiveRecordsNotifier, List<PronunciationVideoRecord>>(
   (ref) => ActiveRecordsNotifier(),

@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 
-/// Represents a user's social profile
 class SocialProfile {
   final String userId;
   final String displayName;

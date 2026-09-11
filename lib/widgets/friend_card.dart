@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../models/social_model.dart';
+
 import '../design_system/design_system.dart';
+import '../models/social_model.dart';
 
 class FriendCard extends StatelessWidget {
   final Friend friend;

@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:shared_core/shared_core.dart';
+
 import '../design_system/design_system.dart';
 import '../providers/purchase_provider.dart';
 import '../services/purchase_service.dart';
-import 'package:shared_core/shared_core.dart';
 
-/// PaywallScreen - RevenueCat を使用したシンプルな購入画面
-///
-/// 月額¥120のプレミアムプランを提示し、
-/// 主な機能（無制限クイズ、AI相談、広告削除）をハイライトしています。
 class PaywallScreen extends ConsumerStatefulWidget {
   const PaywallScreen({super.key});
 

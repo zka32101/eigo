@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../models/user_profile.dart';
 import '../services/user_profile_service.dart';
 
-/// Singleton provider for UserProfileService
 final userProfileServiceProvider = Provider<UserProfileService>((ref) {
   return UserProfileService();
 });

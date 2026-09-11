@@ -2,7 +2,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'english_town_model.g.dart';
 
-/// 町のエリアタイプ
 enum TownAreaType {
   school(
     '🏫 学校',

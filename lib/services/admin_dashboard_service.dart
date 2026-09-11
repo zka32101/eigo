@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../models/admin_dashboard_model.dart';
 
-/// Service for admin dashboard operations and system management
 class AdminDashboardService {
   static final AdminDashboardService _instance =
       AdminDashboardService._internal();

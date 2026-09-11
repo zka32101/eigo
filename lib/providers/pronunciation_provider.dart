@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../services/pronunciation_service.dart';
+
 import '../models/pronunciation_result.dart';
+import '../services/pronunciation_service.dart';
 
 final pronunciationServiceProvider = Provider((ref) {
   return PronunciationService();

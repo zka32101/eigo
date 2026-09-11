@@ -1,6 +1,5 @@
 import 'package:eigo_kore/models/npc_behavior_model.dart';
 
-/// NPC行動・性格管理サービス
 class NPCBehaviorService {
   static final NPCBehaviorService _instance =
       NPCBehaviorService._internal();

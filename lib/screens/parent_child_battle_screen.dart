@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../design_system/design_system.dart';
 import '../models/parent_child_battle_model.dart';
 import '../providers/parent_child_battle_provider.dart';
-import '../design_system/design_system.dart';
 
 class ParentChildBattleScreen extends ConsumerWidget {
   const ParentChildBattleScreen({super.key});

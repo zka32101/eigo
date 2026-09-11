@@ -1,8 +1,6 @@
-import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 
-/// Custom SVG-based illustrations for educational content
-/// All illustrations are created specifically and are commercially usable
+import '../design_system/design_system.dart';
 
 class ListeningIllustration extends StatelessWidget {
   final double size;

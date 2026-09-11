@@ -1,6 +1,5 @@
 import 'package:eigo_kore/models/npc_relationship_model.dart';
 
-/// NPC関係管理サービス
 class NPCRelationshipService {
   static final NPCRelationshipService _instance =
       NPCRelationshipService._internal();

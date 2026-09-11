@@ -1,10 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:eigo_kore/models/npc_behavior_model.dart';
 import 'package:eigo_kore/providers/npc_behavior_provider.dart';
 import 'package:eigo_kore/widgets/npc_mood_indicator.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// NPC プロフィールスクリーン（性格と行動表示）
 class NPCProfileScreen extends ConsumerWidget {
   final String npcId;
   final String npcName;

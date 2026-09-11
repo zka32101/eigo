@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../design_system/design_system.dart';
 import '../models/camera_scan_model.dart';
 import '../providers/camera_scan_provider.dart';
-import '../design_system/design_system.dart';
 
 class CameraScanScreen extends ConsumerWidget {
   const CameraScanScreen({super.key});

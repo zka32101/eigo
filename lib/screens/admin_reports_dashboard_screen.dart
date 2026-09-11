@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../models/admin_dashboard_model.dart';
 import '../providers/admin_dashboard_provider.dart';
 
-/// Admin reports dashboard screen
 class AdminReportsDashboardScreen extends ConsumerWidget {
   const AdminReportsDashboardScreen({Key? key}) : super(key: key);
 

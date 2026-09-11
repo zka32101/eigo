@@ -1,11 +1,8 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:eigo_kore/models/interaction_history_model.dart';
 import 'package:eigo_kore/providers/npc_firebase_provider.dart';
 import 'package:eigo_kore/providers/user_profile_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// ==================== NPC INTERACTION METRICS STATE ====================
-
-/// NPC インタラクションメトリクスを管理するStateNotifier
 class NPCInteractionMetricsNotifier
     extends StateNotifier<List<NPCInteractionMetrics>> {
   NPCInteractionMetricsNotifier(

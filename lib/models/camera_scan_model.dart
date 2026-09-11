@@ -2,7 +2,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'camera_scan_model.g.dart';
 
-/// Scanned vocabulary item from camera
 @JsonSerializable()
 class ScannedVocabulary {
   final String itemId; // Unique identifier

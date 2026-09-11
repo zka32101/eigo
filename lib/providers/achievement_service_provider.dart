@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../models/achievement.dart';
 import '../services/achievement_service.dart';
 
-/// Singleton provider for AchievementService
 final achievementServiceProvider = Provider<AchievementService>((ref) {
   return AchievementService();
 });

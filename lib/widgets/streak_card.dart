@@ -1,5 +1,6 @@
-import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
+
+import '../design_system/design_system.dart';
 
 class StreakCard extends StatelessWidget {
   final int days;

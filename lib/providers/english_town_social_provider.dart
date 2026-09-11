@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../models/english_town_social_model.dart';
 import '../services/english_town_social_service.dart';
 
-/// Social service instance
 final socialServiceProvider =
     Provider<EnglishTownSocialService>((ref) {
   return EnglishTownSocialService();

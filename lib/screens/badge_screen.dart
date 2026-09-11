@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/badge_model.dart';
-import '../providers/badge_provider.dart';
+
 import ../design_system/design_system.dartapp_theme.dart';
 import ../design_system/design_system.dartspacing.dart';
 import ../design_system/design_system.dartsizes.dart';
 import ../design_system/design_system.darttypography.dart';
+import '../models/badge_model.dart';
+import '../providers/badge_provider.dart';
 import '../widgets/educational_illustrations.dart';
 
 class BadgeScreen extends ConsumerWidget {

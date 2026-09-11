@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../providers/english_town_polish_provider.dart';
-import '../design_system/design_system.dart';
 
-/// English-Only Town Settings Screen
-///
-/// Provides options for:
-/// - Sound effects toggle
-/// - Particle effects toggle
-/// - Animation speed settings
-/// - Performance optimization preferences
+import '../design_system/design_system.dart';
+import '../providers/english_town_polish_provider.dart';
+
 class EnglishTownSettingsScreen extends ConsumerWidget {
   const EnglishTownSettingsScreen({Key? key}) : super(key: key);
 

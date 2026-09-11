@@ -1,10 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
+
 import '../models/friend_model.dart';
 import '../services/logger_service.dart';
 
-/// フレンド一覧を管理
 final friendListProvider =
     StateNotifierProvider<FriendListNotifier, List<Friend>>((ref) {
   return FriendListNotifier();

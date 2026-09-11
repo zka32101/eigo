@@ -1,12 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
+
 import '../models/plush_toy_model.dart';
 import '../services/logger_service.dart';
 
-// === Providers ===
-
-/// ユーザーのぬいぐるみキャラクター
 final plushToyCharacterProvider =
     StateNotifierProvider<PlushToyCharacterNotifier, PlushToyCharacter?>(
   (ref) => PlushToyCharacterNotifier(),

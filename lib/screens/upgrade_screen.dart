@@ -1,7 +1,8 @@
-import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_core/shared_core.dart';
+
+import '../design_system/design_system.dart';
 import '../providers/purchase_provider.dart';
 import 'paywall_screen.dart';
 

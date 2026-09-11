@@ -1,11 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../models/english_town_model.dart';
 import '../services/english_town_rewards_service.dart';
 import 'english_town_provider.dart';
 
-/// ==================== REWARDS SYSTEM (Phase 4) ====================
-
-/// Calculate XP reward for a specific conversation
 final conversationXpCalculatorProvider =
     Provider.family<int, ({
       ConversationDifficulty difficulty,

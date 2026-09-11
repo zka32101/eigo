@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../models/leaderboard.dart';
 import '../services/leaderboard_service.dart';
 
-/// Singleton provider for LeaderboardService
 final leaderboardServiceProvider = Provider<LeaderboardService>((ref) {
   return LeaderboardService();
 });

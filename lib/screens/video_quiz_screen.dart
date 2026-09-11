@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/video_model.dart';
-import '../providers/video_provider.dart';
-import '../providers/user_profile_provider.dart';
-import '../design_system/design_system.dart';
 
-/// ビデオクイズ画面
+import '../design_system/design_system.dart';
+import '../models/video_model.dart';
+import '../providers/user_profile_provider.dart';
+import '../providers/video_provider.dart';
+
 class VideoQuizScreen extends ConsumerStatefulWidget {
   final PronunciationVideo video;
   final VideoQuiz quiz;

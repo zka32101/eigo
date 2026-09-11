@@ -2,7 +2,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'daily_challenge_model.g.dart';
 
-/// Daily challenge entry in the database
 @JsonSerializable()
 class DailyChallenge {
   final String challengeId; // Date-based ID (YYYY-MM-DD)

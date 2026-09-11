@@ -1,8 +1,7 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:eigo_kore/models/english_town_model.dart';
 import 'package:eigo_kore/services/english_town_firebase_service.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// ロケーション一覧を管理するStateNotifier
 class LocationsNotifier extends StateNotifier<List<Location>> {
   LocationsNotifier(this._firebaseService) : super([]) {
     _initializeLocations();

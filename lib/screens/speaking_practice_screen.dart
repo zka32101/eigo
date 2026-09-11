@@ -1,8 +1,9 @@
-import '../design_system/design_system.dart';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../data/stage_data.dart';
+import '../design_system/design_system.dart';
 import '../models/question.dart';
 import '../models/stage.dart';
 import '../providers/level_provider.dart';
@@ -12,8 +13,6 @@ import '../services/speech_service.dart';
 import '../services/tts_service.dart';
 import '../widgets/speaking_score_ring.dart';
 
-/// スピーキング集中練習モード
-/// 選択したステージのスピーキング問題のみを繰り返し練習できる
 class SpeakingPracticeScreen extends ConsumerStatefulWidget {
   const SpeakingPracticeScreen({super.key});
 

@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_core/shared_core.dart';
+
 import '../data/multiplayer_question_pool.dart';
 import '../design_system/design_system.dart';
 import '../models/question.dart';
 import '../providers/coin_provider.dart';
 import '../services/eigo_matchmaking_service.dart';
 
-/// リアルタイム対戦（マルチプレイ）の対戦本編画面。
-///
-/// [matchId] から両プレイヤーで共通の問題セット（[MultiplayerQuestionPool]、
-/// matchId をシードにして両者同じ問題順になる）を生成し、4択のリスニング・
-/// リーディング問題に回答する。スコアは [watchMatchProvider] 経由で
-/// リアルタイム同期される。
 class MultiplayerQuizScreen extends ConsumerStatefulWidget {
   final String matchId;
   final String userId;

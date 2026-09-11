@@ -1,6 +1,5 @@
 import 'package:flutter/animation.dart';
 
-/// ロケーション遷移のアニメーション設定
 class LocationTransitionAnimation {
   /// アニメーション期間
   final Duration duration;

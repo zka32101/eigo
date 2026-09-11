@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// Notification types for the app
 enum NotificationType {
   rankChanged,
   achievementUnlocked,

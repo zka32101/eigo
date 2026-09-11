@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../models/analytics_model.dart';
 import '../providers/analytics_provider.dart';
 
-/// Global metrics dashboard for administrators
 class AnalyticsGlobalMetricsDashboardScreen extends ConsumerWidget {
   const AnalyticsGlobalMetricsDashboardScreen({Key? key}) : super(key: key);
 

@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/user_profile.dart';
-import '../providers/user_profile_service_provider.dart';
-import '../providers/user_profile_provider.dart';
+
 import '../design_system/design_system.dart';
+import '../models/user_profile.dart';
+import '../providers/user_profile_provider.dart';
+import '../providers/user_profile_service_provider.dart';
 import '../widgets/user_profile_card.dart';
 
-/// User Profile Screen
-/// Phase 14 Part 1: Enhanced User Profile System
 class UserProfileScreen extends ConsumerStatefulWidget {
   final String? userId; // If null, shows current user
 

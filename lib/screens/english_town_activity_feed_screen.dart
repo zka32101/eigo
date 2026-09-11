@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../providers/english_town_activity_feed_provider.dart';
-import '../design_system/design_system.dart';
 
-/// Activity feed screen showing recent player activities
+import '../design_system/design_system.dart';
+import '../providers/english_town_activity_feed_provider.dart';
+
 class EnglishTownActivityFeedScreen extends ConsumerWidget {
   const EnglishTownActivityFeedScreen({Key? key}) : super(key: key);
 

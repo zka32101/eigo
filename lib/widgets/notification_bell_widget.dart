@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../providers/english_town_notification_provider.dart';
-import '../design_system/design_system.dart';
 
-/// Notification bell widget for app bar
+import '../design_system/design_system.dart';
+import '../providers/english_town_notification_provider.dart';
+
 class NotificationBell extends ConsumerWidget {
   final VoidCallback? onPressed;
 

@@ -3,11 +3,6 @@ import 'dart:math';
 import '../models/question.dart';
 import 'stage_data.dart';
 
-/// リアルタイム対戦（マルチプレイ）用の問題プール。
-///
-/// 対戦中は両プレイヤーが同時に同じ問題へ回答するため、選択肢付き
-/// （リスニング・リーディング）の4択問題のみを対象にする
-/// （スピーキング・ライティングは自動採点・同時進行に向かないため除外）。
 class MultiplayerQuestionPool {
   const MultiplayerQuestionPool._();
 

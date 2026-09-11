@@ -2,7 +2,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'pet_model.g.dart';
 
-/// ペットの種類
 enum PetSpecies {
   @JsonValue('turtle')
   turtle, // 🐢 Turtle

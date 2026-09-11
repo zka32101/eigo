@@ -1,20 +1,10 @@
-import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
+
+import '../design_system/design_system.dart';
 import 'app_theme.dart';
 import 'sizes.dart';
 import 'spacing.dart';
 
-/// eigo-kore アプリケーション全体で使用する
-/// 統一されたコンポーネントスタイル定義
-///
-/// 使用例:
-/// ```dart
-/// ElevatedButton(
-///   style: AppComponentStyles.primaryButton,
-///   onPressed: () => ...,
-///   child: Text('押す'),
-/// )
-/// ```
 class AppComponentStyles {
   // ===== ボタンスタイル =====
 

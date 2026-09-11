@@ -1,18 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/pronunciation_result.dart';
+
 import '../models/pet_model.dart';
-import '../providers/pet_provider.dart';
+import '../models/pronunciation_result.dart';
 import '../providers/coin_provider.dart';
 import '../providers/level_provider.dart';
+import '../providers/pet_provider.dart';
 
-/// 発音スコア → ペットフィード統合サービス
-///
-/// 流れ:
-/// 1. PronunciationResult.accuracy (0.0-1.0) を受け取る
-/// 2. 0-100に正規化
-/// 3. ペットにフィード（hunger 減少、exp 増加）
-/// 4. コイン加算
-/// 5. 人間レベル XP 加算（別系統）
 class PronunciationPetIntegrationService {
   final Ref ref;
 

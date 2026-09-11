@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../models/leaderboard_model.dart';
 import '../providers/leaderboard_provider.dart';
 
-/// Display leaderboard rankings
 class LeaderboardDisplayScreen extends ConsumerWidget {
   final LeaderboardGroupType groupType;
   final String groupName;

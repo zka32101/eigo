@@ -1,6 +1,9 @@
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../design_system/design_system.dart';
+import '../models/pronunciation_result.dart';
 import '../models/question.dart';
 import '../models/stage.dart';
 import '../providers/badge_provider.dart';
@@ -9,15 +12,13 @@ import '../providers/level_provider.dart';
 import '../providers/progress_provider.dart';
 import '../providers/settings_provider.dart';
 import '../providers/speaking_history_provider.dart';
+import '../providers/user_profile_provider.dart';
 import '../providers/weakness_provider.dart';
+import '../services/pronunciation_pet_integration_service.dart';
 import '../services/speech_service.dart';
 import '../services/tts_service.dart';
-import '../services/pronunciation_pet_integration_service.dart';
-import '../design_system/design_system.dart';
-import '../widgets/speaking_score_ring.dart';
 import '../widgets/lesson_screen_components.dart';
-import '../providers/user_profile_provider.dart';
-import '../models/pronunciation_result.dart';
+import '../widgets/speaking_score_ring.dart';
 
 class LessonScreen extends ConsumerStatefulWidget {
   final Stage stage;

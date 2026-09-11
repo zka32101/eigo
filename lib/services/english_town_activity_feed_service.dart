@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../models/english_town_model.dart';
 import '../services/english_town_notification_service.dart';
 
-/// Represents an activity event in the game
 class ActivityEvent {
   final String id;
   final String userId;

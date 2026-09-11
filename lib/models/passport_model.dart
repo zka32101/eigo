@@ -2,7 +2,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'passport_model.g.dart';
 
-/// 姉妹アプリの種類
 enum SisterAppType {
   eigoKore('英語コレ！', 'eigo-kore', 'English learning'),
   kokugoKore('国語コレ！', 'kokugo-kore', 'Japanese language learning'),

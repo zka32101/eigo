@@ -2,7 +2,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'pronunciation_video_model.g.dart';
 
-/// 初回の発音記録（30日後の比較対象となる）
 @JsonSerializable()
 class PronunciationVideoRecord {
   /// 記録ID

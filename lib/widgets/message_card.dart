@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/message_model.dart';
+
 import '../design_system/design_system.dart';
+import '../models/message_model.dart';
 
 class MessageCard extends ConsumerWidget {
   final Message message;

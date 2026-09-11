@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../design_system/design_system.dart';
 import '../models/english_town_social_model.dart';
 import '../providers/english_town_social_provider.dart';
 
-/// Social friends list screen with Phase 9 integration
 class SocialFriendsListScreen extends ConsumerWidget {
   const SocialFriendsListScreen({super.key});
 

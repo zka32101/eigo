@@ -1,8 +1,8 @@
-import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
+
+import '../design_system/design_system.dart';
 import '../providers/level_provider.dart';
 
-/// XP バーウィジェット（compact/full 両対応）
 class XpBar extends StatelessWidget {
   final LevelState level;
   final bool compact;

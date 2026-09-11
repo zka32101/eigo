@@ -1,10 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../services/english_town_firebase_service.dart';
+
 import '../models/english_town_model.dart';
+import '../services/english_town_firebase_service.dart';
 
-/// ==================== FIREBASE SERVICE PROVIDER ====================
-
-/// Firebase service instance
 final englishTownFirebaseServiceProvider = Provider<EnglishTownFirebaseService>((ref) {
   return EnglishTownFirebaseService();
 });

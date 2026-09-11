@@ -1,7 +1,8 @@
-import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../design_system/design_system.dart';
 import '../providers/coin_provider.dart';
 import '../services/firebase_service.dart';
 import '../services/notification_service.dart';

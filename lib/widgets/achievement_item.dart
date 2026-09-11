@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../models/achievement.dart';
-import '../design_system/design_system.dart';
 
-/// Widget for displaying an achievement
+import '../design_system/design_system.dart';
+import '../models/achievement.dart';
+
 class AchievementItem extends StatelessWidget {
   final UserAchievement userAchievement;
   final bool isUnlocked;

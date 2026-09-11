@@ -2,7 +2,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'plush_toy_model.g.dart';
 
-/// プラシシ（ぬいぐるみキャラ）の種類
 enum PlushToySpecies {
   bear('🐻 ベア', 'A friendly bear who loves adventures'),
   cat('🐱 ネコ', 'A curious cat who asks questions'),

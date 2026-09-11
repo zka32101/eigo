@@ -1,8 +1,7 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:eigo_kore/models/npc_save_model.dart';
 import 'package:eigo_kore/services/npc_save_load_service.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// NPC セーブ/ロードサービス
 final npcSaveLoadServiceProvider = Provider((ref) {
   return NPCSaveLoadService.getInstance();
 });

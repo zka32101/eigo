@@ -1,10 +1,11 @@
-import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+
+import '../design_system/design_system.dart';
+import '../providers/ai_api_key_provider.dart';
 import '../providers/claude_conversation_provider.dart';
 import '../providers/user_profile_provider.dart';
-import '../providers/ai_api_key_provider.dart';
 
 class AiFreetalkScreen extends ConsumerStatefulWidget {
   const AiFreetalkScreen({super.key});

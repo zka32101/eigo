@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_core/shared_core.dart';
-import '../data/lesson_data.dart';
+import 'package:shared_core/shared_core.dart' show LessonMenuPage;
 
-/// 「学ぶ（解説メニュー）」画面。
-///
-/// shared_core の LessonMenuPage をラップし、表示時に kLessons を
-/// lessonProvider へ読み込む。
-///
-/// 注意: `lib/screens/lesson_screen.dart` はクイズのステージ学習画面
-/// （クラス名 LessonScreen）としてすでに使われているため、
-/// 本ウィジェットは別名（ExplanationMenuScreen）にしている。
+import '../data/lesson_data.dart';
+import '../providers/lesson_provider.dart';
+
 class ExplanationMenuScreen extends ConsumerStatefulWidget {
   const ExplanationMenuScreen({super.key});
 

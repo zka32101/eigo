@@ -1,6 +1,5 @@
 import 'package:eigo_kore/models/npc_skill_model.dart';
 
-/// NPC スキル教えるサービス
 class NPCSkillService {
   static final NPCSkillService _instance = NPCSkillService._internal();
 

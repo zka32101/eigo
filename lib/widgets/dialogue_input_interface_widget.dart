@@ -1,9 +1,7 @@
+import 'package:eigo_kore/providers/dialogue_context_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:eigo_kore/providers/dialogue_context_provider.dart';
 
-/// ダイアログ入力インターフェースウィジェット
-/// プレイヤーがNPCに応答を入力するためのインターフェース
 class DialogueInputInterfaceWidget extends ConsumerStatefulWidget {
   final void Function(String)? onSubmit;
   final int minCharacters;

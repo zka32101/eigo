@@ -1,21 +1,25 @@
+import 'package:cross_promo_kit/cross_promo_kit.dart'
+    show CrossPromoSection;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_core/shared_core.dart' show FriendsListPage, DailyMissionPage;
+
 import '../data/stage_data.dart';
+import '../design_system/design_system.dart';
 import '../models/stage.dart';
 import '../providers/badge_provider.dart';
 import '../providers/coin_provider.dart';
 import '../providers/level_provider.dart';
 import '../providers/progress_provider.dart';
 import '../providers/study_time_provider.dart';
+import '../providers/user_profile_provider.dart';
 import '../providers/weakness_provider.dart';
-import '../design_system/design_system.dart';
+import '../widgets/home_screen_cards.dart';
 import '../widgets/streak_badge.dart';
 import '../widgets/streak_card.dart';
 import '../widgets/study_time_card.dart';
 import '../widgets/weekly_ranking_card.dart';
 import '../widgets/xp_bar.dart';
-import '../widgets/home_screen_cards.dart';
-import '../providers/user_profile_provider.dart';
 import 'profile_edit_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -149,6 +153,34 @@ class HomeScreen extends ConsumerWidget {
                           ),
                           Builder(
                             builder: (ctx) => IconButton(
+                              icon: Icon(Icons.assignment, color: AppColors.textWhite.withOpacity(0.7), size: 20),
+                              onPressed: () {
+                                Navigator.of(ctx).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => DailyMissionPage(
+                                      primaryColor: AppColors.primary,
+                                      appTitle: '英語コレ！',
+                                      filterSubject: 'english',
+                                    ),
+                                  ),
+                                );
+                              },
+                              tooltip: 'デイリーミッション',
+                            ),
+                          ),
+                          Builder(
+                            builder: (ctx) => IconButton(
+                              icon: Icon(Icons.people, color: AppColors.textWhite.withOpacity(0.7), size: 20),
+                              onPressed: () {
+                                Navigator.of(ctx).push(
+                                  MaterialPageRoute(builder: (_) => const FriendsListPage()),
+                                );
+                              },
+                              tooltip: 'フレンド',
+                            ),
+                          ),
+                          Builder(
+                            builder: (ctx) => IconButton(
                               icon: Icon(Icons.calendar_today, color: AppColors.textWhite.withOpacity(0.7), size: 20),
                               onPressed: () => Navigator.of(ctx).pushNamed('/calendar'),
                               tooltip: 'カレンダー',
@@ -191,6 +223,13 @@ class HomeScreen extends ConsumerWidget {
           SliverToBoxAdapter(child: _ImprovedSkillBreakdown(progress: progress)),
           if (badges.earnedBadges.isNotEmpty)
             SliverToBoxAdapter(child: _RecentBadges(badges: badges)),
+          // クロスプロモーション（他アプリ紹介）
+          SliverToBoxAdapter(
+            child: CrossPromoSection(
+              currentAppId: 'com.example.eigo_kore',
+              currentCategory: '小学コレ',
+            ),
+          ),
           SliverToBoxAdapter(child: SizedBox(height: AppSpacing.xxl)),
         ],
       ),

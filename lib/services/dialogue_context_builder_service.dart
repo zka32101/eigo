@@ -1,9 +1,7 @@
 import 'package:eigo_kore/models/dialogue_template_model.dart';
-import 'package:eigo_kore/models/npc_extended_model.dart';
 import 'package:eigo_kore/models/english_town_model.dart';
+import 'package:eigo_kore/models/npc_extended_model.dart';
 
-/// ダイアログコンテキストビルダーサービス（シングルトンパターン）
-/// 会話に必要なコンテキスト情報を収集・構築
 class DialogueContextBuilderService {
   static final DialogueContextBuilderService _instance =
       DialogueContextBuilderService._internal();

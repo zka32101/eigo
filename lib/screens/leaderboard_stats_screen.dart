@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../models/leaderboard_model.dart';
 import '../providers/leaderboard_provider.dart';
 
-/// Display leaderboard statistics and analytics
 class LeaderboardStatsScreen extends ConsumerWidget {
   const LeaderboardStatsScreen({Key? key}) : super(key: key);
 

@@ -1,6 +1,6 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:eigo_kore/models/npc_behavior_model.dart';
 import 'package:eigo_kore/services/npc_behavior_service.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final npcBehaviorServiceProvider = Provider((ref) {
   return NPCBehaviorService.getInstance();

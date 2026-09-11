@@ -2,7 +2,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'teacher_mode_model.g.dart';
 
-/// Teacher Mode難易度レベル
 enum TeacherModeDifficulty {
   @JsonValue('easy')
   easy,

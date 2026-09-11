@@ -1,6 +1,8 @@
 import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
+
 import '../config/revenuecat_config.dart';
 import '../models/purchase_model.dart';
 import 'logger_service.dart';

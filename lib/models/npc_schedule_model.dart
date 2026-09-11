@@ -2,7 +2,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'npc_schedule_model.g.dart';
 
-/// 曜日
 enum DayOfWeek {
   monday('月曜日', 'Monday'),
   tuesday('火曜日', 'Tuesday'),

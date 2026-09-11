@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../providers/notification_provider.dart';
+
 import '../design_system/design_system.dart';
+import '../providers/notification_provider.dart';
 
 class NotificationBadge extends ConsumerWidget {
   final String userId;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+
 import '../models/english_town_model.dart';
 
-/// Complete English-Only Town map data with all locations, NPCs, and scenes
 class EnglishTownData {
   static final TownMap townMap = TownMap(
     id: 'english_town_v1',

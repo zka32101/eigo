@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../services/english_town_activity_feed_service.dart';
 
-/// Activity feed service instance
 final activityFeedServiceProvider =
     Provider<EnglishTownActivityFeedService>((ref) {
   return EnglishTownActivityFeedService();

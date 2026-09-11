@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../models/leaderboard_model.dart';
 import '../services/leaderboard_service.dart';
 
-// Service provider
 final leaderboardServiceProvider = Provider((ref) {
   return LeaderboardService();
 });

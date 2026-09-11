@@ -1,13 +1,12 @@
 import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:shared_core/shared_core.dart';
+
 import '../firebase_options.dart';
 
-/// Firebase/Firestore ラッパー。
-/// google-services.json が存在しない場合や初期化失敗時は
-/// graceful fallback（操作を無視）する。
 class FirebaseService {
   static final FirebaseService _instance = FirebaseService._();
   factory FirebaseService() => _instance;

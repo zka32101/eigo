@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/achievement_model.dart';
+
 import '../design_system/design_system.dart';
+import '../models/achievement_model.dart';
 
 class AchievementCard extends ConsumerWidget {
   final Achievement achievement;

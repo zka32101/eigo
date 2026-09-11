@@ -1,11 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../models/english_town_model.dart';
+
 import '../models/english_town_advanced.dart';
+import '../models/english_town_model.dart';
 import 'firebase_service.dart';
 
-/// English-Only Town Firebase Service
-/// Handles persistent storage and cloud sync for English-Only Town game data
 class EnglishTownFirebaseService {
   static final EnglishTownFirebaseService _instance = EnglishTownFirebaseService._internal();
 

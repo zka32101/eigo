@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../design_system/design_system.dart';
 import '../models/purchase_model.dart';
 import '../providers/purchase_provider.dart';
 import '../providers/user_profile_provider.dart';
 import '../widgets/product_card.dart';
-import '../design_system/design_system.dart';
 
 class ShopScreen extends ConsumerStatefulWidget {
   const ShopScreen({Key? key}) : super(key: key);

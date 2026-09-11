@@ -1,7 +1,5 @@
 import '../models/question.dart';
 
-// ─── Stage 11: Vehicles（乗り物） ──────────────────────────────────────────
-
 final stage11Questions = <Question>[
   // リスニング (7問)
   const Question(id: 's11_l1', type: QuestionType.listening, difficulty: DifficultyLevel.beginner,

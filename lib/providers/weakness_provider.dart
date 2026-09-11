@@ -1,10 +1,11 @@
 import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../models/question.dart';
-import '../data/stage_data.dart';
 
-/// 問題ごとの回答記録
+import '../data/stage_data.dart';
+import '../models/question.dart';
+
 class QuestionRecord {
   final String questionId;
   final QuestionType type;

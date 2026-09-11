@@ -1,12 +1,11 @@
-import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../data/stage_data.dart';
+import '../design_system/design_system.dart';
 import '../models/stage.dart';
 import '../providers/progress_provider.dart';
 
-/// 改善されたステージ選択画面
-/// GridView を使用した 2 列/3 列レスポンシブレイアウト
 class ImprovedStageSelectScreen extends ConsumerWidget {
   const ImprovedStageSelectScreen({super.key});
 

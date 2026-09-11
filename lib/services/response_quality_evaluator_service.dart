@@ -1,8 +1,6 @@
 import 'package:eigo_kore/models/dialogue_template_model.dart';
 import 'package:eigo_kore/models/npc_extended_model.dart';
 
-/// 応答品質評価サービス（シングルトンパターン）
-/// Claude生成の応答が要件を満たしているかを評価
 class ResponseQualityEvaluatorService {
   static final ResponseQualityEvaluatorService _instance =
       ResponseQualityEvaluatorService._internal();

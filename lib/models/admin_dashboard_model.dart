@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-/// System-wide health and status model
 class SystemHealthStatus {
   final DateTime timestamp;
   final double systemHealth; // 0-100%

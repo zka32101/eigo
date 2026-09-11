@@ -1,5 +1,6 @@
-import '../design_system/design_system.dart';
 import 'package:flutter/material.dart';
+
+import '../design_system/design_system.dart';
 import '../providers/study_time_provider.dart';
 
 class StudyTimeCard extends StatelessWidget {
