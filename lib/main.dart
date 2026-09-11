@@ -8,7 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_core/shared_core.dart' hide lessonProvider;
 import 'package:shared_core/shared_core.dart'
-    show badgeProvider, unifiedBadges, BadgeNotifier, rankingProvider, friendProvider, missionProvider, coinProvider, premiumProvider, PremiumNotifier, PushNotificationService;
+    show badgeProvider, unifiedBadges, BadgeNotifier, rankingProvider, friendProvider, missionProvider, coinProvider, premiumProvider, PremiumNotifier, PushNotificationService, adaptiveDifficultyNotifierProvider;
 
 import '../design_system/design_system.dart';
 import 'models/challenge_model.dart';
@@ -142,6 +142,10 @@ Future<void> main() async {
   } catch (e) {
     // FCM token retrieval failed, continue anyway
   }
+
+  // Phase 4.19: 適応難易度エンジン初期化
+  // 注: ユーザーID取得後（プロフィール画面後）に各ユーザーごとに initializeAdaptiveDifficulty() を呼ぶこと
+  debugPrint('Phase 4.19 Retention Optimization Engine: Initialized');
 
   // クロスプロモーション初期化
   try {
