@@ -79,6 +79,11 @@ jobs:
       - name: Build APK
         id: build_apk
         continue-on-error: true
+        env:
+          KEYSTORE_PATH: ${{ github.workspace }}/android/release.keystore
+          KEYSTORE_PASSWORD: android
+          KEY_ALIAS: androidsignkey
+          KEY_PASSWORD: android
         run: |
           set -o pipefail
           flutter build apk --release -v 2>&1 | tee build_apk.log
@@ -89,6 +94,11 @@ jobs:
       - name: Build AAB
         id: build_aab
         continue-on-error: true
+        env:
+          KEYSTORE_PATH: ${{ github.workspace }}/android/release.keystore
+          KEYSTORE_PASSWORD: android
+          KEY_ALIAS: androidsignkey
+          KEY_PASSWORD: android
         run: |
           set -o pipefail
           flutter build appbundle --release -v 2>&1 | tee build_aab.log
