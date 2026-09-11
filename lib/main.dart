@@ -2,12 +2,13 @@ import 'dart:async';
 
 import 'package:cross_promo_kit/cross_promo_kit.dart'
     show CrossPromoService;
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_core/shared_core.dart' hide lessonProvider;
 import 'package:shared_core/shared_core.dart'
-    show badgeProvider, unifiedBadges, BadgeNotifier, rankingProvider, friendProvider, missionProvider, coinProvider, premiumProvider, PremiumNotifier;
+    show badgeProvider, unifiedBadges, BadgeNotifier, rankingProvider, friendProvider, missionProvider, coinProvider, premiumProvider, PremiumNotifier, PushNotificationService;
 
 import '../design_system/design_system.dart';
 import 'models/challenge_model.dart';
@@ -118,6 +119,29 @@ Future<void> main() async {
 
   // Firebase初期化（未設定時はgraceful fallbackでローカルのみ動作）
   await FirebaseService().init();
+
+  // Phase 4.18: プッシュ通知サービス初期化
+  final pushService = PushNotificationService();
+  try {
+    await pushService.initialize(
+      onMessageHandler: (RemoteMessage message) {
+        debugPrint('Received message: ${message.notification?.title}');
+      },
+    );
+  } catch (e) {
+    // PushNotificationService initialization failed, continue anyway
+  }
+
+  // FCM トークンを取得・保存
+  try {
+    final fcmToken = await pushService.getFCMToken();
+    if (fcmToken != null) {
+      debugPrint('FCM Token obtained: ${fcmToken.substring(0, 20)}...');
+      // 将来: await updateUserFCMToken(userId, fcmToken);
+    }
+  } catch (e) {
+    // FCM token retrieval failed, continue anyway
+  }
 
   // クロスプロモーション初期化
   try {
