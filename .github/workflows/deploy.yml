@@ -55,9 +55,8 @@ jobs:
 
       - name: Get dependencies
         run: |
-          rm -rf .dart_tool pubspec.lock
-          flutter clean
           flutter pub get
+          flutter pub cache repair
 
       - name: Setup signing keystore
         run: |
@@ -69,14 +68,6 @@ jobs:
             echo "KEYSTORE_CONFIGURED=false" >> $GITHUB_ENV
           fi
 
-      - name: Build APK
-        id: build_apk
-        continue-on-error: true
-        run: |
-          set -o pipefail
-          flutter build apk --release -v 2>&1 | tee build_apk.log
-          exit ${PIPESTATUS[0]}
-
       - name: Check Gradle configuration
         run: |
           echo "=== Android Gradle Config ==="
@@ -84,6 +75,16 @@ jobs:
           echo ""
           echo "=== Keystore Info ==="
           ls -lh android/release.keystore 2>/dev/null || echo "No keystore file"
+
+      - name: Build APK
+        id: build_apk
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          flutter build apk --release -v 2>&1 | tee build_apk.log
+          BUILD_EXIT=$?
+          echo "APK Build exit code: $BUILD_EXIT"
+          exit $BUILD_EXIT
 
       - name: Build AAB
         id: build_aab
