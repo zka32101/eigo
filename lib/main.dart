@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cross_promo_kit/cross_promo_kit.dart'
     show CrossPromoService;
 import 'package:flutter/material.dart';
@@ -5,7 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_core/shared_core.dart' hide lessonProvider;
 import 'package:shared_core/shared_core.dart'
-    show badgeProvider, unifiedBadges, BadgeNotifier, rankingProvider, friendProvider;
+    show badgeProvider, unifiedBadges, BadgeNotifier, rankingProvider, friendProvider, missionProvider, coinProvider;
 
 import '../design_system/design_system.dart';
 import 'models/challenge_model.dart';
@@ -46,6 +48,7 @@ import 'screens/leaderboard_screen.dart';
 import 'screens/leaderboard_screen.dart';
 import 'screens/learning_pace_screen.dart';
 import 'screens/lesson_screen.dart';
+import 'screens/mission/mission_screen.dart';
 import 'screens/multiplayer_leaderboard_screen.dart';
 import 'screens/multiplayer_matchmaker_screen.dart';
 import 'screens/notification_center_screen.dart';
@@ -98,6 +101,7 @@ import 'services/notification_service.dart';
 import 'services/purchase_service.dart';
 import 'services/firestore_ranking_service.dart';
 import 'services/firestore_friend_service.dart';
+import 'services/firestore_mission_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -164,16 +168,25 @@ Future<void> main() async {
   // バッジシステム初期化: 統一バッジを主題タグで初期化
   container.read(badgeProvider.notifier).setBadgeDefinitions(unifiedBadges, subject: 'eigo');
 
-  // Firestore ランキング・フレンド サービスの初期化
+  // Firestore ランキング・フレンド・ミッション サービスの初期化
   final rankingService = FirestoreRankingService();
   final friendService = FirestoreFriendService();
+  final missionService = FirestoreMissionService();
 
   // Handler を shared_core provider に注入
   container.read(rankingProvider.notifier).setFetchHandler(rankingService.fetchRankings);
+  container.read(globalRankingProvider.notifier).setFetchHandler(rankingService.fetchGlobalRankings);
   container.read(friendProvider.notifier)
     ..setFetchHandler(friendService.fetchFriends)
     ..setAddFriendHandler(friendService.addFriend)
     ..setRemoveFriendHandler(friendService.removeFriend);
+
+  // Phase 4.5: デイリーミッション統一
+  // ミッション初期化: 現在のユーザー ID で初期化
+  final currentUserId = missionService.getCurrentUserId();
+  if (currentUserId != null) {
+    unawaited(container.read(missionProvider.notifier).initializeMissions(currentUserId));
+  }
 
   runApp(UncontrolledProviderScope(container: container, child: const EigoKoreApp()));
 }
@@ -251,6 +264,7 @@ class EigoKoreApp extends ConsumerWidget {
         '/challenges': (context) => const ChallengeHubScreen(), // Social challenges
         '/challenge-hub': (context) => const ChallengeHubScreen(),
         '/friend-challenges': (context) => const FriendChallengeScreen(),
+        '/mission': (context) => const MissionScreen(),
         '/multiplayer': (context) => const MultiplayerMatchmakerScreen(),
         '/multiplayer-leaderboard': (context) => const MultiplayerLeaderboardScreen(),
         '/video-gallery': (context) => const VideoGalleryScreen(),
