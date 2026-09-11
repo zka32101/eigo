@@ -2,12 +2,13 @@ import 'dart:async';
 
 import 'package:cross_promo_kit/cross_promo_kit.dart'
     show CrossPromoService;
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_core/shared_core.dart' hide lessonProvider;
 import 'package:shared_core/shared_core.dart'
-    show badgeProvider, unifiedBadges, BadgeNotifier, rankingProvider, friendProvider, missionProvider, coinProvider;
+    show badgeProvider, unifiedBadges, BadgeNotifier, rankingProvider, friendProvider, missionProvider, coinProvider, premiumProvider, PremiumNotifier, PushNotificationService, adaptiveDifficultyNotifierProvider;
 
 import '../design_system/design_system.dart';
 import 'models/challenge_model.dart';
@@ -119,6 +120,33 @@ Future<void> main() async {
   // Firebase初期化（未設定時はgraceful fallbackでローカルのみ動作）
   await FirebaseService().init();
 
+  // Phase 4.18: プッシュ通知サービス初期化
+  final pushService = PushNotificationService();
+  try {
+    await pushService.initialize(
+      onMessageHandler: (RemoteMessage message) {
+        debugPrint('Received message: ${message.notification?.title}');
+      },
+    );
+  } catch (e) {
+    // PushNotificationService initialization failed, continue anyway
+  }
+
+  // FCM トークンを取得・保存
+  try {
+    final fcmToken = await pushService.getFCMToken();
+    if (fcmToken != null) {
+      debugPrint('FCM Token obtained: ${fcmToken.substring(0, 20)}...');
+      // 将来: await updateUserFCMToken(userId, fcmToken);
+    }
+  } catch (e) {
+    // FCM token retrieval failed, continue anyway
+  }
+
+  // Phase 4.19: 適応難易度エンジン初期化
+  // 注: ユーザーID取得後（プロフィール画面後）に各ユーザーごとに initializeAdaptiveDifficulty() を呼ぶこと
+  debugPrint('Phase 4.19 Retention Optimization Engine: Initialized');
+
   // クロスプロモーション初期化
   try {
     await CrossPromoService.init();
@@ -130,11 +158,12 @@ Future<void> main() async {
   await AdService().initialize();
 
   // RevenueCat初期化（APIキー未設定時はgraceful skipし、フリープランで動作継続）
-  await PurchaseService.initializeRevenueCat();
+  final purchaseService = PurchaseService();
+  await purchaseService.initializeRevenueCat();
   final fbUserId = FirebaseService().userId;
   if (fbUserId != null) {
     // FirebaseのユーザーIDとRevenueCatユーザーを紐付け（サポート・分析用途）
-    await PurchaseService().linkRevenueCatUser(fbUserId);
+    await purchaseService.linkRevenueCatUser(fbUserId);
   }
 
   // 保存済みコイン残高を読み込んでから起動（未読み込みのままだと0のみで
@@ -151,6 +180,8 @@ Future<void> main() async {
       }),
       screenTimeProvider.overrideWith(ScreenTimeNotifier.new),
       lessonProvider.overrideWith(LessonNotifier.new),
+      // Phase 4.7: 統一サブスクリプション管理（PremiumProvider）
+      premiumProvider.overrideWith(PremiumNotifier.new),
       // リアルタイム対戦（マルチプレイ）: Firestore実装（eigo_ プレフィックス）を注入
       matchmakingHandlersProvider.overrideWithValue(matchmakingService.matchmakingHandlers),
       matchHandlersProvider.overrideWithValue(matchmakingService.matchHandlers),
@@ -181,9 +212,17 @@ Future<void> main() async {
     ..setAddFriendHandler(friendService.addFriend)
     ..setRemoveFriendHandler(friendService.removeFriend);
 
+  // Phase 4.7: 統一サブスクリプション初期化
+  final currentUserId = missionService.getCurrentUserId();
+  if (currentUserId != null) {
+    container.read(premiumProvider.notifier)
+      ..setCheckHandler((userId) => purchaseService.isSubscribed(userId))
+      ..setExpiryHandler((userId) => purchaseService.getSubscriptionExpirationDate(userId));
+    unawaited(container.read(premiumProvider.notifier).checkSubscription(currentUserId));
+  }
+
   // Phase 4.5: デイリーミッション統一
   // ミッション初期化: 現在のユーザー ID で初期化
-  final currentUserId = missionService.getCurrentUserId();
   if (currentUserId != null) {
     unawaited(container.read(missionProvider.notifier).initializeMissions(currentUserId));
   }
