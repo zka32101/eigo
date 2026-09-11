@@ -4,6 +4,17 @@ import '../models/english_town_advanced.dart';
 import '../models/english_town_model.dart';
 import '../providers/english_town_provider.dart';
 
+export '../models/english_town_advanced.dart'
+    show
+        NPCMoodState,
+        WeatherEffect,
+        TimeOfDayDialogueVariation,
+        RewardAnimationConfig,
+        DialogueVariationPool,
+        ConversationPerformanceMetrics,
+        DialogueCache,
+        EngagementAnalytics;
+
 final npcMoodProvider = StateProvider<NPCMoodState>((ref) {
   // Initialize with random mood for variety
   final hour = DateTime.now().hour;
@@ -236,14 +247,3 @@ final animationDurationMultiplierProvider =
     StateProvider<double>((ref) {
   return 1.0; // TODO: Connect to system animation settings
 });
-
-export '../models/english_town_advanced.dart'
-    show
-        NPCMoodState,
-        WeatherEffect,
-        TimeOfDayDialogueVariation,
-        RewardAnimationConfig,
-        DialogueVariationPool,
-        ConversationPerformanceMetrics,
-        DialogueCache,
-        EngagementAnalytics;

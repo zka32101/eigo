@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/admin_dashboard_model.dart';
 
@@ -658,5 +659,3 @@ final adminDashboardServiceProvider =
     Provider<AdminDashboardService>((ref) {
   return AdminDashboardService();
 });
-
-import 'package:flutter_riverpod/flutter_riverpod.dart';
