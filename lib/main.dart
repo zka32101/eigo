@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_core/shared_core.dart' hide lessonProvider;
 import 'package:shared_core/shared_core.dart'
-    show badgeProvider, unifiedBadges, BadgeNotifier, rankingProvider, friendProvider;
+    show badgeProvider, unifiedBadges, BadgeNotifier, rankingProvider, friendProvider, missionProvider, coinProvider;
 
 import '../design_system/design_system.dart';
 import 'models/challenge_model.dart';
@@ -46,6 +46,7 @@ import 'screens/leaderboard_screen.dart';
 import 'screens/leaderboard_screen.dart';
 import 'screens/learning_pace_screen.dart';
 import 'screens/lesson_screen.dart';
+import 'screens/mission/mission_screen.dart';
 import 'screens/multiplayer_leaderboard_screen.dart';
 import 'screens/multiplayer_matchmaker_screen.dart';
 import 'screens/notification_center_screen.dart';
@@ -252,6 +253,7 @@ class EigoKoreApp extends ConsumerWidget {
         '/challenges': (context) => const ChallengeHubScreen(), // Social challenges
         '/challenge-hub': (context) => const ChallengeHubScreen(),
         '/friend-challenges': (context) => const FriendChallengeScreen(),
+        '/mission': (context) => const MissionScreen(),
         '/multiplayer': (context) => const MultiplayerMatchmakerScreen(),
         '/multiplayer-leaderboard': (context) => const MultiplayerLeaderboardScreen(),
         '/video-gallery': (context) => const VideoGalleryScreen(),
