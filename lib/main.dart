@@ -8,7 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_core/shared_core.dart' hide lessonProvider;
 import 'package:shared_core/shared_core.dart'
-    show badgeProvider, unifiedBadges, BadgeNotifier, rankingProvider, friendProvider, missionProvider, coinProvider, premiumProvider, PremiumNotifier, PushNotificationService, adaptiveDifficultyNotifierProvider;
+    show badgeProvider, unifiedBadges, BadgeNotifier, rankingProvider, friendProvider, missionProvider, dailyMissionProvider, coinProvider, premiumProvider, PremiumNotifier, PushNotificationService, adaptiveDifficultyNotifierProvider;
 
 import '../design_system/design_system.dart';
 import 'models/challenge_model.dart';
@@ -225,6 +225,12 @@ Future<void> main() async {
   // ミッション初期化: 現在のユーザー ID で初期化
   if (currentUserId != null) {
     unawaited(container.read(missionProvider.notifier).initializeMissions(currentUserId));
+  }
+
+  // Phase 4.20: デイリーミッション統一実装
+  // 日次ミッション初期化: 現在のユーザー ID とアプリ ID で初期化
+  if (currentUserId != null) {
+    unawaited(container.read(dailyMissionProvider.notifier).initializeDailyMissions(currentUserId, 'eigo'));
   }
 
   runApp(UncontrolledProviderScope(container: container, child: const EigoKoreApp()));
