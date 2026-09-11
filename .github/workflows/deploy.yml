@@ -55,9 +55,8 @@ jobs:
 
       - name: Get dependencies
         run: |
-          rm -rf .dart_tool pubspec.lock
-          flutter clean
           flutter pub get
+          flutter pub cache repair
 
       - name: Setup signing keystore
         run: |
@@ -69,21 +68,43 @@ jobs:
             echo "KEYSTORE_CONFIGURED=false" >> $GITHUB_ENV
           fi
 
+      - name: Check Gradle configuration
+        run: |
+          echo "=== Android Gradle Config ==="
+          cat android/app/build.gradle.kts 2>/dev/null || cat android/app/build.gradle 2>/dev/null || echo "No build.gradle found"
+          echo ""
+          echo "=== Keystore Info ==="
+          ls -lh android/release.keystore 2>/dev/null || echo "No keystore file"
+
       - name: Build APK
         id: build_apk
         continue-on-error: true
+        env:
+          KEYSTORE_PATH: ${{ github.workspace }}/android/release.keystore
+          KEYSTORE_PASSWORD: android
+          KEY_ALIAS: androidsignkey
+          KEY_PASSWORD: android
         run: |
           set -o pipefail
           flutter build apk --release -v 2>&1 | tee build_apk.log
-          exit ${PIPESTATUS[0]}
+          BUILD_EXIT=$?
+          echo "APK Build exit code: $BUILD_EXIT"
+          exit $BUILD_EXIT
 
       - name: Build AAB
         id: build_aab
         continue-on-error: true
+        env:
+          KEYSTORE_PATH: ${{ github.workspace }}/android/release.keystore
+          KEYSTORE_PASSWORD: android
+          KEY_ALIAS: androidsignkey
+          KEY_PASSWORD: android
         run: |
           set -o pipefail
           flutter build appbundle --release -v 2>&1 | tee build_aab.log
-          exit ${PIPESTATUS[0]}
+          BUILD_EXIT=$?
+          echo "Build exit code: $BUILD_EXIT"
+          exit $BUILD_EXIT
 
       - name: Set build status
         id: build_status
@@ -105,6 +126,14 @@ jobs:
             build_apk.log
             build_aab.log
           retention-days: 30
+
+      - name: List build outputs
+        if: always()
+        run: |
+          echo "=== Checking build outputs ==="
+          find build/app/outputs -type f 2>/dev/null || echo "No outputs directory"
+          ls -lh build/app/outputs/apk/release/ 2>/dev/null || echo "No APK directory"
+          ls -lh build/app/outputs/bundle/release/ 2>/dev/null || echo "No AAB directory"
 
       - name: Upload APK artifact
         if: success()
@@ -134,12 +163,17 @@ jobs:
           pip install google-auth google-auth-httplib2 google-api-python-client
 
       - name: Upload to Google Drive
-        if: always() && success()
+        if: success() && env.GOOGLE_DRIVE_SERVICE_ACCOUNT_KEY != ''
         continue-on-error: true
         env:
           GOOGLE_DRIVE_SERVICE_ACCOUNT_KEY: ${{ secrets.GOOGLE_DRIVE_SERVICE_ACCOUNT_KEY }}
           GOOGLE_DRIVE_FOLDER_ID: ${{ secrets.GOOGLE_DRIVE_FOLDER_ID || '1kqPMiEnGtF7sRNiYsds9_9YvuPsT1Rfu' }}
-        run: python scripts/upload_to_drive.py
+        run: |
+          if [ -z "$GOOGLE_DRIVE_SERVICE_ACCOUNT_KEY" ]; then
+            echo "⚠️  Google Drive credentials not configured. Skipping upload."
+            exit 0
+          fi
+          python scripts/upload_to_drive.py
 
   create_release:
     needs: build
