@@ -2,7 +2,7 @@ name: eigo_kore
 description: "英語コレ！- リスニング・スピーキング特化の小学生英語学習アプリ"
 publish_to: 'none'
 
-version: 3.1.0+1
+version: 3.2.0+100
 
 environment:
   sdk: ^3.9.0
