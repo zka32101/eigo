@@ -1,12 +1,12 @@
-# Phase 4 統合完了 - 小学コレ！英語
+# Phase 4 統合完了 - 英語
 
-shared_core の Phase 4.15-4.17 統合完了。
+Phase 4.15-4.18 実装完了。
 
-## Firebase RemoteConfig 設定
-- **ab_tests_config** (JSON)
-- **analytics_config** (JSON)
-- **cloud_functions_config** (JSON)
+RemoteConfig: ab_tests_config, analytics_config, cloud_functions_config, push_notification_config
 
----
+通知設定: NotificationSettingsScreen
+リテンション: RetentionAnalyticsDashboard
+
+詳細: ../../shared_core/PHASE_4_INTEGRATION_GUIDE_418.md
 
 **最終更新**: 2026-09-11
