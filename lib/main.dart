@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cross_promo_kit/cross_promo_kit.dart'
     show CrossPromoService;
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -8,7 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_core/shared_core.dart' hide lessonProvider;
 import 'package:shared_core/shared_core.dart'
-    show badgeProvider, unifiedBadges, BadgeNotifier, rankingProvider, friendProvider, missionProvider, coinProvider, premiumProvider, PremiumNotifier, PushNotificationService, adaptiveDifficultyNotifierProvider;
+    show badgeProvider, unifiedBadges, BadgeNotifier, rankingProvider, friendProvider, missionProvider, coinProvider, premiumProvider, PremiumNotifier, PushNotificationService, adaptiveDifficultyNotifierProvider, weeklyBonusProvider;
 
 import '../design_system/design_system.dart';
 import 'models/challenge_model.dart';
@@ -225,6 +226,30 @@ Future<void> main() async {
   // ミッション初期化: 現在のユーザー ID で初期化
   if (currentUserId != null) {
     unawaited(container.read(missionProvider.notifier).initializeMissions(currentUserId));
+  }
+
+  // Phase 4.20: 週次ボーナスシステム統一
+  // 週次ボーナス初期化とFirestoreハンドラ設定
+  if (currentUserId != null) {
+    // Firestore 永続化ハンドラを設定
+    container.read(weeklyBonusProvider.notifier).setPersistHandler(
+      (userId, bonus) async {
+        try {
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(userId)
+              .collection('bonuses')
+              .doc('weekly')
+              .set(bonus.toJson());
+        } catch (e) {
+          debugPrint('Failed to persist weekly bonus: $e');
+        }
+      },
+    );
+    // 週次ボーナス初期化
+    unawaited(
+      container.read(weeklyBonusProvider.notifier).initializeWeeklyBonus(currentUserId),
+    );
   }
 
   runApp(UncontrolledProviderScope(container: container, child: const EigoKoreApp()));

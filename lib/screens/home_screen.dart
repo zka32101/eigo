@@ -2,7 +2,7 @@ import 'package:cross_promo_kit/cross_promo_kit.dart'
     show CrossPromoSection;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_core/shared_core.dart' show FriendsListPage, DailyMissionPage;
+import 'package:shared_core/shared_core.dart' show FriendsListPage, DailyMissionPage, WeeklyBonusWidget, weeklyBonusProvider, coinProvider;
 
 import '../data/stage_data.dart';
 import '../design_system/design_system.dart';
@@ -202,6 +202,21 @@ class HomeScreen extends ConsumerWidget {
             child: _ImprovedDailyMissionCardWrapper(progress: progress),
           ),
           SliverToBoxAdapter(child: StreakCard(days: progress.streakDays)),
+          // Phase 4.20: 週次ボーナスシステム
+          SliverToBoxAdapter(
+            child: WeeklyBonusWidget(
+              onBonusClaimed: (coins) {
+                ref.read(coinProvider.notifier).addCoins(coins);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('ボーナス $coins コイン獲得しました！🎉'),
+                    backgroundColor: Colors.green,
+                    duration: const Duration(seconds: 2),
+                  ),
+                );
+              },
+            ),
+          ),
           SliverToBoxAdapter(child: StudyTimeCard(studyTime: studyTime)),
           SliverToBoxAdapter(
             child: ImprovedStatsRow(
