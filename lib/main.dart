@@ -119,6 +119,13 @@ Future<void> main() async {
   // 通知初期化
   await NotificationService().init();
 
+  // Phase 4.23: ローカル通知・リマインダーシステム初期化
+  final reminderService = ReminderService.instance;
+  // 通知コールバック設定（オプション）
+  reminderService.setNotificationCallback((notification) {
+    debugPrint('Reminder notification: ${notification.title}');
+  });
+
   // Firebase初期化（未設定時はgraceful fallbackでローカルのみ動作）
   await FirebaseService().init();
 

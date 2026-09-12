@@ -2,7 +2,7 @@ import 'package:cross_promo_kit/cross_promo_kit.dart'
     show CrossPromoSection;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_core/shared_core.dart' show FriendsListPage, DailyMissionPage, WeeklyBonusWidget, weeklyBonusProvider, coinProvider;
+import 'package:shared_core/shared_core.dart' show FriendsListPage, DailyMissionPage, WeeklyBonusWidget, weeklyBonusProvider, coinProvider, NotificationBadge, notificationProvider;
 
 import '../data/stage_data.dart';
 import '../design_system/design_system.dart';
@@ -185,6 +185,12 @@ class HomeScreen extends ConsumerWidget {
                               icon: Icon(Icons.calendar_today, color: AppColors.textWhite.withOpacity(0.7), size: 20),
                               onPressed: () => Navigator.of(ctx).pushNamed('/calendar'),
                               tooltip: 'カレンダー',
+                            ),
+                          ),
+                          // Phase 4.23: ローカル通知・リマインダーシステム
+                          Builder(
+                            builder: (ctx) => NotificationBadge(
+                              onTap: () => Navigator.of(ctx).pushNamed('/notifications'),
                             ),
                           ),
                         ],
