@@ -88,6 +88,44 @@ class PurchaseService {
     }
   }
 
+  /// ユーザーがアクティブなサブスク状態か確認
+  ///
+  /// Phase 4.7: shared_core の [premiumProvider] ハンドラー注入用メソッド
+  /// userId パラメータは shared_core との連携のため。実装では現在のユーザー情報を使用。
+  Future<bool> isSubscribed(String userId) async {
+    if (!_rcInitialized) return false;
+    try {
+      final info = await Purchases.getCustomerInfo();
+      return info.entitlements.active.containsKey('premium');
+    } catch (e) {
+      LoggerService.error('isSubscribed 確認に失敗しました: $e', tag: 'PurchaseService');
+      return false;
+    }
+  }
+
+  /// サブスクリプション有効期限を取得
+  ///
+  /// Phase 4.7: shared_core の [premiumProvider] ハンドラー注入用メソッド
+  /// userId パラメータは shared_core との連携のため。実装では現在のユーザー情報を使用。
+  Future<DateTime?> getSubscriptionExpirationDate(String userId) async {
+    if (!_rcInitialized) return null;
+    try {
+      final info = await Purchases.getCustomerInfo();
+      final expirationDateString = info.entitlements.active.values
+          .firstOrNull
+          ?.expirationDate;
+      return expirationDateString != null
+          ? DateTime.tryParse(expirationDateString)
+          : null;
+    } catch (e) {
+      LoggerService.error(
+        'getSubscriptionExpirationDate 取得に失敗しました: $e',
+        tag: 'PurchaseService',
+      );
+      return null;
+    }
+  }
+
   /// 購入可能なオファリング（プラン・パッケージ一覧）を取得
   Future<Offerings?> getOfferings() async {
     if (!_rcInitialized) return null;
