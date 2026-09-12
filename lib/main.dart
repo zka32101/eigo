@@ -97,7 +97,6 @@ import 'screens/weekly_report_screen.dart';
 import 'screens/word_review_screen.dart';
 import 'services/ad_service.dart';
 import 'services/eigo_matchmaking_service.dart';
-import 'services/cloud_functions_service.dart';
 import 'services/firebase_service.dart';
 import 'services/notification_service.dart';
 import 'services/purchase_service.dart';
@@ -120,10 +119,6 @@ Future<void> main() async {
 
   // Firebase初期化（未設定時はgraceful fallbackでローカルのみ動作）
   await FirebaseService().init();
-
-  // Phase 4.23: Cloud Functions サービス初期化
-  final cloudFunctionsService = CloudFunctionsService();
-  debugPrint('Cloud Functions Service initialized');
 
   // Phase 4.18: プッシュ通知サービス初期化
   final pushService = PushNotificationService();
