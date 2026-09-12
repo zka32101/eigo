@@ -178,7 +178,7 @@ Future<void> main() async {
         notifier.setBadgeDefinitions(unifiedBadges, subject: 'eigo');
         return notifier;
       }),
-      screenTimeProvider.overrideWith(ScreenTimeNotifier.new),
+      screenTimeProvider.overrideWith(() => ScreenTimeNotifier()),
       lessonProvider.overrideWith(LessonNotifier.new),
       // Phase 4.7: 統一サブスクリプション管理（PremiumProvider）
       premiumProvider.overrideWith(PremiumNotifier.new),
