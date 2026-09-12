@@ -4,7 +4,7 @@ import 'package:shared_core/models/mission_model.dart';
 /// Phase 4.5: ゲーミフィケーション統一工事（ミッション機能）
 /// 簡略実装: shared_core の ALL_MISSIONS リストから取得・フィルタリング
 class FirestoreMissionService {
-  static const String appId = 'eigo'; // 英語コレ アプリID
+  static const String appId = 'eigo'; // アプリID
 
   /// ミッション取得（簡略実装）
   /// shared_core の ALL_MISSIONS リストから対応するミッションを取得
