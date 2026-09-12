@@ -27,6 +27,7 @@ import 'providers/user_profile_provider.dart';
 import 'screens/achievements_screen.dart';
 import 'screens/activity_feed_screen.dart';
 import 'screens/ad_settings_screen.dart';
+import 'screens/ai_coaching_dashboard_screen.dart';
 import 'screens/ai_freetalk_screen.dart';
 import 'screens/analytics_screen.dart';
 import 'screens/badge_screen.dart';
@@ -297,6 +298,7 @@ class EigoKoreApp extends ConsumerWidget {
         '/parent-child': (context) => const ParentChildChallengeScreen(),
         '/invite': (context) => const InviteScreen(),
         '/notification-settings': (context) => const NotificationSettingsScreen(),
+        '/ai-coaching': (context) => const AiCoachingDashboardScreen(),
         '/notifications-center': (context) => const NotificationCenterScreen(),
         '/profile-select': (context) => const ProfileSelectScreen(),
         '/ai-freetalk': (context) => const AiFreetalkScreen(),

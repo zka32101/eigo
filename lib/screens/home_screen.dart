@@ -20,6 +20,7 @@ import '../widgets/streak_card.dart';
 import '../widgets/study_time_card.dart';
 import '../widgets/weekly_ranking_card.dart';
 import '../widgets/xp_bar.dart';
+import 'ai_coaching_dashboard_screen.dart';
 import 'profile_edit_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -238,6 +239,10 @@ class HomeScreen extends ConsumerWidget {
           SliverToBoxAdapter(child: _ImprovedSkillBreakdown(progress: progress)),
           if (badges.earnedBadges.isNotEmpty)
             SliverToBoxAdapter(child: _RecentBadges(badges: badges)),
+          // Phase 4.24: AI コーチング
+          SliverToBoxAdapter(
+            child: _AiCoachingCard(),
+          ),
           // クロスプロモーション（他アプリ紹介）
           SliverToBoxAdapter(
             child: CrossPromoSection(
@@ -594,3 +599,56 @@ class _WeeklyRanking extends StatelessWidget {
     );
   }
 }
+
+// ─── AI コーチング ────────────────────────────────────────────
+
+class _AiCoachingCard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.md, AppSpacing.md, AppSpacing.xs),
+      child: Card(
+        elevation: 2,
+        child: InkWell(
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => const AiCoachingDashboardScreen(),
+            ),
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(AppSpacing.md),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      '🤖 AI コーチング',
+                      style: AppTypography.labelLarge.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Spacer(),
+                    Icon(
+                      Icons.arrow_forward,
+                      color: AppColors.textMuted,
+                      size: 20,
+                    ),
+                  ],
+                ),
+                AppSpacing.verticalSpacerXs,
+                Text(
+                  'あなたの学習パターンを分析し、個別のコーチングアドバイスを提供します。',
+                  style: AppTypography.bodySmall.copyWith(
+                    color: AppColors.textMuted,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
