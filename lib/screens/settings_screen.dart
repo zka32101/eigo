@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_core/shared_core.dart'
     hide progressProvider, ProgressNotifier, LearningProgress;
+import 'package:shared_core/widgets/notification_settings_page.dart';
+import 'package:shared_core/widgets/retention_dashboard.dart';
 
 import '../design_system/design_system.dart';
 import '../providers/ai_api_key_provider.dart';
@@ -9,6 +11,7 @@ import '../providers/morning_notification_provider.dart';
 import '../providers/progress_provider.dart';
 import '../providers/purchase_provider.dart';
 import '../providers/settings_provider.dart';
+import '../providers/user_profile_provider.dart';
 import '../services/notification_service.dart';
 import '../services/purchase_service.dart';
 
@@ -22,6 +25,8 @@ class SettingsScreen extends ConsumerWidget {
     final purchase = ref.watch(purchaseProvider);
     final apiKeys = ref.watch(aiApiKeysProvider);
     final morningNotification = ref.watch(morningNotificationStateProvider);
+    final currentUser = ref.watch(currentUserProvider);
+    final userId = currentUser?.id ?? '';
 
     return Scaffold(
       appBar: AppBar(
@@ -49,6 +54,19 @@ class SettingsScreen extends ConsumerWidget {
           _SectionHeader('通知設定'),
           _NotificationCard(settings: settings, ref: ref),
           _MorningEnglishCard(morningNotification: morningNotification, ref: ref),
+          _SettingsTile(
+            icon: Icons.notification_important,
+            color: AppColors.accentBlue,
+            label: '詳細な通知設定',
+            subtitle: 'プッシュ・リテンション・リマインダー',
+            onTap: userId.isNotEmpty
+                ? () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => NotificationSettingsPage(userId: userId),
+                      ),
+                    )
+                : null,
+          ),
 
           AppSpacing.verticalSpacerMd,
           _SectionHeader('AI キー設定'),
@@ -103,6 +121,20 @@ class SettingsScreen extends ConsumerWidget {
             label: 'バッジ一覧',
             subtitle: '${progress.clearedStages.length}ステージクリア済み',
             onTap: () => Navigator.of(context).pushNamed('/badges'),
+          ),
+
+          AppSpacing.verticalSpacerMd,
+          _SectionHeader('分析'),
+          _SettingsTile(
+            icon: Icons.analytics,
+            color: AppColors.accentGreen,
+            label: 'リテンション分析',
+            subtitle: 'ユーザー活動・リスク分析',
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => const RetentionDashboard(),
+              ),
+            ),
           ),
 
           AppSpacing.verticalSpacerMd,
