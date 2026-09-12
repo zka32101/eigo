@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_core/shared_core.dart'
     hide progressProvider, ProgressNotifier, LearningProgress;
+import 'package:shared_core/widgets/add_friend_dialog.dart';
 import 'package:shared_core/widgets/notification_settings_page.dart';
 import 'package:shared_core/widgets/retention_dashboard.dart';
 
@@ -135,6 +136,21 @@ class SettingsScreen extends ConsumerWidget {
                 builder: (_) => const RetentionDashboard(),
               ),
             ),
+          ),
+
+          AppSpacing.verticalSpacerMd,
+          _SectionHeader('👥 ソーシャル'),
+          _SettingsTile(
+            icon: Icons.person_add,
+            color: AppColors.accentBlue,
+            label: 'フレンドを探す',
+            subtitle: 'ユーザーを検索してフレンド申請する',
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (_) => const AddFriendDialog(),
+              );
+            },
           ),
 
           AppSpacing.verticalSpacerMd,
