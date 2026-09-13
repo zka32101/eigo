@@ -12,130 +12,232 @@ import '../providers/settings_provider.dart';
 import '../services/notification_service.dart';
 import '../services/purchase_service.dart';
 
-class SettingsScreen extends ConsumerWidget {
+class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends ConsumerState<SettingsScreen> with TickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final progress = ref.watch(progressProvider);
     final settings = ref.watch(settingsProvider);
     final purchase = ref.watch(purchaseProvider);
     final apiKeys = ref.watch(aiApiKeysProvider);
     final morningNotification = ref.watch(morningNotificationStateProvider);
 
+    // AnalyticsDashboard 用のサンプルデータ
+    final totalQuestions = progress.totalQuestionsAttempted;
+    final averageAccuracy = progress.averageAccuracy;
+    final totalTimeSpent = progress.totalTimeSpent;
+    final dailyActivity = _generateDailyActivity(progress);
+    final accuracyTrend = _generateAccuracyTrend(progress);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('設定'),
         backgroundColor: AppColors.primary,
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: const [
+            Tab(text: '設定'),
+            Tab(text: '学習分析'),
+          ],
+        ),
       ),
-      body: ListView(
-        padding: AppSpacing.allPaddingLg,
+      body: TabBarView(
+        controller: _tabController,
         children: [
-          // プランバッジ
-          _PlanBadgeCard(purchase: purchase),
-          AppSpacing.verticalSpacerMd,
-
-          // 子どもの名前
-          _ChildNameCard(settings: settings, ref: ref),
-          AppSpacing.verticalSpacerMd,
-
-          _SectionHeader('学習設定'),
-          _SoundToggle(settings: settings, ref: ref),
-          _TTSSpeedCard(settings: settings, ref: ref),
-          _AutoPlayToggle(settings: settings, ref: ref),
-          _PhoneticToggle(settings: settings, ref: ref),
-
-          AppSpacing.verticalSpacerMd,
-          _SectionHeader('通知設定'),
-          _NotificationCard(settings: settings, ref: ref),
-          _MorningEnglishCard(morningNotification: morningNotification, ref: ref),
-
-          AppSpacing.verticalSpacerMd,
-          _SectionHeader('AI キー設定'),
-          _ApiKeysCard(apiKeys: apiKeys, ref: ref),
-
-          AppSpacing.verticalSpacerMd,
-          _SectionHeader('アカウント'),
-          _SettingsTile(
-            icon: Icons.star,
-            color: AppColors.accentOrange,
-            label: 'プランをアップグレード',
-            subtitle: purchase.planDisplayName,
-            onTap: () => Navigator.of(context).pushNamed('/upgrade'),
+          // Tab 1: 設定
+          _SettingsTabContent(
+            progress: progress,
+            settings: settings,
+            purchase: purchase,
+            apiKeys: apiKeys,
+            morningNotification: morningNotification,
+            ref: ref,
           ),
-          _SettingsTile(
-            icon: Icons.restore,
-            color: AppColors.primary,
-            label: '購入を復元',
-            subtitle: '以前の購入を復元します',
-            onTap: () async {
-              final success = await ref.read(purchaseProvider.notifier).restore();
-              if (!context.mounted) return;
-              if (success) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('購入を復元しました')),
-                );
-              } else {
-                final errorMessage = ref.read(purchaseProvider).errorMessage;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(errorMessage ?? '復元できる購入が見つかりませんでした'),
-                    backgroundColor: AppColors.error,
-                  ),
-                );
-              }
-            },
-          ),
-          _SettingsTile(
-            icon: Icons.bar_chart,
-            color: AppColors.accentGreen,
-            label: '親向けダッシュボード',
-            subtitle: '学習詳細・スピーキング分析',
-            onTap: () async {
-              final passedGate = await requireParentalGate(context);
-              if (!passedGate || !context.mounted) return;
-              Navigator.of(context).pushNamed('/parent');
-            },
-          ),
-          _SettingsTile(
-            icon: Icons.emoji_events,
-            color: AppColors.accentOrange,
-            label: 'バッジ一覧',
-            subtitle: '${progress.clearedStages.length}ステージクリア済み',
-            onTap: () => Navigator.of(context).pushNamed('/badges'),
-          ),
-
-          AppSpacing.verticalSpacerMd,
-          _SectionHeader('その他'),
-          _SettingsTile(
-            icon: Icons.privacy_tip,
-            color: AppColors.textMuted,
-            label: 'プライバシーポリシー',
-            onTap: () => Navigator.of(context).pushNamed('/privacy'),
-          ),
-          _SettingsTile(
-            icon: Icons.feedback,
-            color: AppColors.textMuted,
-            label: 'バグ報告・ご意見',
-            subtitle: '不具合や改善要望を送る',
-            onTap: () => Navigator.of(context).pushNamed('/feedback'),
-          ),
-          _SettingsTile(
-            icon: Icons.info,
-            color: AppColors.textMuted,
-            label: 'アプリについて',
-            subtitle: 'バージョン 1.1.0',
-            onTap: () => showAboutDialog(
-              context: context,
-              applicationName: '英語コレ！',
-              applicationVersion: '1.1.0',
-              applicationLegalese: '© 2026 ',
+          // Tab 2: 学習分析
+          SingleChildScrollView(
+            padding: EdgeInsets.all(AppSpacing.lg),
+            child: AnalyticsDashboardWidget(
+              userName: settings.childName.isEmpty ? 'ユーザー' : settings.childName,
+              totalQuestions: totalQuestions,
+              averageAccuracy: averageAccuracy,
+              totalTimeSpent: totalTimeSpent,
+              dailyActivity: dailyActivity,
+              accuracyTrend: accuracyTrend,
             ),
           ),
-
-          AppSpacing.verticalSpacerXxl,
         ],
       ),
+    );
+  }
+
+  List<DailyActivityData> _generateDailyActivity(LearningProgress progress) {
+    return [
+      DailyActivityData(day: '月', count: progress.mondayAttempts),
+      DailyActivityData(day: '火', count: progress.tuesdayAttempts),
+      DailyActivityData(day: '水', count: progress.wednesdayAttempts),
+      DailyActivityData(day: '木', count: progress.thursdayAttempts),
+      DailyActivityData(day: '金', count: progress.fridayAttempts),
+      DailyActivityData(day: '土', count: progress.saturdayAttempts),
+      DailyActivityData(day: '日', count: progress.sundayAttempts),
+    ];
+  }
+
+  List<AccuracyTrendData> _generateAccuracyTrend(LearningProgress progress) {
+    return [
+      AccuracyTrendData(week: 'W1', accuracy: progress.week1Accuracy),
+      AccuracyTrendData(week: 'W2', accuracy: progress.week2Accuracy),
+      AccuracyTrendData(week: 'W3', accuracy: progress.week3Accuracy),
+      AccuracyTrendData(week: 'W4', accuracy: progress.week4Accuracy),
+    ];
+  }
+}
+
+class _SettingsTabContent extends StatelessWidget {
+  final LearningProgress progress;
+  final AppSettings settings;
+  final PurchaseState purchase;
+  final AiApiKeys apiKeys;
+  final MorningNotificationState morningNotification;
+  final WidgetRef ref;
+
+  const _SettingsTabContent({
+    required this.progress,
+    required this.settings,
+    required this.purchase,
+    required this.apiKeys,
+    required this.morningNotification,
+    required this.ref,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: EdgeInsets.all(AppSpacing.lg),
+      children: [
+        // プランバッジ
+        _PlanBadgeCard(purchase: purchase),
+        AppSpacing.verticalSpacerMd,
+
+        // 子どもの名前
+        _ChildNameCard(settings: settings, ref: ref),
+        AppSpacing.verticalSpacerMd,
+
+        _SectionHeader('学習設定'),
+        _SoundToggle(settings: settings, ref: ref),
+        _TTSSpeedCard(settings: settings, ref: ref),
+        _AutoPlayToggle(settings: settings, ref: ref),
+        _PhoneticToggle(settings: settings, ref: ref),
+
+        AppSpacing.verticalSpacerMd,
+        _SectionHeader('通知設定'),
+        _NotificationCard(settings: settings, ref: ref),
+        _MorningEnglishCard(morningNotification: morningNotification, ref: ref),
+
+        AppSpacing.verticalSpacerMd,
+        _SectionHeader('AI キー設定'),
+        _ApiKeysCard(apiKeys: apiKeys, ref: ref),
+
+        AppSpacing.verticalSpacerMd,
+        _SectionHeader('アカウント'),
+        _SettingsTile(
+          icon: Icons.star,
+          color: AppColors.accentOrange,
+          label: 'プランをアップグレード',
+          subtitle: purchase.planDisplayName,
+          onTap: () => Navigator.of(context).pushNamed('/upgrade'),
+        ),
+        _SettingsTile(
+          icon: Icons.restore,
+          color: AppColors.primary,
+          label: '購入を復元',
+          subtitle: '以前の購入を復元します',
+          onTap: () async {
+            final success = await ref.read(purchaseProvider.notifier).restore();
+            if (!context.mounted) return;
+            if (success) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('購入を復元しました')),
+              );
+            } else {
+              final errorMessage = ref.read(purchaseProvider).errorMessage;
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(errorMessage ?? '復元できる購入が見つかりませんでした'),
+                  backgroundColor: AppColors.error,
+                ),
+              );
+            }
+          },
+        ),
+        _SettingsTile(
+          icon: Icons.bar_chart,
+          color: AppColors.accentGreen,
+          label: '親向けダッシュボード',
+          subtitle: '学習詳細・スピーキング分析',
+          onTap: () async {
+            final passedGate = await requireParentalGate(context);
+            if (!passedGate || !context.mounted) return;
+            Navigator.of(context).pushNamed('/parent');
+          },
+        ),
+        _SettingsTile(
+          icon: Icons.emoji_events,
+          color: AppColors.accentOrange,
+          label: 'バッジ一覧',
+          subtitle: '${progress.clearedStages.length}ステージクリア済み',
+          onTap: () => Navigator.of(context).pushNamed('/badges'),
+        ),
+
+        AppSpacing.verticalSpacerMd,
+        _SectionHeader('その他'),
+        _SettingsTile(
+          icon: Icons.privacy_tip,
+          color: AppColors.textMuted,
+          label: 'プライバシーポリシー',
+          onTap: () => Navigator.of(context).pushNamed('/privacy'),
+        ),
+        _SettingsTile(
+          icon: Icons.feedback,
+          color: AppColors.textMuted,
+          label: 'バグ報告・ご意見',
+          subtitle: '不具合や改善要望を送る',
+          onTap: () => Navigator.of(context).pushNamed('/feedback'),
+        ),
+        _SettingsTile(
+          icon: Icons.info,
+          color: AppColors.textMuted,
+          label: 'アプリについて',
+          subtitle: 'バージョン 1.1.0',
+          onTap: () => showAboutDialog(
+            context: context,
+            applicationName: '英語コレ！',
+            applicationVersion: '1.1.0',
+            applicationLegalese: '© 2026 ',
+          ),
+        ),
+
+        AppSpacing.verticalSpacerXxl,
+      ],
     );
   }
 }
