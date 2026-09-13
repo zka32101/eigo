@@ -15,11 +15,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Clone shared_core
-        run: |
-          mkdir -p packages
-          git clone https://github.com/zka32101/shared_core packages/shared_core
-
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
