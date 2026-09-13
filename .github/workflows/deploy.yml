@@ -2,6 +2,9 @@
 
 on:
   push:
+    branches:
+      - claude/**
+      - main
     tags:
       - 'v*'
   workflow_dispatch:
@@ -11,11 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
-      - name: Clone shared_core
-        run: |
-          mkdir -p packages
-          git clone https://github.com/zka32101/shared_core packages/shared_core
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -33,6 +31,12 @@ jobs:
         run: |
           echo "flutter.sdk=$FLUTTER_SDK" > android/local.properties
           cat android/local.properties
+
+      - name: Clean dependencies and cache
+        run: |
+          flutter clean
+          rm -f pubspec.lock
+          rm -rf .dart_tool/
 
       - name: Get dependencies
         run: flutter pub get
