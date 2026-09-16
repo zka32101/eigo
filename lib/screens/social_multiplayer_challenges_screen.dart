@@ -547,7 +547,7 @@ class _ChallengeDetailScreen extends ConsumerWidget {
               ),
             ],
           ),
-        );
+        ),
       );
     }).toList();
   }
