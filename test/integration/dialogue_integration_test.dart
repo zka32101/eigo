@@ -385,8 +385,8 @@ void main() {
         // Calculate mean
         final mean = scores.reduce((a, b) => a + b) ~/ scores.length;
         expect(mean, isNotNull);
-        expect(mean, greaterThan(0);
-        expect(mean, lessThanOrEqualTo(100);
+        expect(mean, greaterThan(0));
+        expect(mean, lessThanOrEqualTo(100));
 
         // Verify distribution characteristics
         final highScores = scores.where((s) => s >= 85).length;

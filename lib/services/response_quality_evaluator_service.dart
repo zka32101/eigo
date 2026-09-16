@@ -400,9 +400,9 @@ class ResponseQualityEvaluatorService {
   bool meetsQualityThreshold(
     String response,
     DialogueTemplate template,
-    NPCExtended npc,
+    NPCExtended npc, {
     double threshold = 0.65,
-  ) {
+  }) {
     try {
       final score = evaluateResponseQuality(response, template, npc);
       return score >= threshold;

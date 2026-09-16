@@ -139,7 +139,7 @@ final deleteMessageProvider = FutureProvider<bool>((ref) async {
 /// ==================== UI STATE PROVIDERS ====================
 
 /// Selected conversation (pair of user IDs)
-final selectedConversationProvider = StateProvider<({String user1, String user2})?>>((ref) => null);
+final selectedConversationProvider = StateProvider<({String user1, String user2})?>((ref) => null);
 
 /// Message search query
 final messageSearchQueryProvider = StateProvider<String>((ref) => '');

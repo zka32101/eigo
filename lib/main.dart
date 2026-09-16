@@ -46,7 +46,6 @@ import 'screens/friends_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/invite_screen.dart';
 import 'screens/leaderboard_screen.dart';
-import 'screens/leaderboard_screen.dart';
 import 'screens/learning_pace_screen.dart';
 import 'screens/lesson_screen.dart';
 import 'screens/mission/mission_screen.dart';
@@ -297,7 +296,6 @@ class EigoKoreApp extends ConsumerWidget {
         '/pronunciation-video': (context) => const PronunciationVideoScreen(),
         '/plush-toy': (context) => const PlushToyScreen(),
         '/passport': (context) => const PassportScreen(),
-        '/english-town': (context) => const EnglishTownScreen(),
         '/song-generator': (context) => const SongGeneratorScreen(),
         '/english-town': (context) => const EnglishTownHubScreen(),
         '/challenges': (context) => const ChallengeHubScreen(), // Social challenges
@@ -311,7 +309,6 @@ class EigoKoreApp extends ConsumerWidget {
         '/pet-status': (context) => const PetStatusScreen(),
         '/pet-interaction': (context) => const PetInteractionScreen(),
         '/activity-feed': (context) => const ActivityFeedScreen(),
-        '/leaderboard': (context) => const LeaderboardScreen(),
         '/conversations': (context) => const ConversationListScreen(),
       },
       onGenerateRoute: (settings) {

@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
-import ../design_system/design_system.dartapp_theme.dart';
-import ../design_system/design_system.dartspacing.dart';
-import ../design_system/design_system.dartsizes.dart';
-import ../design_system/design_system.darttypography.dart';
+import '../design_system/design_system.dart';
 import '../data/vocabulary_data.dart';
 import '../models/question.dart';
 import '../widgets/educational_illustrations.dart';
