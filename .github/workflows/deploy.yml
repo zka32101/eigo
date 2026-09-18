@@ -58,9 +58,23 @@ jobs:
           rm -rf .dart_tool/
 
       - name: Get dependencies
+        id: pub_get
+        continue-on-error: true
         run: |
-          flutter pub get
+          flutter pub get -v 2>&1 | tee pub_get_output.log
           flutter pub cache repair
+
+      - name: Upload pub get logs on failure
+        if: steps.pub_get.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: pub-get-logs
+          path: pub_get_output.log
+          retention-days: 30
+
+      - name: Fail if pub get failed
+        if: steps.pub_get.outcome == 'failure'
+        run: exit 1
 
       - name: Generate code
         run: |
