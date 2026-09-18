@@ -56,21 +56,24 @@ jobs:
           flutter clean
           rm -f pubspec.lock
           rm -rf .dart_tool/
+          rm -rf ~/.pub-cache/
 
       - name: Get dependencies
         id: pub_get
         continue-on-error: true
         run: |
-          flutter pub get -v 2>&1 | tee pub_get_output.log
           flutter pub cache repair
+          flutter pub get -v 2>&1 | tee pub_get_output.log || true
 
-      - name: Upload pub get logs on failure
-        if: steps.pub_get.outcome == 'failure'
-        uses: actions/upload-artifact@v4
-        with:
-          name: pub-get-logs
-          path: pub_get_output.log
-          retention-days: 30
+      - name: Check pub get result
+        id: check_pub
+        run: |
+          if [ -f pub_get_output.log ]; then
+            echo "Log file exists"
+            tail -100 pub_get_output.log > /tmp/pub_output.txt
+            cat /tmp/pub_output.txt
+          fi
+          ls -lh .dart_tool/ 2>/dev/null || echo ".dart_tool not created"
 
       - name: Fail if pub get failed
         if: steps.pub_get.outcome == 'failure'
