@@ -195,7 +195,7 @@ jobs:
         continue-on-error: true
         env:
           GOOGLE_DRIVE_SERVICE_ACCOUNT_KEY: ${{ secrets.GOOGLE_DRIVE_SERVICE_ACCOUNT_KEY }}
-          GOOGLE_DRIVE_FOLDER_ID: ${{ secrets.GOOGLE_DRIVE_FOLDER_ID || '1kqPMiEnGtF7sRNiYsds9_9YvuPsT1Rfu' }}
+          GOOGLE_DRIVE_FOLDER_ID: ${{ secrets.GOOGLE_DRIVE_FOLDER_ID || '1iXxOO750AyuIwXNwGF-qTJLmElIldgwD' }}
         run: |
           if [ -z "$GOOGLE_DRIVE_SERVICE_ACCOUNT_KEY" ]; then
             echo "⚠️  Google Drive credentials not configured. Skipping upload."
