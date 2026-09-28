@@ -6,6 +6,7 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 import '../config/revenuecat_config.dart';
 import '../models/purchase_model.dart';
 import '../services/purchase_service.dart';
+import 'trial_provider.dart';
 
 enum PurchasePlan {
   free,
@@ -364,3 +365,16 @@ final purchaseProvider =
     StateNotifierProvider.autoDispose<PurchaseNotifier, PurchaseState>(
   (ref) => PurchaseNotifier(),
 );
+
+/// 有料プラン契約中か、14日間の無料トライアル期間中であれば true。
+/// プレミアム機能（発音チェック等）を実際に使わせてよいかの判定に使う。
+/// トライアル読み込みが完了していない起動直後は、誤って機能をブロックしない
+/// よう楽観的に true を返す。
+final hasPremiumAccessProvider = Provider<bool>((ref) {
+  final purchase = ref.watch(purchaseProvider);
+  if (purchase.activePlan != PurchasePlan.free) return true;
+
+  final trial = ref.watch(trialProvider);
+  if (!trial.isLoaded) return true;
+  return trial.isInTrial;
+});

@@ -9,6 +9,7 @@ import '../providers/morning_notification_provider.dart';
 import '../providers/progress_provider.dart';
 import '../providers/purchase_provider.dart';
 import '../providers/settings_provider.dart';
+import '../providers/trial_provider.dart';
 import '../services/notification_service.dart';
 import '../services/purchase_service.dart';
 
@@ -159,13 +160,23 @@ class SettingsScreen extends ConsumerWidget {
 
 // ─── Plan Badge ───────────────────────────────────────────
 
-class _PlanBadgeCard extends StatelessWidget {
+class _PlanBadgeCard extends ConsumerWidget {
   final PurchaseState purchase;
   const _PlanBadgeCard({required this.purchase});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isFree = purchase.activePlan == PurchasePlan.free;
+    final trial = ref.watch(trialProvider);
+    final isTrialExpired = isFree && trial.isLoaded && !trial.isInTrial;
+
+    String? subtitle;
+    if (isTrialExpired) {
+      subtitle = '無料トライアルは終了しました。プランに登録して続きを楽しもう！';
+    } else if (isFree && trial.isLoaded) {
+      subtitle = '無料トライアル残り${trial.remainingDays}日！ぜひProをお試しください。';
+    }
+
     return Card(
       color: isFree ? AppColors.bgLight : AppColors.primary.withAlpha(15),
       child: Padding(
@@ -192,10 +203,12 @@ class _PlanBadgeCard extends StatelessWidget {
                     '現在のプラン: ${purchase.planDisplayName}',
                     style: AppTypography.labelLarge,
                   ),
-                  if (isFree)
-                    const Text(
-                      '2週間無料でProをお試しください！',
-                      style: AppTypography.bodySmall.copyWith(color: AppColors.accentOrange),
+                  if (subtitle != null)
+                    Text(
+                      subtitle,
+                      style: AppTypography.bodySmall.copyWith(
+                        color: isTrialExpired ? AppColors.error : AppColors.accentOrange,
+                      ),
                     ),
                 ],
               ),
@@ -207,7 +220,7 @@ class _PlanBadgeCard extends StatelessWidget {
                   backgroundColor: AppColors.accentOrange,
                   padding: EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
                 ),
-                child: const Text('試す'),
+                child: Text(isTrialExpired ? '登録する' : '試す'),
               ),
           ],
         ),

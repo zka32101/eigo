@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_core/providers/premium_provider.dart';
 import 'package:shared_core/widgets/premium_gate_widget.dart';
 
+import '../providers/trial_provider.dart';
+
 const _primaryColor = Colors.blue;
 
 class PronunciationCheckScreen extends ConsumerStatefulWidget {
@@ -22,8 +24,11 @@ class _PronunciationCheckScreenState
   @override
   Widget build(BuildContext context) {
     final premiumState = ref.watch(premiumProvider);
+    final trial = ref.watch(trialProvider);
+    final hasAccess = premiumState.isSubscribed ||
+        (trial.isLoaded && trial.isInTrial);
 
-    if (!premiumState.isSubscribed) {
+    if (!hasAccess) {
       return Scaffold(
         appBar: AppBar(
           title: const Text('発音判定'),
@@ -262,7 +267,7 @@ class _PronunciationCheckScreenState
       builder: (context) => AlertDialog(
         title: const Text('プレミアム機能'),
         content: const Text(
-          'リアルタイム発音判定は月額¥120のプレミアム会員向けです。'
+          'リアルタイム発音判定は月額¥300のプレミアム会員向けです。'
         ),
         actions: [
           TextButton(

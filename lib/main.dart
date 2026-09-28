@@ -22,6 +22,7 @@ import 'providers/morning_notification_provider.dart';
 import 'providers/purchase_provider.dart';
 import 'providers/screen_time_provider.dart';
 import 'providers/settings_provider.dart';
+import 'providers/trial_provider.dart';
 import 'providers/user_profile_provider.dart';
 import 'screens/achievements_screen.dart';
 import 'screens/activity_feed_screen.dart';
@@ -235,6 +236,7 @@ class EigoKoreApp extends ConsumerWidget {
     ref.watch(settingsProvider);
     ref.watch(purchaseProvider);
     ref.watch(morningNotificationStateProvider);
+    ref.watch(trialProvider);
 
     final profiles = ref.watch(userProfilesProvider);
     final currentUserId = ref.watch(currentUserIdProvider);

@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:shared_core/shared_core.dart';
 
+import '../config/revenuecat_config.dart';
 import '../design_system/design_system.dart';
 import '../providers/purchase_provider.dart';
+import '../providers/trial_provider.dart';
 import '../services/purchase_service.dart';
 
 class PaywallScreen extends ConsumerStatefulWidget {
@@ -16,6 +18,7 @@ class PaywallScreen extends ConsumerStatefulWidget {
 
 class _PaywallScreenState extends ConsumerState<PaywallScreen> {
   bool _isInitialized = false;
+  bool _isAnnual = false;
 
   @override
   void initState() {
@@ -61,6 +64,10 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
               // 機能リスト
               _buildFeatureList(),
               SizedBox(height: AppSpacing.lg),
+
+              // 月額/年額 切り替え
+              _buildBillingToggle(),
+              SizedBox(height: AppSpacing.md),
 
               // プランカード
               _buildPlanCard(),
@@ -171,7 +178,40 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     );
   }
 
+  Widget _buildBillingToggle() {
+    return Container(
+      padding: EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: AppColors.bgLight,
+        borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: _BillingToggleButton(
+              label: '月額',
+              selected: !_isAnnual,
+              onTap: () => setState(() => _isAnnual = false),
+            ),
+          ),
+          Expanded(
+            child: _BillingToggleButton(
+              label: '年額（お得）',
+              selected: _isAnnual,
+              onTap: () => setState(() => _isAnnual = true),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildPlanCard() {
+    final priceLabel = _isAnnual
+        ? RevenueCatConfig.proPriceAnnualLabel
+        : RevenueCatConfig.proPriceMonthlyLabel;
+    final periodLabel = _isAnnual ? '/年' : '/月';
+
     return Container(
       padding: EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
@@ -198,14 +238,14 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
             textBaseline: TextBaseline.alphabetic,
             children: [
               Text(
-                '¥120',
+                priceLabel,
                 style: AppTypography.headlineLarge.copyWith(
                   fontWeight: FontWeight.bold,
                   color: AppColors.primary,
                 ),
               ),
               Text(
-                '/月',
+                periodLabel,
                 style: AppTypography.bodySmall.copyWith(
                   color: AppColors.textMuted,
                 ),
@@ -251,7 +291,9 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
               ),
             )
           : Text(
-              '¥120/月で始める',
+              _isAnnual
+                  ? '${RevenueCatConfig.proPriceAnnualLabel}/年で始める'
+                  : '${RevenueCatConfig.proPriceMonthlyLabel}/月で始める',
               style: AppTypography.labelLarge.copyWith(
                 fontWeight: FontWeight.bold,
                 color: AppColors.textWhite,
@@ -276,7 +318,9 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
 
     // 購入処理
     final success = await ref.read(purchaseProvider.notifier).purchase(
-      'eigo_kore_pro_monthly',
+      _isAnnual
+          ? RevenueCatConfig.productProAnnual
+          : RevenueCatConfig.productProMonthly,
     );
 
     if (!context.mounted) return;
@@ -304,23 +348,30 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
   }
 
   Widget _buildTrialBanner() {
+    final trial = ref.watch(trialProvider);
+    final isExpired = trial.isLoaded && !trial.isInTrial;
+    final message = isExpired
+        ? '無料トライアルは終了しました。\n引き続きご利用いただくにはプランへの登録が必要です。'
+        : '無料トライアル残り${trial.remainingDays}日！\nすべての機能をお試しいただけます。';
+    final color = isExpired ? AppColors.accentOrange : AppColors.accentGreen;
+
     return Container(
       padding: EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: AppColors.accentGreen.withAlpha(26),
+        color: color.withAlpha(26),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-        border: Border.all(color: AppColors.accentGreen.withAlpha(76)),
+        border: Border.all(color: color.withAlpha(76)),
       ),
       child: Row(
         children: [
-          const Text('🎁', style: TextStyle(fontSize: 24)),
+          Text(isExpired ? '⏰' : '🎁', style: const TextStyle(fontSize: 24)),
           SizedBox(width: AppSpacing.md),
           Expanded(
             child: Text(
-              '2週間無料トライアル実施中！\nすべての機能をお試しいただけます。',
+              message,
               style: AppTypography.bodySmall.copyWith(
                 fontSize: 13,
-                color: AppColors.accentGreen,
+                color: color,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -339,6 +390,41 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
         fontSize: 11,
         color: AppColors.textMuted,
         height: 1.5,
+      ),
+    );
+  }
+}
+
+class _BillingToggleButton extends StatelessWidget {
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _BillingToggleButton({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
+        decoration: BoxDecoration(
+          color: selected ? AppColors.primary : Colors.transparent,
+          borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          label,
+          style: AppTypography.labelLarge.copyWith(
+            fontWeight: FontWeight.bold,
+            color: selected ? AppColors.textWhite : AppColors.textMuted,
+          ),
+        ),
       ),
     );
   }

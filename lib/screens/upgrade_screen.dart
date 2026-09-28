@@ -4,6 +4,7 @@ import 'package:shared_core/shared_core.dart';
 
 import '../design_system/design_system.dart';
 import '../providers/purchase_provider.dart';
+import '../providers/trial_provider.dart';
 import 'paywall_screen.dart';
 
 enum PlanType { lite, pro, plus, premium }
@@ -142,7 +143,7 @@ String _planName(PlanType p) {
 String _planPrice(PlanType p) {
   switch (p) {
     case PlanType.lite: return '¥200';
-    case PlanType.pro: return '¥400';
+    case PlanType.pro: return '¥300';
     case PlanType.plus: return '¥550';
     case PlanType.premium: return '¥1,800';
   }
@@ -388,24 +389,34 @@ class _SubscribeButton extends ConsumerWidget {
   }
 }
 
-class _TrialBanner extends StatelessWidget {
+class _TrialBanner extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final trial = ref.watch(trialProvider);
+    final isExpired = trial.isLoaded && !trial.isInTrial;
+    final message = isExpired
+        ? '無料トライアルは終了しました。\n引き続きご利用いただくにはプランへの登録が必要です。'
+        : '無料トライアル残り${trial.remainingDays}日！\nすべてのプランで全機能をお試しいただけます。';
+
     return Container(
       padding: EdgeInsets.all(AppSpacing.xs),
       decoration: BoxDecoration(
-        color: AppColors.accentGreen.withAlpha(26),
+        color: (isExpired ? AppColors.accentOrange : AppColors.accentGreen).withAlpha(26),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-        border: Border.all(color: AppColors.accentGreen.withAlpha(76)),
+        border: Border.all(color: (isExpired ? AppColors.accentOrange : AppColors.accentGreen).withAlpha(76)),
       ),
       child: Row(
         children: [
-          const Text('🎁', style: TextStyle(fontSize: 20)),
+          Text(isExpired ? '⏰' : '🎁', style: const TextStyle(fontSize: 20)),
           AppSpacing.horizontalSpacerXs,
           Expanded(
             child: Text(
-              '2週間無料トライアル実施中！\nすべてのプランで全機能をお試しいただけます。',
-              style: AppTypography.bodySmall.copyWith(fontSize: 13, color: AppColors.accentGreen, fontWeight: FontWeight.bold),
+              message,
+              style: AppTypography.bodySmall.copyWith(
+                fontSize: 13,
+                color: isExpired ? AppColors.accentOrange : AppColors.accentGreen,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ],
@@ -540,7 +551,7 @@ class _QuickPurchaseButton extends StatelessWidget {
                 ),
                 AppSpacing.verticalSpacerXs,
                 Text(
-                  '月額¥120 • シンプルな購入画面へ',
+                  '月額¥300 • シンプルな購入画面へ',
                   style: AppTypography.bodySmall.copyWith(
                     color: AppColors.textWhite.withOpacity(0.9),
                   ),
