@@ -37,4 +37,12 @@ class RevenueCatConfig {
   static const String productProMonthly = 'eigo_kore_pro_monthly';
   static const String productPlusMonthly = 'eigo_kore_plus_monthly';
   static const String productPremiumMonthly = 'eigo_kore_premium_monthly';
+  static const String productProAnnual = 'eigo_kore_pro_annual';
+
+  // ─── 表示価格 ──────────────────────────────────────────
+  // ストア側の実価格（App Store Connect / Google Play Console）と
+  // 一致させること。ここはアプリ内表示のみを一元管理する定数で、
+  // 実際の請求額はストア側の商品設定に従う。
+  static const String proPriceMonthlyLabel = '¥300';
+  static const String proPriceAnnualLabel = '¥2,400';
 }
