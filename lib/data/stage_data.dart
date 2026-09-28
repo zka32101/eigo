@@ -6,6 +6,7 @@ import 'question_data_extra3.dart';
 import 'question_data_extra4.dart';
 import 'question_data_extra5.dart';
 import 'question_data_extra6.dart';
+import 'self_introduction_data.dart';
 import 'writing_supplement.dart';
 
 final allStages = <Stage>[
@@ -100,4 +101,7 @@ final allStages = <Stage>[
   Stage(id: 'stage_78', grade: 6, stageNumber: 78, title: 'Sentence Practice',   titleJa: '文章練習',         emoji: '📝',  category: StageCategory.sentencePractice, questions: stage78Questions),
   Stage(id: 'stage_79', grade: 6, stageNumber: 79, title: 'Eiken Grade 5',       titleJa: '英検5級対策',      emoji: '📋',  category: StageCategory.eiken5prep,      questions: stage79Questions),
   Stage(id: 'stage_80', grade: 6, stageNumber: 80, title: 'Final Master Review', titleJa: '最終まとめ',       emoji: '🏅',  category: StageCategory.finalReview,     questions: stage80Questions),
+
+  // ── 基本会話の総仕上げ Stage 81 ─────────────────────────────────────────
+  Stage(id: 'stage_81', grade: 3, stageNumber: 81, title: 'Self Introduction', titleJa: '自己紹介',        emoji: '🙋',  category: StageCategory.selfIntroduction, questions: stage81Questions),
 ];

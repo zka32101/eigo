@@ -6,6 +6,39 @@ import '../design_system/design_system.dart';
 import '../models/stage.dart';
 import '../providers/progress_provider.dart';
 
+/// ステージ一覧の絞り込み条件。学年別、または英検5級対策（Stage61-80）で絞る。
+/// StageCategory はほぼステージ1つにつき1カテゴリの粒度で、フィルタには
+/// 細かすぎるため、フィルタ軸としては学年とレベル区分を使う。
+enum StageFilter { all, grade1, grade2, grade3, grade4, grade5, grade6, eikenPrep }
+
+String _stageFilterLabel(StageFilter f) {
+  switch (f) {
+    case StageFilter.all: return 'すべて';
+    case StageFilter.grade1: return '1年生';
+    case StageFilter.grade2: return '2年生';
+    case StageFilter.grade3: return '3年生';
+    case StageFilter.grade4: return '4年生';
+    case StageFilter.grade5: return '5年生';
+    case StageFilter.grade6: return '6年生';
+    case StageFilter.eikenPrep: return '英検5級対策';
+  }
+}
+
+bool _matchesFilter(Stage stage, StageFilter filter) {
+  switch (filter) {
+    case StageFilter.all: return true;
+    case StageFilter.grade1: return stage.grade == 1;
+    case StageFilter.grade2: return stage.grade == 2;
+    case StageFilter.grade3: return stage.grade == 3;
+    case StageFilter.grade4: return stage.grade == 4;
+    case StageFilter.grade5: return stage.grade == 5;
+    case StageFilter.grade6: return stage.grade == 6;
+    case StageFilter.eikenPrep: return stage.stageNumber >= 61;
+  }
+}
+
+final stageFilterProvider = StateProvider<StageFilter>((ref) => StageFilter.all);
+
 class StageSelectScreen extends ConsumerWidget {
   const StageSelectScreen({super.key});
 
@@ -14,6 +47,9 @@ class StageSelectScreen extends ConsumerWidget {
     final progress = ref.watch(progressProvider);
     final isMobile = context.isMobile;
     final crossAxisCount = isMobile ? 2 : 3;
+    final filter = ref.watch(stageFilterProvider);
+    final filteredStages =
+        allStages.where((s) => _matchesFilter(s, filter)).toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -28,55 +64,107 @@ class StageSelectScreen extends ConsumerWidget {
             child: _StageStatsBar(progress: progress),
           ),
 
-          // ステージグリッド
-          SliverPadding(
-            padding: AppSpacing.allPaddingLg,
-            sliver: SliverGrid(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: crossAxisCount,
-                mainAxisSpacing: AppSpacing.lg,
-                crossAxisSpacing: AppSpacing.lg,
-                childAspectRatio: isMobile ? 0.85 : 0.9,
-              ),
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final stage = allStages[index];
-                  final isCleared = progress.isCleared(stage.id);
-                  final isLocked =
-                      index > 0 && !progress.isCleared(allStages[index - 1].id);
-                  final bestScore = progress.stageBestScores[stage.id];
-                  final speakingAvg = progress.stageSpeakingAvg[stage.id];
+          // 絞り込みフィルタ
+          SliverToBoxAdapter(
+            child: _StageFilterBar(selected: filter),
+          ),
 
-                  return ImprovedStageCard(
-                    stage: stage,
-                    isCleared: isCleared,
-                    isLocked: isLocked,
-                    bestScore: bestScore,
-                    speakingAvg: speakingAvg,
-                    onTap: isLocked
-                        ? null
-                        : () => Navigator.of(context).pushNamed(
-                              '/stage-intro',
-                              arguments: stage,
-                            ),
-                    onReview: isCleared
-                        ? () => Navigator.of(context).pushNamed(
-                              '/word-review',
-                              arguments: stage,
-                            )
-                        : null,
-                  );
-                },
-                childCount: allStages.length,
+          // ステージグリッド
+          if (filteredStages.isEmpty)
+            const SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.all(AppSpacing.xl),
+                child: Center(child: Text('このカテゴリのステージはありません')),
+              ),
+            )
+          else
+            SliverPadding(
+              padding: AppSpacing.allPaddingLg,
+              sliver: SliverGrid(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: crossAxisCount,
+                  mainAxisSpacing: AppSpacing.lg,
+                  crossAxisSpacing: AppSpacing.lg,
+                  childAspectRatio: isMobile ? 0.85 : 0.9,
+                ),
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final stage = filteredStages[index];
+                    // ロック判定は全体の並び順（allStages）を基準に行う。
+                    // フィルタで絞り込んでも、前のステージ未クリアならロックしたまま。
+                    final overallIndex = allStages.indexOf(stage);
+                    final isCleared = progress.isCleared(stage.id);
+                    final isLocked = overallIndex > 0 &&
+                        !progress.isCleared(allStages[overallIndex - 1].id);
+                    final bestScore = progress.stageBestScores[stage.id];
+                    final speakingAvg = progress.stageSpeakingAvg[stage.id];
+
+                    return ImprovedStageCard(
+                      stage: stage,
+                      isCleared: isCleared,
+                      isLocked: isLocked,
+                      bestScore: bestScore,
+                      speakingAvg: speakingAvg,
+                      onTap: isLocked
+                          ? null
+                          : () => Navigator.of(context).pushNamed(
+                                '/stage-intro',
+                                arguments: stage,
+                              ),
+                      onReview: isCleared
+                          ? () => Navigator.of(context).pushNamed(
+                                '/word-review',
+                                arguments: stage,
+                              )
+                          : null,
+                    );
+                  },
+                  childCount: filteredStages.length,
+                ),
               ),
             ),
-          ),
 
           // 下部スペーサー
           const SliverToBoxAdapter(
             child: SizedBox(height: AppSpacing.xxl),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ─── ステージ絞り込みフィルタバー ───
+
+class _StageFilterBar extends ConsumerWidget {
+  final StageFilter selected;
+  const _StageFilterBar({required this.selected});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return SizedBox(
+      height: 44,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+        itemCount: StageFilter.values.length,
+        separatorBuilder: (_, __) => AppSpacing.horizontalSpacerXs,
+        itemBuilder: (context, index) {
+          final filter = StageFilter.values[index];
+          final isSelected = filter == selected;
+          return ChoiceChip(
+            label: Text(_stageFilterLabel(filter)),
+            selected: isSelected,
+            onSelected: (_) =>
+                ref.read(stageFilterProvider.notifier).state = filter,
+            selectedColor: AppColors.primary,
+            labelStyle: AppTypography.labelMedium.copyWith(
+              color: isSelected ? AppColors.textWhite : AppColors.textPrimary,
+              fontWeight: FontWeight.bold,
+            ),
+            backgroundColor: AppColors.bgLight,
+          );
+        },
       ),
     );
   }

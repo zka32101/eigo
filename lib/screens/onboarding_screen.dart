@@ -17,6 +17,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   final _pages = const [
     _OnboardPage(
+      emoji: '🎯',
+      title: '目標は「基本的な会話ができる」こと！',
+      subtitle: 'あいさつから日常のやりとりまで、\n毎日少しずつ英語に慣れていこう！',
+      color: AppColors.primary,
+    ),
+    _OnboardPage(
       emoji: '🎧',
       title: 'リスニングで英語耳を鍛える',
       subtitle: 'ネイティブの発音を聞いて、\n本物の英語感覚を身につけよう！',
