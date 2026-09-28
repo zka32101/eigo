@@ -41,11 +41,9 @@ import 'screens/daily_challenge_screen.dart';
 import 'screens/english_town_hub_screen.dart';
 import 'screens/english_town_screen.dart';
 import 'screens/explanation_menu_screen.dart';
-import 'screens/friend_challenge_screen.dart';
-import 'screens/friends_screen.dart';
 import 'screens/home_screen.dart';
+import 'screens/how_to_use_screen.dart';
 import 'screens/invite_screen.dart';
-import 'screens/leaderboard_screen.dart';
 import 'screens/learning_pace_screen.dart';
 import 'screens/lesson_screen.dart';
 import 'screens/mission/mission_screen.dart';
@@ -73,7 +71,6 @@ import 'screens/promotion_screen.dart';
 import 'screens/pronunciation_battle_screen.dart';
 import 'screens/pronunciation_check_screen.dart';
 import 'screens/pronunciation_video_screen.dart';
-import 'screens/ranking_screen.dart';
 import 'screens/result_screen.dart';
 import 'screens/screen_time_settings_screen.dart';
 import 'screens/settings_screen.dart';
@@ -242,15 +239,17 @@ class EigoKoreApp extends ConsumerWidget {
     final profiles = ref.watch(userProfilesProvider);
     final currentUserId = ref.watch(currentUserIdProvider);
     final hasProfiles = profiles.isNotEmpty && currentUserId != null;
+    final profileLoadComplete = ref.watch(profileLoadCompleteProvider);
 
     return MaterialApp(
       title: '英語コレ！',
       theme: buildAppTheme(),
       darkTheme: buildDarkAppTheme(),
       debugShowCheckedModeBanner: false,
-      initialRoute: '/',
+      home: !profileLoadComplete
+          ? const _AppBootLoadingScreen()
+          : (hasProfiles ? const RootShell() : const ProfileSelectScreen()),
       routes: {
-        '/': (context) => hasProfiles ? const RootShell() : const ProfileSelectScreen(),
         '/onboarding': (context) => const OnboardingScreen(),
         '/home': (context) => const RootShell(),
         '/stages': (context) => const StageSelectScreen(),
@@ -259,10 +258,10 @@ class EigoKoreApp extends ConsumerWidget {
         '/parent': (context) => const ParentDashboardScreen(),
         '/screen-time-settings': (context) => const ScreenTimeSettingsScreen(),
         '/privacy': (context) => const PrivacyPolicyScreen(),
+        '/how-to-use': (context) => const HowToUseScreen(),
         '/upgrade': (context) => const UpgradeScreen(),
         '/test-prep': (context) => const TestPrepScreen(),
         '/speaking-practice': (context) => const SpeakingPracticeScreen(),
-        '/ranking': (context) => const RankingScreen(),
         '/calendar': (context) => const StudyCalendarScreen(),
         '/weekly-report': (context) => const WeeklyReportScreen(),
         '/daily-challenge': (context) => const DailyChallengeScreen(),
@@ -286,8 +285,6 @@ class EigoKoreApp extends ConsumerWidget {
         '/ad-settings': (context) => const AdSettingsScreen(),
         '/promotions': (context) => const PromotionScreen(),
         '/profile-management': (context) => const ProfileManagementScreen(),
-        '/leaderboard': (context) => const LeaderboardScreen(),
-        '/friends': (context) => const FriendsScreen(),
         '/analytics': (context) => const AnalyticsScreen(),
         '/notifications': (context) => const NotificationManagementScreen(),
         '/achievements': (context) => const AchievementsScreen(),
@@ -300,7 +297,6 @@ class EigoKoreApp extends ConsumerWidget {
         '/english-town': (context) => const EnglishTownHubScreen(),
         '/challenges': (context) => const ChallengeHubScreen(), // Social challenges
         '/challenge-hub': (context) => const ChallengeHubScreen(),
-        '/friend-challenges': (context) => const FriendChallengeScreen(),
         '/mission': (context) => const MissionScreen(),
         '/multiplayer': (context) => const MultiplayerMatchmakerScreen(),
         '/multiplayer-leaderboard': (context) => const MultiplayerLeaderboardScreen(),
@@ -408,6 +404,20 @@ class EigoKoreApp extends ConsumerWidget {
         }
         return null;
       },
+    );
+  }
+}
+
+/// SharedPreferencesからのプロフィール読み込み完了を待つ間だけ表示する画面。
+/// 起動のたびにプロフィール選択画面が出てしまう問題を防ぐため、
+/// 読み込み完了前に home の中身を確定させないようにする。
+class _AppBootLoadingScreen extends StatelessWidget {
+  const _AppBootLoadingScreen();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(child: CircularProgressIndicator()),
     );
   }
 }

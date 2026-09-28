@@ -79,6 +79,9 @@ jobs:
         if: steps.pub_get.outcome == 'failure'
         run: exit 1
 
+      - name: Generate app icons
+        run: flutter pub run flutter_launcher_icons
+
       - name: Generate code
         run: |
           flutter pub run build_runner build
