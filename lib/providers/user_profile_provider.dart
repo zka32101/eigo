@@ -7,12 +7,28 @@ import 'package:uuid/uuid.dart';
 import '../models/user_profile.dart';
 
 final userProfilesProvider = StateNotifierProvider<UserProfileNotifier, List<UserProfile>>((ref) {
-  return UserProfileNotifier();
+  return UserProfileNotifier(ref);
 });
 
 final currentUserIdProvider = StateNotifierProvider<CurrentUserIdNotifier, String?>((ref) {
-  return CurrentUserIdNotifier();
+  return CurrentUserIdNotifier(ref);
 });
+
+/// 起動時、SharedPreferencesからのプロフィール一覧・現在ユーザーIDの読み込みが
+/// 両方完了したかどうか。完了前にプロフィール選択画面を出してしまうと、
+/// 既存プロフィールがあっても毎回プロフィール選択画面が表示されてしまうため、
+/// 起動フローで参照する。
+final profileLoadCompleteProvider = StateProvider<bool>((ref) => false);
+
+/// UserProfileNotifier / CurrentUserIdNotifier 両方のSharedPreferences読み込みが
+/// 完了した時点で profileLoadCompleteProvider を true にする。
+void _markLoadedIfReady(Ref ref) {
+  final profilesLoaded = ref.read(userProfilesProvider.notifier)._loaded;
+  final currentUserLoaded = ref.read(currentUserIdProvider.notifier)._loaded;
+  if (profilesLoaded && currentUserLoaded) {
+    ref.read(profileLoadCompleteProvider.notifier).state = true;
+  }
+}
 
 final currentUserProvider = Provider<UserProfile?>((ref) {
   final currentUserId = ref.watch(currentUserIdProvider);
@@ -26,8 +42,10 @@ final currentUserProvider = Provider<UserProfile?>((ref) {
 
 class UserProfileNotifier extends StateNotifier<List<UserProfile>> {
   static const String _storageKey = 'eigo_kore_profiles';
+  final Ref _ref;
+  bool _loaded = false;
 
-  UserProfileNotifier() : super([]) {
+  UserProfileNotifier(this._ref) : super([]) {
     _loadProfiles();
   }
 
@@ -39,6 +57,8 @@ class UserProfileNotifier extends StateNotifier<List<UserProfile>> {
       final profiles = decoded.map((json) => UserProfile.fromJson(json as Map<String, dynamic>)).toList();
       state = profiles;
     }
+    _loaded = true;
+    _markLoadedIfReady(_ref);
   }
 
   Future<void> _saveProfiles() async {
@@ -80,8 +100,10 @@ class UserProfileNotifier extends StateNotifier<List<UserProfile>> {
 
 class CurrentUserIdNotifier extends StateNotifier<String?> {
   static const String _currentUserKey = 'eigo_kore_current_user_id';
+  final Ref _ref;
+  bool _loaded = false;
 
-  CurrentUserIdNotifier() : super(null) {
+  CurrentUserIdNotifier(this._ref) : super(null) {
     _loadCurrentUserId();
   }
 
@@ -89,6 +111,8 @@ class CurrentUserIdNotifier extends StateNotifier<String?> {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getString(_currentUserKey);
     state = userId;
+    _loaded = true;
+    _markLoadedIfReady(_ref);
   }
 
   Future<void> setCurrentUserId(String userId) async {

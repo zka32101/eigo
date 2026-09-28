@@ -35,10 +35,6 @@ class SettingsScreen extends ConsumerWidget {
           _PlanBadgeCard(purchase: purchase),
           AppSpacing.verticalSpacerMd,
 
-          // 子どもの名前
-          _ChildNameCard(settings: settings, ref: ref),
-          AppSpacing.verticalSpacerMd,
-
           _SectionHeader('学習設定'),
           _SoundToggle(settings: settings, ref: ref),
           _TTSSpeedCard(settings: settings, ref: ref),
@@ -49,6 +45,20 @@ class SettingsScreen extends ConsumerWidget {
           _SectionHeader('通知設定'),
           _NotificationCard(settings: settings, ref: ref),
           _MorningEnglishCard(morningNotification: morningNotification, ref: ref),
+          _SettingsTile(
+            icon: Icons.tune,
+            color: AppColors.accentPurple,
+            label: '通知の種類を設定',
+            subtitle: 'チャレンジ・ペット通知などを個別に設定',
+            onTap: () => Navigator.of(context).pushNamed('/notification-settings'),
+          ),
+          _SettingsTile(
+            icon: Icons.notifications_none,
+            color: AppColors.textMuted,
+            label: '通知一覧',
+            subtitle: '届いた通知を確認する',
+            onTap: () => Navigator.of(context).pushNamed('/notifications-center'),
+          ),
 
           AppSpacing.verticalSpacerMd,
           _SectionHeader('AI キー設定'),
@@ -107,6 +117,13 @@ class SettingsScreen extends ConsumerWidget {
 
           AppSpacing.verticalSpacerMd,
           _SectionHeader('その他'),
+          _SettingsTile(
+            icon: Icons.help_outline,
+            color: AppColors.primary,
+            label: 'このアプリの使い方',
+            subtitle: '基本的な使い方を確認する',
+            onTap: () => Navigator.of(context).pushNamed('/how-to-use'),
+          ),
           _SettingsTile(
             icon: Icons.privacy_tip,
             color: AppColors.textMuted,
@@ -200,56 +217,6 @@ class _PlanBadgeCard extends StatelessWidget {
 }
 
 // ─── Child Name ───────────────────────────────────────────
-
-class _ChildNameCard extends StatelessWidget {
-  final AppSettings settings;
-  final WidgetRef ref;
-  const _ChildNameCard({required this.settings, required this.ref});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: ListTile(
-        leading: const Icon(Icons.child_care, color: AppColors.primary),
-        title: const Text('子どもの名前'),
-        subtitle: Text(
-          settings.childName.isEmpty ? '未設定（タップして設定）' : settings.childName,
-          style: TextStyle(color: settings.childName.isEmpty ? AppColors.textMuted : AppColors.textPrimary),
-        ),
-        trailing: const Icon(Icons.edit, color: AppColors.textMuted, size: 18),
-        onTap: () => _showNameDialog(context),
-      ),
-    );
-  }
-
-  void _showNameDialog(BuildContext context) {
-    final ctrl = TextEditingController(text: settings.childName);
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('子どもの名前を設定'),
-        content: TextField(
-          controller: ctrl,
-          decoration: const InputDecoration(
-            hintText: '例: たろう',
-            border: OutlineInputBorder(),
-          ),
-          autofocus: true,
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('キャンセル')),
-          ElevatedButton(
-            onPressed: () {
-              ref.read(settingsProvider.notifier).setChildName(ctrl.text.trim());
-              Navigator.pop(ctx);
-            },
-            child: const Text('保存'),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 // ─── Sound Toggle ───────────────────────────────────────────
 

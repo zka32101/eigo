@@ -2,7 +2,7 @@ import 'package:cross_promo_kit/cross_promo_kit.dart'
     show CrossPromoSection;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_core/shared_core.dart' show FriendsListPage, DailyMissionPage;
+import 'package:shared_core/shared_core.dart' show DailyMissionPage;
 
 import '../data/stage_data.dart';
 import '../design_system/design_system.dart';
@@ -18,7 +18,6 @@ import '../widgets/home_screen_cards.dart';
 import '../widgets/streak_badge.dart';
 import '../widgets/streak_card.dart';
 import '../widgets/study_time_card.dart';
-import '../widgets/weekly_ranking_card.dart';
 import '../widgets/xp_bar.dart';
 import 'profile_edit_screen.dart';
 
@@ -170,17 +169,6 @@ class HomeScreen extends ConsumerWidget {
                           ),
                           Builder(
                             builder: (ctx) => IconButton(
-                              icon: Icon(Icons.people, color: AppColors.textWhite.withOpacity(0.7), size: 20),
-                              onPressed: () {
-                                Navigator.of(ctx).push(
-                                  MaterialPageRoute(builder: (_) => const FriendsListPage()),
-                                );
-                              },
-                              tooltip: 'フレンド',
-                            ),
-                          ),
-                          Builder(
-                            builder: (ctx) => IconButton(
                               icon: Icon(Icons.calendar_today, color: AppColors.textWhite.withOpacity(0.7), size: 20),
                               onPressed: () => Navigator.of(ctx).pushNamed('/calendar'),
                               tooltip: 'カレンダー',
@@ -211,7 +199,6 @@ class HomeScreen extends ConsumerWidget {
             ),
           ),
           SliverToBoxAdapter(child: _QuickActions()),
-          SliverToBoxAdapter(child: _WeeklyRanking()),
           if (weakness.weakQuestions.isNotEmpty)
             SliverToBoxAdapter(
               child: ImprovedWeaknessCard(
@@ -314,16 +301,6 @@ class _QuickActions extends StatelessWidget {
               AppSpacing.horizontalSpacerXs,
               _QuickBtn('📹 ビデオ\nギャラリー', AppColors.accentRed, '/video-gallery'),
               AppSpacing.horizontalSpacerXs,
-              _QuickBtn('👥 フレンド\nチャレンジ', AppColors.accentGreen, '/friend-challenges'),
-            ],
-          ),
-          AppSpacing.verticalSpacerXs,
-          Row(
-            children: [
-              _QuickBtn('🔔 通知', AppColors.accentPurple, '/notifications-center'),
-              AppSpacing.horizontalSpacerXs,
-              _QuickBtn('⚙️ 通知設定', AppColors.textMuted, '/notification-settings'),
-              AppSpacing.horizontalSpacerXs,
               const Expanded(child: SizedBox.shrink()),
             ],
           ),
@@ -332,25 +309,15 @@ class _QuickActions extends StatelessWidget {
             children: [
               _SocialQuickBtn('👤 プロフィール', AppColors.primary),
               AppSpacing.horizontalSpacerXs,
-              _SocialQuickBtn('👥 フレンド', AppColors.accentGreen),
-              AppSpacing.horizontalSpacerXs,
               _SocialQuickBtn('💬 メッセージ', AppColors.accentBlue),
-            ],
-          ),
-          AppSpacing.verticalSpacerXs,
-          Row(
-            children: [
+              AppSpacing.horizontalSpacerXs,
               _SocialQuickBtn('📊 アクティビティ', AppColors.accentPurple),
-              AppSpacing.horizontalSpacerXs,
-              _QuickBtn('⚔️ 対戦', AppColors.accentRed, '/multiplayer'),
-              AppSpacing.horizontalSpacerXs,
-              const Expanded(child: SizedBox.shrink()),
             ],
           ),
           AppSpacing.verticalSpacerXs,
           Row(
             children: [
-              _QuickBtn('🏆 ランキング', AppColors.accentOrange, '/leaderboard'),
+              _QuickBtn('⚔️ 対戦', AppColors.accentRed, '/multiplayer'),
               AppSpacing.horizontalSpacerXs,
               _QuickBtn('🎭 キャラ\n図鑑', AppColors.accentPink, '/character-collection'),
               AppSpacing.horizontalSpacerXs,
@@ -418,8 +385,6 @@ class _SocialQuickBtn extends ConsumerWidget {
 
             if (label.contains('プロフィール')) {
               Navigator.of(context).pushNamed('/user-profile', arguments: currentUser.id);
-            } else if (label.contains('フレンド')) {
-              Navigator.of(context).pushNamed('/friends');
             } else if (label.contains('メッセージ')) {
               Navigator.of(context).pushNamed('/conversations');
             } else if (label.contains('アクティビティ')) {
@@ -560,22 +525,3 @@ class _RecentBadges extends StatelessWidget {
   }
 }
 
-class _WeeklyRanking extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final now = DateTime.now();
-    final weeklyScores = List.generate(7, (i) {
-      final date = now.subtract(Duration(days: 6 - i));
-      return DailyScore(
-        date: '',
-        score: (50 + (i * 10) % 50),
-        fullDate: date,
-      );
-    });
-
-    return GestureDetector(
-      onTap: () => Navigator.of(context).pushNamed('/ranking'),
-      child: WeeklyRankingCard(weeklyScores: weeklyScores),
-    );
-  }
-}

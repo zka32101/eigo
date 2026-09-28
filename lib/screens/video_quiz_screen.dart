@@ -231,11 +231,15 @@ class _QuestionCard extends StatelessWidget {
                                   color: isSelected ? Colors.blue : Colors.transparent,
                                 ),
                                 child: Center(
-                                  child: Text(
-                                    String.fromCharCode(65 + index), // A, B, C, D
-                                    style: TextStyle(
-                                      color: isSelected ? Colors.white : Colors.grey,
-                                      fontWeight: FontWeight.bold,
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Text(
+                                      String.fromCharCode(65 + index), // A, B, C, D
+                                      maxLines: 1,
+                                      style: TextStyle(
+                                        color: isSelected ? Colors.white : Colors.grey,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -244,6 +248,8 @@ class _QuestionCard extends StatelessWidget {
                               Expanded(
                                 child: Text(
                                   option,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 3,
                                   style: Theme.of(context).textTheme.bodyMedium,
                                 ),
                               ),

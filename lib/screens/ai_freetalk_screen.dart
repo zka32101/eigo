@@ -174,47 +174,50 @@ class _AiFreetalkScreenState extends ConsumerState<AiFreetalkScreen> {
                     },
                   ),
           ),
-          Container(
-            padding: AppSpacing.allPaddingXs,
-            decoration: BoxDecoration(
-              border: Border(top: BorderSide(color: AppColors.bgLight)),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _textController,
-                    decoration: InputDecoration(
-                      hintText: 'メッセージを入力...',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge * 2),
+          SafeArea(
+            top: false,
+            child: Container(
+              padding: AppSpacing.allPaddingXs,
+              decoration: BoxDecoration(
+                border: Border(top: BorderSide(color: AppColors.bgLight)),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _textController,
+                      decoration: InputDecoration(
+                        hintText: 'メッセージを入力...',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(AppSizes.borderRadiusLarge * 2),
+                        ),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: AppSpacing.md,
+                          vertical: AppSpacing.sm,
+                        ),
                       ),
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: AppSpacing.md,
-                        vertical: AppSpacing.sm,
-                      ),
+                      enabled: !conversation.isLoading,
+                      onSubmitted: (_) => _sendMessage(),
                     ),
-                    enabled: !conversation.isLoading,
-                    onSubmitted: (_) => _sendMessage(),
                   ),
-                ),
-                AppSpacing.horizontalSpacerXs,
-                FloatingActionButton(
-                  mini: true,
-                  backgroundColor: AppColors.readingColor,
-                  onPressed: conversation.isLoading ? null : _sendMessage,
-                  child: conversation.isLoading
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(AppColors.textWhite),
-                          ),
-                        )
-                      : const Icon(Icons.send),
-                ),
-              ],
+                  AppSpacing.horizontalSpacerXs,
+                  FloatingActionButton(
+                    mini: true,
+                    backgroundColor: AppColors.readingColor,
+                    onPressed: conversation.isLoading ? null : _sendMessage,
+                    child: conversation.isLoading
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(AppColors.textWhite),
+                            ),
+                          )
+                        : const Icon(Icons.send),
+                  ),
+                ],
+              ),
             ),
           ),
         ],

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import '../models/notification.dart';
 import 'logger_service.dart';
@@ -13,6 +14,47 @@ class NotificationService {
   NotificationService._internal();
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FlutterLocalNotificationsPlugin _localNotifications =
+      FlutterLocalNotificationsPlugin();
+  bool _initialized = false;
+
+  /// ローカル通知プラグインの初期化（端末への通知送信に必要）
+  Future<void> init() async {
+    if (_initialized) return;
+    const androidSettings =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    const iosSettings = DarwinInitializationSettings(
+      requestSoundPermission: true,
+      requestBadgePermission: true,
+      requestAlertPermission: true,
+    );
+    await _localNotifications.initialize(
+      const InitializationSettings(android: androidSettings, iOS: iosSettings),
+    );
+    _initialized = true;
+  }
+
+  /// 通知権限をリクエストする
+  Future<bool> requestPermission() async {
+    final androidImpl = _localNotifications
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>();
+    if (androidImpl != null) {
+      final granted = await androidImpl.requestNotificationsPermission();
+      return granted ?? true;
+    }
+    final iosImpl = _localNotifications.resolvePlatformSpecificImplementation<
+        IOSFlutterLocalNotificationsPlugin>();
+    if (iosImpl != null) {
+      final granted = await iosImpl.requestPermissions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+      return granted ?? true;
+    }
+    return true;
+  }
 
   /// Send a notification to a user
   Future<bool> sendNotification({

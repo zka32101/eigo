@@ -81,14 +81,17 @@ class ImprovedQuestionCard extends ConsumerWidget {
         padding: AppSpacing.allPaddingLg,
         child: Column(
           children: [
-            // イメージ絵文字
-            if (question.imageEmoji != null)
+            // イメージ絵文字（リスニング問題では正解のヒントになるため非表示）
+            if (question.imageEmoji != null &&
+                question.type != QuestionType.listening)
               Text(
                 question.imageEmoji!,
                 style: const TextStyle(fontSize: 56),
               ),
 
-            if (question.imageEmoji != null) AppSpacing.verticalSpacerMd,
+            if (question.imageEmoji != null &&
+                question.type != QuestionType.listening)
+              AppSpacing.verticalSpacerMd,
 
             // 英語テキスト（大きく目立つ）
             Text(
@@ -252,12 +255,16 @@ class ImprovedChoiceArea extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Center(
-                          child: Text(
-                            String.fromCharCode(65 + index),
-                            // A, B, C, D...
-                            style: AppTypography.labelLarge.copyWith(
-                              color: isSelected ? Colors.white : AppColors.textMuted,
-                              fontWeight: FontWeight.bold,
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              String.fromCharCode(65 + index),
+                              // A, B, C, D...
+                              maxLines: 1,
+                              style: AppTypography.labelLarge.copyWith(
+                                color: isSelected ? Colors.white : AppColors.textMuted,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),
@@ -268,6 +275,8 @@ class ImprovedChoiceArea extends StatelessWidget {
                       Expanded(
                         child: Text(
                           choice,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 3,
                           style: AppTypography.bodyLarge.copyWith(
                             color: AppColors.textPrimary,
                             fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
