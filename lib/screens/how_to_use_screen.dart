@@ -50,6 +50,30 @@ class HowToUseScreen extends StatelessWidget {
       body: ListView(
         padding: AppSpacing.allPaddingLg,
         children: [
+          Container(
+            padding: AppSpacing.allPaddingMd,
+            decoration: BoxDecoration(
+              color: AppColors.primary.withAlpha(20),
+              borderRadius: BorderRadius.circular(AppSizes.borderRadius),
+            ),
+            child: Row(
+              children: [
+                const Text('🎯', style: TextStyle(fontSize: 28)),
+                AppSpacing.horizontalSpacerMd,
+                Expanded(
+                  child: Text(
+                    'このアプリの目標は「基本的な会話ができる」ようになること。\n'
+                    'あいさつから日常のやりとりまで、毎日少しずつ練習していきましょう。',
+                    style: AppTypography.bodySmall.copyWith(
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          AppSpacing.verticalSpacerLg,
           Text(
             '「英語コレ！」でできることを簡単に紹介します。',
             style: AppTypography.bodyMedium.copyWith(color: AppColors.textMuted),

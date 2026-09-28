@@ -254,14 +254,39 @@ class _QuickActions extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.fromLTRB(AppSpacing.md, 0, AppSpacing.md, AppSpacing.xs),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          ImprovedSectionTitle(title: '英語で話してみよう', emoji: '💬'),
+          AppSpacing.verticalSpacerSm,
+          Row(
+            children: [
+              _QuickBtn('🎯 ステージに\n挑戦', AppColors.primary, '/stages'),
+              AppSpacing.horizontalSpacerXs,
+              _QuickBtn('🤖 AI\nフリートーク', AppColors.accentPurple, '/ai-freetalk'),
+              AppSpacing.horizontalSpacerXs,
+              _QuickBtn('🎤 発音\nバトル', AppColors.speakingColor, '/pronunciation-battle'),
+            ],
+          ),
+          AppSpacing.verticalSpacerXs,
+          Row(
+            children: [
+              _QuickBtn('💬 会話\nシミュ', AppColors.readingColor, '/conversation'),
+              AppSpacing.horizontalSpacerXs,
+              _QuickBtn('📖 単語\nカード', AppColors.accentGreen, '/vocabulary'),
+              AppSpacing.horizontalSpacerXs,
+              _QuickBtn('📚 学ぶ', AppColors.listeningColor, '/study-guide'),
+            ],
+          ),
+          AppSpacing.verticalSpacerLg,
+          ImprovedSectionTitle(title: 'もっと練習', emoji: '✏️'),
+          AppSpacing.verticalSpacerSm,
           Row(
             children: [
               _QuickBtn('⚡ デイリー\nチャレンジ', AppColors.accentOrange, '/daily-challenge'),
               AppSpacing.horizontalSpacerXs,
-              _QuickBtn('🎤 発音\nバトル', AppColors.speakingColor, '/pronunciation-battle'),
+              _QuickBtn('🎯 テスト\n対策', AppColors.accentRed, '/test-prep'),
               AppSpacing.horizontalSpacerXs,
-              _QuickBtn('💬 会話\nシミュ', AppColors.primary, '/conversation'),
+              _QuickBtn('🏆 チャレンジ', AppColors.accentPurple, '/challenges'),
             ],
           ),
           AppSpacing.verticalSpacerXs,
@@ -269,59 +294,21 @@ class _QuickActions extends StatelessWidget {
             children: [
               _QuickBtn('👨‍👩‍👧 親子\nチャレンジ', AppColors.accentPink, '/parent-child'),
               AppSpacing.horizontalSpacerXs,
-              _QuickBtn('👫 友達\n招待', AppColors.accentGreen, '/invite'),
-              AppSpacing.horizontalSpacerXs,
-              _QuickBtn('🎯 テスト\n対策', AppColors.accentRed, '/test-prep'),
-            ],
-          ),
-          AppSpacing.verticalSpacerXs,
-          Row(
-            children: [
-              _QuickBtn('🤖 AI\nフリートーク', AppColors.accentPurple, '/ai-freetalk'),
-              AppSpacing.horizontalSpacerXs,
-              _QuickBtn('📖 単語\nカード', AppColors.accentGreen, '/vocabulary'),
-              AppSpacing.horizontalSpacerXs,
               _QuickBtn('📅 カレンダー', AppColors.listeningColor, '/calendar'),
+              AppSpacing.horizontalSpacerXs,
+              _QuickBtn('📹 ビデオ\nギャラリー', AppColors.accentRed, '/video-gallery'),
             ],
           ),
-          AppSpacing.verticalSpacerXs,
+          AppSpacing.verticalSpacerLg,
+          ImprovedSectionTitle(title: 'おたのしみ', emoji: '🎉'),
+          AppSpacing.verticalSpacerSm,
           Row(
             children: [
               _QuickBtn('🐾 ペット\n育成', AppColors.accentOrange, '/pet'),
               AppSpacing.horizontalSpacerXs,
               _QuickBtn('🧑‍🏫 先生\nごっこ', AppColors.readingColor, '/teacher-mode'),
               AppSpacing.horizontalSpacerXs,
-              _QuickBtn('📚 学ぶ', AppColors.primary, '/study-guide'),
-            ],
-          ),
-          AppSpacing.verticalSpacerXs,
-          Row(
-            children: [
-              _QuickBtn('🏆 チャレンジ', AppColors.accentPurple, '/challenges'),
-              AppSpacing.horizontalSpacerXs,
-              _QuickBtn('📹 ビデオ\nギャラリー', AppColors.accentRed, '/video-gallery'),
-              AppSpacing.horizontalSpacerXs,
-              const Expanded(child: SizedBox.shrink()),
-            ],
-          ),
-          AppSpacing.verticalSpacerXs,
-          Row(
-            children: [
-              _SocialQuickBtn('👤 プロフィール', AppColors.primary),
-              AppSpacing.horizontalSpacerXs,
-              _SocialQuickBtn('💬 メッセージ', AppColors.accentBlue),
-              AppSpacing.horizontalSpacerXs,
-              _SocialQuickBtn('📊 アクティビティ', AppColors.accentPurple),
-            ],
-          ),
-          AppSpacing.verticalSpacerXs,
-          Row(
-            children: [
-              _QuickBtn('⚔️ 対戦', AppColors.accentRed, '/multiplayer'),
-              AppSpacing.horizontalSpacerXs,
               _QuickBtn('🎭 キャラ\n図鑑', AppColors.accentPink, '/character-collection'),
-              AppSpacing.horizontalSpacerXs,
-              const Expanded(child: SizedBox.shrink()),
             ],
           ),
         ],
@@ -359,51 +346,6 @@ class _QuickBtn extends StatelessWidget {
   }
 }
 
-class _SocialQuickBtn extends ConsumerWidget {
-  final String label;
-  final Color color;
-
-  const _SocialQuickBtn(this.label, this.color);
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final currentUser = ref.watch(currentUserProvider);
-
-    return Expanded(
-      child: Material(
-        color: color.withAlpha(20),
-        borderRadius: BorderRadius.circular(12),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(12),
-          onTap: () {
-            if (currentUser == null) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('ログインしてください')),
-              );
-              return;
-            }
-
-            if (label.contains('プロフィール')) {
-              Navigator.of(context).pushNamed('/user-profile', arguments: currentUser.id);
-            } else if (label.contains('メッセージ')) {
-              Navigator.of(context).pushNamed('/conversations');
-            } else if (label.contains('アクティビティ')) {
-              Navigator.of(context).pushNamed('/activity-feed');
-            }
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
-            child: Text(
-              label,
-              style: AppTypography.labelSmall.copyWith(fontWeight: FontWeight.bold, color: color),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 // _WeaknessCard replaced with ImprovedWeaknessCard
 

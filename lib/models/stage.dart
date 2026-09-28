@@ -17,6 +17,8 @@ enum StageCategory {
   dailyRoutineAdv, sportsAdv, natureAdv2, familyPeople, schoolSubjects,
   jobsAdv, bodyHealth2, emotionsAdv, clothesFashion, technologyAdv,
   travelTransport, holidaysEvents, sentencePractice, eiken5prep, finalReview,
+  // Stage 81 (基本会話の総仕上げ)
+  selfIntroduction,
 }
 
 class Stage {
@@ -130,5 +132,6 @@ String stageCategoryLabel(StageCategory cat) {
     case StageCategory.sentencePractice: return '文章練習';
     case StageCategory.eiken5prep:    return '英検5級対策';
     case StageCategory.finalReview:   return '最終まとめ';
+    case StageCategory.selfIntroduction: return '自己紹介';
   }
 }
