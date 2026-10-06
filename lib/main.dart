@@ -98,11 +98,14 @@ import 'services/firebase_service.dart';
 import 'services/notification_service.dart';
 import 'services/purchase_service.dart';
 import 'services/firestore_ranking_service.dart';
+import 'widgets/startup_splash.dart';
 import 'services/firestore_friend_service.dart';
 import 'services/firestore_mission_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // 初期化が終わるまで、下部に組織ロゴを出した起動画面を先に表示する
+  runApp(const MaterialApp(debugShowCheckedModeBanner: false, home: StartupSplash()));
 
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
