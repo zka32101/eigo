@@ -1,4 +1,4 @@
-package com.petitworks.eigo_kore
+package com.yourwish.shougakukore.eigo
 
 import io.flutter.embedding.android.FlutterActivity
 

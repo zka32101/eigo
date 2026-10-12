@@ -8,11 +8,9 @@ import '../models/purchase_model.dart';
 import '../services/purchase_service.dart';
 import 'trial_provider.dart';
 
+/// 小学コレシリーズ共通のプレミアム1本（月額/年額）。
 enum PurchasePlan {
   free,
-  lite,
-  pro,
-  plus,
   premium,
 }
 
@@ -27,22 +25,17 @@ class PurchaseState {
     this.errorMessage,
   });
 
-  bool get hasProFeatures => activePlan.index >= PurchasePlan.pro.index;
-  bool get hasPlusFeatures => activePlan.index >= PurchasePlan.plus.index;
   bool get hasPremiumFeatures => activePlan == PurchasePlan.premium;
+  // プランは1本化したため、どの機能も購読中なら全部使える。
+  bool get hasProFeatures => hasPremiumFeatures;
+  bool get hasPlusFeatures => hasPremiumFeatures;
 
   String get planDisplayName {
     switch (activePlan) {
       case PurchasePlan.free:
         return '無料プラン';
-      case PurchasePlan.lite:
-        return 'Lite';
-      case PurchasePlan.pro:
-        return 'Pro';
-      case PurchasePlan.plus:
-        return 'Plus';
       case PurchasePlan.premium:
-        return 'Premium';
+        return 'プレミアム';
     }
   }
 
@@ -278,13 +271,10 @@ class PurchaseNotifier extends StateNotifier<PurchaseState> {
 
   PurchasePlan _planFromEntitlements(Set<String> active) {
     if (active.contains(RevenueCatConfig.entitlementPremium)) return PurchasePlan.premium;
-    if (active.contains(RevenueCatConfig.entitlementPlus)) return PurchasePlan.plus;
-    if (active.contains(RevenueCatConfig.entitlementPro)) return PurchasePlan.pro;
-    if (active.contains(RevenueCatConfig.entitlementLite)) return PurchasePlan.lite;
     return PurchasePlan.free;
   }
 
-  /// ストア商品ID（例: `eigo_kore_pro_monthly`）に対応するRevenueCatパッケージを
+  /// ストア商品ID（例: `eigo_premium_monthly`）に対応するRevenueCatパッケージを
   /// 購入する。成功したら true、ユーザーキャンセルまたはエラー時は false を返す。
   Future<bool> purchase(String productId) async {
     state = state.copyWith(isLoading: true, errorMessage: null);

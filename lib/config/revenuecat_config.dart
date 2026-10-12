@@ -24,20 +24,13 @@ class RevenueCatConfig {
 
   // ─── エンタイトルメントID ──────────────────────────────
   // RevenueCatダッシュボードで作成するエンタイトルメント識別子。
-  // settings_screen.dart / upgrade_screen.dart のプラン名と対応させている。
-  static const String entitlementLite = 'lite';
-  static const String entitlementPro = 'pro';
-  static const String entitlementPlus = 'plus';
-  static const String entitlementPremium = 'premium';
+  // 小学コレシリーズ共通の1つのみ。Play Console の eigo_premium_* はこれに紐づく。
+  static const String entitlementPremium = '小学コレ_pro';
 
   // ─── ストア商品ID ──────────────────────────────────────
-  // App Store Connect / Google Play Console 側で作成する商品IDと一致させる。
-  // upgrade_screen.dart の `_productId()` と同じ値。
-  static const String productLiteMonthly = 'eigo_kore_lite_monthly';
-  static const String productProMonthly = 'eigo_kore_pro_monthly';
-  static const String productPlusMonthly = 'eigo_kore_plus_monthly';
-  static const String productPremiumMonthly = 'eigo_kore_premium_monthly';
-  static const String productProAnnual = 'eigo_kore_pro_annual';
+  // Google Play Console の定期購入ID（基本プラン monthly / yearly）と一致させる。
+  static const String productProMonthly = 'eigo_premium_monthly';
+  static const String productProAnnual = 'eigo_premium_yearly';
 
   // ─── 表示価格 ──────────────────────────────────────────
   // ストア側の実価格（App Store Connect / Google Play Console）と
