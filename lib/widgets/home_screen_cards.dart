@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../design_system/design_system.dart';
-import '../models/progress.dart';
 import '../models/stage.dart';
 
 class ImprovedDailyMissionCard extends StatelessWidget {

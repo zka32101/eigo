@@ -10,7 +10,7 @@ import 'package:shared_core/shared_core.dart' hide lessonProvider;
 import 'package:shared_core/shared_core.dart'
     show badgeProvider, unifiedBadges, BadgeNotifier, rankingProvider, friendProvider, missionProvider, coinProvider, premiumProvider, PremiumNotifier, PushNotificationService, adaptiveDifficultyNotifierProvider;
 
-import '../design_system/design_system.dart';
+import 'design_system/design_system.dart';
 import 'models/challenge_model.dart';
 import 'models/pet_model.dart';
 import 'models/stage.dart';
