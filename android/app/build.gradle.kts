@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.petitworks.eigo_kore"
+    namespace = "com.yourwish.shougakukore.eigo"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -22,7 +22,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.petitworks.eigo_kore"
+        applicationId = "com.yourwish.shougakukore.eigo"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

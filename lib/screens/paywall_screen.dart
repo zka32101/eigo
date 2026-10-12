@@ -225,7 +225,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
       child: Column(
         children: [
           Text(
-            'Pro プラン',
+            'プレミアム',
             style: AppTypography.headlineLarge.copyWith(
               color: AppColors.primary,
               fontWeight: FontWeight.bold,
@@ -254,7 +254,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
           ),
           SizedBox(height: AppSpacing.xs),
           Text(
-            'リスニング + スピーキング完全対応',
+            'すべての機能が使い放題',
             style: AppTypography.bodySmall.copyWith(
               color: AppColors.textMuted,
             ),
@@ -328,7 +328,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Pro プランへようこそ！'),
+          content: const Text('プレミアムへようこそ！'),
           backgroundColor: AppColors.primary,
         ),
       );

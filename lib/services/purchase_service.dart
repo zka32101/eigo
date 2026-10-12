@@ -105,7 +105,9 @@ class PurchaseService {
     if (offerings == null) return null;
     for (final offering in offerings.all.values) {
       for (final pkg in offering.availablePackages) {
-        if (pkg.storeProduct.identifier == productId) {
+        // Android の定期購入は subscriptionId:basePlanId 形式で返ることがあるため、: より前も照合する。
+        final id = pkg.storeProduct.identifier;
+        if (id == productId || id.split(':').first == productId) {
           return pkg;
         }
       }

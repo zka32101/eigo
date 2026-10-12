@@ -89,6 +89,7 @@ import 'screens/upgrade_screen.dart';
 import 'screens/user_profile_screen.dart';
 import 'screens/video_gallery_screen.dart';
 import 'screens/video_player_screen.dart';
+import 'widgets/stage_access_gate.dart';
 import 'screens/vocabulary_screen.dart';
 import 'screens/weekly_report_screen.dart';
 import 'screens/word_review_screen.dart';
@@ -323,14 +324,20 @@ class EigoKoreApp extends ConsumerWidget {
         if (settings.name == '/stage-intro') {
           final stage = settings.arguments as Stage;
           return MaterialPageRoute(
-            builder: (_) => StageIntroScreen(stage: stage),
+            builder: (_) => StageAccessGate(
+              stage: stage,
+              child: StageIntroScreen(stage: stage),
+            ),
             settings: settings,
           );
         }
         if (settings.name == '/lesson') {
           final stage = settings.arguments as Stage;
           return MaterialPageRoute(
-            builder: (_) => LessonScreen(stage: stage),
+            builder: (_) => StageAccessGate(
+              stage: stage,
+              child: LessonScreen(stage: stage),
+            ),
             settings: settings,
           );
         }

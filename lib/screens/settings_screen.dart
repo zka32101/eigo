@@ -174,7 +174,7 @@ class _PlanBadgeCard extends ConsumerWidget {
     if (isTrialExpired) {
       subtitle = '無料トライアルは終了しました。プランに登録して続きを楽しもう！';
     } else if (isFree && trial.isLoaded) {
-      subtitle = '無料トライアル残り${trial.remainingDays}日！ぜひProをお試しください。';
+      subtitle = '無料トライアル残り${trial.remainingDays}日！ぜひプレミアムをお試しください。';
     }
 
     return Card(
