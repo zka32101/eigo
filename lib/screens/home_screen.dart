@@ -15,6 +15,7 @@ import '../providers/study_time_provider.dart';
 import '../providers/user_profile_provider.dart';
 import '../providers/weakness_provider.dart';
 import '../widgets/home_screen_cards.dart';
+import '../widgets/retention_section.dart';
 import '../widgets/streak_badge.dart';
 import '../widgets/streak_card.dart';
 import '../widgets/study_time_card.dart';
@@ -190,6 +191,7 @@ class HomeScreen extends ConsumerWidget {
             child: _ImprovedDailyMissionCardWrapper(progress: progress),
           ),
           SliverToBoxAdapter(child: StreakCard(days: progress.streakDays)),
+          const SliverToBoxAdapter(child: RetentionSection()),
           SliverToBoxAdapter(child: StudyTimeCard(studyTime: studyTime)),
           SliverToBoxAdapter(
             child: ImprovedStatsRow(

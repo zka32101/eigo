@@ -2,6 +2,7 @@ import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../services/retention_hooks.dart';
 import '../design_system/design_system.dart';
 import '../models/pronunciation_result.dart';
 import '../models/question.dart';
@@ -170,6 +171,7 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
     }
     // 弱点記録
     _answerLog.add((id: _current.id, type: _current.type, correct: isCorrect, speakingScore: 0));
+    onQuizAnswered(ref, quizId: _current.id, correct: isCorrect, context: context);
     setState(() {
       _answered = true;
       _selectedAnswer = choice;
@@ -194,6 +196,7 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
           if (s >= 85) _confetti.play();
           // 弱点記録
           _answerLog.add((id: _current.id, type: _current.type, correct: s >= 60, speakingScore: s));
+          onQuizAnswered(ref, quizId: _current.id, correct: s >= 60, context: context);
 
           // ペット育成統合：発音スコア → ペットフィード
           _feedPetFromScore(s, text);

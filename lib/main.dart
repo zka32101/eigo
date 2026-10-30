@@ -96,6 +96,7 @@ import 'services/ad_service.dart';
 import 'services/eigo_matchmaking_service.dart';
 import 'services/firebase_service.dart';
 import 'services/notification_service.dart';
+import 'services/retention_hooks.dart';
 import 'services/purchase_service.dart';
 import 'services/firestore_ranking_service.dart';
 import 'widgets/startup_splash.dart';
@@ -188,6 +189,9 @@ Future<void> main() async {
     ],
   );
   await container.read(coinProvider.notifier).load();
+
+  // 定着率施策（初回7日間・復習キュー・週次チャレンジ・通知計画）の保存データを読み込む
+  await initRetention(container);
 
   // バグ報告・改善要望フォームの送信ハンドラを登録（Firestore `feedback` コレクションへ書き込み）
   container.read(feedbackProvider.notifier).setSubmitHandler(

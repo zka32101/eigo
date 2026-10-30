@@ -12,6 +12,8 @@ import '../providers/settings_provider.dart';
 import '../providers/trial_provider.dart';
 import '../services/notification_service.dart';
 import '../services/purchase_service.dart';
+import '../widgets/reminder_switch.dart';
+import '../widgets/study_window_tile.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -46,6 +48,8 @@ class SettingsScreen extends ConsumerWidget {
           _SectionHeader('通知設定'),
           _NotificationCard(settings: settings, ref: ref),
           _MorningEnglishCard(morningNotification: morningNotification, ref: ref),
+          const ReminderSwitchTile(),
+          const StudyWindowTile(),
           _SettingsTile(
             icon: Icons.tune,
             color: AppColors.accentPurple,
