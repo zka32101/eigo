@@ -2,6 +2,7 @@ import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../services/retention_hooks.dart';
 import '../design_system/design_system.dart';
 import '../models/question.dart';
 import '../providers/level_provider.dart';
@@ -71,6 +72,7 @@ class _TestPrepScreenState extends ConsumerState<TestPrepScreen> {
     if (_answered) return;
     final isCorrect = choice == _current.correctAnswer;
     if (isCorrect) { _score += _current.points; _correct++; _confetti.play(); }
+    onQuizAnswered(ref, quizId: _current.id, correct: isCorrect, context: context);
     setState(() { _answered = true; _selectedAnswer = choice; });
   }
 
@@ -85,6 +87,7 @@ class _TestPrepScreenState extends ConsumerState<TestPrepScreen> {
           setState(() { _speakingScore = s; _speakingDone = true; _isListening = false; });
           if (s >= 60) { _score += _current.points; _correct++; }
           if (s >= 85) _confetti.play();
+          onQuizAnswered(ref, quizId: _current.id, correct: s >= 60, context: context);
         }
       },
     );
